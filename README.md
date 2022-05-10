@@ -57,3 +57,35 @@ Open `http://localhost:3000` with your browser to see the result.
 - [`.husky`](.husky) — Husky configuration and hooks.<br>
 - [`public`](./public) — Static assets such as robots.txt, images, and favicon.<br>
 - [`src`](./src) — Application source code, including pages, components, styles.
+
+#### Commit messages
+
+Commit messages must conform to the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/).
+
+The commit message should be structured as follows:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+`<type>` must be one of the following:
+
+| type     | description                                                                                                 |
+|----------|-------------------------------------------------------------------------------------------------------------|
+| build    | Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)         |
+| chore    | Changes that do not affect production; e.x., updating grunt tasks, etc.                                     |
+| ci       | Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs) |
+| docs     | Documentation only changes                                                                                  |
+| feat     | A new feature                                                                                               |
+| fix      | A bug fix                                                                                                   |
+| perf     | A code change that improves performance                                                                     |
+| refactor | A code change that neither fixes a bug nor adds a feature                                                   |
+| revert   | A commit that reverts a previous commit                                                                     |
+| style    | Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)      |
+| test     | Adding missing tests or correcting existing tests                                                           |
+
+See the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/#examples) for examples of valid commit messages.
