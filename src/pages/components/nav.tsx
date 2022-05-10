@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Button, Dropdown, Menu, Icon } from 'semantic-ui-react';
+import React from 'react';
+import { Button, Menu, Icon } from 'semantic-ui-react';
 
 export default function Nav() {
   return (
