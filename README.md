@@ -24,6 +24,20 @@ A website for Online Master's of Science (OMS) course reviews at Georgia Tech.
 
 ## Development
 
+#### Getting started (VSCode fast-path)
+
+This project includes a [.devcontainers](https://code.visualstudio.com/docs/remote/containers) configuration
+that can be used by VSCode to create a one-click development environment with Docker. The Docker container
+includes all of the dependencies you need to get started, forwards the NextJS and Storybook ports to your
+local machine, and mounts the repository into the container so changes persist outside of Docker.
+
+To get started:
+
+1. Install the [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+   VSCode extension.
+2. Open the repository with VSCode. You should see a prompt on the bottom left of the screen to open the
+   project inside the container.
+
 #### Getting started
 
 Clone the repository and then run the following commands to build the NextJS application:
