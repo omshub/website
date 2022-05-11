@@ -2,13 +2,13 @@
 
 A website for Online Master's of Science (OMS) course reviews at Georgia Tech.
 
-
 ## Resources
 
 #### OMSHub
 
 - Production - https://omshub.org
 - Development - https://dev.omshub.org
+- Storybook - https://storybook.omshub.org
 
 #### OMS program home pages
 
@@ -50,6 +50,7 @@ Open `http://localhost:3000` with your browser to see the result.
 - `yarn lint` — Runs ESLint for all files in the `src` directory.
 - `yarn format` — Runs Prettier for all files in the `src` directory.
 - `yarn commit` — Run commitizen. Alternative to `git commit`.
+- `yarn storybook` - Run storybook locally at `http://localhost:6006`.
 
 #### Directory structure
 
@@ -75,7 +76,7 @@ The commit message should be structured as follows:
 `<type>` must be one of the following:
 
 | type     | description                                                                                                 |
-|----------|-------------------------------------------------------------------------------------------------------------|
+| -------- | ----------------------------------------------------------------------------------------------------------- |
 | build    | Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)         |
 | chore    | Changes that do not affect production; e.x., updating grunt tasks, etc.                                     |
 | ci       | Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs) |
