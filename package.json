@@ -2,6 +2,11 @@
   "name": "nextjs-with-typescript",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=14.0.0",
+    "yarn": ">=1.22.0",
+    "npm": "please-use-yarn"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,9 +14,13 @@
     "lint": "next lint",
     "prepare": "husky install",
     "precommit": "lint-staged",
-    "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest"
+    "prettier": "prettier --write .",
+    "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
+    "@babel/core": "^7.0.0",
     "@commitlint/cli": "^16.2.4",
     "@commitlint/config-conventional": "^16.2.4",
     "@emotion/cache": "^11.7.1",
@@ -26,12 +35,20 @@
     "react-dom": "latest"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^6.4.22",
+    "@storybook/addon-essentials": "^6.4.22",
+    "@storybook/addon-interactions": "^6.4.22",
+    "@storybook/addon-links": "^6.4.22",
+    "@storybook/react": "^6.4.22",
+    "@storybook/testing-library": "^0.0.11",
     "@types/node": "latest",
     "@types/react": "latest",
+    "babel-loader": "^8.2.5",
     "cz-conventional-changelog": "3.3.0",
     "eslint": "latest",
     "eslint-config-next": "latest",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-storybook": "^0.5.11",
     "husky": "^8.0.1",
     "lint-staged": "^12.4.1",
     "prettier": "^2.6.2",
@@ -43,10 +60,10 @@
     }
   },
   "lint-staged": {
-    "*.js": [
+    "*{js,jsx,ts,tsx}": [
       "next lint"
     ],
-    "*.{html,js}": [
+    "*.{html,js,jsx,ts,tsx}": [
       "prettier --write"
     ]
   }

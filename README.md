@@ -1,45 +1,92 @@
-# Next.js with TypeScript example
+# OMSHub
 
-## How to use
+A website for Online Master's of Science (OMS) course reviews at Georgia Tech.
 
-Download the example [or clone the repo](https://github.com/mui/material-ui):
+## Resources
 
-<!-- #default-branch-switch -->
+#### OMSHub
 
-```sh
-curl https://codeload.github.com/mui/material-ui/tar.gz/master | tar -xz --strip=2  material-ui-master/examples/nextjs-with-typescript
-cd nextjs-with-typescript
+- Production - https://omshub.org
+- Development - https://dev.omshub.org
+- Storybook - https://storybook.omshub.org
+
+#### OMS program home pages
+
+- OMS Computer Science (OMSCS) - https://omscs.gatech.edu
+
+- OMS Cybersecurity (OMSCY) - https://pe.gatech.edu/degrees/cybersecurity
+
+- OMS Analytics (OMSA) - https://pe.gatech.edu/degrees/analytics
+
+#### Other
+
+- How to Write a Git Commit Message - https://cbea.ms/git-commit
+
+## Development
+
+#### Getting started
+
+Clone the repository and then run the following commands to build the NextJS application:
+
+```bash
+yarn install
+yarn build
 ```
 
-Install it and run:
+To start the project locally, run:
 
-```sh
-npm install
-npm run dev
+```bash
+yarn start
 ```
 
-or:
+Open `http://localhost:3000` with your browser to see the result.
 
-<!-- #default-branch-switch -->
+#### Yarn development scripts
 
-[![Edit on StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/mui/material-ui/tree/master/examples/nextjs-with-typescript)
+- `yarn dev` — Starts the application in development mode at `http://localhost:3000`.
+- `yarn build` — Creates an optimized production build of your application.
+- `yarn start` — Starts the application in production mode.
+- `yarn type-check` — Validate code using TypeScript compiler.
+- `yarn lint` — Runs ESLint for all files in the `src` directory.
+- `yarn format` — Runs Prettier for all files in the `src` directory.
+- `yarn commit` — Run commitizen. Alternative to `git commit`.
+- `yarn storybook` - Run storybook locally at `http://localhost:6006`.
 
-[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/mui/material-ui/tree/master/examples/nextjs-with-typescript)
+#### Directory structure
 
-## The idea behind the example
+- [`.github`](.github) — GitHub configuration including the CI workflow.<br>
+- [`.husky`](.husky) — Husky configuration and hooks.<br>
+- [`public`](./public) — Static assets such as robots.txt, images, and favicon.<br>
+- [`src`](./src) — Application source code, including pages, components, styles.
 
-The project uses [Next.js](https://github.com/vercel/next.js), which is a framework for server-rendered React apps.
-It includes `@mui/material` and its peer dependencies, including `emotion`, the default style engine in MUI v5. If you prefer, you can [use styled-components instead](https://mui.com/material-ui/guides/interoperability/#styled-components).
+#### Commit messages
 
-## The link component
+Commit messages must conform to the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/).
 
-Next.js has [a custom Link component](https://nextjs.org/docs/api-reference/next/link).
-The example folder provides adapters for usage with MUI.
-More information [in the documentation](https://mui.com/material-ui/guides/routing/#next-js).
+The commit message should be structured as follows:
 
-## What's next?
+```
+<type>[optional scope]: <description>
 
-<!-- #default-branch-switch -->
+[optional body]
 
-You now have a working example project.
-You can head back to the documentation, continuing browsing it from the [templates](https://mui.com/material-ui/getting-started/templates/) section.
+[optional footer(s)]
+```
+
+`<type>` must be one of the following:
+
+| type     | description                                                                                                 |
+| -------- | ----------------------------------------------------------------------------------------------------------- |
+| build    | Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)         |
+| chore    | Changes that do not affect production; e.x., updating grunt tasks, etc.                                     |
+| ci       | Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs) |
+| docs     | Documentation only changes                                                                                  |
+| feat     | A new feature                                                                                               |
+| fix      | A bug fix                                                                                                   |
+| perf     | A code change that improves performance                                                                     |
+| refactor | A code change that neither fixes a bug nor adds a feature                                                   |
+| revert   | A commit that reverts a previous commit                                                                     |
+| style    | Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)      |
+| test     | Adding missing tests or correcting existing tests                                                           |
+
+See the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/#examples) for examples of valid commit messages.

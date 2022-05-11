@@ -1,3 +1,9 @@
 {
-  "extends": ["next/core-web-vitals","eslint:recommended","next","prettier"]
+  "extends": ["plugin:storybook/recommended", "next/core-web-vitals", "eslint:recommended", "next", "prettier"],
+  "overrides": [{
+    "files": ["*.stories.@(ts|tsx|js|jsx|mjs|cjs)"],
+    "rules": {
+      "storybook/hierarchy-separator": "error"
+    }
+  }]
 }
