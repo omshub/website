@@ -8,7 +8,6 @@ A website for Online Master's of Science (OMS) course reviews at Georgia Tech.
 
 - Production - https://omshub.org
 - Development - https://dev.omshub.org
-- Storybook - https://storybook.omshub.org
 
 #### OMS program home pages
 
