@@ -24,15 +24,7 @@ export default function NavBar() {
 						href='/'
 						sx={{ my: 1, mx: 1.5 }}
 					>
-						Courses
-					</Link>
-					<Link
-						variant='button'
-						color='text.primary'
-						href='reviews'
-						sx={{ my: 1, mx: 1.5 }}
-					>
-						Reviews
+						Home
 					</Link>
 					<Link
 						variant='button'

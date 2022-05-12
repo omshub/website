@@ -22,9 +22,6 @@ const Home: NextPage = () => {
 				<Typography variant='h4' component='h1' gutterBottom>
 					You are looking at index.tsx
 				</Typography>
-				<Link href='/reviews' color='secondary'>
-					Go to the reviews page
-				</Link>
 				<Link href='/about' color='secondary'>
 					Go to the about page
 				</Link>
