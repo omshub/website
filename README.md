@@ -28,7 +28,7 @@ A website for Online Master's of Science (OMS) course reviews at Georgia Tech.
 
 This project includes a [.devcontainers](https://code.visualstudio.com/docs/remote/containers) configuration
 that can be used by VSCode to create a one-click development environment with Docker. The Docker container
-includes all of the dependencies you need to get started, forwards the NextJS and Storybook ports to your 
+includes all of the dependencies you need to get started, forwards the NextJS and Storybook ports to your
 local machine, and mounts the repository into the container so changes persist outside of Docker.
 
 To get started:
