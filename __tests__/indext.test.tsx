@@ -7,7 +7,7 @@ describe('Home', () => {
 	it('renders heading', () => {
 		render(<Home />)
 		expect(screen.getByRole('heading')).toHaveTextContent(
-			'MUI v5 + Next.js with TypeScript example'
+			'You are looking at index.tsx'
 		)
 	})
 })
