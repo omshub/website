@@ -77,7 +77,7 @@ Open `http://localhost:3000` with your browser to see the result.
 
 #### Committing using Git CLI:
 
-Using `git cz` or `git commit` will bring up a prompt that will fill out commit messages to the repo's commit connvention.
+Using `git commit` will bring up a prompt that will fill out commit messages to the repo's commit connvention.
 
 #### Committing using Git GUI:
 
