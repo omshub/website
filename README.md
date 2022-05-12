@@ -90,7 +90,7 @@ The commit message should be structured as follows:
 `<type>` must be one of the following:
 
 | type     | description                                                                                                 |
-|----------|-------------------------------------------------------------------------------------------------------------|
+| -------- | ----------------------------------------------------------------------------------------------------------- |
 | build    | Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)         |
 | chore    | Changes that do not affect production; e.x., updating grunt tasks, etc.                                     |
 | ci       | Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs) |
@@ -104,7 +104,6 @@ The commit message should be structured as follows:
 | test     | Adding missing tests or correcting existing tests                                                           |
 
 See the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/#examples) for examples of valid commit messages.
-
 
 ## Attributions
 
