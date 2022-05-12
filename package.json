@@ -34,7 +34,8 @@
 		"commitizen": "^4.2.4",
 		"next": "latest",
 		"react": "latest",
-		"react-dom": "latest"
+		"react-dom": "latest",
+		"storybook-addon-next-router": "^3.1.1"
 	},
 	"devDependencies": {
 		"@storybook/addon-actions": "^6.4.22",
