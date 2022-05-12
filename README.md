@@ -60,6 +60,12 @@ Open `http://localhost:3000` with your browser to see the result.
 
 #### Commit messages
 
+##### Committing using Git CLI:
+
+Using `git commit` or `git cz` will automatically bring up a prompt that guide you through the repo commit conventions.
+
+##### If you are commiting through a Git GUI please follow these specifications below:
+
 Commit messages must conform to the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/).
 
 The commit message should be structured as follows:
