@@ -11,7 +11,7 @@ interface ButtonProps {
 	 */
 	backgroundColor?: string
 	/**
-	 * How large should the button be?
+	 * How large should the nav bar be?
 	 */
 	size?: 'small' | 'medium' | 'large'
 	/**

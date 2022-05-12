@@ -1,17 +1,20 @@
 import * as React from 'react'
-import Link from '../src/Link'
+import Link from '../Link'
 import Typography from '@mui/material/Typography'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Button from '@mui/material/Button'
 
-export default function NavBar() {
+interface NavBarProps {}
+
+export const NavBar = ({ ...props }: NavBarProps) => {
 	return (
 		<AppBar
 			position='static'
 			color='default'
 			elevation={0}
 			sx={{ borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}
+			{...props}
 		>
 			<Toolbar sx={{ flexWrap: 'wrap' }}>
 				<Typography variant='h6' color='inherit' noWrap sx={{ flexGrow: 1 }}>
