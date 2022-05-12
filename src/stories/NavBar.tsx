@@ -1,9 +1,9 @@
+import AppBar from '@mui/material/AppBar'
+import Button from '@mui/material/Button'
+import Toolbar from '@mui/material/Toolbar'
+import Typography from '@mui/material/Typography'
 import * as React from 'react'
 import Link from '../Link'
-import Typography from '@mui/material/Typography'
-import AppBar from '@mui/material/AppBar'
-import Toolbar from '@mui/material/Toolbar'
-import Button from '@mui/material/Button'
 
 interface NavBarProps {}
 
