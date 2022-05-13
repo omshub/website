@@ -1,9 +1,9 @@
+import * as React from 'react'
 import AppBar from '@mui/material/AppBar'
 import Button from '@mui/material/Button'
 import { grey } from '@mui/material/colors'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import * as React from 'react'
 import Link from '../Link'
 
 interface NavBarProps {}
