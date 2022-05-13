@@ -32,7 +32,7 @@
 		"@mui/icons-material": "latest",
 		"@mui/material": "latest",
 		"commitizen": "^4.2.4",
-		"next": "latest",
+		"next": "12.1.5",
 		"react": "latest",
 		"react-dom": "latest"
 	},
