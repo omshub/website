@@ -18,5 +18,5 @@ jobs:
         uses: treosh/lighthouse-ci-action@v9
         with:
           urls: ${{ steps.VercelPreview.outputs.url }}
-          configPath: .github/lighthouse/budget.json
+          budgetPath: .github/lighthouse/budget.json
           uploadArtifacts: true
