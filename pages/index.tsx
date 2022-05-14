@@ -1,3 +1,4 @@
+// @refresh reset
 import * as React from 'react'
 import type { NextPage } from 'next'
 import Container from '@mui/material/Container'
