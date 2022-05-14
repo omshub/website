@@ -1,7 +1,6 @@
 name: Lighthouse
 
-on:
-  pull_request
+on: pull_request
 
 jobs:
   lighthouse:
@@ -10,9 +9,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Wait for Vercel Preview
-        uses: patrickedqvist/wait-for-vercel-preview@main
+        uses: patrickedqvist/wait-for-vercel-preview@1.2.0
         id: VercelPreview
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           max_timeout: 60
-      - run: echo $ ${{ steps.VercelPreview.outputs.url }}
+      - name: Audit Vercel preview URL using Lighthouse
+        uses: treosh/lighthouse-ci-action@v9
+        with:
+          urls: ${{ steps.VercelPreview.outputs.url }}
+          configPath: .github/lighthouse/budget.json
+          uploadArtifacts: true
