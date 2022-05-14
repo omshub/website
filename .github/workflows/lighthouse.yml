@@ -14,9 +14,9 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           max_timeout: 60
-      - name: Audit Vercel preview URL using Lighthouse
+      - name: Run Lighthouse on url and validate with budgets.json
         uses: treosh/lighthouse-ci-action@v9
         with:
           urls: ${{ steps.VercelPreview.outputs.url }}
-          budgetPath: .github/lighthouse/budget.json
+          budgetPath: '.github/lighthouse/budget.json'
           uploadArtifacts: true
