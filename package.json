@@ -18,8 +18,8 @@
 		"precommit": "lint-staged",
 		"prettier": "prettier --write .",
 		"post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest",
-		"storybook": "start-storybook -p 6006",
-		"build-storybook": "build-storybook"
+		"storybook": "start-storybook -s ./public -p 6006",
+		"build-storybook": "build-storybook -s ./public"
 	},
 	"dependencies": {
 		"@babel/core": "^7.0.0",
