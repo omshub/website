@@ -39,3 +39,6 @@ yarn-error.log*
 # user preference files
 .idea/
 .vscode/
+
+# generated
+/storybook-static
