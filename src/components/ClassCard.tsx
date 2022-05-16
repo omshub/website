@@ -52,12 +52,7 @@ const ClassCard = ({ ...props }: ClassCardProps) => {
 						<Typography sx={{ mr: 1 }} variant='body2' color='text.secondary'>
 							{props.reviewCount} reviews
 						</Typography>
-						<Rating
-							name='half-rating'
-							defaultValue={props.reviewValue}
-							precision={0.5}
-							readOnly
-						/>
+						<Rating defaultValue={props.reviewValue} precision={0.5} readOnly />
 					</Box>
 					<Box
 						sx={{
