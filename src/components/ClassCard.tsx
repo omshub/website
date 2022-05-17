@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { useRouter } from 'next/router'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
@@ -14,7 +13,6 @@ import Typography from '@mui/material/Typography'
 interface ClassCardProps {
 	title: string
 	acronym?: string
-	classNumber: string
 	classId: string
 	blurb?: string
 	image?: string
@@ -27,18 +25,9 @@ interface ClassCardProps {
 }
 
 const ClassCard = ({ ...props }: ClassCardProps) => {
-	const router = useRouter()
-
 	return (
 		<Card sx={{ width: 350, boxShadow: `0 5px 15px 0 ${grey[300]}` }}>
-			<CardActionArea
-				onClick={() => {
-					router.push({
-						pathname: '/class/[classid]',
-						query: { classid: props.classId, title: props.title },
-					})
-				}}
-			>
+			<CardActionArea>
 				<CardMedia
 					component='img'
 					height='140'
@@ -47,7 +36,7 @@ const ClassCard = ({ ...props }: ClassCardProps) => {
 				/>
 				<CardContent sx={{ height: 150 }}>
 					<Typography variant='subtitle2' color='text.secondary' gutterBottom>
-						{props.department} {props.classNumber}
+						{props.department} {props.classId}
 					</Typography>
 					<Typography variant='h5' color='text.primary' gutterBottom>
 						{props.title}

@@ -4,7 +4,7 @@ import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import CircularProgress from '@mui/material/CircularProgress'
+import Copyright from '../src/Copyright'
 import ClassCard from '../src/components/ClassCard'
 
 interface ClassData {
@@ -15,26 +15,18 @@ interface ClassData {
 	foundational: string
 	name: string
 	link: string
-	course_id: string
 }
 
 const Home: NextPage = () => {
-	const [loading, setLoading] = useState<boolean>()
 	const [classes, setClasses] = useState<[ClassData]>()
 
 	useEffect(() => {
-		setLoading(true)
-		fetch('https://omshub-readonly.gigalixirapp.com/classes')
-			.then((res) => res.json())
-			.then((classes) => {
-				setLoading(false)
-				setClasses(classes)
-			})
-			.catch((err) => {
-				setLoading(false)
-				console.log(err)
-			})
-	}, [])
+		let classes: [
+			ClassData
+		] = require('../public/static/data/omscentral_courses.json')
+
+		setClasses(classes)
+	})
 
 	return (
 		<Container maxWidth='lg'>
@@ -47,44 +39,15 @@ const Home: NextPage = () => {
 					alignItems: 'center',
 				}}
 			>
-				<Typography variant='body1' sx={{ mb: 5 }}>
-					Hello! OMSHub is under construction. While the formal OMSHub website
-					is being developed, we wanted to offer the community a means of
-					submitting reviews in the interim period with a Google Form. All
-					reviews posted to this form will ultimately be loaded into the final
-					website. In the mean time, the results can be viewed on a spreadsheet.
+				<Typography variant='h4' component='h1' sx={{ mb: 10 }} gutterBottom>
+					OMSCS Course List
 				</Typography>
-				<Link
-					href='https://docs.google.com/forms/d/e/1FAIpQLSc1xXBa3nnPECvoAKLMC4X3iXbZOghOiIQv6p8xAwR5gysBSA/viewform'
-					color='secondary'
-				>
-					Temporary Submission Form
-				</Link>
-				<Link
-					href='https://docs.google.com/spreadsheets/d/1ezCaFiye6dxVcdOCClndmz0JBLwMDrNtayL1WaTObj0/edit#gid=0'
-					color='secondary'
-				>
-					Temporary Spreadsheet With Reviews
-				</Link>
-				<Typography
-					variant='h4'
-					component='h1'
-					sx={{ mt: 5, mb: 10 }}
-					gutterBottom
-				>
-					OMSCS Courses
-				</Typography>
-				{loading && (
-					<Box sx={{ display: 'flex', m: 10 }}>
-						<CircularProgress />
-					</Box>
-				)}
 				<Grid container spacing={3}>
 					{classes?.map((data, i) => (
 						<Grid key={i} item>
 							<ClassCard
 								title={data.name}
-								classNumber={data.number}
+								classId={data.number}
 								acronym={
 									JSON.parse(data.aliases).length > 0
 										? JSON.parse(data.aliases).toString().split(',').join(', ')
@@ -94,12 +57,12 @@ const Home: NextPage = () => {
 								isFoundational={data.foundational === 'true'}
 								department={data.department}
 								link={data.link}
-								classId={data.course_id}
 							></ClassCard>
 						</Grid>
 					))}
 				</Grid>
 			</Box>
+			<Copyright />
 		</Container>
 	)
 }
