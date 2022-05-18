@@ -24,7 +24,7 @@ const Home: NextPage = () => {
 
 	useEffect(() => {
 		setLoading(true)
-		fetch('http://localhost:4000/classes')
+		fetch('https://omshub-readonly.gigalixirapp.com/classes')
 			.then((res) => res.json())
 			.then((classes) => {
 				setLoading(false)
