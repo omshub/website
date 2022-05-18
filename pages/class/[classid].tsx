@@ -8,10 +8,20 @@ import Grid from '@mui/material/Grid'
 import CircularProgress from '@mui/material/CircularProgress'
 import CommentCard from '../../src/components/CommentCard'
 
+interface Review {
+	semester_id: string
+	rating: number
+	difficulty: number
+	workload: number
+	body: string
+	course_id: string
+	created: string
+}
+
 const ClassID: NextPage = () => {
 	const router = useRouter()
 	const [loading, setLoading] = useState<boolean>()
-	const [reviews, setReviews] = useState<any>()
+	const [reviews, setReviews] = useState<[Review]>()
 	useEffect(() => {
 		setLoading(true)
 		if (router.isReady) {
@@ -50,7 +60,7 @@ const ClassID: NextPage = () => {
 					</Box>
 				)}
 				<Grid container spacing={3}>
-					{reviews?.map((data: any, i: number) => (
+					{reviews?.map((data: Review, i: number) => (
 						<Grid key={i} item>
 							<CommentCard
 								body={data.body}
