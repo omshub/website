@@ -21,7 +21,7 @@ const Home: NextPage = () => {
 				<Typography variant='h4' component='h1' sx={{ mb: 10 }} gutterBottom>
 					OMSCS Course List
 				</Typography>
-				Hello OMSHub is under construction. While the formal OMSHub website is
+				Hello! OMSHub is under construction. While the formal OMSHub website is
 				being developed, we wanted to offer the community a means of submitting
 				reviews in the interim period with a Google Form. All reviews posted to
 				this form will ultimately be loaded into the final website. In the mean
