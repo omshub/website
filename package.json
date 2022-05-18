@@ -57,6 +57,7 @@
 		"husky": "^8.0.1",
 		"jest": "^28.1.0",
 		"jest-environment-jsdom": "^28.1.0",
+		"jest-fetch-mock": "^3.0.3",
 		"lint-staged": "^12.4.1",
 		"next-sitemap": "^2.5.20",
 		"prettier": "^2.6.2",
