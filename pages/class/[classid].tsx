@@ -15,7 +15,9 @@ const ClassID: NextPage = () => {
 	useEffect(() => {
 		setLoading(true)
 		if (router.isReady) {
-			fetch(`http://localhost:4000/reviews?id=${router.query.classid}`)
+			fetch(
+				`https://omshub-readonly.gigalixirapp.com/reviews?id=${router.query.classid}`
+			)
 				.then((response) => response.json())
 				.then((reviews) => {
 					setLoading(false)
