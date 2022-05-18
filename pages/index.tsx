@@ -14,18 +14,18 @@ interface ClassData {
 	foundational: string
 	name: string
 	link: string
-	id: string
+	course_id: string
 }
 
 const Home: NextPage = () => {
 	const [classes, setClasses] = useState<[ClassData]>()
 
 	useEffect(() => {
-		let classes: [
-			ClassData
-		] = require('../public/static/data/omscentral_courses.json')
-
-		setClasses(classes)
+		fetch(
+			"http://localhost:4000/classes"
+		).then((res) => res.json())
+		.then((classes) => setClasses(classes))
+		.catch(err => console.log(err))
 	}, [])
 
 	return (
@@ -57,7 +57,7 @@ const Home: NextPage = () => {
 								isFoundational={data.foundational === 'true'}
 								department={data.department}
 								link={data.link}
-								classId={data.id}
+								classId={data.course_id}
 							></ClassCard>
 						</Grid>
 					))}
