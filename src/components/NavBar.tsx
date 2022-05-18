@@ -41,9 +41,16 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 						About
 					</Link>
 				</nav>
-				<Button href='#todo' variant='outlined' sx={{ my: 1, mx: 1.5 }}>
+				<Link
+						variant='button'
+						color='text.primary'
+						href='/api/auth/signin'
+						sx={{ my: 1, mx: 1.5 }}
+					>
+				<Button variant='outlined' sx={{ my: 1, mx: 1.5 }}>
 					Login
 				</Button>
+				</Link>
 			</Toolbar>
 		</AppBar>
 	)

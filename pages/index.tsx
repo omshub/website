@@ -23,6 +23,7 @@ interface ClassData {
 	course_id: string
 }
 
+
 const Home: NextPage = () => {
 	const columns: GridColDef[] = [
 		{
