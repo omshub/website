@@ -4,7 +4,6 @@ import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import Copyright from '../src/Copyright'
 import ClassCard from '../src/components/ClassCard'
 
 interface ClassData {
@@ -15,6 +14,7 @@ interface ClassData {
 	foundational: string
 	name: string
 	link: string
+	id: string
 }
 
 const Home: NextPage = () => {
@@ -26,7 +26,7 @@ const Home: NextPage = () => {
 		] = require('../public/static/data/omscentral_courses.json')
 
 		setClasses(classes)
-	})
+	}, [])
 
 	return (
 		<Container maxWidth='lg'>
@@ -47,7 +47,7 @@ const Home: NextPage = () => {
 						<Grid key={i} item>
 							<ClassCard
 								title={data.name}
-								classId={data.number}
+								classNumber={data.number}
 								acronym={
 									JSON.parse(data.aliases).length > 0
 										? JSON.parse(data.aliases).toString().split(',').join(', ')
@@ -57,12 +57,12 @@ const Home: NextPage = () => {
 								isFoundational={data.foundational === 'true'}
 								department={data.department}
 								link={data.link}
+								classId={data.id}
 							></ClassCard>
 						</Grid>
 					))}
 				</Grid>
 			</Box>
-			<Copyright />
 		</Container>
 	)
 }
