@@ -1,5 +1,9 @@
 # OMSHub
 
+[![license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+![contributors count](https://img.shields.io/github/contributors/omshub/website)
+![pull requests closed](https://img.shields.io/github/issues-pr-closed/omshub/website)
+
 A website for Online Master's of Science (OMS) course reviews at Georgia Tech.
 
 ## Resources
