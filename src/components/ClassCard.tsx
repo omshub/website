@@ -35,7 +35,7 @@ const ClassCard = ({ ...props }: ClassCardProps) => {
 				onClick={() => {
 					router.push({
 						pathname: '/class/[classid]',
-						query: { classid: props.classId },
+						query: { classid: props.classId, title: props.title },
 					})
 				}}
 			>
