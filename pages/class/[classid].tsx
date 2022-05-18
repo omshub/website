@@ -1,42 +1,27 @@
 import React, { useState, useEffect } from 'react'
 import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
-import { useRouter } from 'next/router'
+import Grid from '@mui/material/Grid'
 import CommentCard from '../../src/components/CommentCard'
-
-// interface Reviews {
-// 	semester_id: string
-// 	rating: string
-// 	difficulty: string
-// 	workload: string
-// 	body: string
-// }
 
 const ClassID: NextPage = () => {
 	const router = useRouter()
 
 	const [reviews, setReviews] = useState<any>()
 	useEffect(() => {
-		fetch('https://omshub-data.s3.amazonaws.com/data/omscentral_reviews.json')
-			.then((response) => response.json())
-			.then((reviews) => {
-				const data = reviews.filter(
-					(review: any) => review.course_id === router.query.classid
-				)
-				setReviews(data)
-			})
-			.catch((err) => console.log(err))
-	}, [])
+		if (router.isReady) {
+			fetch(`http://localhost:4000/reviews?id=${router.query.classid}`)
+				.then((response) => response.json())
+				.then((reviews) => setReviews(reviews))
+				.catch((err) => console.log(err))
+		}
+	}, [router.isReady])
 
 	return (
 		<Container maxWidth='lg'>
-			<>
-				{reviews?.map((data: any, i: number) => (
-					<CommentCard key={i} rating={data.rating}></CommentCard>
-				))}
-			</>
 			<Box
 				sx={{
 					my: 4,
@@ -46,9 +31,22 @@ const ClassID: NextPage = () => {
 					alignItems: 'center',
 				}}
 			>
-				<Typography variant='h4' component='h1' gutterBottom>
-					You are looking at class.tsx
+				<Typography variant='h2' color='text.secondary' gutterBottom>
+					{router.query.title}
 				</Typography>
+				<Grid container spacing={3}>
+					{reviews?.map((data: any, i: number) => (
+						<Grid key={i} item>
+							<CommentCard
+								body={data.body}
+								rating={data.rating}
+								difficulty={data.difficulty}
+								workload={data.workload}
+								semester={data.semester_id}
+							></CommentCard>
+						</Grid>
+					))}
+				</Grid>
 			</Box>
 		</Container>
 	)
