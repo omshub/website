@@ -10,6 +10,7 @@
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",
+		"build-sitemap": "next-sitemap",
 		"start": "next start",
 		"test": "jest --watch",
 		"test:ci": "jest --ci",
@@ -34,6 +35,8 @@
 		"react-dom": "latest"
 	},
 	"devDependencies": {
+		"@commitlint/cli": "^16.2.4",
+		"@commitlint/config-conventional": "^16.2.4",
 		"@storybook/addon-actions": "^6.4.22",
 		"@storybook/addon-essentials": "^6.4.22",
 		"@storybook/addon-interactions": "^6.4.22",
@@ -45,6 +48,7 @@
 		"@types/node": "latest",
 		"@types/react": "latest",
 		"babel-loader": "^8.2.5",
+		"commitizen": "^4.2.4",
 		"cz-conventional-changelog": "3.3.0",
 		"eslint": "latest",
 		"eslint-config-next": "latest",
@@ -54,12 +58,10 @@
 		"jest": "^28.1.0",
 		"jest-environment-jsdom": "^28.1.0",
 		"lint-staged": "^12.4.1",
+		"next-sitemap": "^2.5.20",
 		"prettier": "^2.6.2",
 		"storybook-addon-next-router": "^3.1.1",
-		"typescript": "latest",
-		"commitizen": "^4.2.4",
-		"@commitlint/cli": "^16.2.4",
-		"@commitlint/config-conventional": "^16.2.4"
+		"typescript": "latest"
 	},
 	"config": {
 		"commitizen": {
