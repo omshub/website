@@ -1,47 +1,42 @@
 import React, { useState, useEffect } from 'react'
 import type { NextPage } from 'next'
-import { useRouter } from 'next/router'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
-import CircularProgress from '@mui/material/CircularProgress'
+import { useRouter } from 'next/router'
 import CommentCard from '../../src/components/CommentCard'
 
-interface Review {
-	semester_id: string
-	rating: number
-	difficulty: number
-	workload: number
-	body: string
-	course_id: string
-	created: string
-}
+// interface Reviews {
+// 	semester_id: string
+// 	rating: string
+// 	difficulty: string
+// 	workload: string
+// 	body: string
+// }
 
 const ClassID: NextPage = () => {
 	const router = useRouter()
-	const [loading, setLoading] = useState<boolean>()
-	const [reviews, setReviews] = useState<[Review]>()
+
+	const [reviews, setReviews] = useState<any>()
 	useEffect(() => {
-		setLoading(true)
-		if (router.isReady) {
-			fetch(
-				`https://omshub-readonly.gigalixirapp.com/reviews?id=${router.query.classid}`
-			)
-				.then((response) => response.json())
-				.then((reviews) => {
-					setLoading(false)
-					setReviews(reviews)
-				})
-				.catch((err) => {
-					setLoading(false)
-					console.log(err)
-				})
-		}
-	}, [router.isReady])
+		fetch('https://omshub-data.s3.amazonaws.com/data/omscentral_reviews.json')
+			.then((response) => response.json())
+			.then((reviews) => {
+				const data = reviews.filter(
+					(review: any) => review.course_id === router.query.classid
+				)
+				setReviews(data)
+			})
+			.catch((err) => console.log(err))
+	}, [])
 
 	return (
 		<Container maxWidth='lg'>
+			<>
+				{reviews?.map((data: any, i: number) => (
+					<CommentCard key={i} rating={data.rating}></CommentCard>
+				))}
+			</>
 			<Box
 				sx={{
 					my: 4,
@@ -51,27 +46,9 @@ const ClassID: NextPage = () => {
 					alignItems: 'center',
 				}}
 			>
-				<Typography variant='h2' color='text.secondary' gutterBottom>
-					{router.query.title}
+				<Typography variant='h4' component='h1' gutterBottom>
+					You are looking at class.tsx
 				</Typography>
-				{loading && (
-					<Box sx={{ display: 'flex', m: 10 }}>
-						<CircularProgress />
-					</Box>
-				)}
-				<Grid container spacing={3}>
-					{reviews?.map((data: Review, i: number) => (
-						<Grid sx={{ width: `100%` }} key={i} item>
-							<CommentCard
-								body={data.body}
-								rating={data.rating}
-								difficulty={data.difficulty}
-								workload={data.workload}
-								semester={data.semester_id}
-							></CommentCard>
-						</Grid>
-					))}
-				</Grid>
 			</Box>
 		</Container>
 	)
