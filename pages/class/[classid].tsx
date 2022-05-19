@@ -61,7 +61,7 @@ const ClassID: NextPage = () => {
 				)}
 				<Grid container spacing={3}>
 					{reviews?.map((data: Review, i: number) => (
-						<Grid sx={{width:`100%`}} key={i} item>
+						<Grid sx={{ width: `100%` }} key={i} item>
 							<CommentCard
 								body={data.body}
 								rating={data.rating}
