@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Card from '@mui/material/card'
+import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
@@ -42,6 +42,7 @@ const CommentCard = ({ ...props }: CommentCardProps) => {
 						color={props.difficulty >= 4 ? 'error' : 'success'}
 					></Chip>
 				</Box>
+
 				<Typography variant='body1' color='text.primary' gutterBottom>
 					{props.body}
 				</Typography>
