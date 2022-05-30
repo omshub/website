@@ -38,6 +38,12 @@ const Home: NextPage = () => {
 				>
 					Temporary Spreadsheet With Reviews
 				</Link>
+				<Link
+					href='https://awaisrauf.github.io/omscs_reviews/'
+					color='secondary'
+				>
+					Alternate site for legacy reviews (NOTE: not developed/maintained by OMSHub)
+				</Link>
 			</Box>
 			<Copyright />
 		</Container>
