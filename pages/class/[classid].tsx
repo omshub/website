@@ -38,7 +38,7 @@ const ClassID: NextPage = () => {
 					console.log(err)
 				})
 		}
-	}, [router.isReady])
+	}, [router.query, router.isReady])
 
 	return (
 		<Container maxWidth='lg'>
