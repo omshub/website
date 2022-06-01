@@ -26,34 +26,36 @@ const CommentCard = ({ ...props }: CommentCardProps) => {
 						Reviewed on {timestamp}
 					</Typography>
 				</Box>
+
+				<Typography
+					sx={{ mb: 3 }}
+					variant='body1'
+					color='text.primary'
+					gutterBottom
+				>
+					{props.body}
+				</Typography>
+
 				<Box
 					sx={{
 						display: 'flex',
 						alignItems: 'flex-start',
 					}}
 				>
-					<Chip
-						label={`Workload ${props.workload}`}
-						sx={{ ml: 0.5, mb: 2 }}
-						variant='outlined'
-					></Chip>
+					<Chip label={`Workload ${props.workload}`} variant='outlined'></Chip>
 					<Chip
 						label={`Rating ${props.rating}`}
-						sx={{ ml: 0.5, mb: 2 }}
+						sx={{ ml: 1 }}
 						variant='outlined'
 						color='primary'
 					></Chip>
 					<Chip
 						label={`Difficulty ${props.difficulty}`}
-						sx={{ ml: 0.5, mb: 2 }}
+						sx={{ ml: 1 }}
 						variant='outlined'
 						color={props.difficulty >= 4 ? 'error' : 'success'}
 					></Chip>
 				</Box>
-
-				<Typography variant='body1' color='text.primary' gutterBottom>
-					{props.body}
-				</Typography>
 			</CardContent>
 		</Card>
 	)
