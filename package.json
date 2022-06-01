@@ -30,6 +30,7 @@
 		"@emotion/styled": "^11.8.1",
 		"@mui/icons-material": "latest",
 		"@mui/material": "latest",
+		"markdown-to-jsx": "^7.1.7",
 		"next": "12.1.5",
 		"react": "latest",
 		"react-dom": "latest"
