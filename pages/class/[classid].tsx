@@ -26,7 +26,8 @@ const ClassID: NextPage = () => {
 		setLoading(true)
 		if (router.isReady) {
 			fetch(
-				`https://omshub-readonly.gigalixirapp.com/reviews?id=${router.query.classid}`
+				// `http://localhost:4000/api/reviews/${router.query.classid}`
+				`https://omshub-api.gigalixirapp.com/api/reviews/${router.query.classid}`
 			)
 				.then((response) => response.json())
 				.then((reviews) => {
