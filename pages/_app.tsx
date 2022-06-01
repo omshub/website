@@ -6,6 +6,7 @@ import { AppProps } from 'next/app'
 import Head from 'next/head'
 import { NavBar } from '../src/components/NavBar'
 import createEmotionCache from '../src/createEmotionCache'
+import Copyright from '../src/Copyright'
 import theme from '../src/theme'
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -29,6 +30,7 @@ export default function MyApp(props: MyAppProps) {
 				<NavBar />
 				<Component {...pageProps} />
 			</ThemeProvider>
+			<Copyright />
 		</CacheProvider>
 	)
 }
