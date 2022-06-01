@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import { grey } from '@mui/material/colors'
+import Markdown from 'markdown-to-jsx'
 
 interface CommentCardProps {
 	body: string
@@ -27,14 +28,7 @@ const CommentCard = ({ ...props }: CommentCardProps) => {
 					</Typography>
 				</Box>
 
-				<Typography
-					sx={{ mb: 3 }}
-					variant='body1'
-					color='text.primary'
-					gutterBottom
-				>
-					{props.body}
-				</Typography>
+				<Markdown sx={{ mb: 3 }}>{props.body}</Markdown>
 
 				<Box
 					sx={{
