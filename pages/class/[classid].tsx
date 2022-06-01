@@ -69,6 +69,7 @@ const ClassID: NextPage = () => {
 								difficulty={data.difficulty}
 								workload={data.workload}
 								semester={data.semester_id}
+								created={data.created}
 							></CommentCard>
 						</Grid>
 					))}

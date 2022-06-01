@@ -12,12 +12,21 @@ interface CommentCardProps {
 	difficulty: number
 	workload: number
 	semester: string
+	created: string
 }
 
 const CommentCard = ({ ...props }: CommentCardProps) => {
+	const timestamp = new Date(props.created).toLocaleDateString()
+
+
 	return (
 		<Card sx={{ boxShadow: `0 5px 15px 0 ${grey[300]}` }}>
 			<CardContent>
+				<Box sx={{  mb: 3 }}>
+				    <Typography color='text.secondary'>
+				    	Reviewed on {timestamp}
+				    </Typography>
+				</Box>
 				<Box
 					sx={{
 						display: 'flex',
