@@ -106,7 +106,7 @@ const Home: NextPage = () => {
 							}}
 							initialState={{
 								pagination: {
-									pageSize: 5,
+									pageSize: 20,
 								},
 							}}
 						/>
