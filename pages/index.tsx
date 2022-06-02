@@ -9,7 +9,6 @@ import {
 	DataGrid,
 	GridColDef,
 	GridToolbar,
-	GridValueGetterParams,
 	GridRenderCellParams,
 } from '@mui/x-data-grid'
 
@@ -24,25 +23,20 @@ interface ClassData {
 	course_id: string
 }
 
-function getLinkData(params: GridValueGetterParams) {
-	return [`${params.row.name || ''}`, `${params.row.course_id || ''}`]
-}
-
 const Home: NextPage = () => {
 	const columns: GridColDef[] = [
 		{
 			field: 'name',
 			headerName: 'Course Name',
 			flex: 1,
-			valueGetter: getLinkData,
 			renderCell: (params: GridRenderCellParams) => (
 				<Link
 					href={{
-						pathname: `/class/${params.value[1]}`,
-						query: { classid: params.value[1], title: params.value[0] },
+						pathname: `/class/${params.row.course_id}`,
+						query: { classid: params.row.course_id, title: params.row.name },
 					}}
 				>
-					{params.value[0]}
+					{params.row.name}
 				</Link>
 			),
 		},
