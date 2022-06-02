@@ -28,7 +28,7 @@ const CommentCard = ({ ...props }: CommentCardProps) => {
 					</Typography>
 				</Box>
 				<article>
-					<ReactMarkdown sx={{ mb: 3 }}>{props.body}</ReactMarkdown>
+					<ReactMarkdown>{props.body}</ReactMarkdown>
 				</article>
 				<Box
 					sx={{
