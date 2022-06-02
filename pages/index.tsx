@@ -5,8 +5,8 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import CircularProgress from '@mui/material/CircularProgress'
-import ClassCard from '../src/components/ClassCard'
 import Link from '../src/Link'
+import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid'
 
 interface ClassData {
 	number: string
@@ -19,9 +19,33 @@ interface ClassData {
 	course_id: string
 }
 
+function getLinkData(params: any) {
+	return [`${params.row.name || ''}`, `${params.row.course_id || ''}`]
+}
+
 const Home: NextPage = () => {
+	const columns: GridColDef[] = [
+		{
+			field: 'name',
+			headerName: 'Course Name',
+			flex: 1,
+			valueGetter: getLinkData,
+			renderCell: (params) => (
+				<Link
+					href={{
+						pathname: `/class/${params.value[1]}`,
+						query: { classid: params.value[1], title: params.value[0] },
+					}}
+				>
+					{params.value[0]}
+				</Link>
+			),
+		},
+		{ field: 'course_id', headerName: 'Course ID', flex: 1 },
+		{ field: 'aliases', headerName: 'Aliases', flex: 1, hide: true },
+	]
 	const [loading, setLoading] = useState<boolean>()
-	const [classes, setClasses] = useState<[ClassData]>()
+	const [classes, setClasses] = useState<Array<ClassData>>([])
 
 	useEffect(() => {
 		setLoading(true)
@@ -29,8 +53,13 @@ const Home: NextPage = () => {
 		fetch('https://omshub-api.gigalixirapp.com/api/classes')
 			.then((res) => res.json())
 			.then((classes) => {
-				setLoading(false)
+				//Clean data
+				classes = classes.map((data: any, index: any) => ({
+					...data,
+					id: index,
+				}))
 				setClasses(classes)
+				setLoading(false)
 			})
 			.catch((err) => {
 				setLoading(false)
@@ -49,25 +78,6 @@ const Home: NextPage = () => {
 					alignItems: 'center',
 				}}
 			>
-				<Typography variant='body1' sx={{ mb: 5 }}>
-					Hello! OMSHub is under construction. While the formal OMSHub website
-					is being developed, we wanted to offer the community a means of
-					submitting reviews in the interim period with a Google Form. All
-					reviews posted to this form will ultimately be loaded into the final
-					website. In the mean time, the results can be viewed on a spreadsheet.
-				</Typography>
-				<Link
-					href='https://docs.google.com/forms/d/e/1FAIpQLSc1xXBa3nnPECvoAKLMC4X3iXbZOghOiIQv6p8xAwR5gysBSA/viewform'
-					color='secondary'
-				>
-					Temporary Submission Form
-				</Link>
-				<Link
-					href='https://docs.google.com/spreadsheets/d/1ezCaFiye6dxVcdOCClndmz0JBLwMDrNtayL1WaTObj0/edit#gid=0'
-					color='secondary'
-				>
-					Temporary Spreadsheet With Reviews
-				</Link>
 				<Typography
 					variant='h4'
 					component='h1'
@@ -76,31 +86,39 @@ const Home: NextPage = () => {
 				>
 					OMSCS Courses
 				</Typography>
-				{loading && (
-					<Box sx={{ display: 'flex', m: 10 }}>
-						<CircularProgress />
-					</Box>
-				)}
-				<Grid container spacing={3}>
-					{classes?.map((data, i) => (
-						<Grid key={i} item>
-							<ClassCard
-								title={data.name}
-								classNumber={data.number}
-								acronym={
-									JSON.parse(data.aliases).length > 0
-										? JSON.parse(data.aliases).toString().split(',').join(', ')
-										: ''
-								}
-								image='/static/omshub-stub.jpg'
-								isFoundational={data.foundational === 'true'}
-								department={data.department}
-								link={data.link}
-								classId={data.course_id}
-							></ClassCard>
+
+				<>
+					{loading ? (
+						<Box sx={{ display: 'flex', m: 10 }}>
+							<CircularProgress />
+						</Box>
+					) : (
+						<Grid container spacing={3}>
+							<DataGrid
+								autoHeight
+								disableColumnSelector
+								rows={classes}
+								columns={columns}
+								loading={loading}
+								components={{ Toolbar: GridToolbar }}
+								columnVisibilityModel={{
+									aliases: false,
+								}}
+								componentsProps={{
+									toolbar: {
+										showQuickFilter: true,
+										quickFilterProps: { debounceMs: 500 },
+									},
+								}}
+								initialState={{
+									pagination: {
+										pageSize: 5,
+									},
+								}}
+							/>
 						</Grid>
-					))}
-				</Grid>
+					)}
+				</>
 			</Box>
 		</Container>
 	)
