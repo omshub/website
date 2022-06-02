@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import { grey } from '@mui/material/colors'
-import Markdown from 'markdown-to-jsx'
+import ReactMarkdown from 'react-markdown'
 
 interface CommentCardProps {
 	body: string
@@ -27,9 +27,9 @@ const CommentCard = ({ ...props }: CommentCardProps) => {
 						Reviewed on {timestamp}
 					</Typography>
 				</Box>
-
-				<Markdown sx={{ mb: 3 }}>{props.body}</Markdown>
-
+				<article>
+					<ReactMarkdown sx={{ mb: 3 }}>{props.body}</ReactMarkdown>
+				</article>
 				<Box
 					sx={{
 						display: 'flex',
