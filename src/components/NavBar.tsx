@@ -35,7 +35,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 					<Link
 						variant='button'
 						color='text.primary'
-						href='about'
+						href='/about'
 						sx={{ my: 1, mx: 1.5 }}
 					>
 						About
