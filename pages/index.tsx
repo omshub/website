@@ -4,7 +4,6 @@ import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import CircularProgress from '@mui/material/CircularProgress'
 import Link from '../src/Link'
 import {
 	DataGrid,
@@ -94,36 +93,30 @@ const Home: NextPage = () => {
 				</Typography>
 
 				<>
-					{loading ? (
-						<Box sx={{ display: 'flex', m: 10 }}>
-							<CircularProgress />
-						</Box>
-					) : (
-						<Grid container spacing={3}>
-							<DataGrid
-								autoHeight
-								disableColumnSelector
-								rows={classes}
-								columns={columns}
-								loading={loading}
-								components={{ Toolbar: GridToolbar }}
-								columnVisibilityModel={{
-									aliases: false,
-								}}
-								componentsProps={{
-									toolbar: {
-										showQuickFilter: true,
-										quickFilterProps: { debounceMs: 500 },
-									},
-								}}
-								initialState={{
-									pagination: {
-										pageSize: 5,
-									},
-								}}
-							/>
-						</Grid>
-					)}
+					<Grid container spacing={3}>
+						<DataGrid
+							autoHeight
+							disableColumnSelector
+							rows={classes}
+							columns={columns}
+							loading={loading}
+							components={{ Toolbar: GridToolbar }}
+							columnVisibilityModel={{
+								aliases: false,
+							}}
+							componentsProps={{
+								toolbar: {
+									showQuickFilter: true,
+									quickFilterProps: { debounceMs: 500 },
+								},
+							}}
+							initialState={{
+								pagination: {
+									pageSize: 5,
+								},
+							}}
+						/>
+					</Grid>
 				</>
 			</Box>
 		</Container>
