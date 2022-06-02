@@ -6,7 +6,13 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import CircularProgress from '@mui/material/CircularProgress'
 import Link from '../src/Link'
-import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid'
+import {
+	DataGrid,
+	GridColDef,
+	GridToolbar,
+	GridValueGetterParams,
+	GridRenderCellParams,
+} from '@mui/x-data-grid'
 
 interface ClassData {
 	number: string
@@ -19,7 +25,7 @@ interface ClassData {
 	course_id: string
 }
 
-function getLinkData(params: any) {
+function getLinkData(params: GridValueGetterParams) {
 	return [`${params.row.name || ''}`, `${params.row.course_id || ''}`]
 }
 
@@ -30,7 +36,7 @@ const Home: NextPage = () => {
 			headerName: 'Course Name',
 			flex: 1,
 			valueGetter: getLinkData,
-			renderCell: (params) => (
+			renderCell: (params: GridRenderCellParams) => (
 				<Link
 					href={{
 						pathname: `/class/${params.value[1]}`,
@@ -54,7 +60,7 @@ const Home: NextPage = () => {
 			.then((res) => res.json())
 			.then((classes) => {
 				//Clean data
-				classes = classes.map((data: any, index: any) => ({
+				classes = classes.map((data: object, index: number) => ({
 					...data,
 					id: index,
 				}))
