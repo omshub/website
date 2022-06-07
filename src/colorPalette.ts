@@ -1,7 +1,7 @@
 // color palette reference: https://brand.gatech.edu/brand-assets/colors
 
 // primary colors
-export const techGold: string = '#B3a369'
+export const techGold: string = '#b3a369'
 export const navyBlue: string = '#003057'
 export const white: string = '#ffffff'
 
@@ -18,7 +18,7 @@ export const darkGold: string = '#857437'
 
 // tertiary colors (dark)
 export const impactPurple: string = '#5f249f'
-export const boldBlue: string = '3a5dae'
+export const boldBlue: string = '#3a5dae'
 export const olympicTeal: string = '#008c95'
 export const electricBlue: string = '#64ccc9'
 export const canopyLime: string = '#a4d233'
