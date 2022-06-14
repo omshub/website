@@ -4,4 +4,3 @@
 
 # Install Node dependencies.
 yarn install
-yarn build
