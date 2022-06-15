@@ -11,7 +11,7 @@ import {
 	GridRenderCellParams,
 } from '@mui/x-data-grid'
 
-type ClassData = {
+type Class = {
 	number: string
 	aliases: string
 	department: string
@@ -22,13 +22,13 @@ type ClassData = {
 	course_id: string
 }
 
-type ClassDataWithId = ClassData & { id: number }
+type ClassWithId = Class & { id: number }
 
 // use axios.get in the getStaticProps method from Next.js to get data from  https://omshub-readonly.gigalixirapp.com/classes
 export const getStaticProps: GetStaticProps = async () => {
 	const res = await fetch('https://omshub-api.gigalixirapp.com/api/classes')
-	const classes: ClassData[] = await res.json()
-	const classesWithId: ClassDataWithId[] = classes.map((c, i) => ({
+	const classes: Class[] = await res.json()
+	const classesWithId: ClassWithId[] = classes.map((c, i) => ({
 		...c,
 		id: i,
 	}))
@@ -41,7 +41,7 @@ export const getStaticProps: GetStaticProps = async () => {
 }
 
 type HomeProps = {
-	classesWithId: ClassData[]
+	classesWithId: Class[]
 }
 
 const Home = ({ classesWithId }: HomeProps) => {
