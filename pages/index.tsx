@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react'
-import type { NextPage } from 'next'
+import { GetStaticProps } from 'next'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
@@ -12,7 +11,7 @@ import {
 	GridRenderCellParams,
 } from '@mui/x-data-grid'
 
-interface ClassData {
+type ClassData = {
 	number: string
 	aliases: string
 	department: string
@@ -23,7 +22,29 @@ interface ClassData {
 	course_id: string
 }
 
-const Home: NextPage = () => {
+type ClassDataWithId = ClassData & { id: number }
+
+// use axios.get in the getStaticProps method from Next.js to get data from  https://omshub-readonly.gigalixirapp.com/classes
+export const getStaticProps: GetStaticProps = async () => {
+	const res = await fetch('https://omshub-api.gigalixirapp.com/api/classes')
+	const classes: ClassData[] = await res.json()
+	const classesWithId: ClassDataWithId[] = classes.map((c, i) => ({
+		...c,
+		id: i,
+	}))
+	return {
+		props: {
+			classesWithId,
+		},
+		revalidate: 60,
+	}
+}
+
+type HomeProps = {
+	classesWithId: ClassData[]
+}
+
+const Home = ({ classesWithId }: HomeProps) => {
 	const columns: GridColDef[] = [
 		{
 			field: 'name',
@@ -43,28 +64,6 @@ const Home: NextPage = () => {
 		{ field: 'course_id', headerName: 'Course ID', flex: 1 },
 		{ field: 'aliases', headerName: 'Aliases', flex: 1, hide: true },
 	]
-	const [loading, setLoading] = useState<boolean>()
-	const [classes, setClasses] = useState<Array<ClassData>>([])
-
-	useEffect(() => {
-		setLoading(true)
-		// fetch('https://omshub-readonly.gigalixirapp.com/classes')
-		fetch('https://omshub-api.gigalixirapp.com/api/classes')
-			.then((res) => res.json())
-			.then((classes) => {
-				//Clean data
-				classes = classes.map((data: object, index: number) => ({
-					...data,
-					id: index,
-				}))
-				setClasses(classes)
-				setLoading(false)
-			})
-			.catch((err) => {
-				setLoading(false)
-				console.log(err)
-			})
-	}, [])
 
 	return (
 		<Container maxWidth='lg'>
@@ -91,9 +90,8 @@ const Home: NextPage = () => {
 						<DataGrid
 							autoHeight
 							disableColumnSelector
-							rows={classes}
+							rows={classesWithId}
 							columns={columns}
-							loading={loading}
 							components={{ Toolbar: GridToolbar }}
 							columnVisibilityModel={{
 								aliases: false,
