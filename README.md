@@ -44,17 +44,11 @@ To get started:
 
 #### Getting started
 
-Clone the repository and then run the following commands to build the NextJS application:
+To start the development server run the following commands:
 
 ```bash
 yarn install
-yarn build
-```
-
-To start the project locally, run:
-
-```bash
-yarn start
+yarn dev
 ```
 
 Open `http://localhost:3000` with your browser to see the result.
