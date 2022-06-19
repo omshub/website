@@ -60,7 +60,7 @@ Open `http://localhost:3000` with your browser to see the result.
 - `yarn start` — Starts the application in production mode.
 - `yarn type-check` — Validate code using TypeScript compiler.
 - `yarn lint` — Runs ESLint for all files in the `src` directory.
-- `yarn format` — Runs Prettier for all files in the `src` directory.
+- `yarn prettier` — Runs Prettier for all files in the `src` directory.
 - `yarn commit` — Run commitizen. Alternative to `git commit`.
 - `yarn storybook` - Run storybook locally at `http://localhost:6006`.
 

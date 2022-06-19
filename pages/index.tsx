@@ -86,7 +86,7 @@ const Home = ({ classesWithId }: HomeProps) => {
 				</Typography>
 
 				<>
-					<Grid container spacing={3}>
+					<Grid container sx={{ marginLeft: 0, width: `100%` }} spacing={3}>
 						<DataGrid
 							autoHeight
 							disableColumnSelector
