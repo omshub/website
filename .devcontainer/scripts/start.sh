@@ -5,3 +5,6 @@
 # Install Node dependencies.
 sudo yarn install
 sudo yarn build
+
+# Install Firebase CLI
+sudo npm install -g firebase-tools

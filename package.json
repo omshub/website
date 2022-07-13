@@ -9,7 +9,7 @@
 	},
 	"scripts": {
 		"dev": "next dev",
-		"build": "next build",
+		"build": "next build && next export",
 		"build-sitemap": "next-sitemap",
 		"start": "next start",
 		"test": "jest --watch",
@@ -31,6 +31,7 @@
 		"@mui/icons-material": "latest",
 		"@mui/material": "latest",
 		"@mui/x-data-grid": "^5.12.0",
+		"firebase": "^9.9.0",
 		"next": "12.1.5",
 		"react": "latest",
 		"react-dom": "latest",
