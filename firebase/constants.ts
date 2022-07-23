@@ -1,8 +1,8 @@
-type TCollectionsMap = {
-	[collectionKey: string]: string
+type TKeyMap = {
+	[key: string]: string
 }
 
-export const collections: TCollectionsMap = {
+export const collections: TKeyMap = {
 	COURSES: 'courses',
 	DEPARTMENTS: 'departments',
 	PROGRAMS: 'programs',
@@ -10,4 +10,13 @@ export const collections: TCollectionsMap = {
 	SEMESTERS: 'semesters',
 	SPECIALIZATIONS: 'specializations',
 	USERS: 'users',
+}
+
+export const idKeys: TKeyMap = {
+	COURSE_ID: 'courseId',
+	DEPARTMENT_ID: 'departmentId',
+	PROGRAM_ID: 'programId',
+	SEMESTER_ID: 'semesterId',
+	SPECIALIZATION_ID: 'specializationId',
+	USER_ID: 'userId',
 }
