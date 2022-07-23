@@ -30,6 +30,19 @@ export interface Department {
 	name: string
 }
 
+export interface Review {
+	reviewId: string
+	courseId: string
+	rating: number
+	difficulty: number
+	workload: number
+	semester: number
+	year: number
+	body: string
+	created: number
+	modified: number
+}
+
 export interface Specialization {
 	specializationId: string
 	name: string
@@ -39,5 +52,6 @@ export type TCollection =
 	| Course
 	| Department
 	| Program
+	| Review
 	| Semester
 	| Specialization
