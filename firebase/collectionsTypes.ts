@@ -34,3 +34,10 @@ export interface Specialization {
 	specializationId: string
 	name: string
 }
+
+export type TCollection =
+	| Course
+	| Department
+	| Program
+	| Semester
+	| Specialization
