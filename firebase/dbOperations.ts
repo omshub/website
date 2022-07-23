@@ -6,6 +6,7 @@ import {
 	setDoc,
 	deleteDoc,
 	query,
+	// runTransaction,
 	where,
 } from 'firebase/firestore'
 import { db } from './FirebaseConfig'
@@ -14,6 +15,7 @@ import {
 	Course,
 	Department,
 	Program,
+	Review,
 	Semester,
 	Specialization,
 	TCollection,
@@ -23,7 +25,7 @@ const {
 	COURSES,
 	DEPARTMENTS,
 	PROGRAMS,
-	// REVIEWS,
+	REVIEWS,
 	SEMESTERS,
 	SPECIALIZATIONS,
 	// USERS,
@@ -33,6 +35,7 @@ const {
 	COURSE_ID,
 	DEPARTMENT_ID,
 	PROGRAM_ID,
+	REVIEW_ID,
 	SEMESTER_ID,
 	SPECIALIZATION_ID,
 	// USER_ID,
@@ -71,6 +74,21 @@ export const updateDepartment = async (
 ) => update(DEPARTMENTS, departmentId, departmentData)
 export const deleteDepartment = async (departmentId: string) =>
 	del(DEPARTMENTS, departmentId)
+
+// Reviews
+export const getReviews = async () => getAll(REVIEWS)
+
+export const getReview = async () => (reviewId: string) =>
+	get(REVIEWS, REVIEW_ID, reviewId)
+export const addReview = async (reviewData: Review) => {
+	// Include a run transcations here to aggregate course statistics with an updateCourse
+	return add(REVIEWS, reviewData)
+}
+export const updateReview = async (reviewId: string, reviewData: Review) =>
+	// Will need to include a run transcations here to both update review data and recalculate course statistics
+	update(REVIEWS, reviewId, reviewData)
+
+export const deleteReview = async (reviewId: string) => del(REVIEWS, reviewId)
 
 // Programs
 export const getPrograms = async () => getAll(PROGRAMS)
