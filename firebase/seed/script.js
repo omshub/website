@@ -1,5 +1,5 @@
 const { initializeApp } = require('firebase/app')
-const { getFirestore, collection, addDoc } = require('firebase/firestore')
+const { getFirestore, setDoc, doc } = require('firebase/firestore')
 
 // N.B. See `./example.env.js` for how to populate `.env.js`
 const { config } = require('./.env')
@@ -15,17 +15,29 @@ const specializations = require('./data/specializations')
 const firebaseApp = initializeApp(config)
 const db = getFirestore(firebaseApp)
 
-const add = async (collectionName, data) =>
-	addDoc(collection(db, collectionName), data)
+const add = async (collectionName, newDocId, data) =>
+	setDoc(doc(db, collectionName, newDocId), data)
 
 // Seed Firebase Firestore collections in the cloud
-courses.forEach(async (courseData) => add('courses', courseData))
-departments.forEach(async (departmentData) =>
-	add('departments', departmentData)
+courses.forEach(async (courseData) =>
+	add('courses', courseData.courseId, courseData)
 )
-programs.forEach(async (programData) => add('programs', programData))
-reviews.forEach(async (reviewData) => add('reviews', reviewData))
-semesters.forEach(async (semesterData) => add('semesters', semesterData))
+departments.forEach(async (departmentData) =>
+	add('departments', departmentData.departmentId, departmentData)
+)
+programs.forEach(async (programData) =>
+	add('programs', programData.programId, programData)
+)
+reviews.forEach(async (reviewData) =>
+	add('reviews', reviewData.reviewId, reviewData)
+)
+semesters.forEach(async (semesterData) =>
+	add('semesters', semesterData.semesterId, semesterData)
+)
 specializations.forEach(async (specializationData) =>
-	add('specializations', specializationData)
+	add(
+		'specializations',
+		specializationData.specializationId,
+		specializationData
+	)
 )
