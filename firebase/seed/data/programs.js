@@ -1,4 +1,4 @@
-const programs = [
+module.exports = [
 	{
 		programId: 'a',
 		name: 'Analytics',
@@ -15,5 +15,3 @@ const programs = [
 		url: 'https://pe.gatech.edu/degrees/cybersecurity',
 	},
 ]
-
-module.exports = { programs }

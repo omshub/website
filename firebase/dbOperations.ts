@@ -10,7 +10,7 @@ import {
 	where,
 } from 'firebase/firestore'
 import { db } from './FirebaseConfig'
-import { collections, idKeys } from './constants'
+import { collections, idKeys, queryOperators } from './constants'
 import {
 	Course,
 	Department,
@@ -41,11 +41,15 @@ const {
 	// USER_ID,
 } = idKeys
 
-/* --- CRUD Operations --- */
+const { EQUAL_TO } = queryOperators
+
+// Base CRUD operations
 const getAll = async (collectionName: string) =>
 	getDocs(query(collection(db, collectionName)))
 const get = async (collectionName: string, idKey: string, idValue: string) =>
-	getDocs(query(collection(db, collectionName), where(idKey, '==', idValue)))
+	getDocs(
+		query(collection(db, collectionName), where(idKey, EQUAL_TO, idValue))
+	)
 const add = async (collectionName: string, data: TCollection) =>
 	addDoc(collection(db, collectionName), data)
 const update = async (collectionName: string, id: string, data: TCollection) =>
@@ -53,7 +57,7 @@ const update = async (collectionName: string, id: string, data: TCollection) =>
 const del = async (collectionName: string, id: string) =>
 	deleteDoc(doc(db, collectionName, id))
 
-// Courses
+/* --- COURSES --- */
 export const getCourses = async () => getAll(COURSES)
 export const getCourse = async (courseId: string) =>
 	get(COURSES, COURSE_ID, courseId)
@@ -62,7 +66,7 @@ export const updateCourse = async (courseId: string, courseData: Course) =>
 	update(COURSES, courseId, courseData)
 export const deleteCourse = async (courseId: string) => del(COURSES, courseId)
 
-// Departments
+/* --- DEPARTMENTS --- */
 export const getDepartments = async () => getAll(DEPARTMENTS)
 export const getDepartment = async (departmentId: string) =>
 	get(DEPARTMENTS, DEPARTMENT_ID, departmentId)
@@ -75,7 +79,18 @@ export const updateDepartment = async (
 export const deleteDepartment = async (departmentId: string) =>
 	del(DEPARTMENTS, departmentId)
 
-// Reviews
+/* --- PROGRAMS --- */
+export const getPrograms = async () => getAll(PROGRAMS)
+export const getProgram = async (programId: string) =>
+	get(PROGRAMS, PROGRAM_ID, programId)
+export const addProgram = async (programData: Program) =>
+	add(PROGRAMS, programData)
+export const updateProgram = async (programId: string, programData: Program) =>
+	update(PROGRAMS, programId, programData)
+export const deleteProgram = async (programId: string) =>
+	del(PROGRAMS, programId)
+
+/* --- REVIEWS --- */
 export const getReviews = async () => getAll(REVIEWS)
 
 export const getReview = async () => (reviewId: string) =>
@@ -90,18 +105,7 @@ export const updateReview = async (reviewId: string, reviewData: Review) =>
 
 export const deleteReview = async (reviewId: string) => del(REVIEWS, reviewId)
 
-// Programs
-export const getPrograms = async () => getAll(PROGRAMS)
-export const getProgram = async (programId: string) =>
-	get(PROGRAMS, PROGRAM_ID, programId)
-export const addProgram = async (programData: Program) =>
-	add(PROGRAMS, programData)
-export const updateProgram = async (programId: string, programData: Program) =>
-	update(PROGRAMS, programId, programData)
-export const deleteProgram = async (programId: string) =>
-	del(PROGRAMS, programId)
-
-// Semesters
+/* --- SEMESTERS --- */
 export const getSemesters = async () => getAll(SEMESTERS)
 export const getSemester = async (semesterId: string) =>
 	get(SEMESTERS, SEMESTER_ID, semesterId)
@@ -114,7 +118,7 @@ export const updateSemester = async (
 export const deleteSemester = async (semesterId: string) =>
 	del(SEMESTERS, semesterId)
 
-// Specializations
+/* --- SPECIALIZATIONS --- */
 export const getSpecializations = async () => getAll(SPECIALIZATIONS)
 export const getSpecialization = async (specializationId: string) =>
 	get(SPECIALIZATIONS, SPECIALIZATION_ID, specializationId)
