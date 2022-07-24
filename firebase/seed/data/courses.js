@@ -20,6 +20,7 @@ module.exports = [
 		avgWorkload: 10.615909090909092,
 		avgDifficulty: 2.547846889952153,
 		avgOverall: 3.287081339712919,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6150',
@@ -34,6 +35,7 @@ module.exports = [
 		avgWorkload: 8.5,
 		avgDifficulty: 2,
 		avgOverall: 2.5,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6200',
@@ -48,6 +50,7 @@ module.exports = [
 		avgWorkload: 18.240522875816996,
 		avgDifficulty: 3.6666666666666665,
 		avgOverall: 3.650326797385621,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6210',
@@ -62,6 +65,7 @@ module.exports = [
 		avgWorkload: 17.191666666666666,
 		avgDifficulty: 4.158333333333333,
 		avgOverall: 2.9166666666666665,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6238',
@@ -76,6 +80,7 @@ module.exports = [
 		avgWorkload: 14.655172413793103,
 		avgDifficulty: 3.4482758620689653,
 		avgOverall: 2.9655172413793105,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6250',
@@ -90,6 +95,7 @@ module.exports = [
 		avgWorkload: 8.253917050691244,
 		avgDifficulty: 2.4193548387096775,
 		avgOverall: 2.642857142857143,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6260',
@@ -104,6 +110,7 @@ module.exports = [
 		avgWorkload: 16.58974358974359,
 		avgDifficulty: 3.6923076923076925,
 		avgOverall: 3.5384615384615383,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6262',
@@ -118,6 +125,7 @@ module.exports = [
 		avgWorkload: 12.892857142857142,
 		avgDifficulty: 3.0238095238095237,
 		avgOverall: 3.1904761904761907,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6263',
@@ -132,6 +140,7 @@ module.exports = [
 		avgWorkload: 9.891891891891891,
 		avgDifficulty: 2.5945945945945947,
 		avgOverall: 3.418918918918919,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6264',
@@ -146,6 +155,7 @@ module.exports = [
 		avgWorkload: 17.5,
 		avgDifficulty: 4,
 		avgOverall: 3.25,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6265',
@@ -160,6 +170,7 @@ module.exports = [
 		avgWorkload: 29.85,
 		avgDifficulty: 4.3,
 		avgOverall: 4.55,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6266',
@@ -174,6 +185,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6290',
@@ -188,6 +200,7 @@ module.exports = [
 		avgWorkload: 15.055555555555555,
 		avgDifficulty: 3.6296296296296298,
 		avgOverall: 3.1296296296296298,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6291',
@@ -202,6 +215,7 @@ module.exports = [
 		avgWorkload: 15.942857142857143,
 		avgDifficulty: 3.6,
 		avgOverall: 3.6,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6300',
@@ -216,6 +230,7 @@ module.exports = [
 		avgWorkload: 8.734098360655738,
 		avgDifficulty: 2.3049180327868855,
 		avgOverall: 2.7508196721311475,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6310',
@@ -230,6 +245,7 @@ module.exports = [
 		avgWorkload: 11.497354497354497,
 		avgDifficulty: 2.6031746031746033,
 		avgOverall: 2.5978835978835977,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6340',
@@ -244,6 +260,7 @@ module.exports = [
 		avgWorkload: 12.621428571428572,
 		avgDifficulty: 3.2142857142857144,
 		avgOverall: 3.4,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6400',
@@ -258,6 +275,7 @@ module.exports = [
 		avgWorkload: 11.082978723404254,
 		avgDifficulty: 2.8170212765957445,
 		avgOverall: 2.5361702127659576,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6440',
@@ -272,6 +290,7 @@ module.exports = [
 		avgWorkload: 9.014150943396226,
 		avgDifficulty: 2.2641509433962264,
 		avgOverall: 2.009433962264151,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6457',
@@ -286,6 +305,7 @@ module.exports = [
 		avgWorkload: 13.153846153846153,
 		avgDifficulty: 2.230769230769231,
 		avgOverall: 4.3076923076923075,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6460',
@@ -300,6 +320,7 @@ module.exports = [
 		avgWorkload: 14.085106382978724,
 		avgDifficulty: 2.8297872340425534,
 		avgOverall: 3.797872340425532,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6465',
@@ -314,6 +335,7 @@ module.exports = [
 		avgWorkload: 15,
 		avgDifficulty: 3,
 		avgOverall: 4,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6475',
@@ -328,6 +350,7 @@ module.exports = [
 		avgWorkload: 16.48633879781421,
 		avgDifficulty: 3.2185792349726774,
 		avgOverall: 3.0054644808743167,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6476',
@@ -342,6 +365,7 @@ module.exports = [
 		avgWorkload: 21.436842105263157,
 		avgDifficulty: 4.0473684210526315,
 		avgOverall: 3.210526315789474,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6515',
@@ -356,6 +380,7 @@ module.exports = [
 		avgWorkload: 19.141065830721004,
 		avgDifficulty: 4.109717868338558,
 		avgOverall: 3.006269592476489,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6601',
@@ -370,6 +395,7 @@ module.exports = [
 		avgWorkload: 22.90495867768595,
 		avgDifficulty: 4.06198347107438,
 		avgOverall: 4.016528925619835,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6603',
@@ -384,6 +410,7 @@ module.exports = [
 		avgWorkload: 5.857142857142857,
 		avgDifficulty: 1.6734693877551021,
 		avgOverall: 2.63265306122449,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6675',
@@ -398,6 +425,7 @@ module.exports = [
 		avgWorkload: 13.2,
 		avgDifficulty: 3,
 		avgOverall: 2.8,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6726',
@@ -412,6 +440,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6727',
@@ -426,6 +455,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6747',
@@ -440,6 +470,7 @@ module.exports = [
 		avgWorkload: 16.142857142857142,
 		avgDifficulty: 3.5714285714285716,
 		avgOverall: 4.571428571428571,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6750',
@@ -454,6 +485,7 @@ module.exports = [
 		avgWorkload: 12.04952380952381,
 		avgDifficulty: 2.533333333333333,
 		avgOverall: 4.119047619047619,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-6795',
@@ -468,6 +500,7 @@ module.exports = [
 		avgWorkload: 13.5,
 		avgDifficulty: 2.5,
 		avgOverall: 3.5,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-7210',
@@ -482,6 +515,7 @@ module.exports = [
 		avgWorkload: 61.87096774193548,
 		avgDifficulty: 4.645161290322581,
 		avgOverall: 2.935483870967742,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-7280',
@@ -496,6 +530,7 @@ module.exports = [
 		avgWorkload: 13.041666666666666,
 		avgDifficulty: 2.7916666666666665,
 		avgOverall: 3.25,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-7450',
@@ -510,6 +545,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-7470',
@@ -524,6 +560,7 @@ module.exports = [
 		avgWorkload: 8,
 		avgDifficulty: 3,
 		avgOverall: 3,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-7632',
@@ -538,6 +575,7 @@ module.exports = [
 		avgWorkload: 11.5,
 		avgDifficulty: 2.5625,
 		avgOverall: 4.6875,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-7637',
@@ -552,6 +590,7 @@ module.exports = [
 		avgWorkload: 13.848754448398576,
 		avgDifficulty: 3.0818505338078293,
 		avgOverall: 2.8220640569395017,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-7638',
@@ -566,6 +605,7 @@ module.exports = [
 		avgWorkload: 12.547272727272727,
 		avgDifficulty: 3,
 		avgOverall: 3.3636363636363638,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-7639',
@@ -580,6 +620,7 @@ module.exports = [
 		avgWorkload: 12.125,
 		avgDifficulty: 3.15625,
 		avgOverall: 2.96875,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-7641',
@@ -594,6 +635,7 @@ module.exports = [
 		avgWorkload: 21.129886363636363,
 		avgDifficulty: 4.113636363636363,
 		avgOverall: 2.602272727272727,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-7642',
@@ -608,6 +650,7 @@ module.exports = [
 		avgWorkload: 22.354497354497354,
 		avgDifficulty: 4.137566137566138,
 		avgOverall: 3.761904761904762,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-7643',
@@ -622,6 +665,7 @@ module.exports = [
 		avgWorkload: 18.942857142857143,
 		avgDifficulty: 3.8714285714285714,
 		avgOverall: 4,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-7646',
@@ -636,6 +680,7 @@ module.exports = [
 		avgWorkload: 10.999445983379502,
 		avgDifficulty: 2.53185595567867,
 		avgOverall: 3.8005540166204987,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-8803-O04',
@@ -650,6 +695,7 @@ module.exports = [
 		avgWorkload: 15.818181818181818,
 		avgDifficulty: 3.5454545454545454,
 		avgOverall: 3.3636363636363638,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-8803-O05',
@@ -664,6 +710,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-8803-O06',
@@ -678,6 +725,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-8803-O08',
@@ -692,6 +740,7 @@ module.exports = [
 		avgWorkload: 29.875,
 		avgDifficulty: 4.6875,
 		avgOverall: 3.9375,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-8803-O12',
@@ -706,6 +755,7 @@ module.exports = [
 		avgWorkload: 30.555555555555557,
 		avgDifficulty: 4.444444444444445,
 		avgOverall: 4.666666666666667,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-8803-OC1',
@@ -720,6 +770,7 @@ module.exports = [
 		avgWorkload: 5.428571428571429,
 		avgDifficulty: 2,
 		avgOverall: 4.142857142857143,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CS-8813',
@@ -734,6 +785,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CSE-6040',
@@ -748,6 +800,7 @@ module.exports = [
 		avgWorkload: 9.803571428571429,
 		avgDifficulty: 3.1517857142857144,
 		avgOverall: 4.330357142857143,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CSE-6140',
@@ -762,6 +815,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CSE-6220',
@@ -776,6 +830,7 @@ module.exports = [
 		avgWorkload: 19.71794871794872,
 		avgDifficulty: 4.282051282051282,
 		avgOverall: 3.6794871794871793,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CSE-6240',
@@ -790,6 +845,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CSE-6242',
@@ -804,6 +860,7 @@ module.exports = [
 		avgWorkload: 16.020992366412212,
 		avgDifficulty: 3.217557251908397,
 		avgOverall: 2.969465648854962,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CSE-6250',
@@ -818,6 +875,7 @@ module.exports = [
 		avgWorkload: 29.13888888888889,
 		avgDifficulty: 4.277777777777778,
 		avgOverall: 3.1666666666666665,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'CSE-6742',
@@ -832,6 +890,7 @@ module.exports = [
 		avgWorkload: 6,
 		avgDifficulty: 1.75,
 		avgOverall: 3.75,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-6150',
@@ -846,6 +905,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-6266',
@@ -860,6 +920,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-6320',
@@ -874,6 +935,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-6323',
@@ -888,6 +950,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-8803a',
@@ -902,6 +965,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-8803c',
@@ -916,6 +980,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-8803d',
@@ -930,6 +995,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-8803e',
@@ -944,6 +1010,7 @@ module.exports = [
 		avgWorkload: 15,
 		avgDifficulty: 4,
 		avgOverall: 2,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-8803g',
@@ -958,6 +1025,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-8803h',
@@ -972,6 +1040,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-8813',
@@ -986,6 +1055,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-8823',
@@ -1000,6 +1070,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-8843',
@@ -1014,6 +1085,7 @@ module.exports = [
 		avgWorkload: 10,
 		avgDifficulty: 3,
 		avgOverall: 5,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-8853',
@@ -1028,6 +1100,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-8863',
@@ -1042,6 +1115,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ECE-8873',
@@ -1056,6 +1130,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'INTA-6014',
@@ -1070,6 +1145,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'INTA-6103',
@@ -1084,6 +1160,7 @@ module.exports = [
 		avgWorkload: 2.857142857142857,
 		avgDifficulty: 2.2857142857142856,
 		avgOverall: 3.2857142857142856,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'INTA-6450',
@@ -1098,6 +1175,7 @@ module.exports = [
 		avgWorkload: 3.4,
 		avgDifficulty: 1.4,
 		avgOverall: 3,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'INTA-8803G',
@@ -1112,6 +1190,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ISYE-6402',
@@ -1126,6 +1205,7 @@ module.exports = [
 		avgWorkload: 15.46875,
 		avgDifficulty: 4.28125,
 		avgOverall: 1.84375,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ISYE-6404',
@@ -1140,6 +1220,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ISYE-6413',
@@ -1154,6 +1235,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ISYE-6414',
@@ -1168,6 +1250,7 @@ module.exports = [
 		avgWorkload: 8.911111111111111,
 		avgDifficulty: 2.8444444444444446,
 		avgOverall: 3.2555555555555555,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ISYE-6416',
@@ -1182,6 +1265,7 @@ module.exports = [
 		avgWorkload: 12,
 		avgDifficulty: 3,
 		avgOverall: 3,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ISYE-6420',
@@ -1196,6 +1280,7 @@ module.exports = [
 		avgWorkload: 12.368421052631579,
 		avgDifficulty: 3.210526315789474,
 		avgOverall: 2.807017543859649,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ISYE-6501',
@@ -1210,6 +1295,7 @@ module.exports = [
 		avgWorkload: 9.6158940397351,
 		avgDifficulty: 2.80794701986755,
 		avgOverall: 4.158940397350993,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ISYE-6644',
@@ -1224,6 +1310,7 @@ module.exports = [
 		avgWorkload: 11.080808080808081,
 		avgDifficulty: 3.1717171717171717,
 		avgOverall: 4.252525252525253,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ISYE-6650',
@@ -1238,6 +1325,7 @@ module.exports = [
 		avgWorkload: 5,
 		avgDifficulty: 2,
 		avgOverall: 4,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ISYE-6669',
@@ -1252,6 +1340,7 @@ module.exports = [
 		avgWorkload: 13.142857142857142,
 		avgDifficulty: 3.8095238095238093,
 		avgOverall: 3.761904761904762,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ISYE-6740',
@@ -1266,6 +1355,7 @@ module.exports = [
 		avgWorkload: 14.6,
 		avgDifficulty: 3.6285714285714286,
 		avgOverall: 4.0285714285714285,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ISYE-7406',
@@ -1280,6 +1370,7 @@ module.exports = [
 		avgWorkload: 15,
 		avgDifficulty: 2.3333333333333335,
 		avgOverall: 3.6666666666666665,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'ISYE-8803',
@@ -1294,6 +1385,7 @@ module.exports = [
 		avgWorkload: 18.09375,
 		avgDifficulty: 4.09375,
 		avgOverall: 4.25,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'MGT-6203',
@@ -1308,6 +1400,7 @@ module.exports = [
 		avgWorkload: 5.649532710280374,
 		avgDifficulty: 1.925233644859813,
 		avgOverall: 2.317757009345794,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'MGT-6311',
@@ -1322,6 +1415,7 @@ module.exports = [
 		avgWorkload: 3.36,
 		avgDifficulty: 1.32,
 		avgOverall: 4.36,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'MGT-6727',
@@ -1336,6 +1430,7 @@ module.exports = [
 		avgWorkload: 3.2,
 		avgDifficulty: 1.8,
 		avgOverall: 4.2,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'MGT-6748',
@@ -1350,6 +1445,7 @@ module.exports = [
 		avgWorkload: 13.5,
 		avgDifficulty: 2.25,
 		avgOverall: 4.25,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'MGT-8803',
@@ -1364,6 +1460,7 @@ module.exports = [
 		avgWorkload: 7.957831325301205,
 		avgDifficulty: 2.9759036144578315,
 		avgOverall: 2.4096385542168677,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'MGT-8813',
@@ -1378,6 +1475,7 @@ module.exports = [
 		avgWorkload: 4.533333333333333,
 		avgDifficulty: 1.2666666666666666,
 		avgOverall: 3.1333333333333333,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'MGT-8823',
@@ -1392,6 +1490,7 @@ module.exports = [
 		avgWorkload: 4,
 		avgDifficulty: 1.1538461538461537,
 		avgOverall: 3.6153846153846154,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'PUBP-6111',
@@ -1406,6 +1505,7 @@ module.exports = [
 		avgWorkload: 3,
 		avgDifficulty: 1,
 		avgOverall: 4,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'PUBP-6266',
@@ -1420,6 +1520,7 @@ module.exports = [
 		avgWorkload: null,
 		avgDifficulty: null,
 		avgOverall: null,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'PUBP-6501',
@@ -1434,6 +1535,7 @@ module.exports = [
 		avgWorkload: 10.375,
 		avgDifficulty: 2.5,
 		avgOverall: 2.75,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'PUBP-6502',
@@ -1448,6 +1550,7 @@ module.exports = [
 		avgWorkload: 2.3333333333333335,
 		avgDifficulty: 1.3333333333333333,
 		avgOverall: 4.333333333333333,
+		avgStaffSupport: null,
 	},
 	{
 		courseId: 'PUBP-6725',
@@ -1462,6 +1565,7 @@ module.exports = [
 		avgWorkload: 6.470588235294118,
 		avgDifficulty: 1.8823529411764706,
 		avgOverall: 3.4705882352941178,
+		avgStaffSupport: null,
 	},
 	// IGNORE - ambiguous departmentId
 	// {
@@ -1477,5 +1581,6 @@ module.exports = [
 	// 	avgWorkload: null,
 	// 	avgDifficulty: null,
 	// 	avgOverall: null,
+	// avgStaffSupport: null,
 	// },
 ]
