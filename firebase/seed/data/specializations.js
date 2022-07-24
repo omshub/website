@@ -1,4 +1,4 @@
-const specializations = [
+module.exports = [
 	{ specializationId: 'a:at', name: 'Analytical Tools', programId: 'a' },
 	{ specializationId: 'a:ba', name: 'Business Analytics', programId: 'a' },
 	{
@@ -22,5 +22,3 @@ const specializations = [
 	{ specializationId: 'cy:is', name: 'Information Security', programId: 'cy' },
 	{ specializationId: 'cy:pol', name: 'Policy', programId: 'cy' },
 ]
-
-module.exports = { specializations }
