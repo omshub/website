@@ -8,6 +8,7 @@ import {
 	query,
 	// runTransaction,
 	where,
+	DocumentData,
 } from 'firebase/firestore'
 import { db } from './FirebaseConfig'
 import { collections, idKeys, queryOperators } from './constants'
@@ -44,12 +45,24 @@ const {
 const { EQUAL_TO } = queryOperators
 
 // Base CRUD operations
-const getAll = async (collectionName: string) =>
-	getDocs(query(collection(db, collectionName)))
-const get = async (collectionName: string, idKey: string, idValue: string) =>
-	getDocs(
+const getAll = async (collectionName: string) => {
+	const snapshot = await getDocs(query(collection(db, collectionName)))
+	const allData: DocumentData[] = []
+	snapshot.forEach((doc) => {
+		allData.push(doc.data())
+	})
+	return allData
+}
+const get = async (collectionName: string, idKey: string, idValue: string) => {
+	const snapshot = await getDocs(
 		query(collection(db, collectionName), where(idKey, EQUAL_TO, idValue))
 	)
+	const data: DocumentData[] = []
+	snapshot.forEach((doc) => {
+		data.push(doc.data())
+	})
+	return data[0]
+}
 const add = async (collectionName: string, data: TCollection) =>
 	addDoc(collection(db, collectionName), data)
 const update = async (collectionName: string, id: string, data: TCollection) =>
