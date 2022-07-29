@@ -51,8 +51,9 @@ const Home: NextPage = () => {
 		},
 		{ field: 'courseId', headerName: 'Course ID', flex: 0.5 },
 		{ field: 'avgDifficulty', headerName: 'Difficulty', flex: 0.5, valueGetter:(params:any)=>Math.round(params.row.avgDifficulty * 10) / 10 },
-		{ field: 'avgWorkload', headerName: 'Workload', flex: 0.5, valueGetter:(params:any)=>Math.round(params.row.avgDifficulty * 10) / 10 },
-		{ field: 'avgOverall', headerName: 'Overall', flex: 0.5 , valueGetter:(params:any)=>Math.round(params.row.avgDifficulty * 10) / 10},
+		{ field: 'avgWorkload', headerName: 'Workload', flex: 0.5, valueGetter:(params:any)=>Math.round(params.row.avgWorkload * 10) / 10 },
+		{ field: 'avgOverall', headerName: 'Overall', flex: 0.5 , valueGetter:(params:any)=>Math.round(params.row.avgOverall * 10) / 10},
+		{ field: 'numReviews', headerName: 'Number of Reviews', flex: 0.5 },
 		{ field: 'aliases', headerName: 'Aliases', flex: 0, hide: true },
 	]
 	const [loading, setLoading] = useState<boolean>()
