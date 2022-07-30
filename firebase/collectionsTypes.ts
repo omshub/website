@@ -72,10 +72,12 @@ export interface Specialization {
 	programId: string
 }
 
-export type TCollection =
+export type TDocumentData =
 	| Course
 	| Department
 	| Program
 	| Review
 	| Semester
 	| Specialization
+
+export type TDocumentDataObject = { [key: string]: TDocumentData }
