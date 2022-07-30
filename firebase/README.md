@@ -10,29 +10,29 @@
 
 `/firebase` contains the backend service for the app, utilizing the [Firebase](https://firebase.google.com/) services Firestore (database), Cloud Functions, and Authentication.
 
-The primary interface for consumption by the frontend is contained in `/firebase/dbOperations.ts`, which contains the CRUD operations for the various collections. Firestore is a non-relational database, comprised of collections which contain documents.
+Firestore is a non-relational database, comprised of collections which contain documents. The primary interface for consumption by the frontend is contained in `/firebase/dbOperations.ts`, which contains the CRUD operations for the various data-containing documents.
 
-The collections defined in this app, and their corresponding CRUD operations' function calls, are as follows:
+The data documents defined in this app, and their corresponding CRUD operations' function calls, are as follows:
 
-(***core data***)
+(**_core data_**)
 
-| Firestore Document |        Get All         |         Get One         |          Add One          |            Update One            |         Delete One         |
-| :------------------: | :--------------------: | :---------------------: | :-----------------------: | :------------------------------: | :------------------------: |
-|      `coreData/courses`       |     `getCourses()`     |     `getCourse(id)`     |     `addCourse(data)`     |     `updateCourse(id, data)`     |     `deleteCourse(id)`     |
-|    `coreData/departments`     |   `getDepartments()`   |   `getDepartment(id)`   |   `addDepartment(data)`   |   `updateDepartment(id, data)`   |   `deleteDepartment(id)`   |
-|      `coreData/programs`      |    `getPrograms()`     |    `getProgram(id)`     |    `addProgram(data)`     |    `updateProgram(id, data)`     |    `deleteProgram(id)`     |
-|     `coreData/semesters`      |    `getSemesters()`    |    `getSemester(id)`    |    `addSemester(data)`    |    `updateSemester(id, data)`    |    `deleteSemester(id)`    |
-|  `coreData/specializations`   | `getSpecializations()` | `getSpecialization(id)` | `addSpecialization(data)` | `updateSpecialization(id, data)` | `deleteSpecialization(id)` |
+|     Firestore Document     |        Get All         |         Get One         |            Add One            |            Update One            |         Delete One         |
+| :------------------------: | :--------------------: | :---------------------: | :---------------------------: | :------------------------------: | :------------------------: |
+|     `coreData/courses`     |     `getCourses()`     |     `getCourse(id)`     |     `addCourse(id, data)`     |     `updateCourse(id, data)`     |     `deleteCourse(id)`     |
+|   `coreData/departments`   |   `getDepartments()`   |   `getDepartment(id)`   |   `addDepartment(id, data)`   |   `updateDepartment(id, data)`   |   `deleteDepartment(id)`   |
+|    `coreData/programs`     |    `getPrograms()`     |    `getProgram(id)`     |    `addProgram(id, data)`     |    `updateProgram(id, data)`     |    `deleteProgram(id)`     |
+|    `coreData/semesters`    |    `getSemesters()`    |    `getSemester(id)`    |    `addSemester(id, data)`    |    `updateSemester(id, data)`    |    `deleteSemester(id)`    |
+| `coreData/specializations` | `getSpecializations()` | `getSpecialization(id)` | `addSpecialization(id, data)` | `updateSpecialization(id, data)` | `deleteSpecialization(id)` |
 
-(***reviews data***)
+(**_reviews data_**)
 
-| Firestore Collection |        Get All         |         Get One         |          Add One          |            Update One            |         Delete One         |
-| :------------------: | :--------------------: | :---------------------: | :-----------------------: | :------------------------------: | :------------------------: |
-|      `reviewsData/{courseId}/{year}-{semesterTerm}/data`       |     `getReviews(courseId, year, semesterTerm)`     |     `getReview(reviewId, courseId, year, semesterTerm)`     |     `addReview(reviewId, courseId, year, semesterTerm, data)`     |     `updateReview(reviewId, courseId, year, semesterTerm, data)`     |     `deleteReview(reviewId, courseId, year, semesterTerm)`     |
+|                 Firestore Document                  |    Get All (courseId-year-semesterTerm)    |        Get One        |           Add One           |           Update One           |        Delete One        |
+| :-------------------------------------------------: | :----------------------------------------: | :-------------------: | :-------------------------: | :----------------------------: | :----------------------: |
+| `reviewsData/{courseId}/{year}-{semesterTerm}/data` | `getReviews(courseId, year, semesterTerm)` | `getReview(reviewId)` | `addReview(reviewId, data)` | `updateReview(reviewId, data)` | `deleteReview(reviewId)` |
 
-**_N.B._** See `/firebase/colectionsTypes.ts` for definition of collection fields (i.e., `data` per above).
+**_N.B._** See `/firebase/colectionsTypes.ts` for definition of document data fields (i.e., argument `data` per above).
 
-Example usage via `courses` collection (and similarly for the others):
+Example usage via `courses` document (and similarly for the others):
 
 ```ts
 import {

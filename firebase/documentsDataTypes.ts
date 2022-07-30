@@ -3,15 +3,16 @@ export interface Course {
 	name: string
 	departmentId: string
 	courseNumber: string
-	aliases: string[]
 	url: string
-	isFoundational: boolean
+	aliases: string[]
 	isDeprecated: boolean
+	isFoundational: boolean
 	numReviews: number
-	avgWorkload: number
-	avgDifficulty: number
-	avgOverall: number
-	avgStaffSupport: number
+	avgWorkload: number | null
+	avgDifficulty: number | null
+	avgOverall: number | null
+	avgStaffSupport: number | null
+	reviewsCountsByDoc: { [year: number]: { [semesterTerm: number]: number } }
 }
 
 export interface Department {
