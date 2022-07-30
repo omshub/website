@@ -15,7 +15,7 @@ import {
 	Specialization,
 	TDocumentData,
 	TDocumentDataObject,
-} from './collectionsTypes'
+} from './documentsDataTypes'
 
 const {
 	COURSES,
@@ -151,11 +151,41 @@ export const deleteSpecialization = async (specializationId: string) =>
 
 /* --- REVIEWS (keyed by courseId-year-semesterId) --- */
 const baseCollectionReviewsData = 'reviewsData'
+const LEN_SIMPLE_COURSE_NUMBER = 5
+const LEN_COMPOUND_COURSE_NUMBER = 6
+
+const parseReviewId = (reviewId: string) => {
+	let courseId = ''
+	let departmentId = ''
+	let courseNumberA = ''
+	let courseNumberB = ''
+	let year = ''
+	let semesterTerm = ''
+
+	const parsedValues = reviewId.split('-')
+
+	if (parsedValues.length === LEN_SIMPLE_COURSE_NUMBER) {
+		;[departmentId, courseNumberA, year, semesterTerm] = parsedValues
+		courseId = `${departmentId}-${courseNumberA}`
+	}
+
+	if (parsedValues.length === LEN_COMPOUND_COURSE_NUMBER) {
+		;[departmentId, courseNumberA, courseNumberB, year, semesterTerm] =
+			parsedValues
+		courseId = `${departmentId}-${courseNumberA}-${courseNumberB}`
+	}
+
+	return {
+		courseId,
+		year,
+		semesterTerm,
+	}
+}
 
 export const getReviews = async (
 	courseId: string,
-	year: number,
-	semesterTerm: number
+	year: string,
+	semesterTerm: string
 ) => {
 	try {
 		const snapshot = await getDoc(
@@ -172,13 +202,9 @@ export const getReviews = async (
 	}
 }
 
-export const getReview = async (
-	reviewId: string,
-	courseId: string,
-	year: number,
-	semesterTerm: number
-) => {
+export const getReview = async (reviewId: string) => {
 	try {
+		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
 		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
 		return reviewsDataDoc ? reviewsDataDoc[reviewId] : null
 	} catch (e: any) {
@@ -187,14 +213,9 @@ export const getReview = async (
 	}
 }
 
-const addOrUpdateReview = async (
-	reviewId: string,
-	courseId: string,
-	year: number,
-	semesterTerm: number,
-	data: TDocumentData
-) => {
+const addOrUpdateReview = async (reviewId: string, data: TDocumentData) => {
 	try {
+		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
 		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
 		let newDataDoc: TDocumentDataObject = {}
 		if (reviewsDataDoc) {
@@ -202,7 +223,10 @@ const addOrUpdateReview = async (
 		}
 		newDataDoc[reviewId] = data
 		await setDoc(
-			doc(db, `${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`),
+			doc(
+				db,
+				`${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`
+			),
 			newDataDoc
 		)
 	} catch (e: any) {
@@ -211,23 +235,27 @@ const addOrUpdateReview = async (
 	}
 }
 
-export const addReview = async (reviewId: string, courseId: string, year: number, semesterTerm: number, reviewData: Review) => {
-	// Include a run transcations here to aggregate course statistics with an updateCourse
-	await addOrUpdateReview(reviewId, courseId, year, semesterTerm, reviewData)
+export const addReview = async (reviewId: string, reviewData: Review) => {
+	// Include a run transactions here to aggregate course statistics with an updateCourse
+	await addOrUpdateReview(reviewId, reviewData)
 }
 
-export const updateReview = async (reviewId: string, courseId: string, year: number, semesterTerm: number, reviewData: Review) => {
-	// Will need to include a run transcations here to both update review data and recalculate course statistics
-	await addOrUpdateReview(reviewId, courseId, year, semesterTerm, reviewData)
+export const updateReview = async (reviewId: string, reviewData: Review) => {
+	// Will need to include a run transactions here to both update review data and recalculate course statistics
+	await addOrUpdateReview(reviewId, reviewData)
 }
 
-export const deleteReview = async (reviewId: string, courseId: string, year: number, semesterTerm: number) => {
+export const deleteReview = async (reviewId: string) => {
 	try {
+		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
 		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
 		if (reviewsDataDoc) {
 			delete reviewsDataDoc[reviewId]
 			await setDoc(
-				doc(db, `${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`),
+				doc(
+					db,
+					`${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`
+				),
 				reviewsDataDoc
 			)
 		}

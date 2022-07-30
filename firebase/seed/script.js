@@ -93,12 +93,9 @@ for (const courseId in reviewsDataMaps) {
 	const yearSem = reviewsDataMaps[courseId]
 	for (const yearSemId in yearSem) {
 		const reviewData = yearSem[yearSemId]
-		;(async () => {
-			await add(`reviewsData/${courseId}/${yearSemId}`, 'data', reviewData)
-		})()
+		;(async () =>
+			add(`reviewsData/${courseId}/${yearSemId}`, 'data', reviewData))()
 	}
 }
 
-;(async () => {
-	await add(`reviewsRecent50`, 'reviews', { data: reviewsRecent50 })
-})()
+;(async () => add(`reviewsRecent50`, 'reviews', { data: reviewsRecent50 }))()
