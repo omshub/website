@@ -50,11 +50,12 @@ const Home: NextPage = () => {
 			),
 		},
 		{ field: 'courseId', headerName: 'Course ID', flex: 0.5 },
-		{ field: 'avgDifficulty', headerName: 'Difficulty', flex: 0.5, valueGetter:(params:any)=>Math.round(params.row.avgDifficulty * 10) / 10 },
-		{ field: 'avgWorkload', headerName: 'Workload', flex: 0.5, valueGetter:(params:any)=>Math.round(params.row.avgWorkload * 10) / 10 },
-		{ field: 'avgOverall', headerName: 'Overall', flex: 0.5 , valueGetter:(params:any)=>Math.round(params.row.avgOverall * 10) / 10},
+		{ field: 'avgDifficulty', headerName: 'Difficulty (out of 5)', flex: 0.5, valueGetter:(params:any)=>Math.round(params.row.avgDifficulty * 10) / 10 },
+		{ field: 'avgWorkload', headerName: 'Workload (hrs/wk)', flex: 0.5, valueGetter:(params:any)=>Math.round(params.row.avgWorkload * 10) / 10 },
+		{ field: 'avgOverall', headerName: 'Overall (hrs/wk)', flex: 0.5 , valueGetter:(params:any)=>Math.round(params.row.avgOverall * 10) / 10},
 		{ field: 'numReviews', headerName: 'Number of Reviews', flex: 0.5 },
-		{ field: 'aliases', headerName: 'Aliases', flex: 0, hide: true },
+		{ field: 'isDeprecated', headerName: 'is Deprecated?', flex: 0,hide:true},
+		{ field: 'aliases', headerName: 'Aliases', flex: 0,hide:true},
 	]
 	const [loading, setLoading] = useState<boolean>()
 	const [classes, setClasses] = useState<Array<ClassData>>([])
@@ -107,7 +108,9 @@ const Home: NextPage = () => {
 							loading={loading}
 							components={{ Toolbar: GridToolbar }}
 							columnVisibilityModel={{
+								isDeprecated:false,
 								aliases: false,
+
 							}}
 							componentsProps={{
 								toolbar: {
@@ -119,7 +122,12 @@ const Home: NextPage = () => {
 								pagination: {
 									pageSize: 150,
 								},
+								filter: {
+									filterModel: {
+									  items: [{ columnField: 'isDeprecated', operatorValue: 'equals', value: 'false' }],
+									},
 							}}
+						}
 						/>
 					</Grid>
 				</>
