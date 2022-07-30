@@ -17,13 +17,8 @@ import {
 	TDocumentDataObject,
 } from './documentsDataTypes'
 
-const {
-	COURSES,
-	DEPARTMENTS,
-	PROGRAMS,
-	SEMESTERS,
-	SPECIALIZATIONS,
-} = coreDataDocuments
+const { COURSES, DEPARTMENTS, PROGRAMS, SEMESTERS, SPECIALIZATIONS } =
+	coreDataDocuments
 
 // Base CRUD operations (core data)
 const baseCollectionCoreData = 'coreData'
