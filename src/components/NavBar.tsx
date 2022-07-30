@@ -93,7 +93,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 				<Link
 						variant='button'
 						color='text.primary'
-						href='/api/auth/signin'
+						href='/login'
 						sx={{ my: 1, mx: 1.5 }}
 					>
 					<Button variant='outlined' sx={{ my: 1, mx: 1.5 }}>
