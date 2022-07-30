@@ -5,7 +5,7 @@ import {
 	// runTransaction,
 } from 'firebase/firestore'
 import { db } from './FirebaseConfig'
-import { collections } from './constants'
+import { coreDataDocuments } from './constants'
 import {
 	Course,
 	Department,
@@ -23,8 +23,7 @@ const {
 	PROGRAMS,
 	SEMESTERS,
 	SPECIALIZATIONS,
-	// USERS,
-} = collections
+} = coreDataDocuments
 
 // Base CRUD operations (core data)
 const baseCollectionCoreData = 'coreData'
