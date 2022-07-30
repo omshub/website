@@ -151,8 +151,8 @@ export const deleteSpecialization = async (specializationId: string) =>
 
 /* --- REVIEWS (keyed by courseId-year-semesterId) --- */
 const baseCollectionReviewsData = 'reviewsData'
-const LEN_SIMPLE_COURSE_NUMBER = 5
-const LEN_COMPOUND_COURSE_NUMBER = 6
+const LEN_SIMPLE_COURSE_NUMBER = 5 //   DD-CCCC     (e.g., CS-6200)
+const LEN_COMPOUND_COURSE_NUMBER = 6 // DD-CCCC-CCC (e.g., CS-8803-O08)
 
 const parseReviewId = (reviewId: string) => {
 	let courseId = ''
