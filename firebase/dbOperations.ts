@@ -1,13 +1,8 @@
 import {
-	collection,
 	doc,
-	getDocs,
 	getDoc,
 	setDoc,
-	deleteDoc,
-	query,
 	// runTransaction,
-	DocumentData,
 } from 'firebase/firestore'
 import { db } from './FirebaseConfig'
 import { collections } from './constants'
@@ -18,49 +13,87 @@ import {
 	Review,
 	Semester,
 	Specialization,
-	TCollection,
+	TDocumentData,
+	TDocumentDataObject,
 } from './collectionsTypes'
 
 const {
 	COURSES,
 	DEPARTMENTS,
 	PROGRAMS,
-	REVIEWS,
 	SEMESTERS,
 	SPECIALIZATIONS,
 	// USERS,
 } = collections
 
-// Base CRUD operations
-const getAll = async (collectionName: string) => {
-	const snapshot = await getDocs(query(collection(db, collectionName)))
-	const allData: DocumentData[] = []
-	snapshot.forEach((doc) => {
-		allData.push(doc.data())
-	})
-	return allData
+// Base CRUD operations (core data)
+const baseCollectionCoreData = 'coreData'
+
+const getAll = async (dataDocName: string) => {
+	try {
+		const snapshot = await getDoc(
+			doc(db, `${baseCollectionCoreData}/${dataDocName}`)
+		)
+		const coreDataDoc = snapshot.data()
+		return coreDataDoc ?? null
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
 }
-const get = async (collectionName: string, documentId: string) => {
-	const snapshot = await getDoc(doc(db, collectionName, documentId))
-	return snapshot.data()
+const get = async (dataDocName: string, dataId: string) => {
+	try {
+		const coreDataDoc = await getAll(dataDocName)
+		return coreDataDoc ? coreDataDoc[dataId] : null
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
 }
-const add = async (
-	collectionName: string,
-	newDocumentId: string,
-	data: TCollection
-) => setDoc(doc(db, collectionName, newDocumentId), data)
-const update = async (collectionName: string, id: string, data: TCollection) =>
-	setDoc(doc(db, collectionName, id), data)
-const del = async (collectionName: string, id: string) =>
-	deleteDoc(doc(db, collectionName, id))
+const addOrUpdate = async (
+	dataDocName: string,
+	dataId: string,
+	data: TDocumentData
+) => {
+	try {
+		const coreDataDoc = await getAll(dataDocName)
+		let newDataDoc: TDocumentDataObject = {}
+		if (coreDataDoc) {
+			newDataDoc = { ...coreDataDoc }
+		}
+		newDataDoc[dataId] = data
+		await setDoc(
+			doc(db, `${baseCollectionCoreData}/${dataDocName}`),
+			newDataDoc
+		)
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+const del = async (dataDocName: string, dataId: string) => {
+	try {
+		const coreDataDoc = await getAll(dataDocName)
+		if (coreDataDoc) {
+			delete coreDataDoc[dataId]
+			await setDoc(
+				doc(db, `${baseCollectionCoreData}/${dataDocName}`),
+				coreDataDoc
+			)
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
 
 /* --- COURSES --- */
 export const getCourses = async () => getAll(COURSES)
 export const getCourse = async (courseId: string) => get(COURSES, courseId)
 export const addCourse = async (courseId: string, courseData: Course) =>
-	add(COURSES, courseId, courseData)
+	addOrUpdate(COURSES, courseId, courseData)
 export const updateCourse = async (courseId: string, courseData: Course) =>
-	update(COURSES, courseId, courseData)
+	addOrUpdate(COURSES, courseId, courseData)
 export const deleteCourse = async (courseId: string) => del(COURSES, courseId)
 
 /* --- DEPARTMENTS --- */
@@ -70,11 +103,11 @@ export const getDepartment = async (departmentId: string) =>
 export const addDepartment = async (
 	departmentId: string,
 	departmentData: Department
-) => add(DEPARTMENTS, departmentId, departmentData)
+) => addOrUpdate(DEPARTMENTS, departmentId, departmentData)
 export const updateDepartment = async (
 	departmentId: string,
 	departmentData: Department
-) => update(DEPARTMENTS, departmentId, departmentData)
+) => addOrUpdate(DEPARTMENTS, departmentId, departmentData)
 export const deleteDepartment = async (departmentId: string) =>
 	del(DEPARTMENTS, departmentId)
 
@@ -82,35 +115,22 @@ export const deleteDepartment = async (departmentId: string) =>
 export const getPrograms = async () => getAll(PROGRAMS)
 export const getProgram = async (programId: string) => get(PROGRAMS, programId)
 export const addProgram = async (programId: string, programData: Program) =>
-	add(PROGRAMS, programId, programData)
+	addOrUpdate(PROGRAMS, programId, programData)
 export const updateProgram = async (programId: string, programData: Program) =>
-	update(PROGRAMS, programId, programData)
+	addOrUpdate(PROGRAMS, programId, programData)
 export const deleteProgram = async (programId: string) =>
 	del(PROGRAMS, programId)
-
-/* --- REVIEWS --- */
-export const getReviews = async () => getAll(REVIEWS)
-export const getReview = async () => (reviewId: string) =>
-	get(REVIEWS, reviewId)
-export const addReview = async (reviewId: string, reviewData: Review) => {
-	// Include a run transcations here to aggregate course statistics with an updateCourse
-	return add(REVIEWS, reviewId, reviewData)
-}
-export const updateReview = async (reviewId: string, reviewData: Review) =>
-	// Will need to include a run transcations here to both update review data and recalculate course statistics
-	update(REVIEWS, reviewId, reviewData)
-export const deleteReview = async (reviewId: string) => del(REVIEWS, reviewId)
 
 /* --- SEMESTERS --- */
 export const getSemesters = async () => getAll(SEMESTERS)
 export const getSemester = async (semesterId: string) =>
 	get(SEMESTERS, semesterId)
 export const addSemester = async (semesterId: string, semesterData: Semester) =>
-	add(SEMESTERS, semesterId, semesterData)
+	addOrUpdate(SEMESTERS, semesterId, semesterData)
 export const updateSemester = async (
 	semesterId: string,
 	semesterData: Semester
-) => update(SEMESTERS, semesterId, semesterData)
+) => addOrUpdate(SEMESTERS, semesterId, semesterData)
 export const deleteSemester = async (semesterId: string) =>
 	del(SEMESTERS, semesterId)
 
@@ -121,10 +141,98 @@ export const getSpecialization = async (specializationId: string) =>
 export const addSpecialization = async (
 	specializationId: string,
 	specializationData: Specialization
-) => add(SPECIALIZATIONS, specializationId, specializationData)
+) => addOrUpdate(SPECIALIZATIONS, specializationId, specializationData)
 export const updateSpecialization = async (
 	specializationId: string,
 	specializationData: Specialization
-) => update(SPECIALIZATIONS, specializationId, specializationData)
+) => addOrUpdate(SPECIALIZATIONS, specializationId, specializationData)
 export const deleteSpecialization = async (specializationId: string) =>
 	del(SPECIALIZATIONS, specializationId)
+
+/* --- REVIEWS (keyed by courseId-year-semesterId) --- */
+const baseCollectionReviewsData = 'reviewsData'
+
+export const getReviews = async (
+	courseId: string,
+	year: number,
+	semesterTerm: number
+) => {
+	try {
+		const snapshot = await getDoc(
+			doc(
+				db,
+				`${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`
+			)
+		)
+		const allReviewsData = snapshot.data()
+		return allReviewsData ?? null
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const getReview = async (
+	reviewId: string,
+	courseId: string,
+	year: number,
+	semesterTerm: number
+) => {
+	try {
+		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
+		return reviewsDataDoc ? reviewsDataDoc[reviewId] : null
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+const addOrUpdateReview = async (
+	reviewId: string,
+	courseId: string,
+	year: number,
+	semesterTerm: number,
+	data: TDocumentData
+) => {
+	try {
+		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
+		let newDataDoc: TDocumentDataObject = {}
+		if (reviewsDataDoc) {
+			newDataDoc = { ...reviewsDataDoc }
+		}
+		newDataDoc[reviewId] = data
+		await setDoc(
+			doc(db, `${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`),
+			newDataDoc
+		)
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const addReview = async (reviewId: string, courseId: string, year: number, semesterTerm: number, reviewData: Review) => {
+	// Include a run transcations here to aggregate course statistics with an updateCourse
+	await addOrUpdateReview(reviewId, courseId, year, semesterTerm, reviewData)
+}
+
+export const updateReview = async (reviewId: string, courseId: string, year: number, semesterTerm: number, reviewData: Review) => {
+	// Will need to include a run transcations here to both update review data and recalculate course statistics
+	await addOrUpdateReview(reviewId, courseId, year, semesterTerm, reviewData)
+}
+
+export const deleteReview = async (reviewId: string, courseId: string, year: number, semesterTerm: number) => {
+	try {
+		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
+		if (reviewsDataDoc) {
+			delete reviewsDataDoc[reviewId]
+			await setDoc(
+				doc(db, `${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`),
+				reviewsDataDoc
+			)
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}

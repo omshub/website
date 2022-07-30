@@ -14,14 +14,21 @@ The primary interface for consumption by the frontend is contained in `/firebase
 
 The collections defined in this app, and their corresponding CRUD operations' function calls, are as follows:
 
+(***core data***)
+
+| Firestore Document |        Get All         |         Get One         |          Add One          |            Update One            |         Delete One         |
+| :------------------: | :--------------------: | :---------------------: | :-----------------------: | :------------------------------: | :------------------------: |
+|      `coreData/courses`       |     `getCourses()`     |     `getCourse(id)`     |     `addCourse(data)`     |     `updateCourse(id, data)`     |     `deleteCourse(id)`     |
+|    `coreData/departments`     |   `getDepartments()`   |   `getDepartment(id)`   |   `addDepartment(data)`   |   `updateDepartment(id, data)`   |   `deleteDepartment(id)`   |
+|      `coreData/programs`      |    `getPrograms()`     |    `getProgram(id)`     |    `addProgram(data)`     |    `updateProgram(id, data)`     |    `deleteProgram(id)`     |
+|     `coreData/semesters`      |    `getSemesters()`    |    `getSemester(id)`    |    `addSemester(data)`    |    `updateSemester(id, data)`    |    `deleteSemester(id)`    |
+|  `coreData/specializations`   | `getSpecializations()` | `getSpecialization(id)` | `addSpecialization(data)` | `updateSpecialization(id, data)` | `deleteSpecialization(id)` |
+
+(***reviews data***)
+
 | Firestore Collection |        Get All         |         Get One         |          Add One          |            Update One            |         Delete One         |
 | :------------------: | :--------------------: | :---------------------: | :-----------------------: | :------------------------------: | :------------------------: |
-|      `courses`       |     `getCourses()`     |     `getCourse(id)`     |     `addCourse(data)`     |     `updateCourse(id, data)`     |     `deleteCourse(id)`     |
-|    `departments`     |   `getDepartments()`   |   `getDepartment(id)`   |   `addDepartment(data)`   |   `updateDepartment(id, data)`   |   `deleteDepartment(id)`   |
-|      `programs`      |    `getPrograms()`     |    `getProgram(id)`     |    `addProgram(data)`     |    `updateProgram(id, data)`     |    `deleteProgram(id)`     |
-|      `reviews`       |     `getReviews()`     |     `getReview(id)`     |     `addReview(data)`     |     `updateReview(id, data)`     |     `deleteReview(id)`     |
-|     `semesters`      |    `getSemesters()`    |    `getSemester(id)`    |    `addSemester(data)`    |    `updateSemester(id, data)`    |    `deleteSemester(id)`    |
-|  `specializations`   | `getSpecializations()` | `getSpecialization(id)` | `addSpecialization(data)` | `updateSpecialization(id, data)` | `deleteSpecialization(id)` |
+|      `reviewsData/{courseId}/{year}-{semesterTerm}/data`       |     `getReviews(courseId, year, semesterTerm)`     |     `getReview(reviewId, courseId, year, semesterTerm)`     |     `addReview(reviewId, courseId, year, semesterTerm, data)`     |     `updateReview(reviewId, courseId, year, semesterTerm, data)`     |     `deleteReview(reviewId, courseId, year, semesterTerm)`     |
 
 **_N.B._** See `/firebase/colectionsTypes.ts` for definition of collection fields (i.e., `data` per above).
 
