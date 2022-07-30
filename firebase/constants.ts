@@ -4,14 +4,12 @@ type TKeyMap = {
 	[key: string]: string
 }
 
-export const collections: TKeyMap = {
+export const coreDataDocuments: TKeyMap = {
 	COURSES: 'courses',
 	DEPARTMENTS: 'departments',
 	PROGRAMS: 'programs',
-	REVIEWS: 'reviews',
 	SEMESTERS: 'semesters',
 	SPECIALIZATIONS: 'specializations',
-	USERS: 'users',
 }
 
 export const idKeys: TKeyMap = {
