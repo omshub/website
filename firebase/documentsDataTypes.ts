@@ -1,17 +1,30 @@
+export type TDocumentData =
+	| Course
+	| Department
+	| Program
+	| Review
+	| Semester
+	| Specialization
+
+export type TDocumentDataObject = { [key: string]: TDocumentData }
+
+type TReviewsCountsByYearSemObject = { [key: string]: TDocumentData }
+
 export interface Course {
 	courseId: string
 	name: string
 	departmentId: string
 	courseNumber: string
-	aliases: string[]
 	url: string
-	isFoundational: boolean
+	aliases: string[]
 	isDeprecated: boolean
+	isFoundational: boolean
 	numReviews: number
-	avgWorkload: number
-	avgDifficulty: number
-	avgOverall: number
-	avgStaffSupport: number
+	avgWorkload: number | null
+	avgDifficulty: number | null
+	avgOverall: number | null
+	avgStaffSupport: number | null
+	reviewsCountsByYearSem: TReviewsCountsByYearSemObject
 }
 
 export interface Department {
@@ -71,11 +84,3 @@ export interface Specialization {
 	name: string
 	programId: string
 }
-
-export type TCollection =
-	| Course
-	| Department
-	| Program
-	| Review
-	| Semester
-	| Specialization

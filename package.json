@@ -28,14 +28,13 @@
 		"@emotion/react": "^11.9.0",
 		"@emotion/server": "^11.4.0",
 		"@emotion/styled": "^11.8.1",
-		"@mui/icons-material": "latest",
-		"@mui/material": "latest",
+		"@mui/icons-material": "^5.8.4",
+		"@mui/material": "^5.9.2",
 		"@mui/x-data-grid": "^5.12.0",
 		"firebase": "^9.9.0",
 		"next": "12.1.5",
-		"next-auth": "^4.9.0",
-		"react": "latest",
-		"react-dom": "latest",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
 		"react-markdown": "^8.0.3"
 	},
 	"devDependencies": {
@@ -49,13 +48,13 @@
 		"@storybook/testing-library": "^0.0.11",
 		"@testing-library/jest-dom": "^5.16.4",
 		"@testing-library/react": "^13.2.0",
-		"@types/node": "latest",
-		"@types/react": "latest",
+		"@types/node": "^18.6.2",
+		"@types/react": "^18.0.15",
 		"babel-loader": "^8.2.5",
 		"commitizen": "^4.2.4",
 		"cz-conventional-changelog": "3.3.0",
-		"eslint": "latest",
-		"eslint-config-next": "latest",
+		"eslint": "^8.20.0",
+		"eslint-config-next": "^12.2.3",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-storybook": "^0.5.11",
 		"husky": "^8.0.1",
@@ -66,7 +65,7 @@
 		"next-sitemap": "^2.5.20",
 		"prettier": "^2.6.2",
 		"storybook-addon-next-router": "^3.1.1",
-		"typescript": "latest"
+		"typescript": "^4.7.4"
 	},
 	"config": {
 		"commitizen": {

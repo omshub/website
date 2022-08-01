@@ -1,5 +1,6 @@
 const { initializeApp } = require('firebase/app')
-const { getFirestore, collection, addDoc } = require('firebase/firestore')
+const { getFirestore, setDoc, doc } = require('firebase/firestore')
+const _ = require('lodash')
 
 // N.B. See `./example.env.js` for how to populate `.env.js`
 const { config } = require('./.env')
@@ -15,17 +16,86 @@ const specializations = require('./data/specializations')
 const firebaseApp = initializeApp(config)
 const db = getFirestore(firebaseApp)
 
-const add = async (collectionName, data) =>
-	addDoc(collection(db, collectionName), data)
+// convert seed data from array form to map form
+
+/* --- CORE DATA --- */
+const coursesMap = {}
+courses.forEach((course) => {
+	coursesMap[course.courseId] = course
+})
+
+const departmentsMap = {}
+departments.forEach((department) => {
+	departmentsMap[department.departmentId] = department
+})
+
+const programsMap = {}
+programs.forEach((program) => {
+	programsMap[program.programId] = program
+})
+
+const semestersMap = {}
+semesters.forEach((semester) => {
+	semestersMap[semester.semesterId] = semester
+})
+
+const specializationsMap = {}
+specializations.forEach((specialization) => {
+	specializationsMap[specialization.specializationId] = specialization
+})
+
+/* --- REVIEWS DATA --- */
+const mapSemIdToTerm = {
+	sp: 1,
+	sm: 2,
+	fa: 3,
+}
+
+const reviewsDataMaps = {}
+_.sortBy(reviews, ['courseId', 'reviewId']).forEach((review) => {
+	const { year, semesterId, courseId, reviewId } = review
+	const semesterTerm = mapSemIdToTerm[semesterId]
+	const key = `${year}-${semesterTerm}`
+
+	if (!reviewsDataMaps[courseId]) {
+		reviewsDataMaps[courseId] = {}
+	}
+
+	if (!reviewsDataMaps[courseId][key]) {
+		reviewsDataMaps[courseId][key] = {}
+	}
+	reviewsDataMaps[courseId][key][reviewId] = review
+})
+
+const reviewsRecent50 = []
+reviews
+	.sort((a, b) => b.created - a.created)
+	.slice(0, 50)
+	.forEach((review) => {
+		reviewsRecent50.push(review)
+	})
 
 // Seed Firebase Firestore collections in the cloud
-courses.forEach(async (courseData) => add('courses', courseData))
-departments.forEach(async (departmentData) =>
-	add('departments', departmentData)
-)
-programs.forEach(async (programData) => add('programs', programData))
-reviews.forEach(async (reviewData) => add('reviews', reviewData))
-semesters.forEach(async (semesterData) => add('semesters', semesterData))
-specializations.forEach(async (specializationData) =>
-	add('specializations', specializationData)
-)
+const add = async (collectionName, newDocId, data) =>
+	setDoc(doc(db, collectionName, newDocId), data)
+
+// seed core data
+;(async () => {
+	await add('coreData', 'courses', coursesMap)
+	await add('coreData', 'departments', departmentsMap)
+	await add('coreData', 'programs', programsMap)
+	await add('coreData', 'semesters', semestersMap)
+	await add('coreData', 'specializations', specializationsMap)
+})()
+
+// seed reviews data
+for (const courseId in reviewsDataMaps) {
+	const yearSem = reviewsDataMaps[courseId]
+	for (const yearSemId in yearSem) {
+		const reviewData = yearSem[yearSemId]
+		;(async () =>
+			add(`reviewsData/${courseId}/${yearSemId}`, 'data', reviewData))()
+	}
+}
+
+;(async () => add(`reviewsRecent50`, 'reviews', { data: reviewsRecent50 }))()
