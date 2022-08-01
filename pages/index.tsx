@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Link from '../src/Link'
+import { getCourses }  from "../firebase/dbOperations"
 import {
 	DataGrid,
 	GridColDef,
@@ -12,15 +13,23 @@ import {
 	GridRenderCellParams,
 } from '@mui/x-data-grid'
 
-interface ClassData {
-	number: string
-	aliases: string
-	department: string
-	deprecated: boolean
-	foundational: string
-	name: string
-	link: string
-	course_id: string
+interface ClassData extends Object {
+
+	aliases?: string[]
+	avgDifficulty?: number
+	avgOverall?: number
+	avgStaffSupport?: number
+	avgWorkload?: number
+	courseId?: string
+	courseNumber?: string
+	departmentId?: string
+	id?:any
+	isDeprecated?: boolean
+	isFoundational?: boolean
+	key?:any
+	name?: string
+	numReviews?: number
+	url?: string
 }
 
 const Home: NextPage = () => {
@@ -32,40 +41,43 @@ const Home: NextPage = () => {
 			renderCell: (params: GridRenderCellParams) => (
 				<Link
 					href={{
-						pathname: `/class/${params.row.course_id}`,
-						query: { classid: params.row.course_id, title: params.row.name },
+						pathname: `/class/${params.row.courseId}`,
+						query: { courseId: params.row.courseId, title: params.row.name },
 					}}
 				>
 					{params.row.name}
 				</Link>
 			),
 		},
-		{ field: 'course_id', headerName: 'Course ID', flex: 1 },
-		{ field: 'aliases', headerName: 'Aliases', flex: 1, hide: true },
+		{ field: 'courseId', headerName: 'Course ID', flex: 0.5 },
+		{ field: 'avgDifficulty', headerName: 'Difficulty (out of 5)', flex: 0.5, valueGetter:(params:any)=>Math.round(params.row.avgDifficulty * 10) / 10 },
+		{ field: 'avgWorkload', headerName: 'Workload (hrs/wk)', flex: 0.5, valueGetter:(params:any)=>Math.round(params.row.avgWorkload * 10) / 10 },
+		{ field: 'avgOverall', headerName: 'Overall (hrs/wk)', flex: 0.5 , valueGetter:(params:any)=>Math.round(params.row.avgOverall * 10) / 10},
+		{ field: 'numReviews', headerName: 'Number of Reviews', flex: 0.5 },
+		{ field: 'isDeprecated', headerName: 'is Deprecated?', flex: 0,hide:true},
+		{ field: 'aliases', headerName: 'Aliases', flex: 0,hide:true},
 	]
 	const [loading, setLoading] = useState<boolean>()
 	const [classes, setClasses] = useState<Array<ClassData>>([])
 
 	useEffect(() => {
 		setLoading(true)
-		// fetch('https://omshub-readonly.gigalixirapp.com/classes')
-		fetch('https://omshub-api.gigalixirapp.com/api/classes')
-			.then((res) => res.json())
-			.then((classes) => {
-				//Clean data
-				classes = classes.map((data: object, index: number) => ({
-					...data,
-					id: index,
-				}))
-				setClasses(classes)
-				setLoading(false)
-			})
-			.catch((err) => {
-				setLoading(false)
-				console.log(err)
-			})
+		
+		getCourses().then((courses)=>{
+			const classes=courses.map((data:ClassData,index:number)=>({
+				...data,
+				id:index,
+			}))
+			setClasses(classes)
+			setLoading(false)	
+		})
+		.catch((err) => {
+			setLoading(false)
+			console.log(err)
+		})
+		
+		
 	}, [])
-
 	return (
 		<Container maxWidth='lg'>
 			<Box
@@ -96,7 +108,9 @@ const Home: NextPage = () => {
 							loading={loading}
 							components={{ Toolbar: GridToolbar }}
 							columnVisibilityModel={{
+								isDeprecated:false,
 								aliases: false,
+
 							}}
 							componentsProps={{
 								toolbar: {
@@ -108,7 +122,12 @@ const Home: NextPage = () => {
 								pagination: {
 									pageSize: 150,
 								},
+								filter: {
+									filterModel: {
+									  items: [{ columnField: 'isDeprecated', operatorValue: 'equals', value: 'false' }],
+									},
 							}}
+						}
 						/>
 					</Grid>
 				</>
