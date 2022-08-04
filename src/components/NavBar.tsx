@@ -5,17 +5,23 @@ import { grey } from '@mui/material/colors'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import Link from '../Link'
+import Dialog from '@mui/material/Dialog';
+import Login from './LoginContent'
 // import Menu from '@mui/material/Menu';
 // import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
+
 // import IconButton from '@mui/material/IconButton'
 // import AccountCircle from '@mui/icons-material/AccountCircle';
 
 interface NavBarProps {}
 
 export const NavBar = ({ ...props }: NavBarProps) => {
+	const [open, setOpen] = React.useState(false);
+	const handleOpen = () => setOpen(true);
+	const handleClose = () => setOpen(false);
 	// const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-	
+
 	// const isMenuOpen = Boolean(anchorEl);
 
 	// const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -27,7 +33,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 	// };
 
   	// const menuId = 'primary-search-account-menu';
-	
+
 	// const renderMenu = (
 	// 	<>
 	// 	<IconButton
@@ -90,16 +96,17 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 						About
 					</Link>
 				</nav>
-				<Link
-						variant='button'
-						color='text.primary'
-						href='/login'
-						sx={{ my: 1, mx: 1.5 }}
+					<Button onClick={handleOpen} variant='outlined' sx={{ my: 1, mx: 1.5 }}>Login</Button>
+					<Dialog
+						aria-labelledby="spring-modal-title"
+						aria-describedby="spring-modal-description"
+						open={open}
+						onClose={handleClose}
+						closeAfterTransition
 					>
-					<Button variant='outlined' sx={{ my: 1, mx: 1.5 }}>
-						Login
-					</Button>
-				</Link>
+						<Login/>
+
+		  			</Dialog>
 				{/* :
 				<Box sx={{ flexGrow: 0 }}>
 					{renderMenu}
