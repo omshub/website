@@ -73,7 +73,7 @@
 		}
 	},
 	"lint-staged": {
-		"*{js,jsx,ts,tsx}": [
+		"{ts,tsx}": [
 			"next lint"
 		],
 		"*": [
