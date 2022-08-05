@@ -34,7 +34,7 @@ const Login:NextPage = () =>{
         },
 
     }
-
+    
 
     return (
         <Grid
@@ -51,7 +51,7 @@ const Login:NextPage = () =>{
                     Object.keys(providers).map((key,index)=>{
                         return(
                             <>
-                             <SocialButton key={index} onClick={()=>{signInWithProvider(key);handleModalClose()}}style={providers[key].style} text={`Login with ${key}`}></SocialButton>
+                             <SocialButton key={index} onClick={()=>{signInWithProvider(key);handleModalClose()}} style={providers[key].style} text={`Login with ${key}`}></SocialButton>
                             </>
                         )
                     })

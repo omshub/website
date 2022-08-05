@@ -6,9 +6,10 @@ interface SocialButtonProps {
     text?: string
     variant?: string
     style?: object
+    onClick?: () => void
 }
 
-const SocialButton:React.FC = ({...props}:SocialButtonProps) => {
+const SocialButton= ({...props}:SocialButtonProps) => {
     return (
         <Button key={props.key} onClick={props.onClick} style={props.style}>
             {props.text}

@@ -97,7 +97,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 							onClose={handleModalClose}
 							closeAfterTransition
 							>
-							<Login props={handleModalClose}/>
+							<Login/>
 							<Button onClick={handleModalClose}>Close</Button>
 						</Dialog>
 					</>
