@@ -16,7 +16,7 @@ interface NavBarProps {}
 export const NavBar = ({ ...props }: NavBarProps) => {
 	
 	const {user} = useAuth()
-	const {modalOpen,handleModalOpen,handleModalClose} = useMenu()
+	const {loginModalOpen,handleLoginModalOpen,handleLoginModalClose} = useMenu()
 	
 	return (
 		<Box sx={{ flexGrow: 1 }}>
@@ -53,16 +53,16 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 				</nav>
 				{!user ? 
 					<>
-						<Button onClick={handleModalOpen} variant='outlined' sx={{ my: 1, mx: 1.5 }}>Login</Button>
+						<Button disableRipple onClick={handleLoginModalOpen} variant='outlined' sx={{ my: 1, mx: 1.5 }}>Login</Button>
 						<Dialog
 							aria-labelledby="spring-modal-title"
 							aria-describedby="spring-modal-description"
-							open={modalOpen}
-							onClose={handleModalClose}
+							open={loginModalOpen}
+							onClose={handleLoginModalClose}
 							closeAfterTransition
 							>
 							<Login/>
-							<Button onClick={handleModalClose}>Close</Button>
+							<Button onClick={handleLoginModalClose}>Close</Button>
 						</Dialog>
 					</>
 					:

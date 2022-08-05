@@ -1,7 +1,7 @@
 import {createContext, useContext, useEffect, useState} from "react"
 import {onAuthStateChanged} from 'firebase/auth'
 import {auth} from '../firebase/FirebaseConfig'
-import {fetchSignInMethodsForEmail,signInWithPopup,signOut, GoogleAuthProvider,FacebookAuthProvider,GithubAuthProvider } from "firebase/auth";
+import {fetchSignInMethodsForEmail,sendSignInLinkToEmail,isSignInWithEmailLink,signInWithEmailLink,signInWithPopup,signOut, GoogleAuthProvider,FacebookAuthProvider,GithubAuthProvider } from "firebase/auth";
 import {useAlert} from './AlertContext'
 import { OAuthProvider } from "firebase/auth";
 const AuthContext = createContext<any>({})
@@ -13,6 +13,7 @@ export const AuthContextProvider = ({children} : {children:React.ReactNode}) =>{
 
     const [user,setUser] = useState<any>(null)
     const {setAlert} = useAlert()
+
     useEffect(()=>{
         const unsubscribe = onAuthStateChanged(auth,(user: any) =>{
             user ? setUser({
@@ -20,9 +21,15 @@ export const AuthContextProvider = ({children} : {children:React.ReactNode}) =>{
                 email:user.email,
                 displayName:user
             }) : setUser(null)
+            console.log(user)
         })
         // OAuth Providers
+        const email = window.localStorage.getItem("emailForSignIn")
 
+        if (isSignInWithEmailLink(auth,window.location.href) && !!email) {
+            // Sign the user in
+                signInWithEmailLink(auth,email, window.location.href)
+            } 
         
         // Remove all listeners from firebase when unmounting
         return ()=> unsubscribe()
@@ -38,7 +45,22 @@ export const AuthContextProvider = ({children} : {children:React.ReactNode}) =>{
         setUser(null)
         await signOut(auth) 
     }
-    
+    const signWithMagic = (email:string) =>{
+        // If the user is re-entering their email address but already has a code
+        sendSignInLinkToEmail(auth,email, {
+            url: window.location.origin,
+            handleCodeInApp: true,
+        })
+        .then(() => {
+        // Save the users email to verify it after they access their email
+            window.localStorage.setItem("emailForSignIn", email);
+            setAlert({
+                severity:'success',
+                text:`A Magic Link was sent to ${email}! Check your spam folder just in-case.`,
+                variant:'outlined'
+            })
+        })
+    }
     const signInWithProvider = (provider:string) => {
         const [currentProvider , currentProviderAuth] = providerMap[provider]
         signInWithPopup(auth,currentProviderAuth).then((result) => {
@@ -81,6 +103,6 @@ export const AuthContextProvider = ({children} : {children:React.ReactNode}) =>{
             // ...
           })}
           
-    return <AuthContext.Provider value={{user,signInWithProvider,logout}}>{children}</AuthContext.Provider>
+    return <AuthContext.Provider value={{user,signInWithProvider,signWithMagic,logout}}>{children}</AuthContext.Provider>
 
 }

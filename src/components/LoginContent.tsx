@@ -4,9 +4,21 @@ import {useAuth} from '../../context/AuthContext'
 import {useMenu} from '../../context/MenuContext'
 import Stack from '@mui/material/Stack';
 import SocialButton from './SocialButton';
+import TextField from '@mui/material/TextField';
+import { useState } from 'react';
 const Login:NextPage = () =>{
-    const {signInWithProvider} = useAuth()
-    const {handleModalClose} = useMenu()
+    const {signInWithProvider,signWithMagic} = useAuth()
+    const {handleLoginModalClose} = useMenu()
+    const [email,setEmail] = useState()
+    const handleEmailChange = (event:any) =>{
+        setEmail(event?.target?.value)
+    }
+    const handleKeyPress = (event:any) =>{
+        if(event?.charCode == 13){
+            signWithMagic(email)
+            handleLoginModalClose()
+         }
+    }
     const providers:any = {
         "Google":{
             style:{
@@ -47,11 +59,12 @@ const Login:NextPage = () =>{
         >
             <Grid item xs={3}>
                 <Stack spacing={2}>
+                    <TextField onChange={handleEmailChange} onKeyPress={handleKeyPress} sx={{textAlign:'center'}} label={`Login with Magic!`}></TextField>
                     {
                     Object.keys(providers).map((key,index)=>{
                         return(
                             <>
-                             <SocialButton key={index} onClick={()=>{signInWithProvider(key);handleModalClose()}} style={providers[key].style} text={`Login with ${key}`}></SocialButton>
+                             <SocialButton key={index} onClick={()=>{signInWithProvider(key);handleLoginModalClose()}} style={providers[key].style} text={`Login with ${key}`}></SocialButton>
                             </>
                         )
                     })

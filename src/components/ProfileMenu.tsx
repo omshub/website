@@ -4,28 +4,21 @@ import {useAuth} from '../../context/AuthContext'
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
-import IconButton from '@mui/material/IconButton'
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import { Avatar } from '@mui/material';
 
 const ProfileMenu = () => {
-    const {logout} = useAuth()
+    const {user,logout} = useAuth()
     const {profileMenuAnchorEl,handleProfileMenuOpen,handleMenuClose} = useMenu()
     
 	const isProfileMenuOpen = Boolean(profileMenuAnchorEl)
   	const menuId = 'primary-search-account-menu';
     return (
         <>
-        <IconButton
-            size="large"
-            edge="end"
-            aria-label="account of current user"
+        <Avatar
             aria-controls={menuId}
-            aria-haspopup="true"
             onClick={handleProfileMenuOpen}
-            color="inherit"
-            >
-            <AccountCircle />
-        </IconButton>
+            src={user.photoURL}
+        />
         <Menu
         anchorEl={profileMenuAnchorEl}
         anchorOrigin={{
@@ -37,7 +30,7 @@ const ProfileMenu = () => {
         open={isProfileMenuOpen}
         onClose={handleMenuClose}
         >
-        {/* <MenuItem onClick={handleMenuClose}>My account</MenuItem> */}
+        <MenuItem onClick={handleMenuClose}>My account</MenuItem>
         <MenuItem onClick={()=>{handleMenuClose();logout()}}>Logout</MenuItem>
         </Menu>
         </>
