@@ -1,6 +1,8 @@
-// N.B. This data is NOT included in aggregates (cf. `./courses.js`).
-// This legacy data has anomalies with respect to the following field(s):
-//   year, semesterId, workload, difficulty, and/or overall
+/*
+	N.B. This data is NOT included in aggregates (cf. `./courses.js`).
+	This legacy data has anomalies with respect to the following field(s):
+		year, semesterId, workload, difficulty, and/or overall
+ */
 
 module.exports = [
 	{

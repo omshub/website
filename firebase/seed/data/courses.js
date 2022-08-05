@@ -16,10 +16,10 @@ module.exports = [
 		aliases: ['IIS'],
 		isDeprecated: false,
 		isFoundational: true,
-		numReviews: 417,
-		avgWorkload: 10.62937649880096,
-		avgDifficulty: 2.54916067146283,
-		avgOverall: 3.2949640287769784,
+		numReviews: 416,
+		avgWorkload: 10.414543269230771,
+		avgDifficulty: 2.543269230769231,
+		avgOverall: 3.300480769230769,
 		avgStaffSupport: null,
 		reviewsCountsByYearSem: {
 			2015: { 1: 0, 2: 0, 3: 21 },
@@ -29,7 +29,7 @@ module.exports = [
 			2019: { 1: 25, 2: 29, 3: 30 },
 			2020: { 1: 41, 2: 13, 3: 25 },
 			2021: { 1: 20, 2: 10, 3: 15 },
-			2022: { 1: 15, 2: 1, 3: 0 },
+			2022: { 1: 15, 2: 0, 3: 0 },
 		},
 	},
 	{
@@ -2079,7 +2079,7 @@ module.exports = [
 			2021: { 1: 3, 2: 0, 3: 2 },
 		},
 	},
-	// IGNORE - ambiguous departmentId
+	/* IGNORE -- ambiguous departmentId */
 	// {
 	// 	courseId: 'VIP-6600',
 	// 	departmentId: 'VIP',
