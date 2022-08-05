@@ -1,7 +1,7 @@
 import {createContext, useContext, useEffect, useState} from "react"
 import {onAuthStateChanged} from 'firebase/auth'
 import {auth} from '../firebase/FirebaseConfig'
-import {signInWithPopup, GoogleAuthProvider,FacebookAuthProvider,GithubAuthProvider } from "firebase/auth";
+import {signInWithPopup,signOut, GoogleAuthProvider,FacebookAuthProvider,GithubAuthProvider } from "firebase/auth";
 import { OAuthProvider } from "firebase/auth";
 const AuthContext = createContext<any>({})
 
@@ -33,6 +33,10 @@ export const AuthContextProvider = ({children} : {children:React.ReactNode}) =>{
         "Github": [GithubAuthProvider,new GithubAuthProvider()],
         "Facebook": [GithubAuthProvider,new FacebookAuthProvider()]
     }
+    const logout = async () =>{ 
+        setUser(null)
+        await signOut(auth) 
+    }
     
     const signInWithProvider = (provider:string) => {
         const [currentProvider , currentProviderAuth] = providerMap[provider]
@@ -55,7 +59,7 @@ export const AuthContextProvider = ({children} : {children:React.ReactNode}) =>{
             
             // ...
           })}
-    
-    return <AuthContext.Provider value={{user,signInWithProvider}}>{children}</AuthContext.Provider>
+          
+    return <AuthContext.Provider value={{user,signInWithProvider,logout}}>{children}</AuthContext.Provider>
 
 }

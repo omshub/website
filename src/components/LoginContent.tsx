@@ -1,12 +1,40 @@
 import { Grid } from '@mui/material'
 import type { NextPage } from 'next'
-// import {useAuth} from '../../context/AuthContext'
+import {useAuth} from '../../context/AuthContext'
+import {useMenu} from '../../context/MenuContext'
 import Stack from '@mui/material/Stack';
 import SocialButton from './SocialButton';
 const Login:NextPage = () =>{
-    // const {signInWithProvider} = useAuth()
+    const {signInWithProvider} = useAuth()
+    const {handleModalClose} = useMenu()
+    const providers:any = {
+        "Google":{
+            style:{
+                background: 'white', 
+                color: 'black'
+            }
+        },
+        "Facebook":{
+            style:{
+                background:'#293e69',
+                color: 'white'
+            }
+        },
+        "Github":{
+            style:{
+                background:'#555555',
+                color: 'white'
+            }
+        },
+        "Apple":{
+            style:{
+                background:'#3333331c',
+                color: 'black'
+            }
+        },
 
-    const providers = ["Google","Facebook","Github","Apple"]
+    }
+
 
     return (
         <Grid
@@ -20,10 +48,10 @@ const Login:NextPage = () =>{
             <Grid item xs={3}>
                 <Stack spacing={2}>
                     {
-                    providers.map((provider,index)=>{
+                    Object.keys(providers).map((key,index)=>{
                         return(
                             <>
-                             <SocialButton key={index} text={`Login with ${provider}`}></SocialButton>
+                             <SocialButton key={index} onClick={()=>{signInWithProvider(key);handleModalClose()}}style={providers[key].style} text={`Login with ${key}`}></SocialButton>
                             </>
                         )
                     })

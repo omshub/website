@@ -1,4 +1,3 @@
-import * as React from 'react'
 import AppBar from '@mui/material/AppBar'
 import Button from '@mui/material/Button'
 import { grey } from '@mui/material/colors'
@@ -7,62 +6,54 @@ import Typography from '@mui/material/Typography'
 import Link from '../Link'
 import Dialog from '@mui/material/Dialog';
 import Login from './LoginContent'
-// import Menu from '@mui/material/Menu';
-// import MenuItem from '@mui/material/MenuItem';
+import {useAuth} from '../../context/AuthContext'
+import {useMenu} from '../../context/MenuContext'
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 
-// import IconButton from '@mui/material/IconButton'
-// import AccountCircle from '@mui/icons-material/AccountCircle';
+import IconButton from '@mui/material/IconButton'
+import AccountCircle from '@mui/icons-material/AccountCircle';
 
 interface NavBarProps {}
 
 export const NavBar = ({ ...props }: NavBarProps) => {
-	const [open, setOpen] = React.useState(false);
-	const handleOpen = () => setOpen(true);
-	const handleClose = () => setOpen(false);
-	// const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+	
+	const {user,logout} = useAuth()
+	const {profileMenuAnchorEl,modalOpen,handleModalOpen,handleModalClose,handleProfileMenuOpen,handleMenuClose} = useMenu()
+    
+	const isProfileMenuOpen = Boolean(profileMenuAnchorEl)
+  	const menuId = 'primary-search-account-menu';
 
-	// const isMenuOpen = Boolean(anchorEl);
-
-	// const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-	// 	setAnchorEl(event.currentTarget);
-	// };
-
-	// const handleMenuClose = () => {
-	// 	setAnchorEl(null);
-	// };
-
-  	// const menuId = 'primary-search-account-menu';
-
-	// const renderMenu = (
-	// 	<>
-	// 	<IconButton
-    //           size="large"
-    //           edge="end"
-    //           aria-label="account of current user"
-    //           aria-controls={menuId}
-    //           aria-haspopup="true"
-    //           onClick={handleProfileMenuOpen}
-    //           color="inherit"
-    //         >
-    //           <AccountCircle />
-	// 	</IconButton>
-	// 	<Menu
-	// 	  anchorEl={anchorEl}
-	// 	  anchorOrigin={{
-	// 		vertical: 'bottom',
-	// 		horizontal: 'right',
-	// 	  }}
-	// 	  id={menuId}
-	// 	  keepMounted
-	// 	  open={isMenuOpen}
-	// 	  onClose={handleMenuClose}
-	// 	>
-	// 	  <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-	// 	  <MenuItem component={Link} href="/api/auth/signout">Logout</MenuItem>
-	// 	</Menu>
-	// 	</>
-	//   );
+	const renderMenu = (
+		<>
+		<IconButton
+              size="large"
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+              color="inherit"
+            >
+              <AccountCircle />
+		</IconButton>
+		<Menu
+		  anchorEl={profileMenuAnchorEl}
+		  anchorOrigin={{
+			vertical: 'bottom',
+			horizontal: 'right',
+		  }}
+		  id={menuId}
+		  keepMounted
+		  open={isProfileMenuOpen}
+		  onClose={handleMenuClose}
+		>
+		  {/* <MenuItem onClick={handleMenuClose}>My account</MenuItem> */}
+		  <MenuItem onClick={()=>{handleMenuClose();logout()}}>Logout</MenuItem>
+		</Menu>
+		</>
+	  );
 	return (
 		<Box sx={{ flexGrow: 1 }}>
 		<AppBar
@@ -96,21 +87,25 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 						About
 					</Link>
 				</nav>
-					<Button onClick={handleOpen} variant='outlined' sx={{ my: 1, mx: 1.5 }}>Login</Button>
-					<Dialog
-						aria-labelledby="spring-modal-title"
-						aria-describedby="spring-modal-description"
-						open={open}
-						onClose={handleClose}
-						closeAfterTransition
-					>
-						<Login/>
-
-		  			</Dialog>
-				{/* :
-				<Box sx={{ flexGrow: 0 }}>
-					{renderMenu}
-			  	</Box> */}
+				{!user ? 
+					<>
+						<Button onClick={handleModalOpen} variant='outlined' sx={{ my: 1, mx: 1.5 }}>Login</Button>
+						<Dialog
+							aria-labelledby="spring-modal-title"
+							aria-describedby="spring-modal-description"
+							open={modalOpen}
+							onClose={handleModalClose}
+							closeAfterTransition
+							>
+							<Login props={handleModalClose}/>
+							<Button onClick={handleModalClose}>Close</Button>
+						</Dialog>
+					</>
+					:
+					<Box sx={{ flexGrow: 0 }}>
+						{renderMenu}
+			  		</Box>
+				}
 			</Toolbar>
 		</AppBar>
 		</Box>

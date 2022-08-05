@@ -1,15 +1,16 @@
 
 import Button from '@mui/material/Button';
-
+import * as React from 'react'
 interface SocialButtonProps {
+    key?: number 
     text?: string
     variant?: string
     style?: object
 }
 
-const SocialButton = ({...props}:SocialButtonProps) => {
+const SocialButton:React.FC = ({...props}:SocialButtonProps) => {
     return (
-        <Button style={props.style}>
+        <Button key={props.key} onClick={props.onClick} style={props.style}>
             {props.text}
         </Button>
     )

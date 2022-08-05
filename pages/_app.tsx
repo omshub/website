@@ -9,6 +9,7 @@ import createEmotionCache from '../src/createEmotionCache'
 // import Copyright from '../src/Copyright'
 import theme from '../src/theme'
 import {AuthContextProvider} from '../context/AuthContext'
+import {MenuContextProvider} from '../context/MenuContext'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
@@ -22,16 +23,17 @@ export default function MyApp(props: MyAppProps) {
 	return (
 			<CacheProvider value={emotionCache}>
 				<AuthContextProvider>
-				<Head>
-					<meta name='viewport' content='initial-scale=1, width=device-width' />
-					<title>OMSHub</title>
-				</Head>
-				<ThemeProvider theme={theme}>
-					{/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-					<CssBaseline />
-					<NavBar />
-					<Component {...pageProps} />
-				</ThemeProvider>
+					<Head>
+						<meta name='viewport' content='initial-scale=1, width=device-width' />
+						<title>OMSHub</title>
+					</Head>
+					<ThemeProvider theme={theme}>
+						<CssBaseline />
+						<MenuContextProvider>
+							<NavBar />
+						</MenuContextProvider>
+						<Component {...pageProps} />
+					</ThemeProvider>
 				</AuthContextProvider>
 			</CacheProvider>
 
