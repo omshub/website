@@ -8,52 +8,16 @@ import Dialog from '@mui/material/Dialog';
 import Login from './LoginContent'
 import {useAuth} from '../../context/AuthContext'
 import {useMenu} from '../../context/MenuContext'
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
-
-import IconButton from '@mui/material/IconButton'
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import ProfileMenu from './ProfileMenu'
 
 interface NavBarProps {}
 
 export const NavBar = ({ ...props }: NavBarProps) => {
 	
-	const {user,logout} = useAuth()
-	const {profileMenuAnchorEl,modalOpen,handleModalOpen,handleModalClose,handleProfileMenuOpen,handleMenuClose} = useMenu()
-    
-	const isProfileMenuOpen = Boolean(profileMenuAnchorEl)
-  	const menuId = 'primary-search-account-menu';
-
-	const renderMenu = (
-		<>
-		<IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-		</IconButton>
-		<Menu
-		  anchorEl={profileMenuAnchorEl}
-		  anchorOrigin={{
-			vertical: 'bottom',
-			horizontal: 'right',
-		  }}
-		  id={menuId}
-		  keepMounted
-		  open={isProfileMenuOpen}
-		  onClose={handleMenuClose}
-		>
-		  {/* <MenuItem onClick={handleMenuClose}>My account</MenuItem> */}
-		  <MenuItem onClick={()=>{handleMenuClose();logout()}}>Logout</MenuItem>
-		</Menu>
-		</>
-	  );
+	const {user} = useAuth()
+	const {modalOpen,handleModalOpen,handleModalClose} = useMenu()
+	
 	return (
 		<Box sx={{ flexGrow: 1 }}>
 		<AppBar
@@ -103,7 +67,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 					</>
 					:
 					<Box sx={{ flexGrow: 0 }}>
-						{renderMenu}
+						<ProfileMenu/>
 			  		</Box>
 				}
 			</Toolbar>
