@@ -9,7 +9,6 @@ export const MenuContextProvider = ({children} : {children:React.ReactNode}) => 
     const [modalOpen, setModalOpen] = useState(false);
 	const handleModalOpen = () => {
         setModalOpen(true);
-        console.log(open)
     }
 	const handleModalClose = () => setModalOpen(false);
     const [profileMenuAnchorEl, setProfileMenuAnchorEl] = React.useState<null | HTMLElement>(null);

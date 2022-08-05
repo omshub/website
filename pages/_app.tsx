@@ -10,7 +10,7 @@ import createEmotionCache from '../src/createEmotionCache'
 import theme from '../src/theme'
 import {AuthContextProvider} from '../context/AuthContext'
 import {MenuContextProvider} from '../context/MenuContext'
-
+import {AlertContextProvider} from '../context/AlertContext'
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
 
@@ -22,6 +22,7 @@ export default function MyApp(props: MyAppProps) {
 	const { Component, emotionCache = clientSideEmotionCache, pageProps:{ ...pageProps }} = props
 	return (
 			<CacheProvider value={emotionCache}>
+			<AlertContextProvider>
 				<AuthContextProvider>
 					<Head>
 						<meta name='viewport' content='initial-scale=1, width=device-width' />
@@ -29,12 +30,13 @@ export default function MyApp(props: MyAppProps) {
 					</Head>
 					<ThemeProvider theme={theme}>
 						<CssBaseline />
-						<MenuContextProvider>
-							<NavBar />
-						</MenuContextProvider>
+							<MenuContextProvider>
+								<NavBar />
+							</MenuContextProvider>
 						<Component {...pageProps} />
 					</ThemeProvider>
 				</AuthContextProvider>
+			</AlertContextProvider>
 			</CacheProvider>
 
 	)
