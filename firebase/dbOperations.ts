@@ -1,11 +1,10 @@
-import {
-	doc,
-	getDoc,
-	setDoc,
-	// runTransaction,
-} from 'firebase/firestore'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from './FirebaseConfig'
-import { coreDataDocuments } from './constants'
+import {
+	coreDataDocuments,
+	baseCollectionReviewsData,
+	baseDocumentReviewsRecent50,
+} from './constants'
 import {
 	Course,
 	Department,
@@ -13,73 +12,24 @@ import {
 	Review,
 	Semester,
 	Specialization,
-	TDocumentData,
-	TDocumentDataObject,
 } from './documentsDataTypes'
+import {
+	get,
+	getAll,
+	addOrUpdate,
+	del,
+	parseReviewId,
+	addOrUpdateReview,
+	updateCourseDataOnAddReview,
+	updateReviewsRecent50OnAddReview,
+	updateCourseDataOnUpdateReview,
+	updateReviewsRecent50OnUpdateReview,
+	updateCourseDataOnDeleteReview,
+	updateReviewsRecent50OnDeleteReview,
+} from './utilities'
 
 const { COURSES, DEPARTMENTS, PROGRAMS, SEMESTERS, SPECIALIZATIONS } =
 	coreDataDocuments
-
-// Base CRUD operations (core data)
-const baseCollectionCoreData = 'coreData'
-
-const getAll = async (dataDocName: string) => {
-	try {
-		const snapshot = await getDoc(
-			doc(db, `${baseCollectionCoreData}/${dataDocName}`)
-		)
-		const coreDataDoc = snapshot.data()
-		return coreDataDoc ?? null
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-const get = async (dataDocName: string, dataId: string) => {
-	try {
-		const coreDataDoc = await getAll(dataDocName)
-		return coreDataDoc ? coreDataDoc[dataId] : null
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-const addOrUpdate = async (
-	dataDocName: string,
-	dataId: string,
-	data: TDocumentData
-) => {
-	try {
-		const coreDataDoc = await getAll(dataDocName)
-		let newDataDoc: TDocumentDataObject = {}
-		if (coreDataDoc) {
-			newDataDoc = { ...coreDataDoc }
-		}
-		newDataDoc[dataId] = data
-		await setDoc(
-			doc(db, `${baseCollectionCoreData}/${dataDocName}`),
-			newDataDoc
-		)
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-const del = async (dataDocName: string, dataId: string) => {
-	try {
-		const coreDataDoc = await getAll(dataDocName)
-		if (coreDataDoc) {
-			delete coreDataDoc[dataId]
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${dataDocName}`),
-				coreDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
 
 /* --- COURSES --- */
 export const getCourses = async () => getAll(COURSES)
@@ -144,38 +94,6 @@ export const deleteSpecialization = async (specializationId: string) =>
 	del(SPECIALIZATIONS, specializationId)
 
 /* --- REVIEWS (keyed by courseId-year-semesterId) --- */
-const baseCollectionReviewsData = 'reviewsData'
-const LEN_SIMPLE_COURSE_NUMBER = 5 //   DD-CCCC     (e.g., CS-6200)
-const LEN_COMPOUND_COURSE_NUMBER = 6 // DD-CCCC-CCC (e.g., CS-8803-O08)
-
-const parseReviewId = (reviewId: string) => {
-	let courseId = ''
-	let departmentId = ''
-	let courseNumberA = ''
-	let courseNumberB = ''
-	let year = ''
-	let semesterTerm = ''
-
-	const parsedValues = reviewId.split('-')
-
-	if (parsedValues.length === LEN_SIMPLE_COURSE_NUMBER) {
-		;[departmentId, courseNumberA, year, semesterTerm] = parsedValues
-		courseId = `${departmentId}-${courseNumberA}`
-	}
-
-	if (parsedValues.length === LEN_COMPOUND_COURSE_NUMBER) {
-		;[departmentId, courseNumberA, courseNumberB, year, semesterTerm] =
-			parsedValues
-		courseId = `${departmentId}-${courseNumberA}-${courseNumberB}`
-	}
-
-	return {
-		courseId,
-		year,
-		semesterTerm,
-	}
-}
-
 export const getReviews = async (
 	courseId: string,
 	year: string,
@@ -196,6 +114,17 @@ export const getReviews = async (
 	}
 }
 
+export const getReviewsRecent50 = async () => {
+	try {
+		const snapshot = await getDoc(doc(db, baseDocumentReviewsRecent50))
+		const recentReviews50 = snapshot.data()
+		return recentReviews50 ?? null
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
 export const getReview = async (reviewId: string) => {
 	try {
 		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
@@ -207,36 +136,16 @@ export const getReview = async (reviewId: string) => {
 	}
 }
 
-const addOrUpdateReview = async (reviewId: string, data: TDocumentData) => {
-	try {
-		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
-		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
-		let newDataDoc: TDocumentDataObject = {}
-		if (reviewsDataDoc) {
-			newDataDoc = { ...reviewsDataDoc }
-		}
-		newDataDoc[reviewId] = data
-		await setDoc(
-			doc(
-				db,
-				`${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`
-			),
-			newDataDoc
-		)
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
 export const addReview = async (reviewId: string, reviewData: Review) => {
-	// Include a run transactions here to aggregate course statistics with an updateCourse
 	await addOrUpdateReview(reviewId, reviewData)
+	await updateCourseDataOnAddReview(reviewId, reviewData)
+	await updateReviewsRecent50OnAddReview(reviewData)
 }
 
 export const updateReview = async (reviewId: string, reviewData: Review) => {
-	// Will need to include a run transactions here to both update review data and recalculate course statistics
 	await addOrUpdateReview(reviewId, reviewData)
+	await updateCourseDataOnUpdateReview(reviewId, reviewData)
+	await updateReviewsRecent50OnUpdateReview(reviewData)
 }
 
 export const deleteReview = async (reviewId: string) => {
@@ -244,7 +153,8 @@ export const deleteReview = async (reviewId: string) => {
 		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
 		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
 		if (reviewsDataDoc) {
-			delete reviewsDataDoc[reviewId]
+			// delete review from collection `reviewsData`
+			delete reviewsDataDoc.reviewId
 			await setDoc(
 				doc(
 					db,
@@ -252,6 +162,9 @@ export const deleteReview = async (reviewId: string) => {
 				),
 				reviewsDataDoc
 			)
+
+			await updateCourseDataOnDeleteReview(reviewId)
+			await updateReviewsRecent50OnDeleteReview(reviewId)
 		}
 	} catch (e: any) {
 		console.log(e)
