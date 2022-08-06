@@ -1,3 +1,5 @@
+import { TNullableNumber } from './documentsDataTypes'
+
 const LEN_SIMPLE_COURSE_NUMBER = 5 //   DD-CCCC     (e.g., CS-6200)
 const LEN_COMPOUND_COURSE_NUMBER = 6 // DD-CCCC-CCC (e.g., CS-8803-O08)
 
@@ -29,14 +31,12 @@ export const parseReviewId = (reviewId: string) => {
 	}
 }
 
-type TNullableNumber = number | null
-
 export type TAveragesData = {
 	oldAverage?: TNullableNumber
 	oldCount?: number
 	newCount: number
-	oldValue?: TNullableNumber
-	newValue?: TNullableNumber
+	oldValue?: number
+	newValue?: number
 }
 
 export const updateAverage = ({

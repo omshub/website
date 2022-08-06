@@ -1,5 +1,5 @@
 import 'jest-fetch-mock'
-import { Review } from '../documentsDataTypes'
+import { Review, TNullableNumber } from '../documentsDataTypes'
 import {
 	parseReviewId,
 	TAveragesData,
@@ -7,7 +7,7 @@ import {
 	updateAverages,
 } from '../utilityFunctions'
 
-const computeAverage = (dataArray: (number | null)[]) =>
+const computeAverage = (dataArray: TNullableNumber[]) =>
 	dataArray
 		.map((x) => x ?? 0)
 		.filter((x) => x !== 0) // omit nulls
