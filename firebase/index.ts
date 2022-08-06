@@ -6,6 +6,7 @@ import {
 	getReviewsRecent50,
 } from './dbOperations'
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
 	// page `index.ts`
 	getCourses,
