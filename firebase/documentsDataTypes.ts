@@ -1,3 +1,5 @@
+export type TNullableNumber = number | null
+
 export type TDocumentData =
 	| Course
 	| Department
@@ -22,10 +24,10 @@ export interface Course {
 	isDeprecated: boolean
 	isFoundational: boolean
 	numReviews: number
-	avgWorkload: number | null
-	avgDifficulty: number | null
-	avgOverall: number | null
-	avgStaffSupport: number | null
+	avgWorkload: TNullableNumber
+	avgDifficulty: TNullableNumber
+	avgOverall: TNullableNumber
+	avgStaffSupport: TNullableNumber
 	reviewsCountsByYearSem: TReviewsCountsByYearSemObject
 }
 
@@ -51,7 +53,7 @@ export interface Review {
 	isLegacy: boolean
 	reviewerId: string
 	created: number // Unix timestamp
-	modified: number | null // Unix timestamp
+	modified: TNullableNumber // Unix timestamp
 	body: string
 	upvotes: number
 	downvotes: number
@@ -72,9 +74,9 @@ export interface Review {
 	hasProvidedDevEnv: boolean | null
 	/* --- user background review data --- */
 	preparation: TRatingScale | null
-	omsCoursesTaken: number | null
+	omsCoursesTaken: TNullableNumber
 	hasRelevantWorkExperience: boolean | null
-	experienceLevel: number | null
+	experienceLevel: TNullableNumber
 	gradeId: string | null
 }
 
