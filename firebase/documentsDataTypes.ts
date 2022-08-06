@@ -63,7 +63,7 @@ export interface Review {
 	workload: number
 	difficulty: TRatingScale
 	overall: TRatingScale
-	staffSupport: TRatingScale | null
+	staffSupport: TRatingScale | null // N.B. `staffSupport` is null for legacy reviews, however, those records are not modifiable
 	/* --- course logistics review data --- */
 	isRecommended: boolean | null
 	isGoodFirstCourse: boolean | null
