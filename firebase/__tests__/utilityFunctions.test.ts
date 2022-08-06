@@ -13,14 +13,14 @@ const computeAverage = (dataArray: (number | null)[]) =>
 		.filter((x) => x !== 0) // omit nulls
 		.reduce((sum, x) => sum + x, 0) / dataArray.length
 
-const mapReviewDataToAverages = (reviewData: Review[]) => ({
-  avgWorkload: computeAverage(reviewData.map(({ workload }) => workload)),
+const mapReviewsDataToAverages = (reviewsData: Review[]) => ({
+  avgWorkload: computeAverage(reviewsData.map(({ workload }) => workload)),
   avgDifficulty: computeAverage(
-    reviewData.map(({ difficulty }) => difficulty)
+    reviewsData.map(({ difficulty }) => difficulty)
   ),
-  avgOverall: computeAverage(reviewData.map(({ overall }) => overall)),
+  avgOverall: computeAverage(reviewsData.map(({ overall }) => overall)),
   avgStaffSupport: computeAverage(
-    reviewData.map(({ staffSupport }) => staffSupport)
+    reviewsData.map(({ staffSupport }) => staffSupport)
   ),
 })
 
@@ -67,10 +67,11 @@ describe('firebase utility functions tests', () => {
 
 		it('updates average for added value', () => {
 			const newValue = 6
+      const newCount = oldCount + 1
 			const addedData: TAveragesData = {
 				oldAverage,
 				oldCount,
-				newCount: oldCount + 1,
+				newCount,
 				newValue,
 			}
 			const newData = [...oldData, newValue]
@@ -80,10 +81,11 @@ describe('firebase utility functions tests', () => {
 		it('updates average for edited value', () => {
 			const oldValue = 5
 			const newValue = 6
+      const newCount = oldCount
 			const editedData: TAveragesData = {
 				oldAverage,
 				oldCount,
-				newCount: oldCount,
+				newCount,
 				oldValue,
 				newValue,
 			}
@@ -96,10 +98,11 @@ describe('firebase utility functions tests', () => {
 
 		it('updates average for deleted value', () => {
 			const oldValue = 5
+      const newCount = oldCount - 1
 			const deletedData: TAveragesData = {
 				oldAverage,
 				oldCount,
-				newCount: oldCount - 1,
+				newCount,
 				oldValue,
 			}
 			const newData = oldData.filter((x: number) => x !== oldValue)
@@ -111,7 +114,7 @@ describe('firebase utility functions tests', () => {
     const courseId = 'CS-1234'
 		const year = 2100
 		const semesterTerm = 1
-		const baseReviewId = `${courseId}-${year}-${semesterTerm}`
+		const baseReviewId = `${courseId}-${year}-${semesterTerm}-`
 		const baseDummyCourseData = {
       courseId,
       year,
@@ -180,7 +183,7 @@ describe('firebase utility functions tests', () => {
         avgDifficulty,
         avgOverall,
         avgStaffSupport,
-      } = mapReviewDataToAverages(oldReviewsData))
+      } = mapReviewsDataToAverages(oldReviewsData))
 		})
 
     it('returns nulls for `newCount` of 0', () => {
@@ -225,7 +228,7 @@ describe('firebase utility functions tests', () => {
         avgStaffSupport,
       })
 
-      const expectedUpdatedAverages = mapReviewDataToAverages(newReviewsData)
+      const expectedUpdatedAverages = mapReviewsDataToAverages(newReviewsData)
 
       expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
     })
@@ -269,7 +272,7 @@ describe('firebase utility functions tests', () => {
         avgStaffSupport,
       })
 
-      const expectedUpdatedAverages = mapReviewDataToAverages(newReviewsData)
+      const expectedUpdatedAverages = mapReviewsDataToAverages(newReviewsData)
 
       expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
     })
@@ -296,7 +299,7 @@ describe('firebase utility functions tests', () => {
         avgStaffSupport,
       })
 
-      const expectedUpdatedAverages = mapReviewDataToAverages(newReviewsData)
+      const expectedUpdatedAverages = mapReviewsDataToAverages(newReviewsData)
 
       expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
     })
