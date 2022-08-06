@@ -8,10 +8,12 @@ export type TDocumentData =
 	| Semester
 	| Specialization
 
-export type TDocumentDataObject = { [key: string | number]: TDocumentData }
+type TObjectKey = string | number
+
+export type TDocumentDataObject = { [key: TObjectKey]: TDocumentData }
 
 type TReviewsCountsByYearSemObject = {
-	[yearKey: string | number]: { [semesterTermKey: string | number]: number }
+	[yearKey: TObjectKey]: { [semesterTermKey: TObjectKey]: number }
 }
 
 export interface Course {
