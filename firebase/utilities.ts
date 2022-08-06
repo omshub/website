@@ -84,23 +84,25 @@ export const del = async (dataDocName: string, dataId: string) => {
 /* --- REVIEWS DATA CRUD SUB-OPERATIONS --- */
 export const addOrUpdateReview = async (
 	reviewId: string,
-	data: TDocumentData
+	reviewData: TDocumentData
 ) => {
 	try {
 		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
 		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
 		let newDataDoc: TDocumentDataObject = {}
 		if (reviewsDataDoc) {
-			newDataDoc = { ...reviewsDataDoc }
+			if (Object.keys(reviewsDataDoc).length) {
+				newDataDoc = { ...reviewsDataDoc }
+			}
+			newDataDoc[reviewId] = reviewData
+			await setDoc(
+				doc(
+					db,
+					`${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`
+				),
+				newDataDoc
+			)
 		}
-		newDataDoc[reviewId] = data
-		await setDoc(
-			doc(
-				db,
-				`${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`
-			),
-			newDataDoc
-		)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -177,9 +179,10 @@ export const updateReviewsRecent50OnAddReview = async (
 ) => {
 	try {
 		let dataArray = await getReviewsRecent50()
-		if (dataArray && dataArray.length) {
+		if (dataArray && dataArray?.length) {
 			dataArray.unshift(newReviewData)
 			if (dataArray.length > 50) {
+				// maintain buffer size
 				dataArray.pop()
 			}
 			await setDoc(doc(db, baseDocumentReviewsRecent50), { reviews: dataArray })
@@ -247,6 +250,7 @@ export const updateCourseDataOnUpdateReview = async (
 			avgDifficulty,
 			avgOverall,
 			avgStaffSupport,
+			// N.B. No net change in field `reviewsCountsByYearSem` on update
 		}
 
 		await updateCourse(courseId, updatedCourseData)
@@ -318,7 +322,7 @@ export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 
 		if (reviewsCountsByYearSem[year][semesterTerm] === 1) {
 			// remove last remaining count
-			delete reviewsCountsByYearSem.year.semesterTerm
+			delete reviewsCountsByYearSem?.year?.semesterTerm
 		} else {
 			reviewsCountsByYearSem[year][semesterTerm] =
 				reviewsCountsByYearSem[year][semesterTerm] - 1
@@ -355,6 +359,7 @@ export const updateReviewsRecent50OnDeleteReview = async (reviewId: string) => {
 				)
 
 				if (dataArray?.length > 50) {
+					// truncate buffer
 					dataArray?.pop()
 				}
 
