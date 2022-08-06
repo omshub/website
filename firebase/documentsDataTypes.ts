@@ -8,7 +8,9 @@ export type TDocumentData =
 
 export type TDocumentDataObject = { [key: string]: TDocumentData }
 
-type TReviewsCountsByYearSemObject = { [key: string]: TDocumentData }
+type TReviewsCountsByYearSemObject = {
+	[yearKey: string | number]: { [semesterTermKey: string | number]: number }
+}
 
 export interface Course {
 	courseId: string
@@ -40,6 +42,7 @@ export interface Program {
 }
 
 export interface Review {
+	reviewId: string
 	courseId: string
 	year: number
 	semesterId: string
