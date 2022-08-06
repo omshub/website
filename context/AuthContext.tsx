@@ -84,6 +84,9 @@ export const AuthContextProvider = ({children} : {children:React.ReactNode}) =>{
 
                             const lowerCaseName = provider.split(".")[0]
                             const normalCaseName = lowerCaseName.charAt(0).toUpperCase() + lowerCaseName.slice(1).toLowerCase()
+                            if(normalCaseName == 'Emaillink'){
+                                return 'Email'
+                            }
                             return normalCaseName
                         })
             

@@ -62,7 +62,6 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 							closeAfterTransition
 							>
 							<Login/>
-							<Button onClick={handleLoginModalClose}>Close</Button>
 						</Dialog>
 					</>
 					:

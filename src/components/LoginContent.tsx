@@ -6,6 +6,9 @@ import Stack from '@mui/material/Stack';
 import SocialButton from './SocialButton';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
+import Typography from '@mui/material/Typography';
+
+
 const Login:NextPage = () =>{
     const {signInWithProvider,signWithMagic} = useAuth()
     const {handleLoginModalClose} = useMenu()
@@ -19,34 +22,12 @@ const Login:NextPage = () =>{
             handleLoginModalClose()
          }
     }
-    const providers:any = {
-        "Google":{
-            style:{
-                background: 'white', 
-                color: 'black'
-            }
-        },
-        "Facebook":{
-            style:{
-                background:'#293e69',
-                color: 'white'
-            }
-        },
-        "Github":{
-            style:{
-                background:'#555555',
-                color: 'white'
-            }
-        },
-        "Apple":{
-            style:{
-                background:'#3333331c',
-                color: 'black'
-            }
-        },
-
-    }
     
+    const providers = [
+        "Google",
+        "Facebook",
+        "Github",
+    ]
 
     return (
         <Grid
@@ -55,16 +36,19 @@ const Login:NextPage = () =>{
         direction="column"
         alignItems="center"
         justifyContent="center"
-        style={{ padding: '10px' }}
+        style={{ padding: '40px 20px' }}
         >
+             <Typography style={{marginBottom:'20px'}}variant="overline" component="div" gutterBottom>
+                Login via preferred method
+                </Typography>
             <Grid item xs={3}>
                 <Stack spacing={2}>
-                    <TextField onChange={handleEmailChange} onKeyPress={handleKeyPress} sx={{textAlign:'center'}} label={`Login with Magic!`}></TextField>
+                    <TextField onChange={handleEmailChange} onKeyPress={handleKeyPress} sx={{textAlign:'center'}} label={`🔮 Enter an email address`}></TextField>
                     {
-                    Object.keys(providers).map((key,index)=>{
+                    providers.map((provider,index)=>{
                         return(
                             <>
-                             <SocialButton key={index} onClick={()=>{signInWithProvider(key);handleLoginModalClose()}} style={providers[key].style} text={`Login with ${key}`}></SocialButton>
+                             <SocialButton key={index} onClick={()=>{signInWithProvider(provider);handleLoginModalClose()}} provider={provider}></SocialButton>
                             </>
                         )
                     })
