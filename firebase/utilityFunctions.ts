@@ -29,12 +29,14 @@ export const parseReviewId = (reviewId: string) => {
 	}
 }
 
+type TNullableNumber = number | null
+
 export type TAveragesData = {
-	oldAverage?: number | null
+	oldAverage?: TNullableNumber
 	oldCount?: number
 	newCount: number
-	oldValue?: number | null
-	newValue?: number | null
+	oldValue?: TNullableNumber
+	newValue?: TNullableNumber
 }
 
 export const updateAverage = ({
@@ -62,22 +64,23 @@ export const updateAverage = ({
 }
 
 type TAveragesInputData = {
-	avgWorkload?: number | null
-	avgDifficulty?: number | null
-	avgOverall?: number | null
-	avgStaffSupport?: number | null
+	// N.B. `avg`s are null when `numReviews` === 0
+	avgWorkload?: TNullableNumber
+	avgDifficulty?: TNullableNumber
+	avgOverall?: TNullableNumber
+	avgStaffSupport?: TNullableNumber
 	oldWorkload?: number
 	oldDifficulty?: number
 	oldOverall?: number
-	oldStaffSupport?: number | null
+	oldStaffSupport?: number // N.B. `staffSupport` is null for legacy reviews, however, those are records not modifiable
 	newWorkload?: number
 	newDifficulty?: number
 	newOverall?: number
-	newStaffSupport?: number | null
+	newStaffSupport?: number // N.B. `staffSupport` is null for legacy reviews, however, those records are not modifiable
 	oldCount?: number
 	newCount: number
-	oldValue?: number | null
-	newValue?: number | null
+	oldValue?: number
+	newValue?: number
 }
 
 // This function converts input averages to output averages based on
