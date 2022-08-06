@@ -6,11 +6,19 @@
 
 **_N.B._** Requires Node v. 16+.
 
-## Overview and Usage
+## Overview
 
 `/firebase` contains the backend service for the app, utilizing the [Firebase](https://firebase.google.com/) services Firestore (database), Cloud Functions, and Authentication.
 
 Firestore is a non-relational database, comprised of collections which contain documents. The primary interface for consumption by the frontend is contained in `/firebase/dbOperations.ts`, which contains the CRUD operations for the various data-containing documents.
+
+## General Usage
+
+See `firebase/index.ts` for the principal "interface" to the backend/database. This file organizes exports with respect to the corresponding client-side views/pages and components, as applicable.
+
+## Atomic Operations (Full CRUD)
+
+The full CRUD (create, read, update, delete) operations are defined around the semantics of the underlying (Firestore-based) data model. The corresponding implementation logic is defined in `firebase/dbOperations.ts`.
 
 The data documents defined in this app, and their corresponding CRUD operations' function calls, are as follows:
 
