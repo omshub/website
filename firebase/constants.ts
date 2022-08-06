@@ -38,3 +38,7 @@ export const queryOperators: TQueryOpKeyMap = {
 	IN: 'in',
 	NOT_IN: 'not-in',
 }
+
+export const baseCollectionCoreData = 'coreData'
+export const baseCollectionReviewsData = 'reviewsData'
+export const baseDocumentReviewsRecent50 = 'reviewsRecent50/reviews'
