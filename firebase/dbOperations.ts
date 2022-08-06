@@ -13,12 +13,12 @@ import {
 	Semester,
 	Specialization,
 } from './documentsDataTypes'
+import { parseReviewId } from './utilityFunctions'
 import {
 	get,
 	getAll,
 	addOrUpdate,
 	del,
-	parseReviewId,
 	addOrUpdateReview,
 	updateCourseDataOnAddReview,
 	updateReviewsRecent50OnAddReview,
