@@ -41,3 +41,15 @@ export const mapColorScheme: TMapFields = {
   4: olympicTeal,
   5: boldBlue,
 }
+
+type TObject = {
+  [key: string | number]: any
+}
+
+export const mapToArray = (map: TObject) => {
+  const outputArray = []
+  for (const key in map) {
+    outputArray.push(map[key])
+  }
+  return outputArray
+}
