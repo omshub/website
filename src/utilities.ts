@@ -34,7 +34,7 @@ export const mapStaffSupport: TMapFields = {
   5: 'Strong Support',
 }
 
-export const mapColorScheme: TMapFields = {
+export const mapColorPalette: TMapFields = {
   1: newHorizon,
   2: RATCap,
   3: canopyLime,
