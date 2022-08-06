@@ -480,8 +480,10 @@ export const updateReviewsRecent50OnDeleteReview = async (reviewId: string) => {
 				.indexOf(reviewId)
 
 			if (indexFoundAt !== -1) {
-				dataArray =
-					dataArray.slice(0, indexFoundAt) + dataArray.slice(indexFoundAt + 1)
+				dataArray = [
+					...dataArray.slice(0, indexFoundAt),
+					...dataArray.slice(indexFoundAt + 1),
+				]
 
 				if (dataArray?.length > 50) {
 					dataArray?.pop()
