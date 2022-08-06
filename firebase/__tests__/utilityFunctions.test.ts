@@ -14,14 +14,14 @@ const computeAverage = (dataArray: (number | null)[]) =>
 		.reduce((sum, x) => sum + x, 0) / dataArray.length
 
 const mapReviewsDataToAverages = (reviewsData: Review[]) => ({
-  avgWorkload: computeAverage(reviewsData.map(({ workload }) => workload)),
-  avgDifficulty: computeAverage(
-    reviewsData.map(({ difficulty }) => difficulty)
-  ),
-  avgOverall: computeAverage(reviewsData.map(({ overall }) => overall)),
-  avgStaffSupport: computeAverage(
-    reviewsData.map(({ staffSupport }) => staffSupport)
-  ),
+	avgWorkload: computeAverage(reviewsData.map(({ workload }) => workload)),
+	avgDifficulty: computeAverage(
+		reviewsData.map(({ difficulty }) => difficulty)
+	),
+	avgOverall: computeAverage(reviewsData.map(({ overall }) => overall)),
+	avgStaffSupport: computeAverage(
+		reviewsData.map(({ staffSupport }) => staffSupport)
+	),
 })
 
 describe('firebase utility functions tests', () => {
@@ -67,7 +67,7 @@ describe('firebase utility functions tests', () => {
 
 		it('updates average for added value', () => {
 			const newValue = 6
-      const newCount = oldCount + 1
+			const newCount = oldCount + 1
 			const addedData: TAveragesData = {
 				oldAverage,
 				oldCount,
@@ -81,7 +81,7 @@ describe('firebase utility functions tests', () => {
 		it('updates average for edited value', () => {
 			const oldValue = 5
 			const newValue = 6
-      const newCount = oldCount
+			const newCount = oldCount
 			const editedData: TAveragesData = {
 				oldAverage,
 				oldCount,
@@ -98,7 +98,7 @@ describe('firebase utility functions tests', () => {
 
 		it('updates average for deleted value', () => {
 			const oldValue = 5
-      const newCount = oldCount - 1
+			const newCount = oldCount - 1
 			const deletedData: TAveragesData = {
 				oldAverage,
 				oldCount,
@@ -111,36 +111,36 @@ describe('firebase utility functions tests', () => {
 	})
 
 	describe('updateAverages() tests', () => {
-    const courseId = 'CS-1234'
+		const courseId = 'CS-1234'
 		const year = 2100
 		const semesterTerm = 1
 		const baseReviewId = `${courseId}-${year}-${semesterTerm}-`
 		const baseDummyCourseData = {
-      courseId,
-      year,
-      semesterId: 'sp',
-      isLegacy: false,
-      reviewerId: 'xyz',
-      created: 1234567890,
-      modified: null,
-      body: '',
-      upvotes: 0,
-      downvotes: 0,
-      isRecommended: null,
-      isGoodFirstCourse: null,
-      isPairable: null,
-      hasGroupProjects: null,
-      hasWritingAssignments: null,
-      hasExamsQuizzes: null,
-      hasMandatoryReadings: null,
-      hasProgrammingAssignments: null,
-      hasProvidedDevEnv: null,
-      preparation: null,
-      omsCoursesTaken: null,
-      hasRelevantWorkExperience: null,
-      experienceLevel: null,
-      gradeId: null,
-    }
+			courseId,
+			year,
+			semesterId: 'sp',
+			isLegacy: false,
+			reviewerId: 'xyz',
+			created: 1234567890,
+			modified: null,
+			body: '',
+			upvotes: 0,
+			downvotes: 0,
+			isRecommended: null,
+			isGoodFirstCourse: null,
+			isPairable: null,
+			hasGroupProjects: null,
+			hasWritingAssignments: null,
+			hasExamsQuizzes: null,
+			hasMandatoryReadings: null,
+			hasProgrammingAssignments: null,
+			hasProvidedDevEnv: null,
+			preparation: null,
+			omsCoursesTaken: null,
+			hasRelevantWorkExperience: null,
+			experienceLevel: null,
+			gradeId: null,
+		}
 		let oldReviewsData: Review[]
 		let oldCount: number
 		let avgWorkload: number
@@ -177,131 +177,132 @@ describe('firebase utility functions tests', () => {
 			]
 
 			oldCount = oldReviewsData.length
-
-      ;({
-        avgWorkload,
-        avgDifficulty,
-        avgOverall,
-        avgStaffSupport,
-      } = mapReviewsDataToAverages(oldReviewsData))
+			;({ avgWorkload, avgDifficulty, avgOverall, avgStaffSupport } =
+				mapReviewsDataToAverages(oldReviewsData))
 		})
 
-    it('returns nulls for `newCount` of 0', () => {
-      const newReviewsData: Review[] = []
-      const newCount = newReviewsData.length
+		it('returns nulls for `newCount` of 0', () => {
+			const newReviewsData: Review[] = []
+			const newCount = newReviewsData.length
 
-      const updatedAverages = updateAverages({ newCount })
+			const updatedAverages = updateAverages({ newCount })
 
-      const expectedUpdatedAverages = {
-        avgWorkload: null,
-        avgDifficulty: null,
-        avgOverall: null,
-        avgStaffSupport: null,
-      }
+			const expectedUpdatedAverages = {
+				avgWorkload: null,
+				avgDifficulty: null,
+				avgOverall: null,
+				avgStaffSupport: null,
+			}
 
-      expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
-    })
+			expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
+		})
 
 		it('computes updated averages for added review', () => {
-      const addReviewData: Review = {
-        ...baseDummyCourseData,
-        reviewId: baseReviewId + '4',
-        workload: 7,
-        difficulty: 2,
-        overall: 4,
-        staffSupport: 4,
-      }
-      const newReviewsData = [...oldReviewsData, addReviewData]
+			const addReviewData: Review = {
+				...baseDummyCourseData,
+				reviewId: baseReviewId + '4',
+				workload: 7,
+				difficulty: 2,
+				overall: 4,
+				staffSupport: 4,
+			}
+			const newReviewsData = [...oldReviewsData, addReviewData]
 
-      const newCount = newReviewsData.length
+			const newCount = newReviewsData.length
 
-      const updatedAverages = updateAverages({
-        oldCount,
-        newCount,
-        newWorkload: addReviewData.workload,
-        newDifficulty: addReviewData.difficulty,
-        newOverall: addReviewData.overall,
-        newStaffSupport: addReviewData.staffSupport,
-        avgWorkload,
-        avgDifficulty,
-        avgOverall,
-        avgStaffSupport,
-      })
+			const updatedAverages = updateAverages({
+				oldCount,
+				newCount,
+				newWorkload: addReviewData.workload,
+				newDifficulty: addReviewData.difficulty,
+				newOverall: addReviewData.overall,
+				newStaffSupport: addReviewData.staffSupport,
+				avgWorkload,
+				avgDifficulty,
+				avgOverall,
+				avgStaffSupport,
+			})
 
-      const expectedUpdatedAverages = mapReviewsDataToAverages(newReviewsData)
+			const expectedUpdatedAverages = mapReviewsDataToAverages(newReviewsData)
 
-      expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
-    })
+			expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
+		})
 
-    it('computes updated averages for updated review', () => {
-      const reviewId = baseReviewId + '3'
+		it('computes updated averages for updated review', () => {
+			const reviewId = baseReviewId + '3'
 
-      const oldReviewData = oldReviewsData.find((review) => review.reviewId === reviewId)
+			const oldReviewData = oldReviewsData.find(
+				(review) => review.reviewId === reviewId
+			)
 
-      const updatedReviewData: Review = {
-        ...baseDummyCourseData,
-        reviewId,
-        workload: 7,
-        difficulty: 2,
-        overall: 4,
-        staffSupport: 4,
-      }
-      const newReviewsData = oldReviewsData.map((review) => {
-        if (review.reviewId === reviewId) {
-          return updatedReviewData
-        }
-        return review
-      })
+			const updatedReviewData: Review = {
+				...baseDummyCourseData,
+				reviewId,
+				workload: 7,
+				difficulty: 2,
+				overall: 4,
+				staffSupport: 4,
+			}
+			const newReviewsData = oldReviewsData.map((review) => {
+				if (review.reviewId === reviewId) {
+					return updatedReviewData
+				}
+				return review
+			})
 
-      const newCount = newReviewsData.length
+			const newCount = newReviewsData.length
 
-      const updatedAverages = updateAverages({
-        oldCount,
-        newCount,
-        oldWorkload: oldReviewData?.workload,
-        oldDifficulty: oldReviewData?.difficulty,
-        oldOverall: oldReviewData?.overall,
-        oldStaffSupport: oldReviewData?.staffSupport,
-        newWorkload: updatedReviewData.workload,
-        newDifficulty: updatedReviewData.difficulty,
-        newOverall: updatedReviewData.overall,
-        newStaffSupport: updatedReviewData.staffSupport,
-        avgWorkload,
-        avgDifficulty,
-        avgOverall,
-        avgStaffSupport,
-      })
+			const updatedAverages = updateAverages({
+				oldCount,
+				newCount,
+				oldWorkload: oldReviewData?.workload,
+				oldDifficulty: oldReviewData?.difficulty,
+				oldOverall: oldReviewData?.overall,
+				oldStaffSupport: oldReviewData?.staffSupport,
+				newWorkload: updatedReviewData.workload,
+				newDifficulty: updatedReviewData.difficulty,
+				newOverall: updatedReviewData.overall,
+				newStaffSupport: updatedReviewData.staffSupport,
+				avgWorkload,
+				avgDifficulty,
+				avgOverall,
+				avgStaffSupport,
+			})
 
-      const expectedUpdatedAverages = mapReviewsDataToAverages(newReviewsData)
+			const expectedUpdatedAverages = mapReviewsDataToAverages(newReviewsData)
 
-      expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
-    })
+			expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
+		})
 
-    it('computes updated averages for deleted review', () => {
-      const reviewId = baseReviewId + '3'
+		it('computes updated averages for deleted review', () => {
+			const reviewId = baseReviewId + '3'
 
-      const oldReviewData = oldReviewsData.find((review) => review.reviewId === reviewId)
+			const oldReviewData = oldReviewsData.find(
+				(review) => review.reviewId === reviewId
+			)
 
-      const newReviewsData = oldReviewsData.filter((review) => review.reviewId !== reviewId)
+			const newReviewsData = oldReviewsData.filter(
+				(review) => review.reviewId !== reviewId
+			)
 
-      const newCount = newReviewsData.length
+			const newCount = newReviewsData.length
 
-      const updatedAverages = updateAverages({
-        oldCount,
-        newCount,
-        oldWorkload: oldReviewData?.workload,
-        oldDifficulty: oldReviewData?.difficulty,
-        oldOverall: oldReviewData?.overall,
-        oldStaffSupport: oldReviewData?.staffSupport,
-        avgWorkload,
-        avgDifficulty,
-        avgOverall,
-        avgStaffSupport,
-      })
+			const updatedAverages = updateAverages({
+				oldCount,
+				newCount,
+				oldWorkload: oldReviewData?.workload,
+				oldDifficulty: oldReviewData?.difficulty,
+				oldOverall: oldReviewData?.overall,
+				oldStaffSupport: oldReviewData?.staffSupport,
+				avgWorkload,
+				avgDifficulty,
+				avgOverall,
+				avgStaffSupport,
+			})
 
-      const expectedUpdatedAverages = mapReviewsDataToAverages(newReviewsData)
+			const expectedUpdatedAverages = mapReviewsDataToAverages(newReviewsData)
 
-      expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
-    })
+			expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
+		})
 	})
 })
