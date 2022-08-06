@@ -38,7 +38,7 @@ The data documents defined in this app, and their corresponding CRUD operations'
 | :-------------------------------------------------: | :----------------------------------------: | :-------------------: | :-------------------------: | :----------------------------: | :----------------------: |
 | `reviewsData/{courseId}/{year}-{semesterTerm}/data` | `getReviews(courseId, year, semesterTerm)` | `getReview(reviewId)` | `addReview(reviewId, data)` | `updateReview(reviewId, data)` | `deleteReview(reviewId)` |
 
-**_N.B._** See `/firebase/colectionsTypes.ts` for definition of document data fields (i.e., argument `data` per above).
+**_N.B._** See `/firebase/documentsDataTypes.ts` for definition of document data fields (i.e., argument `data` per above).
 
 Example usage via `courses` document (and similarly for the others):
 
