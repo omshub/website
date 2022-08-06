@@ -6,7 +6,7 @@ export type TDocumentData =
 	| Semester
 	| Specialization
 
-export type TDocumentDataObject = { [key: string]: TDocumentData }
+export type TDocumentDataObject = { [key: string | number]: TDocumentData }
 
 type TReviewsCountsByYearSemObject = {
 	[yearKey: string | number]: { [semesterTermKey: string | number]: number }

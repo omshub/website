@@ -114,6 +114,11 @@ export const getReviews = async (
 	}
 }
 
+// N.B. End of array has additional "buffer reviews" (initialized to 20) to
+// guard against net deletion below 50. Return value should be sliced by
+// caller in order to limit to only 50 accordingly, i.e.,:
+//   let reviews = await getReviewsRecent50()
+//   reviews = reviews?.slice(0, 50) 
 export const getReviewsRecent50 = async () => {
 	try {
 		const snapshot = await getDoc(doc(db, baseDocumentReviewsRecent50))
@@ -152,9 +157,9 @@ export const deleteReview = async (reviewId: string) => {
 	try {
 		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
 		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
-		if (reviewsDataDoc) {
+		if (reviewsDataDoc && Object.keys(reviewsDataDoc).length && reviewsDataDoc[reviewId]) {
 			// delete review from collection `reviewsData`
-			delete reviewsDataDoc.reviewId
+			delete reviewsDataDoc?.reviewId
 			await setDoc(
 				doc(
 					db,
