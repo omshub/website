@@ -72,7 +72,7 @@ type TAveragesInputData = {
 	oldWorkload?: number
 	oldDifficulty?: number
 	oldOverall?: number
-	oldStaffSupport?: number // N.B. `staffSupport` is null for legacy reviews, however, those are records not modifiable
+	oldStaffSupport?: number // N.B. `staffSupport` is null for legacy reviews, however, those records are not modifiable
 	newWorkload?: number
 	newDifficulty?: number
 	newOverall?: number
