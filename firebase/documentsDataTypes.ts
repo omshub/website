@@ -41,6 +41,8 @@ export interface Program {
 	url: string
 }
 
+type TRatingScale = 1 | 2 | 3 | 4 | 5
+
 export interface Review {
 	reviewId: string
 	courseId: string
@@ -49,31 +51,31 @@ export interface Review {
 	isLegacy: boolean
 	reviewerId: string
 	created: number // Unix timestamp
-	modified: number // Unix timestamp
+	modified: number | null // Unix timestamp
 	body: string
 	upvotes: number
 	downvotes: number
 	/* --- general review data --- */
 	workload: number
-	difficulty: number
-	overall: number
-	staffSupport: number
+	difficulty: TRatingScale
+	overall: TRatingScale
+	staffSupport: TRatingScale | null
 	/* --- course logistics review data --- */
-	isRecommended: boolean
-	isGoodFirstCourse: boolean
-	isPairable: boolean
-	hasGroupProjects: boolean
-	hasWritingAssignments: boolean
-	hasExamsQuizzes: boolean
-	hasMandatoryReadings: boolean
-	hasProgrammingAssignments: boolean
-	hasProvidedDevEnv: boolean
+	isRecommended: boolean | null
+	isGoodFirstCourse: boolean | null
+	isPairable: boolean | null
+	hasGroupProjects: boolean | null
+	hasWritingAssignments: boolean | null
+	hasExamsQuizzes: boolean | null
+	hasMandatoryReadings: boolean | null
+	hasProgrammingAssignments: boolean | null
+	hasProvidedDevEnv: boolean | null
 	/* --- user background review data --- */
-	preparation: number
-	omsCoursesTaken: number
-	hasRelevantWorkExperience: boolean
-	experienceLevel: number
-	gradeId: string
+	preparation: TRatingScale | null
+	omsCoursesTaken: number | null
+	hasRelevantWorkExperience: boolean | null
+	experienceLevel: number | null
+	gradeId: string | null
 }
 
 export interface Semester {
