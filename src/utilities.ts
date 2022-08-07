@@ -56,7 +56,7 @@ type TSortDirection = 'ASC' | 'DESC'
 
 export const mapToArray = (
 	map: TObject,
-	sortKey?: TSortKey,
+	sortKey?: TSortKey | string,
 	sortDirection?: TSortDirection
 ) => {
 	const outputArray = []
