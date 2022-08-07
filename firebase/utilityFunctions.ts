@@ -1,7 +1,8 @@
 import { TNullableNumber } from '../globals/types'
 
-const LEN_SIMPLE_COURSE_NUMBER = 5 //   DD-CCCC     (e.g., CS-6200)
-const LEN_COMPOUND_COURSE_NUMBER = 6 // DD-CCCC-CCC (e.g., CS-8803-O08)
+const LEN_SIMPLE_COURSE_NUMBER = 5 //   DD-CCCC-...     (e.g., CS-6200-...)     [total 5 * `-`]
+const LEN_COMPOUND_COURSE_NUMBER = 6 // DD-CCCC-CCC-... (e.g., CS-8803-O08-...) [total 6 * `-`]
+const SEPARATOR_TOKEN = '-'
 
 export const parseReviewId = (reviewId: string) => {
 	let courseId = ''
@@ -11,7 +12,7 @@ export const parseReviewId = (reviewId: string) => {
 	let year = ''
 	let semesterTerm = ''
 
-	const parsedValues = reviewId.split('-')
+	const parsedValues = reviewId.split(SEPARATOR_TOKEN)
 
 	if (parsedValues.length === LEN_SIMPLE_COURSE_NUMBER) {
 		;[departmentId, courseNumberA, year, semesterTerm] = parsedValues
