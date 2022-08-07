@@ -6,8 +6,7 @@ import {
 	getReviewsRecent50,
 } from './dbOperations'
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default {
+const backendAPI = {
 	// page `index.ts`
 	getCourses,
 
@@ -21,3 +20,5 @@ export default {
 	// page `[reviewid].tsx`
 	getReview,
 }
+
+export default backendAPI
