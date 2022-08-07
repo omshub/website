@@ -1,10 +1,6 @@
-import { TKeyMap } from './types'
-
-export const idKeys: TKeyMap = {
-	COURSE_ID: 'courseId',
-	DEPARTMENT_ID: 'departmentId',
-	PROGRAM_ID: 'programId',
-	SEMESTER_ID: 'semesterId',
-	SPECIALIZATION_ID: 'specializationId',
-	USER_ID: 'userId',
-}
+export const COURSE_ID = 'courseId'
+export const DEPARTMENT_ID = 'departmentId'
+export const PROGRAM_ID = 'programId'
+export const SEMESTER_ID = 'semesterId'
+export const SPECIALIZATION_ID = 'specializationId'
+export const USER_ID = 'userId'
