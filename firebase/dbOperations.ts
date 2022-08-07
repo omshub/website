@@ -173,7 +173,7 @@ export const deleteReview = async (reviewId: string) => {
 			reviewsDataDoc[reviewId]
 		) {
 			// delete review from collection `reviewsData`
-			delete reviewsDataDoc?.reviewId
+			delete reviewsDataDoc[reviewId]
 			await setDoc(
 				doc(
 					db,

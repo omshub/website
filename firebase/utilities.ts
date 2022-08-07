@@ -329,7 +329,7 @@ export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 
 			if (reviewsCountsByYearSem[year][semesterTerm] === 1) {
 				// remove last remaining count
-				delete reviewsCountsByYearSem?.year?.semesterTerm
+				delete reviewsCountsByYearSem[year][semesterTerm]
 			} else {
 				reviewsCountsByYearSem[year][semesterTerm] =
 					reviewsCountsByYearSem[year][semesterTerm] - 1
