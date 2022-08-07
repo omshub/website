@@ -1,10 +1,11 @@
 /* --- TYPE DEFINITIONS --- */
 
 export type TNullableNumber = number | null
+export type TNullableString = string | null
 export type TObjectKey = string | number
 
 export type TKeyMap = {
-	[key: string]: string
+	[key: TObjectKey]: string | number
 }
 
 export type TRatingScale = 1 | 2 | 3 | 4 | 5
