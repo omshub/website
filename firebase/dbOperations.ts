@@ -12,7 +12,7 @@ import {
 	Review,
 	Semester,
 	Specialization,
-} from './documentsDataTypes'
+} from '../globals/types'
 import { parseReviewId } from './utilityFunctions'
 import {
 	get,

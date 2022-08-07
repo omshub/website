@@ -12,12 +12,8 @@ import {
 	getReview,
 	getReviewsRecent50,
 } from './dbOperations'
-import {
-	Course,
-	Review,
-	TDocumentData,
-	TDocumentDataObject,
-} from './documentsDataTypes'
+import { Course, Review } from '../globals/types'
+import { TDocumentData, TDocumentDataObject } from './documentsDataTypes'
 import { parseReviewId, updateAverages } from './utilityFunctions'
 
 /* --- CORE DATA CRUD SUB-OPERATIONS --- */
