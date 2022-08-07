@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import CircularProgress from '@mui/material/CircularProgress'
-import CommentCard from '../../src/components/CommentCard'
+import ReviewCard from '../../src/components/ReviewCard'
 
 interface Review {
 	semester_id: string
@@ -18,7 +18,7 @@ interface Review {
 	created: string
 }
 
-const ClassID: NextPage = () => {
+const CourseId: NextPage = () => {
 	const router = useRouter()
 	const [loading, setLoading] = useState<boolean>()
 	const [reviews, setReviews] = useState<[Review]>()
@@ -63,14 +63,14 @@ const ClassID: NextPage = () => {
 				<Grid container spacing={3}>
 					{reviews?.map((data: Review, i: number) => (
 						<Grid sx={{ width: `100%` }} key={i} item>
-							<CommentCard
+							<ReviewCard
 								body={data.body}
-								rating={data.rating}
+								overall={data.rating}
 								difficulty={data.difficulty}
 								workload={data.workload}
-								semester={data.semester_id}
+								yearSemester={data.semester_id}
 								created={data.created}
-							></CommentCard>
+							></ReviewCard>
 						</Grid>
 					))}
 				</Grid>
@@ -79,4 +79,4 @@ const ClassID: NextPage = () => {
 	)
 }
 
-export default ClassID
+export default CourseId

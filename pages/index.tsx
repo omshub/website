@@ -32,7 +32,7 @@ const Home: NextPage = () => {
 			renderCell: (params: GridRenderCellParams) => (
 				<Link
 					href={{
-						pathname: `/class/${params.row.course_id}`,
+						pathname: `/course/${params.row.course_id}`,
 						query: { classid: params.row.course_id, title: params.row.name },
 					}}
 				>
