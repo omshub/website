@@ -1,8 +1,5 @@
 import { WhereFilterOp } from 'firebase/firestore'
-
-type TKeyMap = {
-	[key: string]: string
-}
+import { TKeyMap } from '../globals/types'
 
 export const coreDataDocuments: TKeyMap = {
 	COURSES: 'courses',
@@ -10,15 +7,6 @@ export const coreDataDocuments: TKeyMap = {
 	PROGRAMS: 'programs',
 	SEMESTERS: 'semesters',
 	SPECIALIZATIONS: 'specializations',
-}
-
-export const idKeys: TKeyMap = {
-	COURSE_ID: 'courseId',
-	DEPARTMENT_ID: 'departmentId',
-	PROGRAM_ID: 'programId',
-	SEMESTER_ID: 'semesterId',
-	SPECIALIZATION_ID: 'specializationId',
-	USER_ID: 'userId',
 }
 
 // reference: https://firebase.google.com/docs/firestore/query-data/queries#query_operators

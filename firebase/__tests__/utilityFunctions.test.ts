@@ -1,5 +1,5 @@
 import 'jest-fetch-mock'
-import { Review, TNullableNumber } from '../documentsDataTypes'
+import { Review, TNullableNumber } from '../../globals/types'
 import {
 	parseReviewId,
 	TAveragesData,
