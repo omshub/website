@@ -60,23 +60,23 @@ export interface Review {
 	workload: number
 	difficulty: TRatingScale
 	overall: TRatingScale
-	staffSupport: TRatingScale | null // N.B. `staffSupport` is null for legacy reviews, however, those records are not modifiable
+	staffSupport?: TRatingScale // N.B. not previously implemented in legacy data
 	/* --- course logistics review data --- */
-	isRecommended: boolean | null
-	isGoodFirstCourse: boolean | null
-	isPairable: boolean | null
-	hasGroupProjects: boolean | null
-	hasWritingAssignments: boolean | null
-	hasExamsQuizzes: boolean | null
-	hasMandatoryReadings: boolean | null
-	hasProgrammingAssignments: boolean | null
-	hasProvidedDevEnv: boolean | null
+	isRecommended?: boolean
+	isGoodFirstCourse?: boolean
+	isPairable?: boolean
+	hasGroupProjects?: boolean
+	hasWritingAssignments?: boolean
+	hasExamsQuizzes?: boolean
+	hasMandatoryReadings?: boolean
+	hasProgrammingAssignments?: boolean
+	hasProvidedDevEnv?: boolean
 	/* --- user background review data --- */
-	preparation: TRatingScale | null
-	omsCoursesTaken: TNullableNumber
-	hasRelevantWorkExperience: boolean | null
-	experienceLevel: TNullableNumber
-	gradeId: string | null
+	preparation?: TRatingScale
+	omsCoursesTaken?: TNullableNumber
+	hasRelevantWorkExperience?: boolean
+	experienceLevel?: TNullableNumber
+	gradeId?: string
 }
 
 export interface Semester {

@@ -91,15 +91,15 @@ export const updateAverages = ({
 	oldWorkload,
 	oldDifficulty,
 	oldOverall,
-	oldStaffSupport,
+	// oldStaffSupport,
 	newWorkload,
 	newDifficulty,
 	newOverall,
-	newStaffSupport,
+	// newStaffSupport,
 	avgWorkload,
 	avgDifficulty,
 	avgOverall,
-	avgStaffSupport,
+	// avgStaffSupport,
 }: TAveragesInputData) => ({
 	avgWorkload: updateAverage({
 		oldAverage: avgWorkload,
@@ -122,11 +122,12 @@ export const updateAverages = ({
 		oldValue: oldOverall,
 		newValue: newOverall,
 	}),
-	avgStaffSupport: updateAverage({
-		oldAverage: avgStaffSupport,
-		oldCount,
-		newCount,
-		oldValue: oldStaffSupport,
-		newValue: newStaffSupport,
-	}),
+	// TODO: implement additional logic for `avgStaffSupport`
+	// avgStaffSupport: updateAverage({
+	// 	oldAverage: avgStaffSupport,
+	// 	oldCount,
+	// 	newCount,
+	// 	oldValue: oldStaffSupport,
+	// 	newValue: newStaffSupport,
+	// }),
 })
