@@ -56,6 +56,17 @@ export const mapSemesterTermToName: TMapFields = {
 	3: 'Fall',
 }
 
+export const mapSemsterIdToTerm: TObject = {
+	sp: 1,
+	sm: 2,
+	fa: 3,
+}
+
+export const mapSemesterIdToName: TObject = {
+	sp: 'Spring',
+	sm: 'Summer',
+	fa: 'Fall',
+}
 type TObject = {
 	[key: string | number]: any
 }

@@ -11,7 +11,7 @@ import {
 	mapOverall,
 	mapColorPalette,
 	mapColorPaletteInverted,
-	mapSemesterTermToName,
+	mapSemesterIdToName,
 } from '../utilities'
 
 interface ReviewCardProps {
@@ -19,7 +19,7 @@ interface ReviewCardProps {
 	overall: number
 	difficulty: number
 	workload: number
-	yearSemester: string
+	semesterId: string
 	created: string
 }
 
@@ -28,10 +28,9 @@ const ReviewCard = ({
 	overall,
 	difficulty,
 	workload,
-	yearSemester,
+	semesterId,
 	created,
 }: ReviewCardProps) => {
-	const [year, semesterTerm] = yearSemester.split('-')
 	const timestamp = new Date(created).toLocaleDateString()
 
 	return (
@@ -47,7 +46,7 @@ const ReviewCard = ({
 					}}
 				>
 					<Typography color='text.secondary'>
-						Taken {mapSemesterTermToName[Number(semesterTerm)]} {year}
+						Taken {mapSemesterIdToName[semesterId]}
 					</Typography>
 					<Typography color='text.secondary'>
 						Reviewed on {timestamp}

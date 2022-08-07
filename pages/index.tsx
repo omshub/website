@@ -13,7 +13,7 @@ import {
 	GridRenderCellParams,
 } from '@mui/x-data-grid'
 
-interface ClassData extends Object {
+export interface ClassData extends Object {
 	aliases?: string[]
 	avgDifficulty?: number
 	avgOverall?: number
@@ -40,8 +40,8 @@ const Home: NextPage = () => {
 			renderCell: (params: GridRenderCellParams) => (
 				<Link
 					href={{
-						pathname: `/course/${params.row.course_id}`,
-						query: { classid: params.row.course_id, title: params.row.name },
+						pathname: `/course/${params.row.courseId}`,
+						query: { courseData: JSON.stringify(params.row) },
 					}}
 				>
 					{params.row.name}
@@ -92,7 +92,6 @@ const Home: NextPage = () => {
 						id: index,
 					})
 				)
-				console.log(classes)
 				setClasses(classes)
 				setLoading(false)
 			})
