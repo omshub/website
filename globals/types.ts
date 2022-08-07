@@ -5,7 +5,7 @@ export type TNullableString = string | null
 export type TObjectKey = string | number
 
 export type TKeyMap = {
-	[key: TObjectKey]: string | number
+	[key: TObjectKey]: any
 }
 
 export type TRatingScale = 1 | 2 | 3 | 4 | 5

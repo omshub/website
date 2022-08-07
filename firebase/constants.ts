@@ -1,7 +1,10 @@
 import { WhereFilterOp } from 'firebase/firestore'
-import { TKeyMap } from '../globals/types'
 
-export const coreDataDocuments: TKeyMap = {
+type TDataDocumentsObject = {
+	[dataDocuments: string]: string
+}
+
+export const coreDataDocuments: TDataDocumentsObject = {
 	COURSES: 'courses',
 	DEPARTMENTS: 'departments',
 	PROGRAMS: 'programs',
