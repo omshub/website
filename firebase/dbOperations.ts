@@ -135,7 +135,8 @@ export const getReview = async (reviewId: string) => {
 	try {
 		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
 		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
-		return reviewsDataDoc ? reviewsDataDoc[reviewId] : null
+		const review: Review = reviewsDataDoc[reviewId] ?? {}
+		return review
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
