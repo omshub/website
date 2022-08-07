@@ -1,4 +1,3 @@
-/*
 import type { NextPage } from 'next'
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
@@ -16,8 +15,8 @@ import {
 	TNullableNumber,
 	TNullableString,
 	TKeyMap,
-	// Course,
-	// Review,
+	Course,
+	Review,
 	TPayloadReviews,
 } from '../../globals/types'
 
@@ -185,7 +184,6 @@ const CourseId: NextPage = () => {
 		</Container>
 	)
 }
-*/
 
 {
 	/* <Grid sx={{ width: `100%` }} item>
@@ -203,5 +201,4 @@ const CourseId: NextPage = () => {
 ></CommentCard> */
 }
 
-// export default CourseId
-export{} // PLACEHOLDER ONLY --- DELETE THIS
+export default CourseId
