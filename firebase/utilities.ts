@@ -134,19 +134,23 @@ export const updateCourseDataOnAddReview = async (
 			const oldCount = numReviews
 			const newCount = numReviews + 1
 			numReviews = numReviews + 1
-			;({ avgWorkload, avgDifficulty, avgOverall, avgStaffSupport } =
-				updateAverages({
-					oldCount,
-					newCount,
-					newWorkload,
-					newDifficulty,
-					newOverall,
-					newStaffSupport: newStaffSupport ?? undefined,
-					avgWorkload,
-					avgDifficulty,
-					avgOverall,
-					avgStaffSupport,
-				}))
+			;({
+				avgWorkload,
+				avgDifficulty,
+				avgOverall,
+				// avgStaffSupport // TODO: implement additional logic for `avgStaffSupport`
+			} = updateAverages({
+				oldCount,
+				newCount,
+				newWorkload,
+				newDifficulty,
+				newOverall,
+				newStaffSupport: newStaffSupport ?? undefined,
+				avgWorkload,
+				avgDifficulty,
+				avgOverall,
+				avgStaffSupport,
+			}))
 
 			if (!reviewsCountsByYearSem[year][semesterTerm]) {
 				// no previous reviews in year-semesterTerm
@@ -226,23 +230,27 @@ export const updateCourseDataOnUpdateReview = async (
 				staffSupport: newStaffSupport,
 			} = reviewData
 
-			;({ avgWorkload, avgDifficulty, avgOverall, avgStaffSupport } =
-				updateAverages({
-					oldCount,
-					newCount,
-					oldWorkload,
-					oldDifficulty,
-					oldOverall,
-					oldStaffSupport: oldStaffSupport ?? undefined,
-					newWorkload,
-					newDifficulty,
-					newOverall,
-					newStaffSupport: newStaffSupport ?? undefined,
-					avgWorkload,
-					avgDifficulty,
-					avgOverall,
-					avgStaffSupport,
-				}))
+			;({
+				avgWorkload,
+				avgDifficulty,
+				avgOverall,
+				// avgStaffSupport // TODO: implement additional logic for `avgStaffSupport`
+			} = updateAverages({
+				oldCount,
+				newCount,
+				oldWorkload,
+				oldDifficulty,
+				oldOverall,
+				oldStaffSupport: oldStaffSupport ?? undefined,
+				newWorkload,
+				newDifficulty,
+				newOverall,
+				newStaffSupport: newStaffSupport ?? undefined,
+				avgWorkload,
+				avgDifficulty,
+				avgOverall,
+				avgStaffSupport,
+			}))
 
 			const updatedCourseData = {
 				...courseDataDoc,
@@ -309,19 +317,23 @@ export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 				staffSupport: oldStaffSupport,
 			}: Review = await getReview(reviewId)
 
-			;({ avgWorkload, avgDifficulty, avgOverall, avgStaffSupport } =
-				updateAverages({
-					oldCount,
-					newCount,
-					oldWorkload,
-					oldDifficulty,
-					oldOverall,
-					oldStaffSupport: oldStaffSupport ?? undefined,
-					avgWorkload,
-					avgDifficulty,
-					avgOverall,
-					avgStaffSupport,
-				}))
+			;({
+				avgWorkload,
+				avgDifficulty,
+				avgOverall,
+				// avgStaffSupport // TODO: implement additional logic for `avgStaffSupport`
+			} = updateAverages({
+				oldCount,
+				newCount,
+				oldWorkload,
+				oldDifficulty,
+				oldOverall,
+				oldStaffSupport: oldStaffSupport ?? undefined,
+				avgWorkload,
+				avgDifficulty,
+				avgOverall,
+				avgStaffSupport,
+			}))
 
 			if (reviewsCountsByYearSem[year][semesterTerm] === 1) {
 				// remove last remaining count

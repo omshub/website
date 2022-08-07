@@ -164,7 +164,10 @@ describe('firebase utility functions tests', () => {
 			]
 
 			oldCount = oldReviewsData.length
-			;({ avgWorkload, avgDifficulty, avgOverall,
+			;({
+				avgWorkload,
+				avgDifficulty,
+				avgOverall,
 				// avgStaffSupport // TODO: implement additional logic for `avgStaffSupport`
 			} = mapReviewsDataToAverages(oldReviewsData))
 		})

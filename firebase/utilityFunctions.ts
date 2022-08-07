@@ -98,8 +98,8 @@ export const updateAverages = ({
 	// newStaffSupport,
 	avgWorkload,
 	avgDifficulty,
-	avgOverall,
 	// avgStaffSupport,
+	avgOverall,
 }: TAveragesInputData) => ({
 	avgWorkload: updateAverage({
 		oldAverage: avgWorkload,
