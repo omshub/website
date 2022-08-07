@@ -1,3 +1,5 @@
+/* --- TYPE DEFINITIONS --- */
+
 export type TNullableNumber = number | null
 export type TObjectKey = string | number
 
@@ -5,9 +7,13 @@ export type TKeyMap = {
 	[key: string]: string
 }
 
+export type TRatingScale = 1 | 2 | 3 | 4 | 5
+
 type TReviewsCountsByYearSemObject = {
 	[yearKey: TObjectKey]: { [semesterTermKey: TObjectKey]: number }
 }
+
+/* --- DATA MODELS --- */
 
 export interface Course {
 	courseId: string
@@ -37,8 +43,6 @@ export interface Program {
 	name: string
 	url: string
 }
-
-export type TRatingScale = 1 | 2 | 3 | 4 | 5
 
 export interface Review {
 	reviewId: string
