@@ -52,13 +52,15 @@ export const addOrUpdate = async (
 		const coreDataDoc = await getAll(dataDocName)
 		let newDataDoc: TDocumentDataObject = {}
 		if (coreDataDoc) {
-			newDataDoc = { ...coreDataDoc }
+			if (Object.keys(coreDataDoc).length) {
+				newDataDoc = { ...coreDataDoc }
+			}
+			newDataDoc[dataId] = data
+			await setDoc(
+				doc(db, `${baseCollectionCoreData}/${dataDocName}`),
+				newDataDoc
+			)
 		}
-		newDataDoc[dataId] = data
-		await setDoc(
-			doc(db, `${baseCollectionCoreData}/${dataDocName}`),
-			newDataDoc
-		)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -68,7 +70,7 @@ export const addOrUpdate = async (
 export const del = async (dataDocName: string, dataId: string) => {
 	try {
 		const coreDataDoc = await getAll(dataDocName)
-		if (coreDataDoc) {
+		if (coreDataDoc && Object.keys(coreDataDoc).length) {
 			delete coreDataDoc[dataId]
 			await setDoc(
 				doc(db, `${baseCollectionCoreData}/${dataDocName}`),
@@ -116,58 +118,60 @@ export const updateCourseDataOnAddReview = async (
 	try {
 		let { courseId, year, semesterTerm } = parseReviewId(reviewId)
 		const courseDataDoc: Course = await getCourse(courseId)
-		let {
-			numReviews,
-			avgWorkload,
-			avgDifficulty,
-			avgOverall,
-			avgStaffSupport,
-			reviewsCountsByYearSem,
-		} = courseDataDoc
-
-		const {
-			workload: newWorkload,
-			difficulty: newDifficulty,
-			overall: newOverall,
-			staffSupport: newStaffSupport,
-		} = reviewData
-
-		const oldCount = numReviews
-		const newCount = numReviews + 1
-		numReviews = numReviews + 1
-		;({ avgWorkload, avgDifficulty, avgOverall, avgStaffSupport } =
-			updateAverages({
-				oldCount,
-				newCount,
-				newWorkload,
-				newDifficulty,
-				newOverall,
-				newStaffSupport: newStaffSupport ?? undefined,
+		if (courseDataDoc) {
+			let {
+				numReviews,
 				avgWorkload,
 				avgDifficulty,
 				avgOverall,
 				avgStaffSupport,
-			}))
+				reviewsCountsByYearSem,
+			} = courseDataDoc
 
-		if (!reviewsCountsByYearSem[year][semesterTerm]) {
-			// no previous reviews in year-semesterTerm
-			reviewsCountsByYearSem[year][semesterTerm] = 1
-		} else {
-			reviewsCountsByYearSem[year][semesterTerm] =
-				reviewsCountsByYearSem[year][semesterTerm] + 1
+			const {
+				workload: newWorkload,
+				difficulty: newDifficulty,
+				overall: newOverall,
+				staffSupport: newStaffSupport,
+			} = reviewData
+
+			const oldCount = numReviews
+			const newCount = numReviews + 1
+			numReviews = numReviews + 1
+			;({ avgWorkload, avgDifficulty, avgOverall, avgStaffSupport } =
+				updateAverages({
+					oldCount,
+					newCount,
+					newWorkload,
+					newDifficulty,
+					newOverall,
+					newStaffSupport: newStaffSupport ?? undefined,
+					avgWorkload,
+					avgDifficulty,
+					avgOverall,
+					avgStaffSupport,
+				}))
+
+			if (!reviewsCountsByYearSem[year][semesterTerm]) {
+				// no previous reviews in year-semesterTerm
+				reviewsCountsByYearSem[year][semesterTerm] = 1
+			} else {
+				reviewsCountsByYearSem[year][semesterTerm] =
+					reviewsCountsByYearSem[year][semesterTerm] + 1
+			}
+
+			const updatedCourseData = {
+				...courseDataDoc,
+				numReviews,
+				avgWorkload,
+				avgDifficulty,
+				avgOverall,
+				avgStaffSupport,
+				reviewsCountsByYearSem,
+			}
+
+			await updateCourse(courseId, updatedCourseData)
 		}
-
-		const updatedCourseData = {
-			...courseDataDoc,
-			numReviews,
-			avgWorkload,
-			avgDifficulty,
-			avgOverall,
-			avgStaffSupport,
-			reviewsCountsByYearSem,
-		}
-
-		await updateCourse(courseId, updatedCourseData)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -200,60 +204,62 @@ export const updateCourseDataOnUpdateReview = async (
 	try {
 		let { courseId } = parseReviewId(reviewId)
 		const courseDataDoc: Course = await getCourse(courseId)
-		let {
-			numReviews,
-			avgWorkload,
-			avgDifficulty,
-			avgOverall,
-			avgStaffSupport,
-		} = courseDataDoc
-
-		const oldCount = numReviews
-		const newCount = numReviews
-
-		const {
-			workload: oldWorkload,
-			difficulty: oldDifficulty,
-			overall: oldOverall,
-			staffSupport: oldStaffSupport,
-		}: Review = await getReview(reviewId)
-
-		const {
-			workload: newWorkload,
-			difficulty: newDifficulty,
-			overall: newOverall,
-			staffSupport: newStaffSupport,
-		} = reviewData
-
-		;({ avgWorkload, avgDifficulty, avgOverall, avgStaffSupport } =
-			updateAverages({
-				oldCount,
-				newCount,
-				oldWorkload,
-				oldDifficulty,
-				oldOverall,
-				oldStaffSupport: oldStaffSupport ?? undefined,
-				newWorkload,
-				newDifficulty,
-				newOverall,
-				newStaffSupport: newStaffSupport ?? undefined,
+		if (courseDataDoc) {
+			let {
+				numReviews,
 				avgWorkload,
 				avgDifficulty,
 				avgOverall,
 				avgStaffSupport,
-			}))
+			} = courseDataDoc
 
-		const updatedCourseData = {
-			...courseDataDoc,
-			numReviews,
-			avgWorkload,
-			avgDifficulty,
-			avgOverall,
-			avgStaffSupport,
-			// N.B. No net change in field `reviewsCountsByYearSem` on update
+			const oldCount = numReviews
+			const newCount = numReviews
+
+			const {
+				workload: oldWorkload,
+				difficulty: oldDifficulty,
+				overall: oldOverall,
+				staffSupport: oldStaffSupport,
+			}: Review = await getReview(reviewId)
+
+			const {
+				workload: newWorkload,
+				difficulty: newDifficulty,
+				overall: newOverall,
+				staffSupport: newStaffSupport,
+			} = reviewData
+
+			;({ avgWorkload, avgDifficulty, avgOverall, avgStaffSupport } =
+				updateAverages({
+					oldCount,
+					newCount,
+					oldWorkload,
+					oldDifficulty,
+					oldOverall,
+					oldStaffSupport: oldStaffSupport ?? undefined,
+					newWorkload,
+					newDifficulty,
+					newOverall,
+					newStaffSupport: newStaffSupport ?? undefined,
+					avgWorkload,
+					avgDifficulty,
+					avgOverall,
+					avgStaffSupport,
+				}))
+
+			const updatedCourseData = {
+				...courseDataDoc,
+				numReviews,
+				avgWorkload,
+				avgDifficulty,
+				avgOverall,
+				avgStaffSupport,
+				// N.B. No net change in field `reviewsCountsByYearSem` on update
+			}
+
+			await updateCourse(courseId, updatedCourseData)
 		}
-
-		await updateCourse(courseId, updatedCourseData)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -286,59 +292,61 @@ export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 	try {
 		let { courseId, year, semesterTerm } = parseReviewId(reviewId)
 		const courseDataDoc: Course = await getCourse(courseId)
-		let {
-			numReviews,
-			avgWorkload,
-			avgDifficulty,
-			avgOverall,
-			avgStaffSupport,
-			reviewsCountsByYearSem,
-		} = courseDataDoc
-
-		const oldCount = numReviews
-		const newCount = numReviews - 1
-		numReviews = numReviews - 1
-
-		const {
-			workload: oldWorkload,
-			difficulty: oldDifficulty,
-			overall: oldOverall,
-			staffSupport: oldStaffSupport,
-		}: Review = await getReview(reviewId)
-
-		;({ avgWorkload, avgDifficulty, avgOverall, avgStaffSupport } =
-			updateAverages({
-				oldCount,
-				newCount,
-				oldWorkload,
-				oldDifficulty,
-				oldOverall,
-				oldStaffSupport: oldStaffSupport ?? undefined,
+		if (courseDataDoc) {
+			let {
+				numReviews,
 				avgWorkload,
 				avgDifficulty,
 				avgOverall,
 				avgStaffSupport,
-			}))
+				reviewsCountsByYearSem,
+			} = courseDataDoc
 
-		if (reviewsCountsByYearSem[year][semesterTerm] === 1) {
-			// remove last remaining count
-			delete reviewsCountsByYearSem?.year?.semesterTerm
-		} else {
-			reviewsCountsByYearSem[year][semesterTerm] =
-				reviewsCountsByYearSem[year][semesterTerm] - 1
+			const oldCount = numReviews
+			const newCount = numReviews - 1
+			numReviews = numReviews - 1
+
+			const {
+				workload: oldWorkload,
+				difficulty: oldDifficulty,
+				overall: oldOverall,
+				staffSupport: oldStaffSupport,
+			}: Review = await getReview(reviewId)
+
+			;({ avgWorkload, avgDifficulty, avgOverall, avgStaffSupport } =
+				updateAverages({
+					oldCount,
+					newCount,
+					oldWorkload,
+					oldDifficulty,
+					oldOverall,
+					oldStaffSupport: oldStaffSupport ?? undefined,
+					avgWorkload,
+					avgDifficulty,
+					avgOverall,
+					avgStaffSupport,
+				}))
+
+			if (reviewsCountsByYearSem[year][semesterTerm] === 1) {
+				// remove last remaining count
+				delete reviewsCountsByYearSem?.year?.semesterTerm
+			} else {
+				reviewsCountsByYearSem[year][semesterTerm] =
+					reviewsCountsByYearSem[year][semesterTerm] - 1
+			}
+
+			const updatedCourseData = {
+				...courseDataDoc,
+				numReviews,
+				avgWorkload,
+				avgDifficulty,
+				avgOverall,
+				avgStaffSupport,
+				reviewsCountsByYearSem,
+			}
+
+			await updateCourse(courseId, updatedCourseData)
 		}
-
-		const updatedCourseData = {
-			...courseDataDoc,
-			numReviews,
-			avgWorkload,
-			avgDifficulty,
-			avgOverall,
-			avgStaffSupport,
-			reviewsCountsByYearSem,
-		}
-
-		await updateCourse(courseId, updatedCourseData)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)

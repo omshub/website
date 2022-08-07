@@ -142,15 +142,25 @@ export const getReview = async (reviewId: string) => {
 }
 
 export const addReview = async (reviewId: string, reviewData: Review) => {
-	await addOrUpdateReview(reviewId, reviewData)
-	await updateCourseDataOnAddReview(reviewId, reviewData)
-	await updateReviewsRecent50OnAddReview(reviewData)
+	try {
+		await addOrUpdateReview(reviewId, reviewData)
+		await updateCourseDataOnAddReview(reviewId, reviewData)
+		await updateReviewsRecent50OnAddReview(reviewData)
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
 }
 
 export const updateReview = async (reviewId: string, reviewData: Review) => {
-	await addOrUpdateReview(reviewId, reviewData)
-	await updateCourseDataOnUpdateReview(reviewId, reviewData)
-	await updateReviewsRecent50OnUpdateReview(reviewData)
+	try {
+		await addOrUpdateReview(reviewId, reviewData)
+		await updateCourseDataOnUpdateReview(reviewId, reviewData)
+		await updateReviewsRecent50OnUpdateReview(reviewData)
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
 }
 
 export const deleteReview = async (reviewId: string) => {
