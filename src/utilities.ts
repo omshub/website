@@ -42,6 +42,20 @@ export const mapColorPalette: TMapFields = {
 	5: boldBlue,
 }
 
+export const mapColorPaletteInverted: TMapFields = {
+	1: boldBlue,
+	2: olympicTeal,
+	3: canopyLime,
+	4: RATCap,
+	5: newHorizon,
+}
+
+export const mapSemesterTermToName: TMapFields = {
+	1: 'Spring',
+	2: 'Summer',
+	3: 'Fall',
+}
+
 type TObject = {
 	[key: string | number]: any
 }
