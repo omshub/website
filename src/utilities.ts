@@ -45,11 +45,30 @@ export const mapColorPalette: TMapFields = {
 type TObject = {
 	[key: string | number]: any
 }
+type TSortKey =
+	| 'courseId'
+	| 'departmentId'
+	| 'programId'
+	| 'semesterId'
+	| 'specializationId'
+	| 'userId'
+type TSortDirection = 'ASC' | 'DESC'
 
-export const mapToArray = (map: TObject) => {
+export const mapToArray = (
+	map: TObject,
+	sortKey?: TSortKey,
+	sortDirection?: TSortDirection
+) => {
 	const outputArray = []
 	for (const key in map) {
 		outputArray.push(map[key])
+	}
+	if (sortKey) {
+		if (!sortDirection) {
+			sortDirection = 'ASC'
+		}
+		const directionFactor = sortDirection === 'ASC' ? 1 : -1
+		outputArray.sort((a, b) => directionFactor * (a[sortKey] - b[sortKey]))
 	}
 	return outputArray
 }
