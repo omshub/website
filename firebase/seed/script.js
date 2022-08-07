@@ -68,9 +68,10 @@ _.sortBy(reviews, ['courseId', 'reviewId']).forEach((review) => {
 })
 
 const reviewsRecent50 = []
+const BUFFER = 20 // add padding to prevent net deletion below 50 count
 reviews
 	.sort((a, b) => b.created - a.created)
-	.slice(0, 50)
+	.slice(0, 50 + BUFFER)
 	.forEach((review) => {
 		reviewsRecent50.push(review)
 	})
@@ -98,4 +99,4 @@ for (const courseId in reviewsDataMaps) {
 	}
 }
 
-;(async () => add(`reviewsRecent50`, 'reviews', { data: reviewsRecent50 }))()
+;(async () => add('reviewsRecent50', 'reviews', { data: reviewsRecent50 }))()

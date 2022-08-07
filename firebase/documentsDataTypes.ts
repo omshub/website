@@ -1,3 +1,5 @@
+export type TNullableNumber = number | null
+
 export type TDocumentData =
 	| Course
 	| Department
@@ -6,9 +8,13 @@ export type TDocumentData =
 	| Semester
 	| Specialization
 
-export type TDocumentDataObject = { [key: string]: TDocumentData }
+type TObjectKey = string | number
 
-type TReviewsCountsByYearSemObject = { [key: string]: TDocumentData }
+export type TDocumentDataObject = { [key: TObjectKey]: TDocumentData }
+
+type TReviewsCountsByYearSemObject = {
+	[yearKey: TObjectKey]: { [semesterTermKey: TObjectKey]: number }
+}
 
 export interface Course {
 	courseId: string
@@ -20,10 +26,10 @@ export interface Course {
 	isDeprecated: boolean
 	isFoundational: boolean
 	numReviews: number
-	avgWorkload: number | null
-	avgDifficulty: number | null
-	avgOverall: number | null
-	avgStaffSupport: number | null
+	avgWorkload: TNullableNumber
+	avgDifficulty: TNullableNumber
+	avgOverall: TNullableNumber
+	avgStaffSupport: TNullableNumber
 	reviewsCountsByYearSem: TReviewsCountsByYearSemObject
 }
 
@@ -39,38 +45,41 @@ export interface Program {
 	url: string
 }
 
+type TRatingScale = 1 | 2 | 3 | 4 | 5
+
 export interface Review {
+	reviewId: string
 	courseId: string
 	year: number
 	semesterId: string
 	isLegacy: boolean
 	reviewerId: string
 	created: number // Unix timestamp
-	modified: number // Unix timestamp
+	modified: TNullableNumber // Unix timestamp
 	body: string
 	upvotes: number
 	downvotes: number
 	/* --- general review data --- */
 	workload: number
-	difficulty: number
-	overall: number
-	staffSupport: number
+	difficulty: TRatingScale
+	overall: TRatingScale
+	staffSupport: TRatingScale | null // N.B. `staffSupport` is null for legacy reviews, however, those records are not modifiable
 	/* --- course logistics review data --- */
-	isRecommended: boolean
-	isGoodFirstCourse: boolean
-	isPairable: boolean
-	hasGroupProjects: boolean
-	hasWritingAssignments: boolean
-	hasExamsQuizzes: boolean
-	hasMandatoryReadings: boolean
-	hasProgrammingAssignments: boolean
-	hasProvidedDevEnv: boolean
+	isRecommended: boolean | null
+	isGoodFirstCourse: boolean | null
+	isPairable: boolean | null
+	hasGroupProjects: boolean | null
+	hasWritingAssignments: boolean | null
+	hasExamsQuizzes: boolean | null
+	hasMandatoryReadings: boolean | null
+	hasProgrammingAssignments: boolean | null
+	hasProvidedDevEnv: boolean | null
 	/* --- user background review data --- */
-	preparation: number
-	omsCoursesTaken: number
-	hasRelevantWorkExperience: boolean
-	experienceLevel: number
-	gradeId: string
+	preparation: TRatingScale | null
+	omsCoursesTaken: TNullableNumber
+	hasRelevantWorkExperience: boolean | null
+	experienceLevel: TNullableNumber
+	gradeId: string | null
 }
 
 export interface Semester {
