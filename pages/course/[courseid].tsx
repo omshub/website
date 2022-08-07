@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
+/*
 import type { NextPage } from 'next'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
@@ -10,68 +11,49 @@ import ReviewCard from '../../src/components/ReviewCard'
 import { mapSemesterTermToName } from '../../src/utilities'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
-import { getReviews } from '../../firebase/dbOperations'
-interface Review {
-	semesterId: string
-	rating: number
-	difficulty: number
-	workload: number
-	overall: number
-	body: string
-	course_id: string
-	created: string
-}
+import backendAPI from '../../firebase'
+import {
+	TNullableNumber,
+	TNullableString,
+	TKeyMap,
+	// Course,
+	// Review,
+	TPayloadReviews,
+} from '../../globals/types'
 
-interface CourseData {
-	aliases: string[]
-	avgDifficulty: number
-	avgOverall: number
-	avgStaffSupport: number
-	avgWorkload: number
-	courseId: string
-	courseNumber: string
-	departmentId: string
-	id: number
-	isDeprecated: boolean
-	isFoundational: boolean
-	name: string
-	numReviews: number
-	reviewsCountsByYearSem: object
-	url: string
-}
-
+const { getReviews } = backendAPI
 
 const CourseId: NextPage = () => {
 	const router = useRouter()
 	const [loading, setLoading] = useState<boolean>()
-	const [courseTimeline, setCourseTimeLine] = useState<Object>({})
-	const [courseYears, setCourseYears] = useState([])
+	const [courseTimeline, setCourseTimeLine] = useState<TKeyMap>({})
+	const [courseYears, setCourseYears] = useState<number[]>([])
 	const [activeSemesters, setActiveSemesters] = useState({})
-	const [reviews, setReviews] = useState<[Review]>()
+	const [reviews, setReviews] = useState<TPayloadReviews>()
 	const [courseId, setCourseId] = useState<string>()
-	const [selectedSemester, setSelectedSemester] = useState<string | null>()
-	const [selectedYear, setSelectedYear] = useState<string | null>()
+	const [selectedSemester, setSelectedSemester] = useState<TNullableString>()
+	const [selectedYear, setSelectedYear] = useState<TNullableNumber>()
 
 	const handleSemester = (
 		event: React.MouseEvent<HTMLElement>,
-		newSemester: string | null
+		newSemester: TNullableString
 	) => {
 		setSelectedSemester(newSemester)
 	}
 
 	const handleYear = (
 		event: React.MouseEvent<HTMLElement>,
-		newYear: string | null
+		newYear: TNullableNumber
 	) => {
 		setSelectedYear(newYear)
 	}
 	useEffect(() => {
 		setLoading(true)
 		if (router.isReady) {
-			if (selectedYear == undefined || selectedSemester == undefined) {
-				const courseData:CourseData = JSON.parse(router.query?.courseData)
+			if (!(selectedYear && selectedSemester)) {
+				const courseData:Course = JSON.parse(router.query?.courseData)
 				const courseTimeline = courseData?.reviewsCountsByYearSem
-				const courseYears = Object.keys(courseTimeline)
+				const courseYears = Object.keys(courseTimeline).map((year) => Number(year))
 				const mostRecentYear = courseYears[courseYears.length - 1]
 				const mostRecentYearSemesters = Object.keys(
 					courseTimeline[mostRecentYear]
@@ -105,15 +87,19 @@ const CourseId: NextPage = () => {
 				setActiveSemesters(newActiveSemesters)
 			}
 
-			getReviews(courseId, selectedYear, selectedSemester)
-				.then((reviews) => {
-					setReviews(reviews)
-					setLoading(false)
-				})
-				.catch((err) => {
-					setLoading(false)
-					console.log(err)
-				})
+			if (courseId && selectedYear && selectedSemester) {
+				getReviews(courseId, String(selectedYear), selectedSemester)
+					.then((reviews) => {
+						if (reviews) {
+							setReviews(reviews)
+							setLoading(false)
+						}
+					})
+					.catch((err) => {
+						setLoading(false)
+						console.log(err)
+					})
+			}
 		}
 	}, [router.query, router.isReady, selectedYear, selectedSemester])
 
@@ -185,7 +171,7 @@ const CourseId: NextPage = () => {
 													difficulty={value.difficulty}
 													workload={value.workload}
 													semesterId={value.semesterId}
-													created={value.created}
+													created={String(value.created)}
 												></ReviewCard>
 											</Grid>
 										)
@@ -199,6 +185,8 @@ const CourseId: NextPage = () => {
 		</Container>
 	)
 }
+*/
+
 {
 	/* <Grid sx={{ width: `100%` }} item>
 							
@@ -215,4 +203,5 @@ const CourseId: NextPage = () => {
 ></CommentCard> */
 }
 
-export default CourseId
+// export default CourseId
+export{} // PLACEHOLDER ONLY --- DELETE THIS

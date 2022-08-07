@@ -91,3 +91,8 @@ export interface Specialization {
 	name: string
 	programId: string
 }
+
+/* --- PAYLOADS --- */
+export type TPayloadReviews = {
+  [reviewId: string]: Review
+}

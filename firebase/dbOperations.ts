@@ -12,6 +12,7 @@ import {
 	Review,
 	Semester,
 	Specialization,
+	TPayloadReviews,
 } from '../globals/types'
 import { parseReviewId } from './utilityFunctions'
 import {
@@ -106,8 +107,8 @@ export const getReviews = async (
 				`${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`
 			)
 		)
-		const allReviewsData = snapshot.data()
-		return allReviewsData ?? null
+		const allReviewsData: TPayloadReviews = snapshot.data() ?? {}
+		return allReviewsData
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
