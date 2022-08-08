@@ -26,7 +26,11 @@ const Home: NextPage = () => {
 				<Link
 					href={{
 						pathname: `/course/${params.row.courseId}`,
-						query: { courseData: JSON.stringify(params.row) },
+						query: {
+							title: params.row.name,
+							courseData: JSON.stringify(params.row),
+							numReviews: params.row.numReviews,
+						},
 					}}
 				>
 					{params.row.name}

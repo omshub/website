@@ -31,7 +31,7 @@ const CourseId: NextPage = () => {
 	const [courseTimeline, setCourseTimeLine] = useState<TKeyMap>({})
 	const [courseYears, setCourseYears] = useState<number[]>([])
 	const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>({})
-	const [reviews, setReviews] = useState<TPayloadReviews>()
+	const [reviews, setReviews] = useState<TPayloadReviews>({})
 	const [courseId, setCourseId] = useState<string | undefined>()
 	const [selectedSemester, setSelectedSemester] = useState<TNullableString>()
 	const [selectedYear, setSelectedYear] = useState<TNullableNumber>()
@@ -51,7 +51,8 @@ const CourseId: NextPage = () => {
 	}
 	useEffect(() => {
 		setLoading(true)
-		if (router.isReady) {
+		console.log(router)
+		if (router.isReady && Number(router?.query?.numReviews)) {
 			if (!(selectedYear && selectedSemester)) {
 				const parseArg: any = router.query?.courseData
 				const courseData: Course = JSON.parse(parseArg)
@@ -105,6 +106,8 @@ const CourseId: NextPage = () => {
 						console.log(err)
 					})
 			}
+		} else if (router.isReady && !Number(router.query?.numReviews)) {
+			setLoading(false)
 		}
 	}, [router.query, router.isReady, selectedYear, selectedSemester])
 
@@ -166,28 +169,46 @@ const CourseId: NextPage = () => {
 									})}
 							</ToggleButtonGroup>
 						</Grid>
-						<Grid container spacing={3} sx={{ margin: '10px 0' }}>
-							{reviews && (
-								<>
-									{mapToArray(reviews, REVIEW_ID, 'DESC').map(
-										(value: Review) => {
-											return (
-												<Grid sx={{ width: `100%` }} key={value.reviewId} item>
-													<ReviewCard
-														body={value.body}
-														overall={value.overall}
-														difficulty={value.difficulty}
-														workload={value.workload}
-														semesterId={value.semesterId}
-														created={value.created}
-													></ReviewCard>
-												</Grid>
-											)
-										}
-									)}
-								</>
-							)}
-						</Grid>
+
+						{Number(router.query?.numReviews) ? (
+							<>
+								{reviews && (
+									<Grid container spacing={3} sx={{ margin: '10px 0' }}>
+										{mapToArray(reviews, REVIEW_ID, 'DESC').map(
+											(value: Review) => {
+												return (
+													<Grid
+														sx={{ width: `100%` }}
+														key={value.reviewId}
+														item
+													>
+														<ReviewCard
+															body={value.body}
+															overall={value.overall}
+															difficulty={value.difficulty}
+															workload={value.workload}
+															semesterId={value.semesterId}
+															created={value.created}
+														></ReviewCard>
+													</Grid>
+												)
+											}
+										)}
+									</Grid>
+								)}
+							</>
+						) : (
+							<>
+								<Typography
+									variant='h3'
+									color='text.secondary'
+									style={{ textAlign: 'center' }}
+									gutterBottom
+								>
+									{`Aww shucks no reviews 🥲`}
+								</Typography>
+							</>
+						)}
 					</>
 				)}
 			</Box>
