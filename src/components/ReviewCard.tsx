@@ -7,6 +7,7 @@ import Chip from '@mui/material/Chip'
 import { grey } from '@mui/material/colors'
 import ReactMarkdown from 'react-markdown'
 import { Review } from '@globals/types'
+import Grid from '@mui/material/Grid'
 import {
 	mapDifficulty,
 	mapOverall,
@@ -51,26 +52,34 @@ const ReviewCard = ({
 						alignItems: 'flex-start',
 					}}
 				>
-					<Chip label={`Workload: ${workload} hr/wk`} variant='outlined'></Chip>
-					<Chip
-						label={`Difficulty: ${mapDifficulty[difficulty]}`}
-						sx={{
-							ml: 1,
-							color: mapColorPaletteInverted[difficulty],
-							borderColor: mapColorPaletteInverted[difficulty],
-						}}
-						variant='outlined'
-					></Chip>
-					<Chip
-						label={`Overall: ${mapOverall[overall]}`}
-						sx={{
-							ml: 1,
-							color: mapColorPalette[overall],
-							borderColor: mapColorPalette[overall],
-						}}
-						variant='outlined'
-						color='primary'
-					></Chip>
+					<Grid container direction="row" rowSpacing={2} justifyContent="flex-start" alignItems="flex-start">
+						<Grid item>
+							<Chip label={`Workload: ${workload} hr/wk`} variant='outlined'></Chip>
+						</Grid>
+						<Grid item>
+						<Chip
+							label={`Difficulty: ${mapDifficulty[difficulty]}`}
+							sx={{
+								ml: 1,
+								color: mapColorPaletteInverted[difficulty],
+								borderColor: mapColorPaletteInverted[difficulty],
+							}}
+							variant='outlined'
+						></Chip>
+						</Grid>
+						<Grid item>
+							<Chip
+								label={`Overall: ${mapOverall[overall]}`}
+								sx={{
+									ml: 1,
+									color: mapColorPalette[overall],
+									borderColor: mapColorPalette[overall],
+								}}
+								variant='outlined'
+								color='primary'
+							></Chip>
+						</Grid>
+					</Grid>
 				</Box>
 				<article>
 					<ReactMarkdown>{body}</ReactMarkdown>

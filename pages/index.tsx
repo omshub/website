@@ -149,6 +149,7 @@ const Home: NextPage = () => {
 										items: [
 											{
 												columnField: courseFields.IS_DEPRECATED,
+												operatorValue:'is',
 												value: 'false',
 											},
 										],
