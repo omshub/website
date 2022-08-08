@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Link from '../src/Link'
+
 import {
 	DataGrid,
 	GridColDef,
@@ -13,7 +14,7 @@ import {
 } from '@mui/x-data-grid'
 import { Course } from '../globals/types'
 import { getCourses } from '../firebase/dbOperations'
-import { mapToArray } from '../src/utilities'
+import { mapToArray,roundNumber } from '../src/utilities'
 import { COURSE_ID } from '../globals/constants'
 
 const Home: NextPage = () => {
@@ -32,6 +33,7 @@ const Home: NextPage = () => {
 							numReviews: params.row.numReviews,
 						},
 					}}
+					sx={{textDecoration:'unset',"&:hover":{textDecoration:'underline'}}}
 				>
 					{params.row.name}
 				</Link>
@@ -43,20 +45,20 @@ const Home: NextPage = () => {
 			headerName: 'Difficulty (out of 5)',
 			flex: 0.5,
 			valueGetter: (params: any) =>
-				Math.round(params.row.avgDifficulty * 10) / 10,
+			roundNumber(params.row.avgDifficulty,1),
 		},
 		{
 			field: 'avgWorkload',
 			headerName: 'Workload (hrs/wk)',
 			flex: 0.5,
 			valueGetter: (params: any) =>
-				Math.round(params.row.avgWorkload * 10) / 10,
+			roundNumber(params.row.avgWorkload,1),
 		},
 		{
 			field: 'avgOverall',
 			headerName: 'Overall (out of 5)',
 			flex: 0.5,
-			valueGetter: (params: any) => Math.round(params.row.avgOverall * 10) / 10,
+			valueGetter: (params: any) => roundNumber(params.row.avgOverall,1),
 		},
 		{ field: 'numReviews', headerName: 'Number of Reviews', flex: 0.5 },
 		{
@@ -86,7 +88,7 @@ const Home: NextPage = () => {
 			})
 	}, [])
 	return (
-		<Container maxWidth='lg'>
+		<Container maxWidth='xl'>
 			<Box
 				sx={{
 					my: 4,
@@ -106,7 +108,7 @@ const Home: NextPage = () => {
 				</Typography>
 
 				<>
-					<Grid container sx={{ marginLeft: 0, width: `100%` }} spacing={3}>
+					<Grid container sx={{margin:0, width: `100%` }} spacing={3}>
 						<DataGrid
 							autoHeight
 							disableColumnSelector
@@ -114,6 +116,7 @@ const Home: NextPage = () => {
 							columns={columns}
 							loading={loading}
 							components={{ Toolbar: GridToolbar }}
+							sx={{borderRadius:'25px',padding:'20px 10px'}}
 							columnVisibilityModel={{
 								isDeprecated: false,
 								aliases: false,

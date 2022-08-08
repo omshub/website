@@ -162,7 +162,8 @@ const CourseId: NextPage = () => {
 											{`Average Workload`}
 										</Typography>
 										<Typography variant='h5' component='div'>
-											{roundNumber(Number(courseData?.avgWorkload), 1) + ' hrs/wk'}
+											{roundNumber(Number(courseData?.avgWorkload), 1) +
+												' hrs/wk'}
 										</Typography>
 									</CardContent>
 								</Card>
@@ -180,12 +181,17 @@ const CourseId: NextPage = () => {
 											component='div'
 											sx={{
 												color:
-													mapColorPaletteInverted[Number(courseData?.avgDifficulty)],
+													mapColorPaletteInverted[
+														Number(courseData?.avgDifficulty)
+													],
 												border:
-													mapColorPaletteInverted[Number(courseData?.avgDifficulty)],
+													mapColorPaletteInverted[
+														Number(courseData?.avgDifficulty)
+													],
 											}}
 										>
-											{roundNumber(Number(courseData?.avgDifficulty), 1) + ' /5'}
+											{roundNumber(Number(courseData?.avgDifficulty), 1) +
+												' /5'}
 										</Typography>
 									</CardContent>
 								</Card>
@@ -202,8 +208,10 @@ const CourseId: NextPage = () => {
 											variant='h5'
 											component='div'
 											sx={{
-												color: mapColorPalette[Number(courseData.avgDifficulty)],
-												border: mapColorPalette[Number(courseData.avgDifficulty)],
+												color:
+													mapColorPalette[Number(courseData.avgDifficulty)],
+												border:
+													mapColorPalette[Number(courseData.avgDifficulty)],
 											}}
 										>
 											{roundNumber(Number(courseData.avgOverall), 1) + ' /5'}
