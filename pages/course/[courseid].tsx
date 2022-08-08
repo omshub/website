@@ -155,7 +155,7 @@ const CourseId: NextPage = () => {
 												<ToggleButton
 													value={key}
 													key={index}
-													disabled={Boolean(value)}
+													disabled={Boolean(value) || selectedSemester == key}
 												>
 													{mapSemesterTermToName[Number(key)]}
 												</ToggleButton>
@@ -174,7 +174,7 @@ const CourseId: NextPage = () => {
 								{courseYears &&
 									courseYears.map((year: number, index: number) => {
 										return (
-											<ToggleButton value={year} key={index}>
+											<ToggleButton value={year} key={index} disabled={selectedYear == year}>
 												{year}
 											</ToggleButton>
 										)
