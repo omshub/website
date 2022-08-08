@@ -5,31 +5,16 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Link from '../src/Link'
-import { getCourses } from '../firebase/dbOperations'
 import {
 	DataGrid,
 	GridColDef,
 	GridToolbar,
 	GridRenderCellParams,
 } from '@mui/x-data-grid'
+import { Course, TPayloadCourses } from '../globals/types'
+import backendAPI from '../firebase'
 
-export interface ClassData extends Object {
-	aliases?: string[]
-	avgDifficulty?: number
-	avgOverall?: number
-	avgStaffSupport?: number
-	avgWorkload?: number
-	courseId?: string
-	courseNumber?: string
-	departmentId?: string
-	id?: any
-	isDeprecated?: boolean
-	isFoundational?: boolean
-	key?: any
-	name?: string
-	numReviews?: number
-	url?: string
-}
+const { getCourses } = backendAPI
 
 const Home: NextPage = () => {
 	const columns: GridColDef[] = [
@@ -79,20 +64,20 @@ const Home: NextPage = () => {
 		{ field: 'aliases', headerName: 'Aliases', flex: 0, hide: true },
 	]
 	const [loading, setLoading] = useState<boolean>()
-	const [classes, setClasses] = useState<Array<ClassData>>([])
+	const [courses, setCourses] = useState<Array<Course>>([])
 
 	useEffect(() => {
 		setLoading(true)
 
 		getCourses()
-			.then((courses: any) => {
-				const classes = Object.keys(courses).map(
+			.then((payloadCourses: TPayloadCourses) => {
+				const courses = Object.keys(payloadCourses).map(
 					(key: string, index: number) => ({
-						...courses[key],
+						...payloadCourses[key],
 						id: index,
 					})
 				)
-				setClasses(classes)
+				setCourses(courses)
 				setLoading(false)
 			})
 			.catch((err) => {
@@ -125,7 +110,7 @@ const Home: NextPage = () => {
 						<DataGrid
 							autoHeight
 							disableColumnSelector
-							rows={classes}
+							rows={courses}
 							columns={columns}
 							loading={loading}
 							components={{ Toolbar: GridToolbar }}
