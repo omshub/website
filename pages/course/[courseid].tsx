@@ -89,6 +89,7 @@ const CourseId: NextPage = () => {
 					}),
 					{}
 				)
+				setSelectedSemester(newAvailableSemesters[newAvailableSemesters.length - 1])
 				setActiveSemesters(newActiveSemesters)
 			}
 
