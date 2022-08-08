@@ -56,9 +56,9 @@ const CourseId: NextPage = () => {
 				const parseArg: any = router.query?.courseData
 				const courseData: Course = JSON.parse(parseArg)
 				const courseTimeline = courseData?.reviewsCountsByYearSem
-				const courseYears = Object.keys(courseTimeline).map((year) =>
-					Number(year)
-				).reverse()
+				const courseYears = Object.keys(courseTimeline)
+					.map((year) => Number(year))
+					.reverse()
 				const mostRecentYear = courseYears[courseYears.length - 1]
 				const mostRecentYearSemesters = Object.keys(
 					courseTimeline[mostRecentYear]
@@ -143,7 +143,11 @@ const CourseId: NextPage = () => {
 									Object.entries(activeSemesters).map(
 										([key, value]: [string, boolean], index: number) => {
 											return (
-												<ToggleButton value={key} key={index} disabled={Boolean(value)}>
+												<ToggleButton
+													value={key}
+													key={index}
+													disabled={Boolean(value)}
+												>
 													{mapSemesterTermToName[Number(key)]}
 												</ToggleButton>
 											)
