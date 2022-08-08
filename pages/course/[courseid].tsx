@@ -7,19 +7,19 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import CircularProgress from '@mui/material/CircularProgress'
 import ReviewCard from '../../src/components/ReviewCard'
-import { mapSemesterTermToName } from '../../src/utilities'
+import { mapSemesterTermToName, mapToArray } from '../../src/utilities'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
-import backendAPI from '../../firebase'
 import {
 	TNullableNumber,
 	TNullableString,
 	TKeyMap,
 	Course,
 	TPayloadReviews,
+	Review,
 } from '../../globals/types'
-
-const { getReviews } = backendAPI
+import { getReviews } from '../../firebase/dbOperations'
+import { REVIEW_ID } from '../../globals/constants'
 
 type TActiveSemesters = {
 	[semesterTerm: number]: boolean
@@ -53,9 +53,12 @@ const CourseId: NextPage = () => {
 		setLoading(true)
 		if (router.isReady) {
 			if (!(selectedYear && selectedSemester)) {
-				const courseData:Course = JSON.parse(router.query?.courseData)
+				const parseArg: any = router.query?.courseData
+				const courseData: Course = JSON.parse(parseArg)
 				const courseTimeline = courseData?.reviewsCountsByYearSem
-				const courseYears = Object.keys(courseTimeline).map((year) => Number(year))
+				const courseYears = Object.keys(courseTimeline).map((year) =>
+					Number(year)
+				)
 				const mostRecentYear = courseYears[courseYears.length - 1]
 				const mostRecentYearSemesters = Object.keys(
 					courseTimeline[mostRecentYear]
@@ -135,13 +138,15 @@ const CourseId: NextPage = () => {
 								sx={{ margin: '10px', width: `100%` }}
 							>
 								{activeSemesters &&
-									Object.entries(activeSemesters).map(([key, value]:[string,boolean], index: number) => {
-										return (
-											<ToggleButton value={key} key={index} disabled={value}>
-												{mapSemesterTermToName[Number(key)]}
-											</ToggleButton>
-										)
-									})}
+									Object.entries(activeSemesters).map(
+										([key, value]: [string, boolean], index: number) => {
+											return (
+												<ToggleButton value={key} key={index} disabled={value}>
+													{mapSemesterTermToName[Number(key)]}
+												</ToggleButton>
+											)
+										}
+									)}
 							</ToggleButtonGroup>
 							<ToggleButtonGroup
 								value={selectedYear}
@@ -164,20 +169,22 @@ const CourseId: NextPage = () => {
 						<Grid container spacing={3} sx={{ margin: '10px 0' }}>
 							{reviews && (
 								<>
-									{Object.values(reviews).map((value, index) => {
-										return (
-											<Grid sx={{ width: `100%` }} key={index} item>
-												<ReviewCard
-													body={value.body}
-													overall={value.overall}
-													difficulty={value.difficulty}
-													workload={value.workload}
-													semesterId={value.semesterId}
-													created={String(value.created)}
-												></ReviewCard>
-											</Grid>
-										)
-									})}
+									{mapToArray(reviews, REVIEW_ID, 'DESC').map(
+										(value: Review) => {
+											return (
+												<Grid sx={{ width: `100%` }} key={value.reviewId} item>
+													<ReviewCard
+														body={value.body}
+														overall={value.overall}
+														difficulty={value.difficulty}
+														workload={value.workload}
+														semesterId={value.semesterId}
+														created={String(value.created)}
+													></ReviewCard>
+												</Grid>
+											)
+										}
+									)}
 								</>
 							)}
 						</Grid>

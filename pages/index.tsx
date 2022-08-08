@@ -11,10 +11,10 @@ import {
 	GridToolbar,
 	GridRenderCellParams,
 } from '@mui/x-data-grid'
-import { Course, TPayloadCourses } from '../globals/types'
-import backendAPI from '../firebase'
-
-const { getCourses } = backendAPI
+import { Course } from '../globals/types'
+import { getCourses } from '../firebase/dbOperations'
+import { mapToArray } from '../src/utilities'
+import { COURSE_ID } from '../globals/constants'
 
 const Home: NextPage = () => {
 	const columns: GridColDef[] = [
@@ -64,23 +64,18 @@ const Home: NextPage = () => {
 		{ field: 'aliases', headerName: 'Aliases', flex: 0, hide: true },
 	]
 	const [loading, setLoading] = useState<boolean>()
-	const [courses, setCourses] = useState<Array<Course>>([])
+	const [courses, setCourses] = useState<Course[]>([])
 
 	useEffect(() => {
 		setLoading(true)
 
 		getCourses()
-			.then((payloadCourses: TPayloadCourses) => {
-				const courses = Object.keys(payloadCourses).map(
-					(key: string, index: number) => ({
-						...payloadCourses[key],
-						id: index,
-					})
-				)
+			.then((payloadCourses) => {
+				const courses: Course[] = mapToArray(payloadCourses, COURSE_ID)
 				setCourses(courses)
 				setLoading(false)
 			})
-			.catch((err) => {
+			.catch((err: any) => {
 				setLoading(false)
 				console.log(err)
 			})
