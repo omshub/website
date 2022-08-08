@@ -166,8 +166,8 @@ export type TPayloadProgrammingLanguages = {
 	[programmingLanguageId: string]: ProgrammingLanguage
 }
 
-export type TPayloadGrade = {
-	[gradeId: string]: ProgrammingLanguage
+export type TPayloadGrades = {
+	[gradeId: string]: Grade
 }
 
 /* --- DATA MODELS TYPEDEFS --- */
@@ -388,7 +388,7 @@ export type TSubjectAreaId =
 	| 'phys'
 	| 'zzOther' // N.B. Prefixed with `zz` to always sort to end
 
-	export type TSubjectAreaName =
+export type TSubjectAreaName =
 	| 'Actuarial Science'
 	| 'Business - Other/General (Accounting, etc.)'
 	| 'Computer Science'
