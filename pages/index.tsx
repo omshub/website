@@ -72,7 +72,8 @@ const Home: NextPage = () => {
 		getCourses()
 			.then((payloadCourses) => {
 				const courses: Course[] = mapToArray(payloadCourses, COURSE_ID)
-				setCourses(courses)
+				const coursesWithIds = courses.map((data, i) => ({ ...data, id: i }))
+				setCourses(coursesWithIds)
 				setLoading(false)
 			})
 			.catch((err: any) => {

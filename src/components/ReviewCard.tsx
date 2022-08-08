@@ -20,7 +20,7 @@ interface ReviewCardProps {
 	difficulty: number
 	workload: number
 	semesterId: string
-	created: string
+	created: number
 }
 
 const ReviewCard = ({
