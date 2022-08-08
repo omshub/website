@@ -85,7 +85,7 @@ type TSortKey =
 	| 'userId'
 type TSortDirection = 'ASC' | 'DESC'
 
-export const mapToArray = (
+export const mapPayloadToArray = (
 	map: TObject,
 	sortKey?: TSortKey | string,
 	sortDirection?: TSortDirection

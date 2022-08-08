@@ -14,7 +14,7 @@ import {
 } from '@mui/x-data-grid'
 import { Course } from '../globals/types'
 import { getCourses } from '../firebase/dbOperations'
-import { mapToArray, roundNumber } from '../src/utilities'
+import { mapPayloadToArray, roundNumber } from '../src/utilities'
 import { COURSE_ID } from '../globals/constants'
 
 const Home: NextPage = () => {
@@ -78,7 +78,7 @@ const Home: NextPage = () => {
 
 		getCourses()
 			.then((payloadCourses) => {
-				const courses: Course[] = mapToArray(payloadCourses, COURSE_ID)
+				const courses: Course[] = mapPayloadToArray(payloadCourses, COURSE_ID)
 				const coursesWithIds = courses.map((data, i) => ({ ...data, id: i }))
 				setCourses(coursesWithIds)
 				setLoading(false)

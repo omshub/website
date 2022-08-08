@@ -12,7 +12,7 @@ import {
 	mapColorPaletteInverted,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
-	mapToArray,
+	mapPayloadToArray,
 	roundNumber,
 } from '../../src/utilities'
 import ToggleButton from '@mui/material/ToggleButton'
@@ -276,7 +276,7 @@ const CourseId: NextPage = () => {
 							<>
 								{reviews && (
 									<Grid container spacing={3} sx={{ margin: '10px 0' }}>
-										{mapToArray(reviews, REVIEW_ID, 'DESC').map(
+										{mapPayloadToArray(reviews, REVIEW_ID, 'DESC').map(
 											(value: Review) => {
 												return (
 													<Grid
