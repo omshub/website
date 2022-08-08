@@ -1,60 +1,59 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, setDoc } from 'firebase/firestore'
 import { db } from './FirebaseConfig'
 import {
+	coreDataDocuments,
 	baseCollectionCoreData,
 	baseCollectionReviewsData,
 	baseDocumentReviewsRecent50,
 } from './constants'
 import {
+	getCourses,
 	getCourse,
 	updateCourse,
 	getReviews,
 	getReview,
 	getReviewsRecent50,
+	getDepartments,
+	getPrograms,
+	getSemesters,
+	getSpecializations,
 } from './dbOperations'
-import { Course, Review } from '../globals/types'
+import {
+	Course,
+	Department,
+	Program,
+	Semester,
+	Specialization,
+	Review,
+	TPayloadCourses,
+	TPayloadDepartments,
+	TPayloadPrograms,
+	TPayloadSemesters,
+	TPayloadSpecializations,
+} from '../globals/types'
 import { TDocumentData, TDocumentDataObject } from './documentsDataTypes'
 import { parseReviewId, updateAverages } from './utilityFunctions'
 
-/* --- CORE DATA CRUD SUB-OPERATIONS --- */
-export const getAll = async (dataDocName: string) => {
-	try {
-		const snapshot = await getDoc(
-			doc(db, `${baseCollectionCoreData}/${dataDocName}`)
-		)
-		const coreDataDoc = snapshot.data()
-		return coreDataDoc ?? null
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-export const get = async (dataDocName: string, dataId: string) => {
-	try {
-		const coreDataDoc = await getAll(dataDocName)
-		return coreDataDoc ? coreDataDoc[dataId] : null
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
+const { COURSES, DEPARTMENTS, PROGRAMS, SEMESTERS, SPECIALIZATIONS } =
+	coreDataDocuments
 
-export const addOrUpdate = async (
-	dataDocName: string,
-	dataId: string,
-	data: TDocumentData
+/* --- CORE DATA CRUD SUB-OPERATIONS --- */
+
+export const addOrUpdateCourse = async (
+	courseId: string,
+	courseData: Course
 ) => {
 	try {
-		const coreDataDoc = await getAll(dataDocName)
-		let newDataDoc: TDocumentDataObject = {}
-		if (coreDataDoc) {
-			if (Object.keys(coreDataDoc).length) {
-				newDataDoc = { ...coreDataDoc }
+		const coursesDataDoc = await getCourses()
+		let newCoursesDataDoc: TPayloadCourses = {}
+		if (coursesDataDoc) {
+			if (Object.keys(coursesDataDoc).length) {
+				newCoursesDataDoc = { ...coursesDataDoc }
 			}
-			newDataDoc[dataId] = data
+			newCoursesDataDoc[courseId] = courseData
 			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${dataDocName}`),
-				newDataDoc
+				doc(db, `${baseCollectionCoreData}/${COURSES}`),
+				newCoursesDataDoc
 			)
 		}
 	} catch (e: any) {
@@ -63,14 +62,90 @@ export const addOrUpdate = async (
 	}
 }
 
-export const del = async (dataDocName: string, dataId: string) => {
+export const addOrUpdateDepartment = async (
+	departmentId: string,
+	departmentData: Department
+) => {
 	try {
-		const coreDataDoc = await getAll(dataDocName)
-		if (coreDataDoc && Object.keys(coreDataDoc).length) {
-			delete coreDataDoc[dataId]
+		const departmentsDataDoc = await getDepartments()
+		let newDepartmentsDataDoc: TPayloadDepartments = {}
+		if (departmentsDataDoc) {
+			if (Object.keys(departmentsDataDoc).length) {
+				newDepartmentsDataDoc = { ...departmentsDataDoc }
+			}
+			newDepartmentsDataDoc[departmentId] = departmentData
 			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${dataDocName}`),
-				coreDataDoc
+				doc(db, `${baseCollectionCoreData}/${DEPARTMENTS}`),
+				newDepartmentsDataDoc
+			)
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const addOrUpdateProgram = async (
+	programId: string,
+	programData: Program
+) => {
+	try {
+		const programsDataDoc = await getPrograms()
+		let newProgramsDataDoc: TPayloadPrograms = {}
+		if (programsDataDoc) {
+			if (Object.keys(programsDataDoc).length) {
+				newProgramsDataDoc = { ...programsDataDoc }
+			}
+			newProgramsDataDoc[programId] = programData
+			await setDoc(
+				doc(db, `${baseCollectionCoreData}/${PROGRAMS}`),
+				newProgramsDataDoc
+			)
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const addOrUpdateSemester = async (
+	semesterId: string,
+	semesterData: Semester
+) => {
+	try {
+		const semestersDataDoc = await getSemesters()
+		let newSemestersDataDoc: TPayloadSemesters = {}
+		if (semestersDataDoc) {
+			if (Object.keys(semestersDataDoc).length) {
+				newSemestersDataDoc = { ...semestersDataDoc }
+			}
+			newSemestersDataDoc[semesterId] = semesterData
+			await setDoc(
+				doc(db, `${baseCollectionCoreData}/${SEMESTERS}`),
+				newSemestersDataDoc
+			)
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const addOrUpdateSpecialization = async (
+	specializationId: string,
+	specializationData: Specialization
+) => {
+	try {
+		const specializationsDataDoc = await getSpecializations()
+		let newSpecializationsDataDoc: TPayloadSpecializations = {}
+		if (specializationsDataDoc) {
+			if (Object.keys(specializationsDataDoc).length) {
+				newSpecializationsDataDoc = { ...specializationsDataDoc }
+			}
+			newSpecializationsDataDoc[specializationId] = specializationData
+			await setDoc(
+				doc(db, `${baseCollectionCoreData}/${SPECIALIZATIONS}`),
+				newSpecializationsDataDoc
 			)
 		}
 	} catch (e: any) {
@@ -80,6 +155,7 @@ export const del = async (dataDocName: string, dataId: string) => {
 }
 
 /* --- REVIEWS DATA CRUD SUB-OPERATIONS --- */
+
 export const addOrUpdateReview = async (
 	reviewId: string,
 	reviewData: TDocumentData
@@ -113,7 +189,7 @@ export const updateCourseDataOnAddReview = async (
 ) => {
 	try {
 		let { courseId, year, semesterTerm } = parseReviewId(reviewId)
-		const courseDataDoc: Course = await getCourse(courseId)
+		const courseDataDoc = await getCourse(courseId)
 		if (courseDataDoc) {
 			let {
 				numReviews,
@@ -199,7 +275,7 @@ export const updateCourseDataOnUpdateReview = async (
 ) => {
 	try {
 		let { courseId } = parseReviewId(reviewId)
-		const courseDataDoc: Course = await getCourse(courseId)
+		const courseDataDoc = await getCourse(courseId)
 		if (courseDataDoc) {
 			let {
 				numReviews,
@@ -287,7 +363,7 @@ export const updateReviewsRecent50OnUpdateReview = async (
 export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 	try {
 		let { courseId, year, semesterTerm } = parseReviewId(reviewId)
-		const courseDataDoc: Course = await getCourse(courseId)
+		const courseDataDoc = await getCourse(courseId)
 		if (courseDataDoc) {
 			let {
 				numReviews,
