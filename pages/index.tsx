@@ -4,7 +4,7 @@ import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import Link from '../src/Link'
+import Link from '@src/Link'
 
 import {
 	DataGrid,
@@ -14,7 +14,7 @@ import {
 } from '@mui/x-data-grid'
 import { Course } from '@globals/types'
 import { getCourses } from '@backend/dbOperations'
-import { mapPayloadToArray, roundNumber } from '../src/utilities'
+import { mapPayloadToArray, roundNumber } from '@src/utilities'
 import { courseFields } from '@globals/constants'
 
 const Home: NextPage = () => {

@@ -19,6 +19,7 @@
 		"paths": {
 			"@globals/*": ["globals/*"],
 			"@backend/*": ["firebase/*"],
+			"@src/*": ["src/*"],
 			"@pages/*": ["pages/*"],
 			"@components/*": ["src/components/*"]
 		}

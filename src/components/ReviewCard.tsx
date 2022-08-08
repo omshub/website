@@ -13,7 +13,7 @@ import {
 	mapColorPalette,
 	mapColorPaletteInverted,
 	mapSemesterIdToName,
-} from '../utilities'
+} from '@src/utilities'
 
 const ReviewCard = ({
 	body,

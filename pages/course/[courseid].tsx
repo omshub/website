@@ -14,7 +14,7 @@ import {
 	mapSemesterTermToName,
 	mapPayloadToArray,
 	roundNumber,
-} from '../../src/utilities'
+} from '@src/utilities'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import CardContent from '@mui/material/CardContent'
