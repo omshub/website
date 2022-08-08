@@ -23,8 +23,8 @@ const Home: NextPage = () => {
 		{
 			field: courseFields.NAME,
 			headerName: 'Course Name',
-			flex: isDesktop? 1 : 0,
-			minWidth : isDesktop? 50 : 300,
+			flex: isDesktop ? 1 : 0,
+			minWidth: isDesktop ? 50 : 300,
 			renderCell: (params: GridRenderCellParams) => (
 				<Link
 					href={{
@@ -44,32 +44,36 @@ const Home: NextPage = () => {
 				</Link>
 			),
 		},
-		{ field: courseFields.COURSE_ID, headerName: 'Course ID', flex: isDesktop? 0.5 : 0 },
+		{
+			field: courseFields.COURSE_ID,
+			headerName: 'Course ID',
+			flex: isDesktop ? 0.5 : 0,
+		},
 		{
 			field: courseFields.AVG_DIFFICULTY,
 			headerName: 'Difficulty (out of 5)',
-			flex: isDesktop? 0.5 : 0,
+			flex: isDesktop ? 0.5 : 0,
 			valueGetter: (params: any) => roundNumber(params.row.avgDifficulty, 1),
 			type: 'number',
 		},
 		{
 			field: courseFields.AVG_WORKLOAD,
 			headerName: 'Workload (hrs/wk)',
-			flex: isDesktop? 0.5 : 0,
+			flex: isDesktop ? 0.5 : 0,
 			valueGetter: (params: any) => roundNumber(params.row.avgWorkload, 1),
 			type: 'number',
 		},
 		{
 			field: courseFields.AVG_OVERALL,
 			headerName: 'Overall (out of 5)',
-			flex: isDesktop? 0.5 : 0,
+			flex: isDesktop ? 0.5 : 0,
 			valueGetter: (params: any) => roundNumber(params.row.avgOverall, 1),
 			type: 'number',
 		},
 		{
 			field: courseFields.NUM_REVIEWS,
 			headerName: 'Number of Reviews',
-			flex: isDesktop? 0.5 : 0,
+			flex: isDesktop ? 0.5 : 0,
 			type: 'number',
 		},
 		{
@@ -151,7 +155,7 @@ const Home: NextPage = () => {
 										items: [
 											{
 												columnField: courseFields.IS_DEPRECATED,
-												operatorValue:'is',
+												operatorValue: 'is',
 												value: 'false',
 											},
 										],
