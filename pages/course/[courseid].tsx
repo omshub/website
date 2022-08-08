@@ -7,9 +7,19 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import CircularProgress from '@mui/material/CircularProgress'
 import ReviewCard from '../../src/components/ReviewCard'
-import { mapSemesterTermToName, mapToArray } from '../../src/utilities'
+import {
+	mapColorPalette,
+	mapColorPaletteInverted,
+	mapSemesterTermToEmoji,
+	mapSemesterTermToName,
+	mapToArray,
+	roundNumber,
+} from '../../src/utilities'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
+import CardContent from '@mui/material/CardContent'
+import Card from '@mui/material/Card'
+
 import {
 	TNullableNumber,
 	TNullableString,
@@ -35,7 +45,7 @@ const CourseId: NextPage = () => {
 	const [courseId, setCourseId] = useState<string | undefined>()
 	const [selectedSemester, setSelectedSemester] = useState<TNullableString>()
 	const [selectedYear, setSelectedYear] = useState<TNullableNumber>()
-
+	const [courseData, setCourseData] = useState<Course>()
 	const handleSemester = (
 		event: React.MouseEvent<HTMLElement>,
 		newSemester: TNullableString
@@ -59,7 +69,7 @@ const CourseId: NextPage = () => {
 				const courseYears = Object.keys(courseTimeline)
 					.map((year) => Number(year))
 					.reverse()
-				const mostRecentYear = courseYears[courseYears.length - 1]
+				const mostRecentYear = courseYears[0]
 				const mostRecentYearSemesters = Object.keys(
 					courseTimeline[mostRecentYear]
 				)
@@ -74,6 +84,7 @@ const CourseId: NextPage = () => {
 					{}
 				)
 
+				setCourseData(courseData)
 				setCourseTimeLine(courseTimeline)
 				setCourseYears(courseYears)
 				setSelectedSemester(mostRecentSemester)
@@ -139,14 +150,76 @@ const CourseId: NextPage = () => {
 					</Box>
 				) : (
 					<>
+						{courseData && (
+							<Grid container sx={{ justifyContent: 'center' }}>
+								<Card variant='outlined' sx={{ padding: '5px 30px' }}>
+									<CardContent>
+										<Typography
+											sx={{ fontSize: 14 }}
+											color='text.secondary'
+											gutterBottom
+										>
+											{`Average Workload`}
+										</Typography>
+										<Typography variant='h5' component='div'>
+											{roundNumber(Number(courseData?.avgWorkload), 1) + ' hrs/wk'}
+										</Typography>
+									</CardContent>
+								</Card>
+								<Card variant='outlined' sx={{ padding: '5px 30px' }}>
+									<CardContent>
+										<Typography
+											sx={{ fontSize: 14 }}
+											color='text.secondary'
+											gutterBottom
+										>
+											{`Average Difficulty`}
+										</Typography>
+										<Typography
+											variant='h5'
+											component='div'
+											sx={{
+												color:
+													mapColorPaletteInverted[Number(courseData?.avgDifficulty)],
+												border:
+													mapColorPaletteInverted[Number(courseData?.avgDifficulty)],
+											}}
+										>
+											{roundNumber(Number(courseData?.avgDifficulty), 1) + ' /5'}
+										</Typography>
+									</CardContent>
+								</Card>
+								<Card variant='outlined' sx={{ padding: '5px 30px' }}>
+									<CardContent>
+										<Typography
+											sx={{ fontSize: 14 }}
+											color='text.secondary'
+											gutterBottom
+										>
+											{`Average Overall`}
+										</Typography>
+										<Typography
+											variant='h5'
+											component='div'
+											sx={{
+												color: mapColorPalette[Number(courseData.avgDifficulty)],
+												border: mapColorPalette[Number(courseData.avgDifficulty)],
+											}}
+										>
+											{roundNumber(Number(courseData.avgOverall), 1) + ' /5'}
+										</Typography>
+									</CardContent>
+								</Card>
+							</Grid>
+						)}
 						<Grid>
 							<ToggleButtonGroup
 								value={selectedSemester}
 								onChange={handleSemester}
 								exclusive={true}
 								aria-label='year selection'
-								size='small'
-								sx={{ margin: '10px', width: `100%` }}
+								size='large'
+								sx={{ margin: '10px', width: `100%`, justifyContent: 'center' }}
 							>
 								{activeSemesters &&
 									Object.entries(activeSemesters).map(
@@ -157,7 +230,10 @@ const CourseId: NextPage = () => {
 													key={index}
 													disabled={Boolean(value) || selectedSemester == key}
 												>
-													{mapSemesterTermToName[Number(key)]}
+													<Typography variant='h6' gutterBottom component='div'>
+														{mapSemesterTermToName[Number(key)]}{' '}
+														{mapSemesterTermToEmoji[Number(key)]}
+													</Typography>
 												</ToggleButton>
 											)
 										}
@@ -168,14 +244,20 @@ const CourseId: NextPage = () => {
 								onChange={handleYear}
 								exclusive={true}
 								aria-label='year selection'
-								size='small'
-								sx={{ margin: '10px', width: `100%` }}
+								size='large'
+								sx={{ margin: '10px', width: `100%`, justifyContent: 'center' }}
 							>
 								{courseYears &&
 									courseYears.map((year: number, index: number) => {
 										return (
-											<ToggleButton value={year} key={index} disabled={selectedYear == year}>
-												{year}
+											<ToggleButton
+												value={year}
+												key={index}
+												disabled={selectedYear == year}
+											>
+												<Typography variant='h6' gutterBottom component='div'>
+													{year}
+												</Typography>
 											</ToggleButton>
 										)
 									})}

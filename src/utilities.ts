@@ -56,6 +56,12 @@ export const mapSemesterTermToName: TMapFields = {
 	3: 'Fall',
 }
 
+export const mapSemesterTermToEmoji: TMapFields = {
+	1: '🌱',
+	2: '🌞',
+	3: '🍂',
+}
+
 export const mapSemsterIdToTerm: TObject = {
 	sp: 1,
 	sm: 2,
@@ -112,4 +118,8 @@ export const mapToArray = (
 		})
 	}
 	return outputArray
+}
+
+export const roundNumber = (number: number, fixed: number) => {
+	return (Math.round(number * 10) / 10).toFixed(fixed)
 }
