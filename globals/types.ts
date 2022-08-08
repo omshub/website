@@ -1,10 +1,11 @@
 /* --- TYPE DEFINITIONS --- */
 
 export type TNullableNumber = number | null
+export type TNullableString = string | null
 export type TObjectKey = string | number
 
 export type TKeyMap = {
-	[key: string]: string
+	[key: TObjectKey]: any
 }
 
 export type TRatingScale = 1 | 2 | 3 | 4 | 5
@@ -44,6 +45,18 @@ export interface Program {
 	url: string
 }
 
+export interface Semester {
+	semesterId: string
+	term: number
+	name: string
+}
+
+export interface Specialization {
+	specializationId: string
+	name: string
+	programId: string
+}
+
 export interface Review {
 	reviewId: string
 	courseId: string
@@ -79,14 +92,28 @@ export interface Review {
 	gradeId: string | null
 }
 
-export interface Semester {
-	semesterId: string
-	term: number
-	name: string
+/* --- PAYLOADS --- */
+
+export type TPayloadCourses = {
+	[courseId: string]: Course
 }
 
-export interface Specialization {
-	specializationId: string
-	name: string
-	programId: string
+export type TPayloadDepartments = {
+	[departmentId: string]: Department
+}
+
+export type TPayloadPrograms = {
+	[programId: string]: Program
+}
+
+export type TPayloadSemesters = {
+	[semesterId: string]: Semester
+}
+
+export type TPayloadSpecializations = {
+	[specializationId: string]: Specialization
+}
+
+export type TPayloadReviews = {
+	[reviewId: string]: Review
 }

@@ -1,3 +1,4 @@
+import { ASC } from '../globals/constants'
 import {
 	newHorizon,
 	RATCap,
@@ -56,6 +57,23 @@ export const mapSemesterTermToName: TMapFields = {
 	3: 'Fall',
 }
 
+export const mapSemesterTermToEmoji: TMapFields = {
+	1: '🌱',
+	2: '🌞',
+	3: '🍂',
+}
+
+export const mapSemsterIdToTerm: TObject = {
+	sp: 1,
+	sm: 2,
+	fa: 3,
+}
+
+export const mapSemesterIdToName: TObject = {
+	sp: 'Spring',
+	sm: 'Summer',
+	fa: 'Fall',
+}
 type TObject = {
 	[key: string | number]: any
 }
@@ -68,7 +86,7 @@ type TSortKey =
 	| 'userId'
 type TSortDirection = 'ASC' | 'DESC'
 
-export const mapToArray = (
+export const mapPayloadToArray = (
 	map: TObject,
 	sortKey?: TSortKey | string,
 	sortDirection?: TSortDirection
@@ -79,10 +97,30 @@ export const mapToArray = (
 	}
 	if (sortKey) {
 		if (!sortDirection) {
-			sortDirection = 'ASC'
+			sortDirection = ASC
 		}
-		const directionFactor = sortDirection === 'ASC' ? 1 : -1
-		outputArray.sort((a, b) => directionFactor * (a[sortKey] - b[sortKey]))
+		const isAscendingSortFactor = sortDirection === ASC ? 1 : -1
+		outputArray.sort((a, b) => {
+			const valA = a[sortKey]
+			const valB = b[sortKey]
+
+			if (typeof valA === 'string' && typeof valB === 'string') {
+				return valA < valB
+					? isAscendingSortFactor * -1
+					: isAscendingSortFactor * 1
+			}
+
+			if (typeof valA === 'number' && typeof valB === 'number') {
+				return isAscendingSortFactor * (valA - valB) ? 1 : -1
+			}
+
+			// default fallthrough
+			return -1
+		})
 	}
 	return outputArray
+}
+
+export const roundNumber = (number: number, fixed: number) => {
+	return (Math.round(number * 10) / 10).toFixed(fixed)
 }

@@ -5,23 +5,17 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Link from '../src/Link'
+
 import {
 	DataGrid,
 	GridColDef,
 	GridToolbar,
 	GridRenderCellParams,
 } from '@mui/x-data-grid'
-
-interface ClassData {
-	number: string
-	aliases: string
-	department: string
-	deprecated: boolean
-	foundational: string
-	name: string
-	link: string
-	course_id: string
-}
+import { Course } from '../globals/types'
+import { getCourses } from '../firebase/dbOperations'
+import { mapPayloadToArray, roundNumber } from '../src/utilities'
+import { COURSE_ID } from '../globals/constants'
 
 const Home: NextPage = () => {
 	const columns: GridColDef[] = [
@@ -32,42 +26,70 @@ const Home: NextPage = () => {
 			renderCell: (params: GridRenderCellParams) => (
 				<Link
 					href={{
-						pathname: `/course/${params.row.course_id}`,
-						query: { classid: params.row.course_id, title: params.row.name },
+						pathname: `/course/${params.row.courseId}`,
+						query: {
+							title: params.row.name,
+							courseData: JSON.stringify(params.row),
+							numReviews: params.row.numReviews,
+						},
+					}}
+					sx={{
+						textDecoration: 'unset',
+						'&:hover': { textDecoration: 'underline' },
 					}}
 				>
 					{params.row.name}
 				</Link>
 			),
 		},
-		{ field: 'course_id', headerName: 'Course ID', flex: 1 },
-		{ field: 'aliases', headerName: 'Aliases', flex: 1, hide: true },
+		{ field: 'courseId', headerName: 'Course ID', flex: 0.5 },
+		{
+			field: 'avgDifficulty',
+			headerName: 'Difficulty (out of 5)',
+			flex: 0.5,
+			valueGetter: (params: any) => roundNumber(params.row.avgDifficulty, 1),
+		},
+		{
+			field: 'avgWorkload',
+			headerName: 'Workload (hrs/wk)',
+			flex: 0.5,
+			valueGetter: (params: any) => roundNumber(params.row.avgWorkload, 1),
+		},
+		{
+			field: 'avgOverall',
+			headerName: 'Overall (out of 5)',
+			flex: 0.5,
+			valueGetter: (params: any) => roundNumber(params.row.avgOverall, 1),
+		},
+		{ field: 'numReviews', headerName: 'Number of Reviews', flex: 0.5 },
+		{
+			field: 'isDeprecated',
+			headerName: 'is Deprecated?',
+			flex: 0,
+			hide: true,
+		},
+		{ field: 'aliases', headerName: 'Aliases', flex: 0, hide: true },
 	]
 	const [loading, setLoading] = useState<boolean>()
-	const [classes, setClasses] = useState<Array<ClassData>>([])
+	const [courses, setCourses] = useState<Course[]>([])
 
 	useEffect(() => {
 		setLoading(true)
-		// fetch('https://omshub-readonly.gigalixirapp.com/classes')
-		fetch('https://omshub-api.gigalixirapp.com/api/classes')
-			.then((res) => res.json())
-			.then((classes) => {
-				//Clean data
-				classes = classes.map((data: object, index: number) => ({
-					...data,
-					id: index,
-				}))
-				setClasses(classes)
+
+		getCourses()
+			.then((payloadCourses) => {
+				const courses: Course[] = mapPayloadToArray(payloadCourses, COURSE_ID)
+				const coursesWithIds = courses.map((data, i) => ({ ...data, id: i }))
+				setCourses(coursesWithIds)
 				setLoading(false)
 			})
-			.catch((err) => {
+			.catch((err: any) => {
 				setLoading(false)
 				console.log(err)
 			})
 	}, [])
-
 	return (
-		<Container maxWidth='lg'>
+		<Container maxWidth='xl'>
 			<Box
 				sx={{
 					my: 4,
@@ -87,15 +109,17 @@ const Home: NextPage = () => {
 				</Typography>
 
 				<>
-					<Grid container sx={{ marginLeft: 0, width: `100%` }} spacing={3}>
+					<Grid container sx={{ margin: 0, width: `100%` }} spacing={3}>
 						<DataGrid
 							autoHeight
 							disableColumnSelector
-							rows={classes}
+							rows={courses}
 							columns={columns}
 							loading={loading}
 							components={{ Toolbar: GridToolbar }}
+							sx={{ borderRadius: '25px', padding: '20px 10px' }}
 							columnVisibilityModel={{
+								isDeprecated: false,
 								aliases: false,
 							}}
 							componentsProps={{
@@ -107,6 +131,17 @@ const Home: NextPage = () => {
 							initialState={{
 								pagination: {
 									pageSize: 150,
+								},
+								filter: {
+									filterModel: {
+										items: [
+											{
+												columnField: 'isDeprecated',
+												operatorValue: 'equals',
+												value: 'false',
+											},
+										],
+									},
 								},
 							}}
 						/>

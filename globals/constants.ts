@@ -4,3 +4,7 @@ export const PROGRAM_ID = 'programId'
 export const SEMESTER_ID = 'semesterId'
 export const SPECIALIZATION_ID = 'specializationId'
 export const USER_ID = 'userId'
+export const REVIEW_ID = 'reviewId'
+
+export const ASC = 'ASC'
+export const DESC = 'DESC'
