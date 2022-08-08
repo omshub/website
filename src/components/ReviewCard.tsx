@@ -21,7 +21,7 @@ interface ReviewCardProps {
 	workload: number
 	semesterId: string
 	created: number
-	year:number
+	year: number
 }
 
 const ReviewCard = ({
