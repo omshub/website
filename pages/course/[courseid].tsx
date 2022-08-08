@@ -81,15 +81,23 @@ const CourseId: NextPage = () => {
 				setCourseId(courseData.courseId)
 				setActiveSemesters(activeSemesters)
 			} else {
-				const newAvailableSemesters = Object.keys(courseTimeline[selectedYear])
-				const newActiveSemesters = Object.keys(mapSemesterTermToName).reduce(
+				const newAvailableSemesters: any = Object.keys(
+					courseTimeline[selectedYear]
+				)
+				const newActiveSemesters: any = Object.keys(
+					mapSemesterTermToName
+				).reduce(
 					(attrs, key) => ({
 						...attrs,
 						[key]: !(newAvailableSemesters.indexOf(key.toString()) > -1),
 					}),
 					{}
 				)
-				setSelectedSemester(newAvailableSemesters[newAvailableSemesters.length - 1])
+				if (newActiveSemesters[selectedSemester]) {
+					setSelectedSemester(
+						newAvailableSemesters[newAvailableSemesters.length - 1]
+					)
+				}
 				setActiveSemesters(newActiveSemesters)
 			}
 
