@@ -16,20 +16,23 @@ import {
 	TNullableString,
 	TKeyMap,
 	Course,
-	Review,
 	TPayloadReviews,
 } from '../../globals/types'
 
 const { getReviews } = backendAPI
+
+type TActiveSemesters = {
+	[semesterTerm: number]: boolean
+}
 
 const CourseId: NextPage = () => {
 	const router = useRouter()
 	const [loading, setLoading] = useState<boolean>()
 	const [courseTimeline, setCourseTimeLine] = useState<TKeyMap>({})
 	const [courseYears, setCourseYears] = useState<number[]>([])
-	const [activeSemesters, setActiveSemesters] = useState({})
+	const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>({})
 	const [reviews, setReviews] = useState<TPayloadReviews>()
-	const [courseId, setCourseId] = useState<string>()
+	const [courseId, setCourseId] = useState<string | undefined>()
 	const [selectedSemester, setSelectedSemester] = useState<TNullableString>()
 	const [selectedYear, setSelectedYear] = useState<TNullableNumber>()
 
@@ -132,10 +135,10 @@ const CourseId: NextPage = () => {
 								sx={{ margin: '10px', width: `100%` }}
 							>
 								{activeSemesters &&
-									Object.entries(activeSemesters).map(([key, value]:[number,boolean], index) => {
+									Object.entries(activeSemesters).map(([key, value]:[string,boolean], index: number) => {
 										return (
 											<ToggleButton value={key} key={index} disabled={value}>
-												{mapSemesterTermToName[key]}
+												{mapSemesterTermToName[Number(key)]}
 											</ToggleButton>
 										)
 									})}
@@ -183,22 +186,6 @@ const CourseId: NextPage = () => {
 			</Box>
 		</Container>
 	)
-}
-
-{
-	/* <Grid sx={{ width: `100%` }} item>
-							
-							</Grid> */
-}
-{
-	/* <CommentCard
-	body={value.body}
-	rating={value.overall}
-	difficulty={value.difficulty}
-	workload={value.workload}
-	semester={value.semesterId}
-	created={value.created}
-></CommentCard> */
 }
 
 export default CourseId
