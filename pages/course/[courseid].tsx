@@ -285,9 +285,7 @@ const CourseId: NextPage = () => {
 														key={value.reviewId}
 														item
 													>
-														<ReviewCard
-															{...value}
-														></ReviewCard>
+														<ReviewCard {...value}></ReviewCard>
 													</Grid>
 												)
 											}
