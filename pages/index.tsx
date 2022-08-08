@@ -67,7 +67,7 @@ const Home: NextPage = () => {
 			flex: 0.5,
 		},
 		{
-			field: 'isDeprecated',
+			field: courseFields.IS_DEPRECATED,
 			headerName: 'is Deprecated?',
 			flex: 0,
 			hide: true,
