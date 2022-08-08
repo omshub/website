@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import CircularProgress from '@mui/material/CircularProgress'
-import ReviewCard from '../../src/components/ReviewCard'
+import ReviewCard from '@components/ReviewCard'
 import {
 	mapColorPalette,
 	mapColorPaletteInverted,
@@ -14,7 +14,7 @@ import {
 	mapSemesterTermToName,
 	mapPayloadToArray,
 	roundNumber,
-} from '../../src/utilities'
+} from '@src/utilities'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import CardContent from '@mui/material/CardContent'
@@ -27,9 +27,9 @@ import {
 	Course,
 	TPayloadReviews,
 	Review,
-} from '../../globals/types'
-import { getReviews } from '../../firebase/dbOperations'
-import { REVIEW_ID, DESC } from '../../globals/constants'
+} from '@globals/types'
+import { getReviews } from '@backend/dbOperations'
+import { REVIEW_ID, DESC } from '@globals/constants'
 
 type TActiveSemesters = {
 	[semesterTerm: number]: boolean

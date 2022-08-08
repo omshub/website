@@ -4,7 +4,7 @@ import Button from '@mui/material/Button'
 import { grey } from '@mui/material/colors'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import Link from '../Link'
+import Link from '@src/Link'
 
 interface NavBarProps {}
 
