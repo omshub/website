@@ -97,11 +97,13 @@ export const mapToArray = (
 			const valA = a[sortKey]
 			const valB = b[sortKey]
 
-			if (typeof(valA) === 'string'  && typeof(valB) === 'string') {
-				return valA < valB ? isAscendingSortFactor*(-1) : isAscendingSortFactor*(1)
+			if (typeof valA === 'string' && typeof valB === 'string') {
+				return valA < valB
+					? isAscendingSortFactor * -1
+					: isAscendingSortFactor * 1
 			}
 
-			if (typeof(valA) === 'number' && typeof(valB) === 'number') {
+			if (typeof valA === 'number' && typeof valB === 'number') {
 				return isAscendingSortFactor * (valA - valB) ? 1 : -1
 			}
 
