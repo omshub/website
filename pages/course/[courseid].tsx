@@ -286,13 +286,7 @@ const CourseId: NextPage = () => {
 														item
 													>
 														<ReviewCard
-															body={value.body}
-															overall={value.overall}
-															difficulty={value.difficulty}
-															workload={value.workload}
-															semesterId={value.semesterId}
-															created={value.created}
-															year={value.year}
+															{...value}
 														></ReviewCard>
 													</Grid>
 												)

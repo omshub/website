@@ -6,6 +6,7 @@ import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import { grey } from '@mui/material/colors'
 import ReactMarkdown from 'react-markdown'
+import { Review } from '../../globals/types'
 import {
 	mapDifficulty,
 	mapOverall,
@@ -13,16 +14,6 @@ import {
 	mapColorPaletteInverted,
 	mapSemesterIdToName,
 } from '../utilities'
-
-interface ReviewCardProps {
-	body: string
-	overall: number
-	difficulty: number
-	workload: number
-	semesterId: string
-	created: number
-	year: number
-}
 
 const ReviewCard = ({
 	body,
@@ -32,7 +23,7 @@ const ReviewCard = ({
 	semesterId,
 	created,
 	year,
-}: ReviewCardProps) => {
+}: Review) => {
 	const timestamp = new Date(created).toLocaleDateString()
 
 	return (
