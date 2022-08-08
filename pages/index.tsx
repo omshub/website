@@ -48,29 +48,34 @@ const Home: NextPage = () => {
 			headerName: 'Difficulty (out of 5)',
 			flex: 0.5,
 			valueGetter: (params: any) => roundNumber(params.row.avgDifficulty, 1),
+			type: 'number',
 		},
 		{
 			field: courseFields.AVG_WORKLOAD,
 			headerName: 'Workload (hrs/wk)',
 			flex: 0.5,
 			valueGetter: (params: any) => roundNumber(params.row.avgWorkload, 1),
+			type: 'number',
 		},
 		{
 			field: courseFields.AVG_OVERALL,
 			headerName: 'Overall (out of 5)',
 			flex: 0.5,
 			valueGetter: (params: any) => roundNumber(params.row.avgOverall, 1),
+			type: 'number',
 		},
 		{
 			field: courseFields.NUM_REVIEWS,
 			headerName: 'Number of Reviews',
 			flex: 0.5,
+			type: 'number',
 		},
 		{
 			field: courseFields.IS_DEPRECATED,
 			headerName: 'is Deprecated?',
 			flex: 0,
 			hide: true,
+			type: 'boolean',
 		},
 		{ field: courseFields.ALIASES, headerName: 'Aliases', flex: 0, hide: true },
 	]
@@ -144,7 +149,6 @@ const Home: NextPage = () => {
 										items: [
 											{
 												columnField: courseFields.IS_DEPRECATED,
-												operatorValue: 'equals',
 												value: 'false',
 											},
 										],
