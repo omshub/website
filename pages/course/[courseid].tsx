@@ -236,7 +236,7 @@ const CourseId: NextPage = () => {
 												<ToggleButton
 													value={key}
 													key={index}
-													disabled={Boolean(value) || selectedSemester == key}
+													disabled={Boolean(value) || selectedSemester === key}
 												>
 													<Typography variant='h6' gutterBottom component='div'>
 														{mapSemesterTermToName[Number(key)]}{' '}
@@ -261,7 +261,7 @@ const CourseId: NextPage = () => {
 											<ToggleButton
 												value={year}
 												key={index}
-												disabled={selectedYear == year}
+												disabled={selectedYear === year}
 											>
 												<Typography variant='h6' gutterBottom component='div'>
 													{year}
