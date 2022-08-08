@@ -83,6 +83,7 @@ const add = async (collectionName, newDocId, data) =>
 // seed core data
 ;(async () => {
 	await add('coreData', 'courses', coursesMap)
+	await add('coreData', '_coursesLegacySnapshot', coursesMap) // retain separate "legacy snapshot" for "baseline accounting" purposes
 	await add('coreData', 'departments', departmentsMap)
 	await add('coreData', 'programs', programsMap)
 	await add('coreData', 'semesters', semestersMap)
