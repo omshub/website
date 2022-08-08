@@ -112,7 +112,7 @@ const Home: NextPage = () => {
 					sx={{ mt: 5, mb: 10 }}
 					gutterBottom
 				>
-					OMSCS Courses
+					GT OMS Courses
 				</Typography>
 
 				<>

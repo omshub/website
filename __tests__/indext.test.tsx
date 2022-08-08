@@ -9,6 +9,6 @@ import 'jest-fetch-mock'
 describe('Home', () => {
 	it('renders heading', () => {
 		// render(<Home />)
-		// expect(screen.getByRole('heading')).toHaveTextContent('OMSCS Courses')
+		// expect(screen.getByRole('heading')).toHaveTextContent('GT OMS Courses')
 	})
 })
