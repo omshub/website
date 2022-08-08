@@ -128,7 +128,7 @@ const CourseId: NextPage = () => {
 		} else if (router.isReady && !Number(router.query?.numReviews)) {
 			setLoading(false)
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router.query, router.isReady, selectedYear, selectedSemester])
 
 	return (
