@@ -12,10 +12,10 @@ import {
 	GridToolbar,
 	GridRenderCellParams,
 } from '@mui/x-data-grid'
-import { Course } from '../globals/types'
-import { getCourses } from '../firebase/dbOperations'
+import { Course } from '@globals/types'
+import { getCourses } from '@backend/dbOperations'
 import { mapPayloadToArray, roundNumber } from '../src/utilities'
-import { COURSE_ID } from '../globals/constants'
+import { COURSE_ID } from '@globals/constants'
 
 const Home: NextPage = () => {
 	const columns: GridColDef[] = [

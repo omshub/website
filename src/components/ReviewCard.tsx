@@ -6,7 +6,7 @@ import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import { grey } from '@mui/material/colors'
 import ReactMarkdown from 'react-markdown'
-import { Review } from '../../globals/types'
+import { Review } from '@globals/types'
 import {
 	mapDifficulty,
 	mapOverall,
