@@ -54,7 +54,7 @@ const Home: NextPage = () => {
 		},
 		{
 			field: 'avgOverall',
-			headerName: 'Overall (hrs/wk)',
+			headerName: 'Overall (out of 5)',
 			flex: 0.5,
 			valueGetter: (params: any) => Math.round(params.row.avgOverall * 10) / 10,
 		},

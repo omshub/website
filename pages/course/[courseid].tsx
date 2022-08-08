@@ -143,7 +143,7 @@ const CourseId: NextPage = () => {
 									Object.entries(activeSemesters).map(
 										([key, value]: [string, boolean], index: number) => {
 											return (
-												<ToggleButton value={key} key={index} disabled={value}>
+												<ToggleButton value={key} key={index} disabled={Boolean(value)}>
 													{mapSemesterTermToName[Number(key)]}
 												</ToggleButton>
 											)
