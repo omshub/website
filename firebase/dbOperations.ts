@@ -117,7 +117,7 @@ export const deleteDepartment = async (departmentId: string) => {
 		if (departmentsDataDoc && Object.keys(departmentsDataDoc).length) {
 			delete departmentsDataDoc[departmentId]
 			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${COURSES}`),
+				doc(db, `${baseCollectionCoreData}/${DEPARTMENTS}`),
 				departmentsDataDoc
 			)
 		}
