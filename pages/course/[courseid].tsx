@@ -47,7 +47,7 @@ const CourseId: NextPage = () => {
 	const [selectedSemester, setSelectedSemester] = useState<TNullableString>()
 	const [selectedYear, setSelectedYear] = useState<TNullableNumber>()
 	const [courseData, setCourseData] = useState<Course>()
-	const orientation = useMediaQuery("(min-width:600px)");
+	const orientation = useMediaQuery('(min-width:600px)')
 	const handleSemester = (
 		event: React.MouseEvent<HTMLElement>,
 		newSemester: TNullableString
@@ -154,77 +154,85 @@ const CourseId: NextPage = () => {
 				) : (
 					<>
 						{courseData && (
-							<Grid container direction="row" spacing={4} justifyContent="center">
-									<Grid item xs={12} lg={4}>
-										<Card variant='outlined' sx={{ padding: '5 30' }}>
-											<CardContent>
-												<Typography
-													sx={{ fontSize: 14 }}
-													color='text.secondary'
-													gutterBottom
-												>
-													{`Average Workload`}
-												</Typography>
-												<Typography variant='h5'>
-													{roundNumber(Number(courseData?.avgWorkload), 1) +
-														' hrs/wk'}
-												</Typography>
-											</CardContent>
-										</Card>
-									</Grid>
-									<Grid item xs={12} lg={4}>
-										<Card variant='outlined' sx={{ padding: '5 30' }}>
-											<CardContent>
-												<Typography
-													sx={{ fontSize: 14 }}
-													color='text.secondary'
-													gutterBottom
-												>
-													{`Average Difficulty`}
-												</Typography>
-												<Typography
-													variant='h5'
-													sx={{
-														color:
-															mapColorPaletteInverted[
-																Number(courseData?.avgDifficulty)
-															],
-														border:
-															mapColorPaletteInverted[
-																Number(courseData?.avgDifficulty)
-															],
-													}}
-												>
-													{roundNumber(Number(courseData?.avgDifficulty), 1) +
-														' /5'}
-												</Typography>
-											</CardContent>
-										</Card>
-									</Grid>
-									<Grid item xs={12} lg={4}>
-										<Card variant='outlined' sx={{ margin:'10',padding:'5 30' }}>
-											<CardContent>
-												<Typography
-													sx={{ fontSize: 14 }}
-													color='text.secondary'
-													gutterBottom
-												>
-													{`Average Overall`}
-												</Typography>
-												<Typography
-													variant='h5'
-													sx={{
-														color:
-															mapColorPalette[Number(courseData.avgDifficulty)],
-														border:
-															mapColorPalette[Number(courseData.avgDifficulty)],
-													}}
-												>
-													{roundNumber(Number(courseData.avgOverall), 1) + ' /5'}
-												</Typography>
-											</CardContent>
-										</Card>
-									</Grid>
+							<Grid
+								container
+								direction='row'
+								spacing={4}
+								justifyContent='center'
+							>
+								<Grid item xs={12} lg={4}>
+									<Card variant='outlined' sx={{ padding: '5 30' }}>
+										<CardContent>
+											<Typography
+												sx={{ fontSize: 14 }}
+												color='text.secondary'
+												gutterBottom
+											>
+												{`Average Workload`}
+											</Typography>
+											<Typography variant='h5'>
+												{roundNumber(Number(courseData?.avgWorkload), 1) +
+													' hrs/wk'}
+											</Typography>
+										</CardContent>
+									</Card>
+								</Grid>
+								<Grid item xs={12} lg={4}>
+									<Card variant='outlined' sx={{ padding: '5 30' }}>
+										<CardContent>
+											<Typography
+												sx={{ fontSize: 14 }}
+												color='text.secondary'
+												gutterBottom
+											>
+												{`Average Difficulty`}
+											</Typography>
+											<Typography
+												variant='h5'
+												sx={{
+													color:
+														mapColorPaletteInverted[
+															Number(courseData?.avgDifficulty)
+														],
+													border:
+														mapColorPaletteInverted[
+															Number(courseData?.avgDifficulty)
+														],
+												}}
+											>
+												{roundNumber(Number(courseData?.avgDifficulty), 1) +
+													' /5'}
+											</Typography>
+										</CardContent>
+									</Card>
+								</Grid>
+								<Grid item xs={12} lg={4}>
+									<Card
+										variant='outlined'
+										sx={{ margin: '10', padding: '5 30' }}
+									>
+										<CardContent>
+											<Typography
+												sx={{ fontSize: 14 }}
+												color='text.secondary'
+												gutterBottom
+											>
+												{`Average Overall`}
+											</Typography>
+											<Typography
+												variant='h5'
+												sx={{
+													color:
+														mapColorPalette[Number(courseData.avgDifficulty)],
+													border:
+														mapColorPalette[Number(courseData.avgDifficulty)],
+												}}
+											>
+												{roundNumber(Number(courseData.avgOverall), 1) + ' /5'}
+											</Typography>
+										</CardContent>
+									</Card>
+								</Grid>
 							</Grid>
 						)}
 						<Grid>
@@ -272,9 +280,7 @@ const CourseId: NextPage = () => {
 												key={index}
 												disabled={selectedYear === year}
 											>
-												<Typography variant='body2'>
-													{year}
-												</Typography>
+												<Typography variant='body2'>{year}</Typography>
 											</ToggleButton>
 										)
 									})}

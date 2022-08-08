@@ -52,20 +52,29 @@ const ReviewCard = ({
 						alignItems: 'flex-start',
 					}}
 				>
-					<Grid container direction="row" rowSpacing={2} justifyContent="flex-start" alignItems="flex-start">
+					<Grid
+						container
+						direction='row'
+						rowSpacing={2}
+						justifyContent='flex-start'
+						alignItems='flex-start'
+					>
 						<Grid item>
-							<Chip label={`Workload: ${workload} hr/wk`} variant='outlined'></Chip>
+							<Chip
+								label={`Workload: ${workload} hr/wk`}
+								variant='outlined'
+							></Chip>
 						</Grid>
 						<Grid item>
-						<Chip
-							label={`Difficulty: ${mapDifficulty[difficulty]}`}
-							sx={{
-								ml: 1,
-								color: mapColorPaletteInverted[difficulty],
-								borderColor: mapColorPaletteInverted[difficulty],
-							}}
-							variant='outlined'
-						></Chip>
+							<Chip
+								label={`Difficulty: ${mapDifficulty[difficulty]}`}
+								sx={{
+									ml: 1,
+									color: mapColorPaletteInverted[difficulty],
+									borderColor: mapColorPaletteInverted[difficulty],
+								}}
+								variant='outlined'
+							></Chip>
 						</Grid>
 						<Grid item>
 							<Chip
