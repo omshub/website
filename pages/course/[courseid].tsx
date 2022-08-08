@@ -189,6 +189,7 @@ const CourseId: NextPage = () => {
 															workload={value.workload}
 															semesterId={value.semesterId}
 															created={value.created}
+															year={value.year}
 														></ReviewCard>
 													</Grid>
 												)

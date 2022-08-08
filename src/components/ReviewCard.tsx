@@ -21,6 +21,7 @@ interface ReviewCardProps {
 	workload: number
 	semesterId: string
 	created: number
+	year:number
 }
 
 const ReviewCard = ({
@@ -30,6 +31,7 @@ const ReviewCard = ({
 	workload,
 	semesterId,
 	created,
+	year,
 }: ReviewCardProps) => {
 	const timestamp = new Date(created).toLocaleDateString()
 
@@ -46,7 +48,7 @@ const ReviewCard = ({
 					}}
 				>
 					<Typography color='text.secondary'>
-						Taken {mapSemesterIdToName[semesterId]}
+						Taken {mapSemesterIdToName[semesterId]} {year}
 					</Typography>
 					<Typography color='text.secondary'>
 						Reviewed on {timestamp}
