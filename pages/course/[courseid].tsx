@@ -29,7 +29,7 @@ import {
 	Review,
 } from '../../globals/types'
 import { getReviews } from '../../firebase/dbOperations'
-import { REVIEW_ID } from '../../globals/constants'
+import { REVIEW_ID, DESC } from '../../globals/constants'
 
 type TActiveSemesters = {
 	[semesterTerm: number]: boolean
@@ -276,7 +276,7 @@ const CourseId: NextPage = () => {
 							<>
 								{reviews && (
 									<Grid container spacing={3} sx={{ margin: '10px 0' }}>
-										{mapPayloadToArray(reviews, REVIEW_ID, 'DESC').map(
+										{mapPayloadToArray(reviews, REVIEW_ID, DESC).map(
 											(value: Review) => {
 												return (
 													<Grid

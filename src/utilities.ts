@@ -1,3 +1,4 @@
+import { ASC } from '../globals/constants'
 import {
 	newHorizon,
 	RATCap,
@@ -96,9 +97,9 @@ export const mapPayloadToArray = (
 	}
 	if (sortKey) {
 		if (!sortDirection) {
-			sortDirection = 'ASC'
+			sortDirection = ASC
 		}
-		const isAscendingSortFactor = sortDirection === 'ASC' ? 1 : -1
+		const isAscendingSortFactor = sortDirection === ASC ? 1 : -1
 		outputArray.sort((a, b) => {
 			const valA = a[sortKey]
 			const valB = b[sortKey]
