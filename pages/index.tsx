@@ -15,12 +15,12 @@ import {
 import { Course } from '@globals/types'
 import { getCourses } from '@backend/dbOperations'
 import { mapPayloadToArray, roundNumber } from '../src/utilities'
-import { COURSE_ID } from '@globals/constants'
+import { courseFields } from '@globals/constants'
 
 const Home: NextPage = () => {
 	const columns: GridColDef[] = [
 		{
-			field: 'name',
+			field: courseFields.NAME,
 			headerName: 'Course Name',
 			flex: 1,
 			renderCell: (params: GridRenderCellParams) => (
@@ -42,33 +42,37 @@ const Home: NextPage = () => {
 				</Link>
 			),
 		},
-		{ field: 'courseId', headerName: 'Course ID', flex: 0.5 },
+		{ field: courseFields.COURSE_ID, headerName: 'Course ID', flex: 0.5 },
 		{
-			field: 'avgDifficulty',
+			field: courseFields.AVG_DIFFICULTY,
 			headerName: 'Difficulty (out of 5)',
 			flex: 0.5,
 			valueGetter: (params: any) => roundNumber(params.row.avgDifficulty, 1),
 		},
 		{
-			field: 'avgWorkload',
+			field: courseFields.AVG_WORKLOAD,
 			headerName: 'Workload (hrs/wk)',
 			flex: 0.5,
 			valueGetter: (params: any) => roundNumber(params.row.avgWorkload, 1),
 		},
 		{
-			field: 'avgOverall',
+			field: courseFields.AVG_OVERALL,
 			headerName: 'Overall (out of 5)',
 			flex: 0.5,
 			valueGetter: (params: any) => roundNumber(params.row.avgOverall, 1),
 		},
-		{ field: 'numReviews', headerName: 'Number of Reviews', flex: 0.5 },
+		{
+			field: courseFields.NUM_REVIEWS,
+			headerName: 'Number of Reviews',
+			flex: 0.5,
+		},
 		{
 			field: 'isDeprecated',
 			headerName: 'is Deprecated?',
 			flex: 0,
 			hide: true,
 		},
-		{ field: 'aliases', headerName: 'Aliases', flex: 0, hide: true },
+		{ field: courseFields.ALIASES, headerName: 'Aliases', flex: 0, hide: true },
 	]
 	const [loading, setLoading] = useState<boolean>()
 	const [courses, setCourses] = useState<Course[]>([])
@@ -78,7 +82,10 @@ const Home: NextPage = () => {
 
 		getCourses()
 			.then((payloadCourses) => {
-				const courses: Course[] = mapPayloadToArray(payloadCourses, COURSE_ID)
+				const courses: Course[] = mapPayloadToArray(
+					payloadCourses,
+					courseFields.COURSE_ID
+				)
 				const coursesWithIds = courses.map((data, i) => ({ ...data, id: i }))
 				setCourses(coursesWithIds)
 				setLoading(false)
@@ -136,7 +143,7 @@ const Home: NextPage = () => {
 									filterModel: {
 										items: [
 											{
-												columnField: 'isDeprecated',
+												columnField: courseFields.IS_DEPRECATED,
 												operatorValue: 'equals',
 												value: 'false',
 											},
