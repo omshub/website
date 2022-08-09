@@ -14,7 +14,7 @@ import {
 	mapPayloadToArray,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
-	roundNumber
+	roundNumber,
 } from '@src/utilities'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -28,7 +28,7 @@ import {
 	TKeyMap,
 	TNullableNumber,
 	TNullableString,
-	TPayloadReviews
+	TPayloadReviews,
 } from '@globals/types'
 import { useMediaQuery } from '@mui/material'
 

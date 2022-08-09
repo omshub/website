@@ -45,25 +45,25 @@ const Recents: NextPage = () => {
 				<Typography variant='subtitle1' color='text.secondary' gutterBottom>
 					{`A Dynamic List of the 50 Most Recent Reviews`}
 				</Typography>
-			{loading ? (
-				<Box sx={{ display: 'flex', m: 10 }}>
-					<CircularProgress />
-				</Box>
-			) : (
-				<>
-					{reviews && (
-						<Grid container spacing={3} sx={{ margin: '10px 0' }}>
-							{reviews.slice(0, 50).map((value: Review) => {
-								return (
-									<Grid sx={{ width: `100%` }} key={value.reviewId} item>
-										<ReviewCard {...value}></ReviewCard>
-									</Grid>
-								)
-							})}
-						</Grid>
-					)}
-				</>
-			)}
+				{loading ? (
+					<Box sx={{ display: 'flex', m: 10 }}>
+						<CircularProgress />
+					</Box>
+				) : (
+					<>
+						{reviews && (
+							<Grid container spacing={3} sx={{ margin: '10px 0' }}>
+								{reviews.slice(0, 50).map((value: Review) => {
+									return (
+										<Grid sx={{ width: `100%` }} key={value.reviewId} item>
+											<ReviewCard {...value}></ReviewCard>
+										</Grid>
+									)
+								})}
+							</Grid>
+						)}
+					</>
+				)}
 			</Box>
 		</Container>
 	)
