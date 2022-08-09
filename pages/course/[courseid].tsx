@@ -147,13 +147,7 @@ const CourseId: NextPage = () => {
 				<Typography variant='h2' color='text.secondary' gutterBottom>
 					{router.query.title}
 				</Typography>
-				{loading ? (
-					<Box sx={{ display: 'flex', m: 10 }}>
-						<CircularProgress />
-					</Box>
-				) : (
-					<>
-						{courseData && (
+				{courseData && (
 							<Grid
 								container
 								direction='row'
@@ -286,7 +280,12 @@ const CourseId: NextPage = () => {
 									})}
 							</ToggleButtonGroup>
 						</Grid>
-
+				{loading ? (
+					<Box sx={{ display: 'flex', m: 10 }}>
+						<CircularProgress />
+					</Box>
+				) : (
+					<>
 						{Number(router.query?.numReviews) ? (
 							<>
 								{reviews && (
