@@ -10,15 +10,16 @@ import {
 	DataGrid,
 	GridColDef,
 	GridRenderCellParams,
-	GridToolbar,
+	GridToolbar
 } from '@mui/x-data-grid'
 import Link from '@src/Link'
 import { mapPayloadToArray, roundNumber } from '@src/utilities'
+import { useCourse } from 'context/CurrentCourseContext'
 import type { NextPage } from 'next'
 import { useEffect, useState } from 'react'
-
 const Home: NextPage = () => {
 	const isDesktop = useMediaQuery('(min-width:600px)')
+	const {setAllCourseData} = useCourse()
 	const columns: GridColDef[] = [
 		{
 			field: courseFields.NAME,
@@ -26,21 +27,17 @@ const Home: NextPage = () => {
 			flex: isDesktop ? 1 : 0,
 			minWidth: isDesktop ? 50 : 300,
 			renderCell: (params: GridRenderCellParams) => (
+				
 				<Link
 					href={{
 						pathname: `/course/${params.row.courseId}`,
-						query: {
-							title: params.row.name,
-							courseData: JSON.stringify(params.row),
-							numReviews: params.row.numReviews,
-						},
 					}}
 					sx={{
 						textDecoration: 'unset',
 						'&:hover': { textDecoration: 'underline' },
 					}}
 				>
-					{params.row.name}
+						{params.row.name}
 				</Link>
 			),
 		},
@@ -93,6 +90,7 @@ const Home: NextPage = () => {
 
 		getCourses()
 			.then((payloadCourses) => {
+				setAllCourseData(payloadCourses)
 				const courses: Course[] = mapPayloadToArray(
 					payloadCourses,
 					courseFields.NAME

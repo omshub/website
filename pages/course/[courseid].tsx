@@ -1,4 +1,15 @@
+import { getReviews } from '@backend/dbOperations'
 import ReviewCard from '@components/ReviewCard'
+import { DESC, REVIEW_ID } from '@globals/constants'
+import {
+	Course,
+	Review,
+	TKeyMap,
+	TNullableNumber,
+	TNullableString,
+	TPayloadReviews
+} from '@globals/types'
+import { useMediaQuery } from '@mui/material'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -14,23 +25,12 @@ import {
 	mapPayloadToArray,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
-	roundNumber,
+	roundNumber
 } from '@src/utilities'
+import { useCourse } from 'context/CurrentCourseContext'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-
-import { getReviews } from '@backend/dbOperations'
-import { DESC, REVIEW_ID } from '@globals/constants'
-import {
-	Course,
-	Review,
-	TKeyMap,
-	TNullableNumber,
-	TNullableString,
-	TPayloadReviews,
-} from '@globals/types'
-import { useMediaQuery } from '@mui/material'
 
 type TActiveSemesters = {
 	[semesterTerm: number]: boolean
@@ -43,10 +43,10 @@ const CourseId: NextPage = () => {
 	const [courseYears, setCourseYears] = useState<number[]>([])
 	const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>({})
 	const [reviews, setReviews] = useState<TPayloadReviews>({})
-	const [courseId, setCourseId] = useState<string | undefined>()
 	const [selectedSemester, setSelectedSemester] = useState<TNullableString>()
 	const [selectedYear, setSelectedYear] = useState<TNullableNumber>()
-	const [courseData, setCourseData] = useState<Course>()
+	const [courseData,setCourseData] = useState<Course>()
+	const {allCourseData} = useCourse()
 	const orientation = useMediaQuery('(min-width:600px)')
 	const handleSemester = (
 		event: React.MouseEvent<HTMLElement>,
@@ -62,11 +62,13 @@ const CourseId: NextPage = () => {
 		setSelectedYear(newYear)
 	}
 	useEffect(() => {
+		// 
 		setLoading(true)
-		if (router.isReady && Number(router?.query?.numReviews)) {
+		const path = router.asPath.split('/')
+		const courseId = path[path.length - 1]
+		const courseData:Course = allCourseData[courseId]
+		if (router.isReady && Number(courseData?.numReviews)) {
 			if (!(selectedYear && selectedSemester)) {
-				const parseArg: any = router.query?.courseData
-				const courseData: Course = JSON.parse(parseArg)
 				const courseTimeline = courseData?.reviewsCountsByYearSem
 				const courseYears = Object.keys(courseTimeline)
 					.map((year) => Number(year))
@@ -85,13 +87,11 @@ const CourseId: NextPage = () => {
 					}),
 					{}
 				)
-
 				setCourseData(courseData)
 				setCourseTimeLine(courseTimeline)
 				setCourseYears(courseYears)
 				setSelectedSemester(mostRecentSemester)
 				setSelectedYear(mostRecentYear)
-				setCourseId(courseData.courseId)
 				setActiveSemesters(activeSemesters)
 			} else {
 				const newAvailableSemesters: any = Object.keys(
@@ -113,7 +113,6 @@ const CourseId: NextPage = () => {
 				}
 				setActiveSemesters(newActiveSemesters)
 			}
-
 			if (courseId && selectedYear && selectedSemester) {
 				getReviews(courseId, String(selectedYear), selectedSemester)
 					.then((reviews) => {
@@ -127,11 +126,11 @@ const CourseId: NextPage = () => {
 						console.log(err)
 					})
 			}
-		} else if (router.isReady && !Number(router.query?.numReviews)) {
+		} else if (router.isReady && !Number(courseData?.numReviews)) {
 			setLoading(false)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [router.query, router.isReady, selectedYear, selectedSemester])
+	}, [router.query, router.isReady, selectedYear, selectedSemester,courseData])
 
 	return (
 		<Container maxWidth='lg'>
@@ -281,7 +280,7 @@ const CourseId: NextPage = () => {
 					</Box>
 				) : (
 					<>
-						{Number(router.query?.numReviews) ? (
+						{Number(courseData?.numReviews) ? (
 							<>
 								{reviews && (
 									<Grid container rowSpacing={5} sx={{ mt: 1 }}>
