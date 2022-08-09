@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react'
-import type { NextPage } from 'next'
-import Container from '@mui/material/Container'
-import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
-import Link from '@src/Link'
+import { getCourses } from '@backend/dbOperations'
+import { courseFields } from '@globals/constants'
+import { Course } from '@globals/types'
 import { useMediaQuery } from '@mui/material'
+import Box from '@mui/material/Box'
+import Container from '@mui/material/Container'
+import Grid from '@mui/material/Grid'
+import Typography from '@mui/material/Typography'
 import {
 	DataGrid,
 	GridColDef,
-	GridToolbar,
 	GridRenderCellParams,
+	GridToolbar,
 } from '@mui/x-data-grid'
-import { Course } from '@globals/types'
-import { getCourses } from '@backend/dbOperations'
+import Link from '@src/Link'
 import { mapPayloadToArray, roundNumber } from '@src/utilities'
-import { courseFields } from '@globals/constants'
+import type { NextPage } from 'next'
+import { useEffect, useState } from 'react'
 
 const Home: NextPage = () => {
 	const isDesktop = useMediaQuery('(min-width:600px)')
@@ -117,15 +117,12 @@ const Home: NextPage = () => {
 					alignItems: 'center',
 				}}
 			>
-				<Typography
-					variant='h4'
-					component='h1'
-					sx={{ mt: 5, mb: 10 }}
-					gutterBottom
-				>
-					GT OMS Courses
+				<Typography variant='h2' sx={{ mt: 5 }} gutterBottom>
+					OMS Courses
 				</Typography>
-
+				<Typography variant='subtitle1' sx={{ mb: 10 }} gutterBottom>
+					{`Georgia Tech's Online Master's Course Catalog`}
+				</Typography>
 				<>
 					<Grid container sx={{ margin: 0, width: `100%` }} spacing={3}>
 						<DataGrid

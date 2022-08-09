@@ -1,4 +1,3 @@
-import * as React from 'react'
 import AppBar from '@mui/material/AppBar'
 import Button from '@mui/material/Button'
 import { grey } from '@mui/material/colors'
@@ -36,7 +35,12 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 						variant='button'
 						color='text.primary'
 						href='/recents'
-						sx={{ my: 1, mx: 1.5 }}
+						sx={{
+							my: 1,
+							mx: 1.5,
+							textDecoration: 'unset',
+							'&:hover': { textDecoration: 'underline' },
+						}}
 					>
 						Recent Reviews
 					</Link>
@@ -44,7 +48,12 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 						variant='button'
 						color='text.primary'
 						href='/about'
-						sx={{ my: 1, mx: 1.5 }}
+						sx={{
+							my: 1,
+							mx: 1.5,
+							textDecoration: 'unset',
+							'&:hover': { textDecoration: 'underline' },
+						}}
 					>
 						About
 					</Link>

@@ -12,7 +12,7 @@ import {
 	mapColorPaletteInverted,
 	mapDifficulty,
 	mapOverall,
-	mapSemesterIdToName
+	mapSemesterIdToName,
 } from '@src/utilities'
 import ReactMarkdown from 'react-markdown'
 

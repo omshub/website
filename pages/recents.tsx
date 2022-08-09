@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react'
-import type { NextPage } from 'next'
-import { Review } from '@globals/types'
-import Container from '@mui/material/Container'
 import { getReviewsRecent50 } from '@backend/dbOperations'
-import Grid from '@mui/material/Grid'
 import ReviewCard from '@components/ReviewCard'
+import { Review } from '@globals/types'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
-import Button from '@mui/material/Button'
-import Link from '@src/Link'
+import Container from '@mui/material/Container'
+import Grid from '@mui/material/Grid'
+import Typography from '@mui/material/Typography'
+import type { NextPage } from 'next'
+import { useEffect, useState } from 'react'
 
 const Recents: NextPage = () => {
 	const [loading, setLoading] = useState<boolean>()
@@ -30,11 +29,22 @@ const Recents: NextPage = () => {
 	}, [])
 
 	return (
-		<Container>
-			<Box maxWidth='sm'>
-				<Button variant='contained' component={Link} noLinkStyle href='/'>
-					Return to the home page
-				</Button>
+		<Container maxWidth='lg'>
+			<Box
+				sx={{
+					my: 4,
+					display: 'flex',
+					flexDirection: 'column',
+					justifyContent: 'center',
+					alignItems: 'center',
+				}}
+			>
+				<Typography variant='h2' color='text.secondary' gutterBottom>
+					{`Recent Reviews`}
+				</Typography>
+				<Typography variant='subtitle1' color='text.secondary' gutterBottom>
+					{`A Dynamic List of the 50 Most Recent Reviews`}
+				</Typography>
 			</Box>
 			{loading ? (
 				<Box sx={{ display: 'flex', m: 10 }}>
