@@ -16,7 +16,7 @@
 		"test:ci": "jest --ci",
 		"lint": "next lint",
 		"prepare": "husky install",
-		"precommit": "yarn prettier && lint-staged",
+		"precommit": "lint-staged",
 		"prettier": "prettier --write .",
 		"post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest",
 		"storybook": "start-storybook -s ./public -p 6006",

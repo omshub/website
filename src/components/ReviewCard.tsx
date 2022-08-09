@@ -1,20 +1,19 @@
-import * as React from 'react'
+import { Review } from '@globals/types'
+import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
-import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import { grey } from '@mui/material/colors'
-import ReactMarkdown from 'react-markdown'
-import { Review } from '@globals/types'
 import Grid from '@mui/material/Grid'
+import Typography from '@mui/material/Typography'
 import {
-	mapDifficulty,
-	mapOverall,
 	mapColorPalette,
 	mapColorPaletteInverted,
-	mapSemesterIdToName,
+	mapDifficulty,
+	mapOverall,
+	mapSemesterIdToName
 } from '@src/utilities'
+import ReactMarkdown from 'react-markdown'
 
 const ReviewCard = ({
 	body,
@@ -28,7 +27,7 @@ const ReviewCard = ({
 	const timestamp = new Date(created).toLocaleDateString()
 
 	return (
-		<Card sx={{ boxShadow: `0 5px 15px 0 ${grey[300]}` }}>
+		<Card sx={{ p: 1, borderRadius: '10px', boxShadow: `0 5px 15px 0 ${grey[400]}` }}>
 			<CardContent>
 				<Box
 					sx={{
@@ -56,6 +55,7 @@ const ReviewCard = ({
 						container
 						direction='row'
 						rowSpacing={2}
+						columnSpacing={1}
 						justifyContent='flex-start'
 						alignItems='flex-start'
 					>
@@ -69,7 +69,6 @@ const ReviewCard = ({
 							<Chip
 								label={`Difficulty: ${mapDifficulty[difficulty]}`}
 								sx={{
-									ml: 1,
 									color: mapColorPaletteInverted[difficulty],
 									borderColor: mapColorPaletteInverted[difficulty],
 								}}
@@ -80,7 +79,6 @@ const ReviewCard = ({
 							<Chip
 								label={`Overall: ${mapOverall[overall]}`}
 								sx={{
-									ml: 1,
 									color: mapColorPalette[overall],
 									borderColor: mapColorPalette[overall],
 								}}

@@ -1,35 +1,35 @@
-import type { NextPage } from 'next'
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import Container from '@mui/material/Container'
-import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
-import CircularProgress from '@mui/material/CircularProgress'
 import ReviewCard from '@components/ReviewCard'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import CircularProgress from '@mui/material/CircularProgress'
+import Container from '@mui/material/Container'
+import Grid from '@mui/material/Grid'
+import ToggleButton from '@mui/material/ToggleButton'
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
+import Typography from '@mui/material/Typography'
 import {
 	mapColorPalette,
 	mapColorPaletteInverted,
+	mapPayloadToArray,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
-	mapPayloadToArray,
-	roundNumber,
+	roundNumber
 } from '@src/utilities'
-import ToggleButton from '@mui/material/ToggleButton'
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
-import CardContent from '@mui/material/CardContent'
-import Card from '@mui/material/Card'
+import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
 
+import { getReviews } from '@backend/dbOperations'
+import { DESC, REVIEW_ID } from '@globals/constants'
 import {
+	Course,
+	Review,
+	TKeyMap,
 	TNullableNumber,
 	TNullableString,
-	TKeyMap,
-	Course,
-	TPayloadReviews,
-	Review,
+	TPayloadReviews
 } from '@globals/types'
-import { getReviews } from '@backend/dbOperations'
-import { REVIEW_ID, DESC } from '@globals/constants'
 import { useMediaQuery } from '@mui/material'
 
 type TActiveSemesters = {
@@ -148,138 +148,133 @@ const CourseId: NextPage = () => {
 					{router.query.title}
 				</Typography>
 				{courseData && (
-							<Grid
-								container
-								direction='row'
-								spacing={4}
-								justifyContent='center'
-							>
-								<Grid item xs={12} lg={4}>
-									<Card variant='outlined' sx={{ padding: '5 30' }}>
-										<CardContent>
-											<Typography
-												sx={{ fontSize: 14 }}
-												color='text.secondary'
-												gutterBottom
-											>
-												{`Average Workload`}
-											</Typography>
-											<Typography variant='h5'>
-												{roundNumber(Number(courseData?.avgWorkload), 1) +
-													' hrs/wk'}
-											</Typography>
-										</CardContent>
-									</Card>
-								</Grid>
-								<Grid item xs={12} lg={4}>
-									<Card variant='outlined' sx={{ padding: '5 30' }}>
-										<CardContent>
-											<Typography
-												sx={{ fontSize: 14 }}
-												color='text.secondary'
-												gutterBottom
-											>
-												{`Average Difficulty`}
-											</Typography>
-											<Typography
-												variant='h5'
-												sx={{
-													color:
-														mapColorPaletteInverted[
-															Number(courseData?.avgDifficulty)
-														],
-													border:
-														mapColorPaletteInverted[
-															Number(courseData?.avgDifficulty)
-														],
-												}}
-											>
-												{roundNumber(Number(courseData?.avgDifficulty), 1) +
-													' /5'}
-											</Typography>
-										</CardContent>
-									</Card>
-								</Grid>
-								<Grid item xs={12} lg={4}>
-									<Card
-										variant='outlined'
-										sx={{ margin: '10', padding: '5 30' }}
+					<Grid
+						sx={{ my: 1 }}
+						container
+						direction='row'
+						spacing={4}
+						justifyContent='center'
+					>
+						<Grid item xs={12} lg={4}>
+							<Card variant='outlined' sx={{ padding: '5 30' }}>
+								<CardContent>
+									<Typography
+										sx={{ fontSize: 14 }}
+										color='text.secondary'
+										gutterBottom
 									>
-										<CardContent>
-											<Typography
-												sx={{ fontSize: 14 }}
-												color='text.secondary'
-												gutterBottom
-											>
-												{`Average Overall`}
-											</Typography>
-											<Typography
-												variant='h5'
-												sx={{
-													color:
-														mapColorPalette[Number(courseData.avgDifficulty)],
-													border:
-														mapColorPalette[Number(courseData.avgDifficulty)],
-												}}
-											>
-												{roundNumber(Number(courseData.avgOverall), 1) + ' /5'}
-											</Typography>
-										</CardContent>
-									</Card>
-								</Grid>
-							</Grid>
-						)}
-						<Grid>
-							<ToggleButtonGroup
-								value={selectedSemester}
-								onChange={handleSemester}
-								exclusive={true}
-								aria-label='year selection'
-								size='large'
-								orientation={`${orientation ? `horizontal` : `vertical`}`}
-								sx={{ margin: '10px', width: `100%`, justifyContent: 'center' }}
-							>
-								{activeSemesters &&
-									Object.entries(activeSemesters).map(
-										([key, value]: [string, boolean], index: number) => {
-											return (
-												<ToggleButton
-													value={key}
-													key={index}
-													disabled={Boolean(value) || selectedSemester === key}
-												>
-													<Typography variant='body1'>
-														{mapSemesterTermToName[Number(key)]}{' '}
-														{mapSemesterTermToEmoji[Number(key)]}
-													</Typography>
-												</ToggleButton>
-											)
-										}
-									)}
-							</ToggleButtonGroup>
-							<ToggleButtonGroup
-								value={selectedYear}
-								onChange={handleYear}
-								exclusive={true}
-								aria-label='year selection'
-								size='large'
-								orientation={`${orientation ? `horizontal` : `vertical`}`}
-								sx={{ margin: '10px', width: `100%`, justifyContent: 'center' }}
-							>
-								{courseYears &&
-									courseYears.map((year: number, index: number) => {
-										return (
-											<ToggleButton
-												value={year}
-												key={index}
-												disabled={selectedYear === year}
-											>
-												<Typography variant='body2'>{year}</Typography>
-											</ToggleButton>
-										)
-									})}
-							</ToggleButtonGroup>
+										{`Average Workload`}
+									</Typography>
+									<Typography variant='h5'>
+										{roundNumber(Number(courseData?.avgWorkload), 1) +
+											' hrs/wk'}
+									</Typography>
+								</CardContent>
+							</Card>
 						</Grid>
+						<Grid item xs={12} lg={4}>
+							<Card variant='outlined' sx={{ padding: '5 30' }}>
+								<CardContent>
+									<Typography
+										sx={{ fontSize: 14 }}
+										color='text.secondary'
+										gutterBottom
+									>
+										{`Average Difficulty`}
+									</Typography>
+									<Typography
+										variant='h5'
+										sx={{
+											color:
+												mapColorPaletteInverted[
+													Number(courseData?.avgDifficulty)
+												],
+											border:
+												mapColorPaletteInverted[
+													Number(courseData?.avgDifficulty)
+												],
+										}}
+									>
+										{roundNumber(Number(courseData?.avgDifficulty), 1) + ' /5'}
+									</Typography>
+								</CardContent>
+							</Card>
+						</Grid>
+						<Grid item xs={12} lg={4}>
+							<Card variant='outlined' sx={{ margin: '10', padding: '5 30' }}>
+								<CardContent>
+									<Typography
+										sx={{ fontSize: 14 }}
+										color='text.secondary'
+										gutterBottom
+									>
+										{`Average Overall`}
+									</Typography>
+									<Typography
+										variant='h5'
+										sx={{
+											color: mapColorPalette[Number(courseData.avgDifficulty)],
+											border: mapColorPalette[Number(courseData.avgDifficulty)],
+										}}
+									>
+										{roundNumber(Number(courseData.avgOverall), 1) + ' /5'}
+									</Typography>
+								</CardContent>
+							</Card>
+						</Grid>
+					</Grid>
+				)}
+				<Grid>
+					<ToggleButtonGroup
+						value={selectedSemester}
+						onChange={handleSemester}
+						exclusive={true}
+						aria-label='year selection'
+						size='large'
+						orientation={`${orientation ? `horizontal` : `vertical`}`}
+						sx={{ my: 2, width: `100%`, justifyContent: 'center' }}
+					>
+						{activeSemesters &&
+							Object.entries(activeSemesters).map(
+								([key, value]: [string, boolean], index: number) => {
+									return (
+										<ToggleButton
+											value={key}
+											key={index}
+											disabled={Boolean(value) || selectedSemester === key}
+										>
+											<Typography variant='body1'>
+												{mapSemesterTermToName[Number(key)]}{' '}
+												{mapSemesterTermToEmoji[Number(key)]}
+											</Typography>
+										</ToggleButton>
+									)
+								}
+							)}
+					</ToggleButtonGroup>
+					<ToggleButtonGroup
+						value={selectedYear}
+						onChange={handleYear}
+						exclusive={true}
+						aria-label='year selection'
+						size='large'
+						orientation={`${orientation ? `horizontal` : `vertical`}`}
+						sx={{ my: 2, width: `100%`, justifyContent: 'center' }}
+					>
+						{courseYears &&
+							courseYears.map((year: number, index: number) => {
+								return (
+									<ToggleButton
+										value={year}
+										key={index}
+										disabled={selectedYear === year}
+									>
+										<Typography variant='body2'>{year}</Typography>
+									</ToggleButton>
+								)
+							})}
+					</ToggleButtonGroup>
+				</Grid>
 				{loading ? (
 					<Box sx={{ display: 'flex', m: 10 }}>
 						<CircularProgress />
@@ -289,7 +284,7 @@ const CourseId: NextPage = () => {
 						{Number(router.query?.numReviews) ? (
 							<>
 								{reviews && (
-									<Grid container spacing={3} sx={{ margin: '10px 0' }}>
+									<Grid container rowSpacing={5} sx={{mt:1}}>
 										{mapPayloadToArray(reviews, REVIEW_ID, DESC).map(
 											(value: Review) => {
 												return (
