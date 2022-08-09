@@ -38,15 +38,15 @@ export const mapStaffSupport: TMapFields = {
 export const mapColorPalette: TMapFields = {
 	1: newHorizon,
 	2: RATCap,
-	3: canopyLime,
+	3: boldBlue,
 	4: olympicTeal,
-	5: boldBlue,
+	5: canopyLime,
 }
 
 export const mapColorPaletteInverted: TMapFields = {
-	1: boldBlue,
+	1: canopyLime,
 	2: olympicTeal,
-	3: canopyLime,
+	3: boldBlue,
 	4: RATCap,
 	5: newHorizon,
 }

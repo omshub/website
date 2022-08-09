@@ -19,7 +19,7 @@ import {
 	TPayloadReviews,
 	TPayloadSemesters,
 	TPayloadSpecializations,
-} from '../globals/types'
+} from '@globals/types'
 import { parseReviewId } from './utilityFunctions'
 import {
 	addOrUpdateReview,
@@ -290,8 +290,9 @@ export const getReviews = async (
 export const getReviewsRecent50 = async () => {
 	try {
 		const snapshot = await getDoc(doc(db, baseDocumentReviewsRecent50))
-		const recentReviews50 = snapshot.data()
-		return recentReviews50 ?? null
+		const data = snapshot.data()
+		const recentReviews50: Review[] = data ? data?.data : []
+		return recentReviews50
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)

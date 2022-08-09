@@ -1,4 +1,5 @@
 import { Review } from '@globals/types'
+import { getCourseDataStatic } from '@globals/utilities'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -23,8 +24,10 @@ const ReviewCard = ({
 	semesterId,
 	created,
 	year,
+	courseId,
 }: Review) => {
 	const timestamp = new Date(created).toLocaleDateString()
+	const { name: courseName } = getCourseDataStatic(courseId)
 
 	return (
 		<Card
@@ -44,6 +47,8 @@ const ReviewCard = ({
 						flexDirection: 'column',
 					}}
 				>
+					<Typography color='text.primary'>{courseId}</Typography>
+					<Typography color='text.secondary'>{courseName}</Typography>
 					<Typography color='text.secondary'>
 						Taken {mapSemesterIdToName[semesterId]} {year}
 					</Typography>

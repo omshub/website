@@ -144,7 +144,7 @@ const CourseId: NextPage = () => {
 					alignItems: 'center',
 				}}
 			>
-				<Typography variant='h2' color='text.secondary' gutterBottom>
+				<Typography variant='h4' color='text.secondary' gutterBottom>
 					{router.query.title}
 				</Typography>
 				{courseData && (

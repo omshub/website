@@ -1,4 +1,5 @@
 import {
+	courses,
 	departments,
 	educationLevels,
 	grades,
@@ -8,6 +9,7 @@ import {
 	subjectAreas,
 } from '@globals/staticDataModels'
 import {
+	TCourseId,
 	TDepartmentId,
 	TEducationLevelId,
 	TGradeId,
@@ -18,6 +20,9 @@ import {
 } from '@globals/types'
 
 /* --- STATIC DATA GETTERS --- */
+
+export const getCoursesDataStatic = () => courses
+export const getCourseDataStatic = (courseId: TCourseId) => courses[courseId]
 
 export const getDepartments = () => departments
 export const getDepartment = (departmentId: TDepartmentId) =>
