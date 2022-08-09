@@ -7,6 +7,8 @@ import Grid from '@mui/material/Grid'
 import ReviewCard from '@components/ReviewCard'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
+import Button from '@mui/material/Button'
+import Link from '@src/Link'
 
 const Recents: NextPage = () => {
 	const [loading, setLoading] = useState<boolean>()
@@ -29,6 +31,11 @@ const Recents: NextPage = () => {
 
 	return (
 		<Container>
+			<Box maxWidth='sm'>
+				<Button variant='contained' component={Link} noLinkStyle href='/'>
+					Return to the home page
+				</Button>
+			</Box>
 			{loading ? (
 				<Box sx={{ display: 'flex', m: 10 }}>
 					<CircularProgress />
