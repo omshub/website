@@ -1,11 +1,11 @@
-import { ASC } from '../globals/constants'
+import { ASC } from '@globals/constants'
 import {
 	newHorizon,
 	RATCap,
 	canopyLime,
 	olympicTeal,
 	boldBlue,
-} from './colorPalette'
+} from '@src/colorPalette'
 
 type TMapFields = {
 	[key: number]: string
