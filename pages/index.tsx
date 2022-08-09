@@ -95,7 +95,7 @@ const Home: NextPage = () => {
 			.then((payloadCourses) => {
 				const courses: Course[] = mapPayloadToArray(
 					payloadCourses,
-					courseFields.COURSE_ID
+					courseFields.NAME
 				)
 				const coursesWithIds = courses.map((data, i) => ({ ...data, id: i }))
 				setCourses(coursesWithIds)
