@@ -5,8 +5,8 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Link from '../src/Link'
-import Alert from '@mui/material/Alert';
-import {useAlert} from '../context/AlertContext'
+import Alert from '@mui/material/Alert'
+import { useAlert } from '../context/AlertContext'
 import {
 	DataGrid,
 	GridColDef,
@@ -24,7 +24,6 @@ interface ClassData {
 	link: string
 	course_id: string
 }
-
 
 const Home: NextPage = () => {
 	const columns: GridColDef[] = [
@@ -68,11 +67,15 @@ const Home: NextPage = () => {
 				console.log(err)
 			})
 	}, [])
-	const {alert} = useAlert()
+	const { alert } = useAlert()
 	return (
 		<Container maxWidth='lg'>
 			<Box>
-				{alert && <Alert severity={alert.severity} variant={alert.variant}>{alert.text}</Alert>}
+				{alert && (
+					<Alert severity={alert.severity} variant={alert.variant}>
+						{alert.text}
+					</Alert>
+				)}
 			</Box>
 			<Box
 				sx={{
