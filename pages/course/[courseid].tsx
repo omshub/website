@@ -14,7 +14,7 @@ import {
 	mapPayloadToArray,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
-	roundNumber
+	roundNumber,
 } from '@src/utilities'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -28,7 +28,7 @@ import {
 	TKeyMap,
 	TNullableNumber,
 	TNullableString,
-	TPayloadReviews
+	TPayloadReviews,
 } from '@globals/types'
 import { useMediaQuery } from '@mui/material'
 
@@ -284,7 +284,7 @@ const CourseId: NextPage = () => {
 						{Number(router.query?.numReviews) ? (
 							<>
 								{reviews && (
-									<Grid container rowSpacing={5} sx={{mt:1}}>
+									<Grid container rowSpacing={5} sx={{ mt: 1 }}>
 										{mapPayloadToArray(reviews, REVIEW_ID, DESC).map(
 											(value: Review) => {
 												return (

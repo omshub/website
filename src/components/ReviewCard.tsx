@@ -11,7 +11,7 @@ import {
 	mapColorPaletteInverted,
 	mapDifficulty,
 	mapOverall,
-	mapSemesterIdToName
+	mapSemesterIdToName,
 } from '@src/utilities'
 import ReactMarkdown from 'react-markdown'
 
@@ -27,7 +27,13 @@ const ReviewCard = ({
 	const timestamp = new Date(created).toLocaleDateString()
 
 	return (
-		<Card sx={{ p: 1, borderRadius: '10px', boxShadow: `0 5px 15px 0 ${grey[400]}` }}>
+		<Card
+			sx={{
+				p: 1,
+				borderRadius: '10px',
+				boxShadow: `0 5px 15px 0 ${grey[400]}`,
+			}}
+		>
 			<CardContent>
 				<Box
 					sx={{
