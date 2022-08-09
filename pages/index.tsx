@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Link from '@src/Link'
-
+import { useMediaQuery } from '@mui/material'
 import {
 	DataGrid,
 	GridColDef,
@@ -18,11 +18,13 @@ import { mapPayloadToArray, roundNumber } from '@src/utilities'
 import { courseFields } from '@globals/constants'
 
 const Home: NextPage = () => {
+	const isDesktop = useMediaQuery('(min-width:600px)')
 	const columns: GridColDef[] = [
 		{
 			field: courseFields.NAME,
 			headerName: 'Course Name',
-			flex: 1,
+			flex: isDesktop ? 1 : 0,
+			minWidth: isDesktop ? 50 : 300,
 			renderCell: (params: GridRenderCellParams) => (
 				<Link
 					href={{
@@ -42,32 +44,36 @@ const Home: NextPage = () => {
 				</Link>
 			),
 		},
-		{ field: courseFields.COURSE_ID, headerName: 'Course ID', flex: 0.5 },
+		{
+			field: courseFields.COURSE_ID,
+			headerName: 'Course ID',
+			flex: isDesktop ? 0.5 : 0,
+		},
 		{
 			field: courseFields.AVG_DIFFICULTY,
 			headerName: 'Difficulty (out of 5)',
-			flex: 0.5,
+			flex: isDesktop ? 0.5 : 0,
 			valueGetter: (params: any) => roundNumber(params.row.avgDifficulty, 1),
 			type: 'number',
 		},
 		{
 			field: courseFields.AVG_WORKLOAD,
 			headerName: 'Workload (hrs/wk)',
-			flex: 0.5,
+			flex: isDesktop ? 0.5 : 0,
 			valueGetter: (params: any) => roundNumber(params.row.avgWorkload, 1),
 			type: 'number',
 		},
 		{
 			field: courseFields.AVG_OVERALL,
 			headerName: 'Overall (out of 5)',
-			flex: 0.5,
+			flex: isDesktop ? 0.5 : 0,
 			valueGetter: (params: any) => roundNumber(params.row.avgOverall, 1),
 			type: 'number',
 		},
 		{
 			field: courseFields.NUM_REVIEWS,
 			headerName: 'Number of Reviews',
-			flex: 0.5,
+			flex: isDesktop ? 0.5 : 0,
 			type: 'number',
 		},
 		{
@@ -149,6 +155,7 @@ const Home: NextPage = () => {
 										items: [
 											{
 												columnField: courseFields.IS_DEPRECATED,
+												operatorValue: 'is',
 												value: 'false',
 											},
 										],
