@@ -14,7 +14,7 @@ import {
 	mapPayloadToArray,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
-	roundNumber,
+	roundNumber
 } from '@src/utilities'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -28,7 +28,7 @@ import {
 	TKeyMap,
 	TNullableNumber,
 	TNullableString,
-	TPayloadReviews,
+	TPayloadReviews
 } from '@globals/types'
 import { useMediaQuery } from '@mui/material'
 
@@ -144,7 +144,7 @@ const CourseId: NextPage = () => {
 					alignItems: 'center',
 				}}
 			>
-				<Typography variant='h2' color='text.secondary' gutterBottom>
+				<Typography variant='h4' color='text.secondary' gutterBottom>
 					{router.query.title}
 				</Typography>
 				{courseData && (

@@ -39,13 +39,12 @@ const Recents: NextPage = () => {
 					alignItems: 'center',
 				}}
 			>
-				<Typography variant='h2' color='text.secondary' gutterBottom>
+				<Typography variant='h4' color='text.secondary' gutterBottom>
 					{`Recent Reviews`}
 				</Typography>
 				<Typography variant='subtitle1' color='text.secondary' gutterBottom>
 					{`A Dynamic List of the 50 Most Recent Reviews`}
 				</Typography>
-			</Box>
 			{loading ? (
 				<Box sx={{ display: 'flex', m: 10 }}>
 					<CircularProgress />
@@ -65,6 +64,7 @@ const Recents: NextPage = () => {
 					)}
 				</>
 			)}
+			</Box>
 		</Container>
 	)
 }
