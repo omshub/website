@@ -73,11 +73,13 @@ const CourseId: NextPage = () => {
 		const path = router.asPath.split('/')
 		const courseId = path[path.length - 1]
 
-		if (courseId) {
+		const hasRouterQuerygAnomaly = courseId === '[courseid]'
+		if (courseId && !hasRouterQuerygAnomaly) {
 			getCourses()
 				.then((payloadCourses) => {
 					setPayloadCourses(payloadCourses)
 					setCourseId(courseId)
+					setCourseData(payloadCourses[courseId])
 					setLoading(false)
 				})
 				.catch((err: any) => {
@@ -90,15 +92,11 @@ const CourseId: NextPage = () => {
 	useEffect(() => {
 		setLoading(true)
 		if (router.isReady && payloadCourses && courseId) {
-			console.log('PATH A')
-
 			const course = payloadCourses[courseId]
 			setCourseData(course)
 			const numReviews = course?.numReviews
 
-			if (!(selectedYear && selectedSemester) && numReviews) {
-				console.log('PATH 1')
-
+			if (!(selectedYear && selectedSemester) && numReviews && courseData) {
 				const courseTimeline = course.reviewsCountsByYearSem
 				const courseYears = Object.keys(courseTimeline)
 					.map((year) => Number(year))
@@ -126,8 +124,6 @@ const CourseId: NextPage = () => {
 				setCourseId(course.courseId)
 				setActiveSemesters(activeSemesters)
 			} else if (selectedYear && selectedSemester) {
-				console.log('PATH 2')
-
 				const newAvailableSemesters: any = Object.keys(
 					courseTimeline[selectedYear]
 				)
@@ -161,14 +157,16 @@ const CourseId: NextPage = () => {
 						console.log(err)
 					})
 			}
-		} else if (router.isReady && !Number(router.query?.numReviews)) {
-			console.log('PATH B')
+		} else if (router.isReady && !courseData?.numReviews) {
 			setLoading(false)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [router.query, router.isReady, courseId, selectedYear, selectedSemester])
+	}, [router.isReady, courseId, selectedYear, selectedSemester])
 
-	return (
+	const hasData = payloadCourses && reviews && courseData && courseId
+	return !hasData ? (
+		<></>
+	) : (
 		<Container maxWidth='lg'>
 			<Box
 				sx={{
