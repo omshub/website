@@ -1,24 +1,15 @@
 import { WhereFilterOp } from 'firebase/firestore'
 
-type TKeyMap = {
-	[key: string]: string
+type TDataDocumentsObject = {
+	[dataDocuments: string]: string
 }
 
-export const coreDataDocuments: TKeyMap = {
+export const coreDataDocuments: TDataDocumentsObject = {
 	COURSES: 'courses',
 	DEPARTMENTS: 'departments',
 	PROGRAMS: 'programs',
 	SEMESTERS: 'semesters',
 	SPECIALIZATIONS: 'specializations',
-}
-
-export const idKeys: TKeyMap = {
-	COURSE_ID: 'courseId',
-	DEPARTMENT_ID: 'departmentId',
-	PROGRAM_ID: 'programId',
-	SEMESTER_ID: 'semesterId',
-	SPECIALIZATION_ID: 'specializationId',
-	USER_ID: 'userId',
 }
 
 // reference: https://firebase.google.com/docs/firestore/query-data/queries#query_operators
@@ -38,3 +29,7 @@ export const queryOperators: TQueryOpKeyMap = {
 	IN: 'in',
 	NOT_IN: 'not-in',
 }
+
+export const baseCollectionCoreData = 'coreData'
+export const baseCollectionReviewsData = 'reviewsData'
+export const baseDocumentReviewsRecent50 = 'reviewsRecent50/reviews'

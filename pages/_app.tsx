@@ -11,6 +11,7 @@ import theme from '../src/theme'
 import { AuthContextProvider } from '../context/AuthContext'
 import { MenuContextProvider } from '../context/MenuContext'
 import { AlertContextProvider } from '../context/AlertContext'
+
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
 

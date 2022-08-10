@@ -1,68 +1,110 @@
-import React, { useState, useEffect } from 'react'
-import type { NextPage } from 'next'
-import Container from '@mui/material/Container'
-import Typography from '@mui/material/Typography'
+import { getCourses } from '@backend/dbOperations'
+import { courseFields } from '@globals/constants'
+import { Course } from '@globals/types'
+import { useMediaQuery } from '@mui/material'
 import Box from '@mui/material/Box'
+import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import Link from '../src/Link'
 import Alert from '@mui/material/Alert'
 import { useAlert } from '../context/AlertContext'
+import Typography from '@mui/material/Typography'
 import {
 	DataGrid,
 	GridColDef,
-	GridToolbar,
 	GridRenderCellParams,
+	GridToolbar,
 } from '@mui/x-data-grid'
-
-interface ClassData {
-	number: string
-	aliases: string
-	department: string
-	deprecated: boolean
-	foundational: string
-	name: string
-	link: string
-	course_id: string
-}
+import Link from '@src/Link'
+import { mapPayloadToArray, roundNumber } from '@src/utilities'
+import type { NextPage } from 'next'
+import { useEffect, useState } from 'react'
 
 const Home: NextPage = () => {
+	const isDesktop = useMediaQuery('(min-width:600px)')
 	const columns: GridColDef[] = [
 		{
-			field: 'name',
+			field: courseFields.NAME,
 			headerName: 'Course Name',
-			flex: 1,
+			flex: isDesktop ? 1 : 0,
+			minWidth: isDesktop ? 50 : 300,
 			renderCell: (params: GridRenderCellParams) => (
 				<Link
 					href={{
-						pathname: `/class/${params.row.course_id}`,
-						query: { classid: params.row.course_id, title: params.row.name },
+						pathname: `/course/${params.row.courseId}`,
+						query: {
+							title: params.row.name,
+							courseData: JSON.stringify(params.row),
+							numReviews: params.row.numReviews,
+						},
+					}}
+					sx={{
+						textDecoration: 'unset',
+						'&:hover': { textDecoration: 'underline' },
 					}}
 				>
 					{params.row.name}
 				</Link>
 			),
 		},
-		{ field: 'course_id', headerName: 'Course ID', flex: 1 },
-		{ field: 'aliases', headerName: 'Aliases', flex: 1, hide: true },
+		{
+			field: courseFields.COURSE_ID,
+			headerName: 'Course ID',
+			flex: isDesktop ? 0.5 : 0,
+		},
+		{
+			field: courseFields.AVG_DIFFICULTY,
+			headerName: 'Difficulty (out of 5)',
+			flex: isDesktop ? 0.5 : 0,
+			valueGetter: (params: any) => roundNumber(params.row.avgDifficulty, 1),
+			type: 'number',
+		},
+		{
+			field: courseFields.AVG_WORKLOAD,
+			headerName: 'Workload (hrs/wk)',
+			flex: isDesktop ? 0.5 : 0,
+			valueGetter: (params: any) => roundNumber(params.row.avgWorkload, 1),
+			type: 'number',
+		},
+		{
+			field: courseFields.AVG_OVERALL,
+			headerName: 'Overall (out of 5)',
+			flex: isDesktop ? 0.5 : 0,
+			valueGetter: (params: any) => roundNumber(params.row.avgOverall, 1),
+			type: 'number',
+		},
+		{
+			field: courseFields.NUM_REVIEWS,
+			headerName: 'Number of Reviews',
+			flex: isDesktop ? 0.5 : 0,
+			type: 'number',
+		},
+		{
+			field: courseFields.IS_DEPRECATED,
+			headerName: 'is Deprecated?',
+			flex: 0,
+			hide: true,
+			type: 'boolean',
+		},
+		{ field: courseFields.ALIASES, headerName: 'Aliases', flex: 0, hide: true },
 	]
 	const [loading, setLoading] = useState<boolean>()
-	const [classes, setClasses] = useState<Array<ClassData>>([])
+	const [courses, setCourses] = useState<Course[]>([])
 
 	useEffect(() => {
 		setLoading(true)
-		// fetch('https://omshub-readonly.gigalixirapp.com/classes')
-		fetch('https://omshub-api.gigalixirapp.com/api/classes')
-			.then((res) => res.json())
-			.then((classes) => {
-				//Clean data
-				classes = classes.map((data: object, index: number) => ({
-					...data,
-					id: index,
-				}))
-				setClasses(classes)
+
+		getCourses()
+			.then((payloadCourses) => {
+				const courses: Course[] = mapPayloadToArray(
+					payloadCourses,
+					courseFields.NAME
+				)
+				const coursesWithIds = courses.map((data, i) => ({ ...data, id: i }))
+				setCourses(coursesWithIds)
 				setLoading(false)
 			})
-			.catch((err) => {
+			.catch((err: any) => {
 				setLoading(false)
 				console.log(err)
 			})
@@ -86,25 +128,24 @@ const Home: NextPage = () => {
 					alignItems: 'center',
 				}}
 			>
-				<Typography
-					variant='h4'
-					component='h1'
-					sx={{ mt: 5, mb: 10 }}
-					gutterBottom
-				>
-					OMSCS Courses
+				<Typography variant='h2' sx={{ mt: 5 }} gutterBottom>
+					OMS Courses
 				</Typography>
-
+				<Typography variant='subtitle1' sx={{ mb: 10 }} gutterBottom>
+					{`Georgia Tech's Online Master's Course Catalog`}
+				</Typography>
 				<>
-					<Grid container sx={{ marginLeft: 0, width: `100%` }} spacing={3}>
+					<Grid container sx={{ margin: 0, width: `100%` }} spacing={3}>
 						<DataGrid
 							autoHeight
 							disableColumnSelector
-							rows={classes}
+							rows={courses}
 							columns={columns}
 							loading={loading}
 							components={{ Toolbar: GridToolbar }}
+							sx={{ borderRadius: '25px', padding: '20px 10px' }}
 							columnVisibilityModel={{
+								isDeprecated: false,
 								aliases: false,
 							}}
 							componentsProps={{
@@ -116,6 +157,17 @@ const Home: NextPage = () => {
 							initialState={{
 								pagination: {
 									pageSize: 150,
+								},
+								filter: {
+									filterModel: {
+										items: [
+											{
+												columnField: courseFields.IS_DEPRECATED,
+												operatorValue: 'is',
+												value: 'false',
+											},
+										],
+									},
 								},
 							}}
 						/>

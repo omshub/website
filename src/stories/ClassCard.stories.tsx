@@ -1,7 +1,7 @@
 import React from 'react'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import Grid from '@mui/material/Grid'
-import ClassCard from '../components/ClassCard'
+import ClassCard from '@components/ClassCard'
 
 export default {
 	title: 'General/ClassCard',

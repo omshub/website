@@ -68,9 +68,10 @@ _.sortBy(reviews, ['courseId', 'reviewId']).forEach((review) => {
 })
 
 const reviewsRecent50 = []
+const BUFFER = 20 // add padding to prevent net deletion below 50 count
 reviews
 	.sort((a, b) => b.created - a.created)
-	.slice(0, 50)
+	.slice(0, 50 + BUFFER)
 	.forEach((review) => {
 		reviewsRecent50.push(review)
 	})
@@ -82,6 +83,7 @@ const add = async (collectionName, newDocId, data) =>
 // seed core data
 ;(async () => {
 	await add('coreData', 'courses', coursesMap)
+	await add('coreData', '_coursesLegacySnapshot', coursesMap) // retain separate "legacy snapshot" for "baseline accounting" purposes
 	await add('coreData', 'departments', departmentsMap)
 	await add('coreData', 'programs', programsMap)
 	await add('coreData', 'semesters', semestersMap)
@@ -98,4 +100,4 @@ for (const courseId in reviewsDataMaps) {
 	}
 }
 
-;(async () => add(`reviewsRecent50`, 'reviews', { data: reviewsRecent50 }))()
+;(async () => add('reviewsRecent50', 'reviews', { data: reviewsRecent50 }))()

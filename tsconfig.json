@@ -15,8 +15,13 @@
 		"jsx": "preserve",
 		"jsxImportSource": "@emotion/react",
 		"incremental": true,
+		"baseUrl": ".",
 		"paths": {
-			"@/pages/*": ["./pages/*"]
+			"@globals/*": ["globals/*"],
+			"@backend/*": ["firebase/*"],
+			"@src/*": ["src/*"],
+			"@pages/*": ["pages/*"],
+			"@components/*": ["src/components/*"]
 		}
 	},
 	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
