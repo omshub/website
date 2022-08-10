@@ -95,7 +95,6 @@ const CourseId: NextPage<CoursePageProps> = ({
 			const newAvailableSemesters: any = Object.keys(
 				courseTimeline[selectedYear]
 			)
-			// console.log(courseTimeline,selectedYear,newAvailableSemesters)
 			const newActiveSemesters: any = Object.keys(mapSemesterTermToName).reduce(
 				(attrs, key) => ({
 					...attrs,
