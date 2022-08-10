@@ -3,6 +3,8 @@
 	the Firebase Firestore db.
 */
 
+/* eslint-disable-file no-unused-vars */
+
 /* --- IMPORTS ---*/
 const reviews = require('../firebase/seed/data/reviews')
 // N.B. `coursesData` already contains the computed values resulting from this script
