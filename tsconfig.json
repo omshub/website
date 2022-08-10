@@ -21,7 +21,8 @@
 			"@backend/*": ["firebase/*"],
 			"@src/*": ["src/*"],
 			"@pages/*": ["pages/*"],
-			"@components/*": ["src/components/*"]
+			"@components/*": ["src/components/*"],
+			"@context/*": ["context/*"]
 		}
 	},
 	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

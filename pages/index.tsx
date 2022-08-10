@@ -15,10 +15,19 @@ import {
 import Link from '@src/Link'
 import { mapPayloadToArray, roundNumber } from '@src/utilities'
 import type { NextPage } from 'next'
-import { useEffect, useState } from 'react'
 
-const Home: NextPage = () => {
+interface HomePageProps {
+	allCourseData: Course[]
+}
+
+const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 	const isDesktop = useMediaQuery('(min-width:600px)')
+	const coursesArray: Course[] = mapPayloadToArray(
+		allCourseData,
+		courseFields.NAME
+	)
+	const courses = coursesArray.map((data, i) => ({ ...data, id: i }))
+
 	const columns: GridColDef[] = [
 		{
 			field: courseFields.NAME,
@@ -27,14 +36,8 @@ const Home: NextPage = () => {
 			minWidth: isDesktop ? 50 : 300,
 			renderCell: (params: GridRenderCellParams) => (
 				<Link
-					href={{
-						pathname: `/course/${params.row.courseId}`,
-						query: {
-							title: params.row.name,
-							courseData: JSON.stringify(params.row),
-							numReviews: params.row.numReviews,
-						},
-					}}
+					href='/course/[courseid]'
+					as={`/course/${params.row.courseId}`}
 					sx={{
 						textDecoration: 'unset',
 						'&:hover': { textDecoration: 'underline' },
@@ -85,27 +88,7 @@ const Home: NextPage = () => {
 		},
 		{ field: courseFields.ALIASES, headerName: 'Aliases', flex: 0, hide: true },
 	]
-	const [loading, setLoading] = useState<boolean>()
-	const [courses, setCourses] = useState<Course[]>([])
 
-	useEffect(() => {
-		setLoading(true)
-
-		getCourses()
-			.then((payloadCourses) => {
-				const courses: Course[] = mapPayloadToArray(
-					payloadCourses,
-					courseFields.NAME
-				)
-				const coursesWithIds = courses.map((data, i) => ({ ...data, id: i }))
-				setCourses(coursesWithIds)
-				setLoading(false)
-			})
-			.catch((err: any) => {
-				setLoading(false)
-				console.log(err)
-			})
-	}, [])
 	return (
 		<Container maxWidth='xl'>
 			<Box
@@ -115,6 +98,7 @@ const Home: NextPage = () => {
 					flexDirection: 'column',
 					justifyContent: 'center',
 					alignItems: 'center',
+					textAlign: 'center',
 				}}
 			>
 				<Typography variant='h2' sx={{ mt: 5 }} gutterBottom>
@@ -130,7 +114,7 @@ const Home: NextPage = () => {
 							disableColumnSelector
 							rows={courses}
 							columns={columns}
-							loading={loading}
+							loading={!allCourseData}
 							components={{ Toolbar: GridToolbar }}
 							sx={{ borderRadius: '25px', padding: '20px 10px' }}
 							columnVisibilityModel={{
@@ -168,3 +152,12 @@ const Home: NextPage = () => {
 }
 
 export default Home
+
+export async function getServerSideProps() {
+	const coursesData = await getCourses()
+	return {
+		props: {
+			allCourseData: coursesData,
+		},
+	}
+}

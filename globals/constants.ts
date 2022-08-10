@@ -1,4 +1,4 @@
-import { TKeyMap } from './types'
+import { TKeyMap } from '@globals/types'
 
 export const COURSE_ID = 'courseId'
 export const DEPARTMENT_ID = 'departmentId'

@@ -7,27 +7,12 @@ import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import type { NextPage } from 'next'
-import { useEffect, useState } from 'react'
 
-const Recents: NextPage = () => {
-	const [loading, setLoading] = useState<boolean>()
-	const [reviews, setReviews] = useState<Review[]>([])
+interface RecentsProps {
+	recent50Reviews: Review[]
+}
 
-	useEffect(() => {
-		setLoading(true)
-
-		getReviewsRecent50()
-			.then((reviews) => {
-				if (reviews) {
-					setReviews(reviews)
-					setLoading(false)
-				}
-			})
-			.catch((err: any) => {
-				console.log(err)
-			})
-	}, [])
-
+const Recents: NextPage<RecentsProps> = ({ recent50Reviews }) => {
 	return (
 		<Container maxWidth='lg'>
 			<Box
@@ -45,15 +30,15 @@ const Recents: NextPage = () => {
 				<Typography variant='subtitle1' color='text.secondary' gutterBottom>
 					{`A Dynamic List of the 50 Most Recent Reviews`}
 				</Typography>
-				{loading ? (
+				{!recent50Reviews ? (
 					<Box sx={{ display: 'flex', m: 10 }}>
 						<CircularProgress />
 					</Box>
 				) : (
 					<>
-						{reviews && (
+						{recent50Reviews && (
 							<Grid container spacing={3} sx={{ margin: '10px 0' }}>
-								{reviews.slice(0, 50).map((value: Review) => {
+								{recent50Reviews.slice(0, 50).map((value: Review) => {
 									return (
 										<Grid sx={{ width: `100%` }} key={value.reviewId} item>
 											<ReviewCard {...value}></ReviewCard>
@@ -70,3 +55,11 @@ const Recents: NextPage = () => {
 }
 
 export default Recents
+export async function getServerSideProps() {
+	const ReviewsRecent50 = await getReviewsRecent50()
+	return {
+		props: {
+			recent50Reviews: ReviewsRecent50,
+		},
+	}
+}
