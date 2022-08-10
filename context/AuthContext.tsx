@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '../firebase/FirebaseConfig'
+import { auth } from '@backend/FirebaseConfig'
 import {
 	fetchSignInMethodsForEmail,
 	sendSignInLinkToEmail,
