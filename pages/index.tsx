@@ -10,16 +10,22 @@ import {
 	DataGrid,
 	GridColDef,
 	GridRenderCellParams,
-	GridToolbar
+	GridToolbar,
 } from '@mui/x-data-grid'
 import Link from '@src/Link'
 import { mapPayloadToArray, roundNumber } from '@src/utilities'
 import type { NextPage } from 'next'
-import useSWR from 'swr'
-const Home: NextPage = () => {
+
+interface HomePageProps {
+	allCourseData: Course[]
+}
+
+const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 	const isDesktop = useMediaQuery('(min-width:600px)')
-	const { data, error } = useSWR('/courses', getCourses)
-	const coursesArray: Course[] = mapPayloadToArray(data, courseFields.NAME)
+	const coursesArray: Course[] = mapPayloadToArray(
+		allCourseData,
+		courseFields.NAME
+	)
 	const courses = coursesArray.map((data, i) => ({ ...data, id: i }))
 
 	const columns: GridColDef[] = [
@@ -30,7 +36,7 @@ const Home: NextPage = () => {
 			minWidth: isDesktop ? 50 : 300,
 			renderCell: (params: GridRenderCellParams) => (
 				<Link
-					href="/course/[courseid]"
+					href='/course/[courseid]'
 					as={`/course/${params.row.courseId}`}
 					sx={{
 						textDecoration: 'unset',
@@ -108,7 +114,7 @@ const Home: NextPage = () => {
 							disableColumnSelector
 							rows={courses}
 							columns={columns}
-							loading={!data && !error}
+							loading={!allCourseData}
 							components={{ Toolbar: GridToolbar }}
 							sx={{ borderRadius: '25px', padding: '20px 10px' }}
 							columnVisibilityModel={{
@@ -146,3 +152,12 @@ const Home: NextPage = () => {
 }
 
 export default Home
+
+export async function getServerSideProps() {
+	const coursesData = await getCourses()
+	return {
+		props: {
+			allCourseData: coursesData,
+		},
+	}
+}

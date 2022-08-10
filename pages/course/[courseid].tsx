@@ -18,7 +18,7 @@ import {
 	mapPayloadToArray,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
-	roundNumber
+	roundNumber,
 } from '@src/utilities'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -28,29 +28,43 @@ type TActiveSemesters = {
 	[semesterTerm: number]: boolean
 }
 
-interface CoursePageProps{
-	courseData: Course,
-	courseTimeline: number[],
-	courseYears: number[],
-	defaultYear : number,
-	defaultSemester: string,
-	defaultSemesterToggles: boolean[],
-	defaultReviews: TPayloadReviews,
+interface CoursePageProps {
+	courseData: Course
+	courseTimeline: number[]
+	courseYears: number[]
+	defaultYear: number
+	defaultSemester: string
+	defaultSemesterToggles: boolean[]
+	defaultReviews: TPayloadReviews
 }
 
-const CourseId: NextPage<CoursePageProps> = ({courseData,courseTimeline,defaultYear,courseYears,defaultSemester,defaultSemesterToggles,defaultReviews}) => {
+const CourseId: NextPage<CoursePageProps> = ({
+	courseData,
+	courseTimeline,
+	defaultYear,
+	courseYears,
+	defaultSemester,
+	defaultSemesterToggles,
+	defaultReviews,
+}) => {
 	const router = useRouter()
 	const [loading, setLoading] = useState<boolean>(true)
-	const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>(defaultSemesterToggles)
-	const [selectedSemester, setSelectedSemester] = useState<string>(defaultSemester)
+	const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>(
+		defaultSemesterToggles
+	)
+	const [selectedSemester, setSelectedSemester] =
+		useState<string>(defaultSemester)
 	const [selectedYear, setSelectedYear] = useState<number>(defaultYear)
-	const [courseReviews, setCourseReviews] = useState<TPayloadReviews>(defaultReviews)
+	const [courseReviews, setCourseReviews] =
+		useState<TPayloadReviews>(defaultReviews)
 	const orientation = useMediaQuery('(min-width:600px)')
 
 	const path = router.asPath.split('/')
 	const courseId = path[path.length - 1]
 	const { mutate } = useSWRConfig()
-	const { data: course_reviews } = useSWR(`/course/${courseId}/${selectedYear}/${selectedSemester}`)
+	const { data: course_reviews } = useSWR(
+		`/course/${courseId}/${selectedYear}/${selectedSemester}`
+	)
 	const handleSemester = (
 		event: React.MouseEvent<HTMLElement>,
 		newSemester: string
@@ -65,13 +79,13 @@ const CourseId: NextPage<CoursePageProps> = ({courseData,courseTimeline,defaultY
 		setSelectedYear(newYear)
 	}
 
-	useEffect(()=>{
-		if(course_reviews){
+	useEffect(() => {
+		if (course_reviews) {
 			setCourseReviews(course_reviews)
 			setLoading(false)
 			console.log(course_reviews)
 		}
-	},[course_reviews])
+	}, [course_reviews])
 	useEffect(() => {
 		setLoading(true)
 		if (selectedYear && selectedSemester) {
@@ -94,7 +108,9 @@ const CourseId: NextPage<CoursePageProps> = ({courseData,courseTimeline,defaultY
 			setActiveSemesters(newActiveSemesters)
 		}
 		mutate(
-			selectedYear && selectedSemester ? `/course/${courseId}/${selectedYear}/${selectedSemester}` : null,
+			selectedYear && selectedSemester
+				? `/course/${courseId}/${selectedYear}/${selectedSemester}`
+				: null,
 			() => {
 				return getReviews(
 					courseId,
@@ -295,41 +311,43 @@ const CourseId: NextPage<CoursePageProps> = ({courseData,courseTimeline,defaultY
 
 export default CourseId
 
-interface PageProps{
+interface PageProps {
 	query: { courseid: string }
 }
-export async function getServerSideProps(context:PageProps){
+export async function getServerSideProps(context: PageProps) {
 	const { courseid } = context.query
 	const allCourseData = await getCourses()
 	const currentCourseData = allCourseData[courseid]
 	const courseTimeline = currentCourseData.reviewsCountsByYearSem
-			const courseYears = Object.keys(courseTimeline)
-				.map((year) => Number(year))
-				.reverse()
-			const mostRecentYear = courseYears[0]
-			const mostRecentYearSemesters = Object.keys(
-				courseTimeline[mostRecentYear]
-			)
-			const mostRecentSemester =
-				mostRecentYearSemesters[mostRecentYearSemesters.length - 1]
-			const availableSemesters = Object.keys(courseTimeline[mostRecentYear])
-			const activeSemesters = Object.keys(mapSemesterTermToName).reduce(
-				(attrs, key) => ({
-					...attrs,
-					[key]: !(availableSemesters.indexOf(key.toString()) > -1),
-				}),
-				{}
-		)
-	const courseReviews = await getReviews(courseid,String(mostRecentYear),String(mostRecentSemester))
+	const courseYears = Object.keys(courseTimeline)
+		.map((year) => Number(year))
+		.reverse()
+	const mostRecentYear = courseYears[0]
+	const mostRecentYearSemesters = Object.keys(courseTimeline[mostRecentYear])
+	const mostRecentSemester =
+		mostRecentYearSemesters[mostRecentYearSemesters.length - 1]
+	const availableSemesters = Object.keys(courseTimeline[mostRecentYear])
+	const activeSemesters = Object.keys(mapSemesterTermToName).reduce(
+		(attrs, key) => ({
+			...attrs,
+			[key]: !(availableSemesters.indexOf(key.toString()) > -1),
+		}),
+		{}
+	)
+	const courseReviews = await getReviews(
+		courseid,
+		String(mostRecentYear),
+		String(mostRecentSemester)
+	)
 	return {
-		props:{
+		props: {
 			courseData: currentCourseData,
 			courseTimeline: courseTimeline,
 			courseYears: courseYears,
-			defaultYear : mostRecentYear,
+			defaultYear: mostRecentYear,
 			defaultSemester: mostRecentSemester,
 			defaultSemesterToggles: activeSemesters,
-			defaultReviews: courseReviews
-		}	
-	} 
+			defaultReviews: courseReviews,
+		},
+	}
 }
