@@ -1,15 +1,4 @@
-import { getReviews } from '@backend/dbOperations'
 import ReviewCard from '@components/ReviewCard'
-import { DESC, REVIEW_ID } from '@globals/constants'
-import {
-	Course,
-	Review,
-	TKeyMap,
-	TNullableNumber,
-	TNullableString,
-	TPayloadReviews
-} from '@globals/types'
-import { useMediaQuery } from '@mui/material'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -25,12 +14,24 @@ import {
 	mapPayloadToArray,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
-	roundNumber
+	roundNumber,
 } from '@src/utilities'
-import { useCourse } from 'context/CurrentCourseContext'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+
+import { getCourses, getReviews } from '@backend/dbOperations'
+import { DESC, REVIEW_ID } from '@globals/constants'
+import {
+	Course,
+	Review,
+	TKeyMap,
+	TNullableNumber,
+	TNullableString,
+	TPayloadCourses,
+	TPayloadReviews,
+} from '@globals/types'
+import { useMediaQuery } from '@mui/material'
 
 type TActiveSemesters = {
 	[semesterTerm: number]: boolean
@@ -43,11 +44,14 @@ const CourseId: NextPage = () => {
 	const [courseYears, setCourseYears] = useState<number[]>([])
 	const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>({})
 	const [reviews, setReviews] = useState<TPayloadReviews>({})
+	const [courseId, setCourseId] = useState<string | undefined>()
 	const [selectedSemester, setSelectedSemester] = useState<TNullableString>()
 	const [selectedYear, setSelectedYear] = useState<TNullableNumber>()
-	const [courseData,setCourseData] = useState<Course>()
-	const {allCourseData} = useCourse()
+	const [courseData, setCourseData] = useState<Course>()
+	const [payloadCourses, setPayloadCourses] = useState<TPayloadCourses>()
+
 	const orientation = useMediaQuery('(min-width:600px)')
+
 	const handleSemester = (
 		event: React.MouseEvent<HTMLElement>,
 		newSemester: TNullableString
@@ -61,15 +65,35 @@ const CourseId: NextPage = () => {
 	) => {
 		setSelectedYear(newYear)
 	}
+
 	useEffect(() => {
-		// 
 		setLoading(true)
-		const path = router.asPath.split('/')
-		const courseId = path[path.length - 1]
-		const courseData:Course = allCourseData[courseId]
-		if (router.isReady && Number(courseData?.numReviews)) {
-			if (!(selectedYear && selectedSemester)) {
-				const courseTimeline = courseData?.reviewsCountsByYearSem
+
+		getCourses()
+			.then((payloadCourses) => {
+				setPayloadCourses(payloadCourses)
+
+				const path = router.asPath.split('/')
+				const courseId = path[path.length - 1]
+				setCourseId(courseId)
+
+				setLoading(false)
+			})
+			.catch((err: any) => {
+				setLoading(false)
+				console.log(err)
+			})
+	}, [])
+
+	useEffect(() => {
+		setLoading(true)
+		if (router.isReady && payloadCourses && courseId) {
+			const course = payloadCourses[courseId]
+			setCourseData(course)
+			const numReviews = course.numReviews
+
+			if (!(selectedYear && selectedSemester) && numReviews) {
+				const courseTimeline = course.reviewsCountsByYearSem
 				const courseYears = Object.keys(courseTimeline)
 					.map((year) => Number(year))
 					.reverse()
@@ -87,13 +111,15 @@ const CourseId: NextPage = () => {
 					}),
 					{}
 				)
+
 				setCourseData(courseData)
 				setCourseTimeLine(courseTimeline)
 				setCourseYears(courseYears)
 				setSelectedSemester(mostRecentSemester)
 				setSelectedYear(mostRecentYear)
+				setCourseId(course.courseId)
 				setActiveSemesters(activeSemesters)
-			} else {
+			} else if (selectedYear && selectedSemester) {
 				const newAvailableSemesters: any = Object.keys(
 					courseTimeline[selectedYear]
 				)
@@ -113,6 +139,7 @@ const CourseId: NextPage = () => {
 				}
 				setActiveSemesters(newActiveSemesters)
 			}
+
 			if (courseId && selectedYear && selectedSemester) {
 				getReviews(courseId, String(selectedYear), selectedSemester)
 					.then((reviews) => {
@@ -126,11 +153,11 @@ const CourseId: NextPage = () => {
 						console.log(err)
 					})
 			}
-		} else if (router.isReady && !Number(courseData?.numReviews)) {
+		} else if (router.isReady && !Number(router.query?.numReviews)) {
 			setLoading(false)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [router.query, router.isReady, selectedYear, selectedSemester,courseData])
+	}, [router.query, router.isReady, courseId, selectedYear, selectedSemester])
 
 	return (
 		<Container maxWidth='lg'>
@@ -280,7 +307,8 @@ const CourseId: NextPage = () => {
 					</Box>
 				) : (
 					<>
-						{Number(courseData?.numReviews) ? (
+						{/* {Number(router.query?.numReviews) ? ( */}
+						{courseData?.numReviews ? (
 							<>
 								{reviews && (
 									<Grid container rowSpacing={5} sx={{ mt: 1 }}>
