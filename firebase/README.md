@@ -94,10 +94,10 @@ await deleteCourse(courseId)
 
 ## Seeding the Data
 
-To seed the static data and legacy reviews, ensure that `/firebase/seed/.env.js` exists locally and is populated with appropriate credentials (cf. `/firebase/seed/example.env.js` for details), and then run the following from the terminal (e.g., bash):
+To seed the static data and legacy reviews, ensure that `/__seed__/.env.js` exists locally and is populated with appropriate credentials (cf. `/__seed__/example.env.js` for details), and then run the following from the terminal (e.g., bash):
 
 ```bash
-node firebase/seed/script.js
+yarn db:seed
 ```
 
-This has already been performed in the production environment, and therefore is not necessary to re-run. This can be used to seed a test/dev environment, for example.
+**_N.B._** This has already been performed in the production environment, and therefore is not necessary to re-run. This can be used to seed a test/dev environment, for example.
