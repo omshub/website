@@ -8,8 +8,8 @@
 		"npm": "please-use-yarn"
 	},
 	"scripts": {
-		"dev": "next dev",
-		"build": "next build && next export",
+		"dev": "NODE_OPTIONS='--inspect' next dev",
+		"build": "next build",
 		"build-sitemap": "next-sitemap",
 		"start": "next start",
 		"test": "jest --watch",

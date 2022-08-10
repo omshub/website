@@ -10,7 +10,7 @@ import {
 	DataGrid,
 	GridColDef,
 	GridRenderCellParams,
-	GridToolbar,
+	GridToolbar
 } from '@mui/x-data-grid'
 import Link from '@src/Link'
 import { mapPayloadToArray, roundNumber } from '@src/utilities'
@@ -30,9 +30,8 @@ const Home: NextPage = () => {
 			minWidth: isDesktop ? 50 : 300,
 			renderCell: (params: GridRenderCellParams) => (
 				<Link
-					href={{
-						pathname: `/course/${params.row.courseId}`,
-					}}
+					href="/course/[courseid]"
+					as={`/course/${params.row.courseId}`}
 					sx={{
 						textDecoration: 'unset',
 						'&:hover': { textDecoration: 'underline' },
