@@ -39,6 +39,7 @@ type TActiveSemesters = {
 
 const CourseId: NextPage = () => {
 	const router = useRouter()
+
 	const [loading, setLoading] = useState<boolean>()
 	const [courseTimeline, setCourseTimeLine] = useState<TKeyMap>({})
 	const [courseYears, setCourseYears] = useState<number[]>([])
@@ -69,30 +70,35 @@ const CourseId: NextPage = () => {
 	useEffect(() => {
 		setLoading(true)
 
-		getCourses()
-			.then((payloadCourses) => {
-				setPayloadCourses(payloadCourses)
+		const path = router.asPath.split('/')
+		const courseId = path[path.length - 1]
 
-				const path = router.asPath.split('/')
-				const courseId = path[path.length - 1]
-				setCourseId(courseId)
-
-				setLoading(false)
-			})
-			.catch((err: any) => {
-				setLoading(false)
-				console.log(err)
-			})
-	}, [])
+		if (courseId) {
+			getCourses()
+				.then((payloadCourses) => {
+					setPayloadCourses(payloadCourses)
+					setCourseId(courseId)
+					setLoading(false)
+				})
+				.catch((err: any) => {
+					setLoading(false)
+					console.log(err)
+				})
+		}
+	}, [router.asPath])
 
 	useEffect(() => {
 		setLoading(true)
 		if (router.isReady && payloadCourses && courseId) {
+			console.log('PATH A')
+
 			const course = payloadCourses[courseId]
 			setCourseData(course)
-			const numReviews = course.numReviews
+			const numReviews = course?.numReviews
 
 			if (!(selectedYear && selectedSemester) && numReviews) {
+				console.log('PATH 1')
+
 				const courseTimeline = course.reviewsCountsByYearSem
 				const courseYears = Object.keys(courseTimeline)
 					.map((year) => Number(year))
@@ -120,6 +126,8 @@ const CourseId: NextPage = () => {
 				setCourseId(course.courseId)
 				setActiveSemesters(activeSemesters)
 			} else if (selectedYear && selectedSemester) {
+				console.log('PATH 2')
+
 				const newAvailableSemesters: any = Object.keys(
 					courseTimeline[selectedYear]
 				)
@@ -140,7 +148,7 @@ const CourseId: NextPage = () => {
 				setActiveSemesters(newActiveSemesters)
 			}
 
-			if (courseId && selectedYear && selectedSemester) {
+			if (selectedYear && selectedSemester) {
 				getReviews(courseId, String(selectedYear), selectedSemester)
 					.then((reviews) => {
 						if (reviews) {
@@ -154,6 +162,7 @@ const CourseId: NextPage = () => {
 					})
 			}
 		} else if (router.isReady && !Number(router.query?.numReviews)) {
+			console.log('PATH B')
 			setLoading(false)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -171,7 +180,7 @@ const CourseId: NextPage = () => {
 				}}
 			>
 				<Typography variant='h4' color='text.secondary' gutterBottom>
-					{router.query.title}
+					{courseData?.name}
 				</Typography>
 				{courseData && (
 					<Grid
@@ -307,7 +316,6 @@ const CourseId: NextPage = () => {
 					</Box>
 				) : (
 					<>
-						{/* {Number(router.query?.numReviews) ? ( */}
 						{courseData?.numReviews ? (
 							<>
 								{reviews && (
