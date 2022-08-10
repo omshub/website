@@ -7,6 +7,7 @@ import SocialButton from './SocialButton'
 import TextField from '@mui/material/TextField'
 import { useState } from 'react'
 import Typography from '@mui/material/Typography'
+import { TProviderName } from '@globals/types'
 
 const Login: NextPage = () => {
 	const { signInWithProvider, signWithMagic } = useAuth()
@@ -22,7 +23,7 @@ const Login: NextPage = () => {
 		}
 	}
 
-	const providers = ['Google', 'Facebook', 'Github']
+	const providers: TProviderName[] = ['Google', 'Facebook', 'Github']
 
 	return (
 		<Grid
@@ -49,7 +50,7 @@ const Login: NextPage = () => {
 						sx={{ textAlign: 'center' }}
 						label={`🔮 Enter an email address`}
 					></TextField>
-					{providers.map((provider, index) => {
+					{providers.map((provider: TProviderName, index) => {
 						return (
 							<>
 								<SocialButton

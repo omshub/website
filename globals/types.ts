@@ -14,6 +14,8 @@ type TReviewsCountsByYearSemObject = {
 	[yearKey: TObjectKey]: { [semesterTermKey: TObjectKey]: number }
 }
 
+export type TProviderName = 'Google' | 'Facebook' | 'Github' | 'Apple'
+
 /* --- DATA MODELS (API/DYNAMIC) --- */
 
 export interface Course {

@@ -1,17 +1,27 @@
 import Button from '@mui/material/Button'
-import GoogleIcon from '../assets/GoogleIcon'
+import GoogleIcon from '@src/assets/GoogleIcon'
 import FacebookIcon from '@mui/icons-material/Facebook'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import AppleIcon from '@mui/icons-material/Apple'
+import { TKeyMap, TProviderName } from '@globals/types'
 
 interface SocialButtonProps {
 	key?: number
-	provider?: string
+	provider: TProviderName
 	variant?: string
 	style?: object
 	onClick?: () => void
 }
-const providers: any = {
+interface Provider {
+	style: TKeyMap
+	SocialIcon: any
+}
+type TProviders = {
+	// eslint-disable-next-line no-unused-vars
+	[provider in TProviderName]: Provider
+}
+
+const providers: TProviders = {
 	Google: {
 		style: {
 			background: 'white',
