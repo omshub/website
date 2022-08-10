@@ -1,4 +1,3 @@
-import { CurrentCourseProvider } from '@context/CurrentCourseContext'
 import { CacheProvider, EmotionCache } from '@emotion/react'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
@@ -28,9 +27,7 @@ export default function MyApp(props: MyAppProps) {
 				{/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
 				<CssBaseline />
 				<NavBar />
-				<CurrentCourseProvider>
-					<Component {...pageProps} />
-				</CurrentCourseProvider>
+				<Component {...pageProps} />
 			</ThemeProvider>
 			<Copyright />
 		</CacheProvider>
