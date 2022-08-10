@@ -1,5 +1,5 @@
-import { useMenu } from '../../context/MenuContext'
-import { useAuth } from '../../context/AuthContext'
+import { useMenu } from '@context/MenuContext'
+import { useAuth } from '@context/AuthContext'
 
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'

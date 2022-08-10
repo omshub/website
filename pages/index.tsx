@@ -7,7 +7,7 @@ import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import Alert from '@mui/material/Alert'
-import { useAlert } from '../context/AlertContext'
+import { useAlert } from '@context/AlertContext'
 import Typography from '@mui/material/Typography'
 import {
 	DataGrid,
