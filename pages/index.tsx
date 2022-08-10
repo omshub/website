@@ -1,4 +1,5 @@
 import { getCourses } from '@backend/dbOperations'
+import { useCourse } from '@context/CurrentCourseContext'
 import { courseFields } from '@globals/constants'
 import { Course } from '@globals/types'
 import { useMediaQuery } from '@mui/material'
@@ -10,15 +11,15 @@ import {
 	DataGrid,
 	GridColDef,
 	GridRenderCellParams,
-	GridToolbar,
+	GridToolbar
 } from '@mui/x-data-grid'
 import Link from '@src/Link'
 import { mapPayloadToArray, roundNumber } from '@src/utilities'
 import type { NextPage } from 'next'
 import { useEffect, useState } from 'react'
-
 const Home: NextPage = () => {
 	const isDesktop = useMediaQuery('(min-width:600px)')
+	const {setAllCourseData} = useCourse()
 	const columns: GridColDef[] = [
 		{
 			field: courseFields.NAME,
@@ -93,6 +94,7 @@ const Home: NextPage = () => {
 					courseFields.NAME
 				)
 				const coursesWithIds = courses.map((data, i) => ({ ...data, id: i }))
+				setAllCourseData(payloadCourses)
 				setCourses(coursesWithIds)
 				setLoading(false)
 			})
@@ -110,9 +112,10 @@ const Home: NextPage = () => {
 					flexDirection: 'column',
 					justifyContent: 'center',
 					alignItems: 'center',
+					textAlign: 'center',
 				}}
 			>
-				<Typography variant='h2' sx={{ mt: 5 }} gutterBottom>
+				<Typography variant='h2' sx={{ mt: 5}} gutterBottom>
 					OMS Courses
 				</Typography>
 				<Typography variant='subtitle1' sx={{ mb: 10 }} gutterBottom>
