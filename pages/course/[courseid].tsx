@@ -36,6 +36,7 @@ interface CoursePageProps {
 	defaultSemester: string
 	defaultSemesterToggles: boolean[]
 	defaultReviews: TPayloadReviews
+	numberOfReviews: number
 }
 
 const CourseId: NextPage<CoursePageProps> = ({
@@ -48,7 +49,7 @@ const CourseId: NextPage<CoursePageProps> = ({
 	defaultReviews,
 }) => {
 	const router = useRouter()
-	const [loading, setLoading] = useState<boolean>(true)
+	const [loading, setLoading] = useState<boolean>(false)
 	const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>(
 		defaultSemesterToggles
 	)
@@ -78,17 +79,19 @@ const CourseId: NextPage<CoursePageProps> = ({
 	) => {
 		setSelectedYear(newYear)
 	}
-
+	useEffect(() => {
+		if (courseData?.numReviews) {
+			setLoading(false)
+		}
+	}, [courseData])
 	useEffect(() => {
 		if (course_reviews) {
 			setCourseReviews(course_reviews)
-			setLoading(false)
-			console.log(course_reviews)
 		}
 	}, [course_reviews])
 	useEffect(() => {
-		setLoading(true)
 		if (selectedYear && selectedSemester) {
+			setLoading(true)
 			const newAvailableSemesters: any = Object.keys(
 				courseTimeline[selectedYear]
 			)
@@ -119,6 +122,7 @@ const CourseId: NextPage<CoursePageProps> = ({
 				)
 			}
 		)
+		setLoading(false)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedYear, selectedSemester])
 
@@ -136,83 +140,87 @@ const CourseId: NextPage<CoursePageProps> = ({
 				<Typography variant='h4' color='text.secondary' gutterBottom>
 					{courseData?.name}
 				</Typography>
-				{courseData && (
-					<Grid
-						sx={{ my: 1 }}
-						container
-						direction='row'
-						spacing={4}
-						justifyContent='center'
-					>
-						<Grid item xs={12} lg={4}>
-							<Card variant='outlined' sx={{ padding: '5 30' }}>
-								<CardContent>
-									<Typography
-										sx={{ fontSize: 14 }}
-										color='text.secondary'
-										gutterBottom
-									>
-										{`Average Workload`}
-									</Typography>
-									<Typography variant='h5'>
-										{roundNumber(Number(courseData?.avgWorkload), 1) +
-											' hrs/wk'}
-									</Typography>
-								</CardContent>
-							</Card>
+				{courseData &&
+					courseData?.avgWorkload &&
+					courseData?.avgDifficulty &&
+					courseData.avgOverall && (
+						<Grid
+							sx={{ my: 1 }}
+							container
+							direction='row'
+							spacing={4}
+							justifyContent='center'
+						>
+							<Grid item xs={12} lg={4}>
+								<Card variant='outlined' sx={{ padding: '5 30' }}>
+									<CardContent>
+										<Typography
+											sx={{ fontSize: 14 }}
+											color='text.secondary'
+											gutterBottom
+										>
+											{`Average Workload`}
+										</Typography>
+										<Typography variant='h5'>
+											{roundNumber(Number(courseData?.avgWorkload), 1) +
+												' hrs/wk'}
+										</Typography>
+									</CardContent>
+								</Card>
+							</Grid>
+							<Grid item xs={12} lg={4}>
+								<Card variant='outlined' sx={{ padding: '5 30' }}>
+									<CardContent>
+										<Typography
+											sx={{ fontSize: 14 }}
+											color='text.secondary'
+											gutterBottom
+										>
+											{`Average Difficulty`}
+										</Typography>
+										<Typography
+											variant='h5'
+											sx={{
+												color:
+													mapColorPaletteInverted[
+														Number(courseData?.avgDifficulty)
+													],
+												border:
+													mapColorPaletteInverted[
+														Number(courseData?.avgDifficulty)
+													],
+											}}
+										>
+											{roundNumber(Number(courseData?.avgDifficulty), 1) +
+												' /5'}
+										</Typography>
+									</CardContent>
+								</Card>
+							</Grid>
+							<Grid item xs={12} lg={4}>
+								<Card variant='outlined' sx={{ margin: '10', padding: '5 30' }}>
+									<CardContent>
+										<Typography
+											sx={{ fontSize: 14 }}
+											color='text.secondary'
+											gutterBottom
+										>
+											{`Average Overall`}
+										</Typography>
+										<Typography
+											variant='h5'
+											sx={{
+												color: mapColorPalette[Number(courseData.avgOverall)],
+												border: mapColorPalette[Number(courseData.avgOverall)],
+											}}
+										>
+											{roundNumber(Number(courseData.avgOverall), 1) + ' /5'}
+										</Typography>
+									</CardContent>
+								</Card>
+							</Grid>
 						</Grid>
-						<Grid item xs={12} lg={4}>
-							<Card variant='outlined' sx={{ padding: '5 30' }}>
-								<CardContent>
-									<Typography
-										sx={{ fontSize: 14 }}
-										color='text.secondary'
-										gutterBottom
-									>
-										{`Average Difficulty`}
-									</Typography>
-									<Typography
-										variant='h5'
-										sx={{
-											color:
-												mapColorPaletteInverted[
-													Number(courseData?.avgDifficulty)
-												],
-											border:
-												mapColorPaletteInverted[
-													Number(courseData?.avgDifficulty)
-												],
-										}}
-									>
-										{roundNumber(Number(courseData?.avgDifficulty), 1) + ' /5'}
-									</Typography>
-								</CardContent>
-							</Card>
-						</Grid>
-						<Grid item xs={12} lg={4}>
-							<Card variant='outlined' sx={{ margin: '10', padding: '5 30' }}>
-								<CardContent>
-									<Typography
-										sx={{ fontSize: 14 }}
-										color='text.secondary'
-										gutterBottom
-									>
-										{`Average Overall`}
-									</Typography>
-									<Typography
-										variant='h5'
-										sx={{
-											color: mapColorPalette[Number(courseData.avgDifficulty)],
-											border: mapColorPalette[Number(courseData.avgDifficulty)],
-										}}
-									>
-										{roundNumber(Number(courseData.avgOverall), 1) + ' /5'}
-									</Typography>
-								</CardContent>
-							</Card>
-						</Grid>
-					</Grid>
-				)}
+					)}
 				<Grid>
 					<ToggleButtonGroup
 						value={selectedSemester}
@@ -264,7 +272,7 @@ const CourseId: NextPage<CoursePageProps> = ({
 							})}
 					</ToggleButtonGroup>
 				</Grid>
-				{loading || !courseData ? (
+				{loading ? (
 					<Box sx={{ display: 'flex', m: 10 }}>
 						<CircularProgress />
 					</Box>
@@ -318,36 +326,45 @@ export async function getServerSideProps(context: PageProps) {
 	const { courseid } = context.query
 	const allCourseData = await getCourses()
 	const currentCourseData = allCourseData[courseid]
-	const courseTimeline = currentCourseData.reviewsCountsByYearSem
-	const courseYears = Object.keys(courseTimeline)
-		.map((year) => Number(year))
-		.reverse()
-	const mostRecentYear = courseYears[0]
-	const mostRecentYearSemesters = Object.keys(courseTimeline[mostRecentYear])
-	const mostRecentSemester =
-		mostRecentYearSemesters[mostRecentYearSemesters.length - 1]
-	const availableSemesters = Object.keys(courseTimeline[mostRecentYear])
-	const activeSemesters = Object.keys(mapSemesterTermToName).reduce(
-		(attrs, key) => ({
-			...attrs,
-			[key]: !(availableSemesters.indexOf(key.toString()) > -1),
-		}),
-		{}
-	)
-	const courseReviews = await getReviews(
-		courseid,
-		String(mostRecentYear),
-		String(mostRecentSemester)
-	)
-	return {
-		props: {
-			courseData: currentCourseData,
-			courseTimeline: courseTimeline,
-			courseYears: courseYears,
-			defaultYear: mostRecentYear,
-			defaultSemester: mostRecentSemester,
-			defaultSemesterToggles: activeSemesters,
-			defaultReviews: courseReviews,
-		},
+	if (currentCourseData.numReviews) {
+		const courseTimeline = currentCourseData.reviewsCountsByYearSem
+		const courseYears = Object.keys(courseTimeline)
+			.map((year) => Number(year))
+			.reverse()
+		const mostRecentYear = courseYears[0]
+		const mostRecentYearSemesters = Object.keys(courseTimeline[mostRecentYear])
+		const mostRecentSemester =
+			mostRecentYearSemesters[mostRecentYearSemesters.length - 1]
+		const availableSemesters = Object.keys(courseTimeline[mostRecentYear])
+		const activeSemesters = Object.keys(mapSemesterTermToName).reduce(
+			(attrs, key) => ({
+				...attrs,
+				[key]: !(availableSemesters.indexOf(key.toString()) > -1),
+			}),
+			{}
+		)
+		const courseReviews = await getReviews(
+			courseid,
+			String(mostRecentYear),
+			String(mostRecentSemester)
+		)
+		return {
+			props: {
+				courseData: currentCourseData,
+				courseTimeline: courseTimeline,
+				courseYears: courseYears,
+				defaultYear: mostRecentYear,
+				defaultSemester: mostRecentSemester,
+				defaultSemesterToggles: activeSemesters,
+				defaultReviews: courseReviews,
+				numReviews: currentCourseData.numReviews,
+			},
+		}
+	} else {
+		return {
+			props: {
+				courseData: currentCourseData,
+			},
+		}
 	}
 }
