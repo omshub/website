@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { getCourses } from '@backend/dbOperations'
 import { courseFields } from '@globals/constants'
 import { Course } from '@globals/types'
@@ -5,7 +6,6 @@ import { useMediaQuery } from '@mui/material'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
-import Link from '../src/Link'
 import Alert from '@mui/material/Alert'
 import { useAlert } from '../context/AlertContext'
 import Typography from '@mui/material/Typography'
@@ -18,10 +18,14 @@ import {
 import Link from '@src/Link'
 import { mapPayloadToArray, roundNumber } from '@src/utilities'
 import type { NextPage } from 'next'
-import { useEffect, useState } from 'react'
 
-const Home: NextPage = () => {
+interface HomePageProps {
+	allCourseData: Course[]
+}
+
+const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 	const isDesktop = useMediaQuery('(min-width:600px)')
+
 	const columns: GridColDef[] = [
 		{
 			field: courseFields.NAME,
@@ -30,14 +34,8 @@ const Home: NextPage = () => {
 			minWidth: isDesktop ? 50 : 300,
 			renderCell: (params: GridRenderCellParams) => (
 				<Link
-					href={{
-						pathname: `/course/${params.row.courseId}`,
-						query: {
-							title: params.row.name,
-							courseData: JSON.stringify(params.row),
-							numReviews: params.row.numReviews,
-						},
-					}}
+					href='/course/[courseid]'
+					as={`/course/${params.row.courseId}`}
 					sx={{
 						textDecoration: 'unset',
 						'&:hover': { textDecoration: 'underline' },
@@ -126,6 +124,7 @@ const Home: NextPage = () => {
 					flexDirection: 'column',
 					justifyContent: 'center',
 					alignItems: 'center',
+					textAlign: 'center',
 				}}
 			>
 				<Typography variant='h2' sx={{ mt: 5 }} gutterBottom>
@@ -141,7 +140,7 @@ const Home: NextPage = () => {
 							disableColumnSelector
 							rows={courses}
 							columns={columns}
-							loading={loading}
+							loading={!allCourseData || loading}
 							components={{ Toolbar: GridToolbar }}
 							sx={{ borderRadius: '25px', padding: '20px 10px' }}
 							columnVisibilityModel={{
@@ -179,3 +178,12 @@ const Home: NextPage = () => {
 }
 
 export default Home
+
+export async function getServerSideProps() {
+	const coursesData = await getCourses()
+	return {
+		props: {
+			allCourseData: coursesData,
+		},
+	}
+}

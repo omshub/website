@@ -11,7 +11,6 @@ import { useMenu } from '../../context/MenuContext'
 import Box from '@mui/material/Box'
 import ProfileMenu from './ProfileMenu'
 
-
 interface NavBarProps {}
 
 export const NavBar = ({ ...props }: NavBarProps) => {
@@ -32,43 +31,49 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 				{...props}
 			>
 				<Toolbar sx={{ flexWrap: 'wrap' }}>
-				<Link
-					variant='button'
-					color='text.primary'
-					href='/'
-					sx={{ flexGrow: 1, my: 1, mx: 1.5, textDecoration: 'none' }}
-				>
-					<Typography variant='h6' color='inherit' noWrap sx={{ flexGrow: 1 }}>
-						OMSHub
-					</Typography>
-				</Link>
-				<nav>
 					<Link
 						variant='button'
 						color='text.primary'
-						href='/recents'
-						sx={{
-							my: 1,
-							mx: 1.5,
-							textDecoration: 'unset',
-							'&:hover': { textDecoration: 'underline' },
-						}}
+						href='/'
+						sx={{ flexGrow: 1, my: 1, mx: 1.5, textDecoration: 'none' }}
 					>
-						Recent Reviews
+						<Typography
+							variant='h6'
+							color='inherit'
+							noWrap
+							sx={{ flexGrow: 1 }}
+						>
+							OMSHub
+						</Typography>
 					</Link>
-					<Link
-						variant='button'
-						color='text.primary'
-						href='/about'
-						sx={{
-							my: 1,
-							mx: 1.5,
-							textDecoration: 'unset',
-							'&:hover': { textDecoration: 'underline' },
-						}}
-					>
-						About
-					</Link>
+					<nav>
+						<Link
+							variant='button'
+							color='text.primary'
+							href='/recents'
+							sx={{
+								my: 1,
+								mx: 1.5,
+								textDecoration: 'unset',
+								'&:hover': { textDecoration: 'underline' },
+							}}
+						>
+							Recent Reviews
+						</Link>
+						<Link
+							variant='button'
+							color='text.primary'
+							href='/about'
+							sx={{
+								my: 1,
+								mx: 1.5,
+								textDecoration: 'unset',
+								'&:hover': { textDecoration: 'underline' },
+							}}
+						>
+							About
+						</Link>
+					</nav>
 					{!user ? (
 						<>
 							<Button

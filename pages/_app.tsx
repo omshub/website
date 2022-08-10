@@ -1,22 +1,22 @@
-import * as React from 'react'
 import { CacheProvider, EmotionCache } from '@emotion/react'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
 import { AppProps } from 'next/app'
 import Head from 'next/head'
-import { NavBar } from '../src/components/NavBar'
-import createEmotionCache from '../src/createEmotionCache'
-// import Copyright from '../src/Copyright'
-import theme from '../src/theme'
-import { AuthContextProvider } from '../context/AuthContext'
-import { MenuContextProvider } from '../context/MenuContext'
-import { AlertContextProvider } from '../context/AlertContext'
+import { NavBar } from '@src/components/NavBar'
+import createEmotionCache from '@src/createEmotionCache'
+// import Copyright from '@src/Copyright'
+import theme from '@src/theme'
+import { AlertContextProvider } from '@context/AlertContext'
+import { AuthContextProvider } from '@context/AuthContext'
+import { MenuContextProvider } from '@context/MenuContext'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
 
 interface MyAppProps extends AppProps {
 	emotionCache?: EmotionCache
+	fallback: object
 }
 
 export default function MyApp(props: MyAppProps) {
@@ -43,6 +43,7 @@ export default function MyApp(props: MyAppProps) {
 						</MenuContextProvider>
 						<Component {...pageProps} />
 					</ThemeProvider>
+					{/* <Copyright /> */}
 				</AuthContextProvider>
 			</AlertContextProvider>
 		</CacheProvider>
