@@ -1,10 +1,10 @@
 import { ASC } from '@globals/constants'
 import {
-	newHorizon,
-	RATCap,
-	canopyLime,
-	olympicTeal,
 	boldBlue,
+	canopyLime,
+	newHorizon,
+	olympicTeal,
+	RATCap,
 } from '@src/colorPalette'
 
 type TMapFields = {
@@ -87,7 +87,7 @@ type TSortKey =
 type TSortDirection = 'ASC' | 'DESC'
 
 export const mapPayloadToArray = (
-	map: TObject,
+	map: TObject | undefined,
 	sortKey?: TSortKey | string,
 	sortDirection?: TSortDirection
 ) => {

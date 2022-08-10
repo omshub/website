@@ -1,5 +1,4 @@
 import { getCourses } from '@backend/dbOperations'
-import { useCourse } from '@context/CurrentCourseContext'
 import { courseFields } from '@globals/constants'
 import { Course } from '@globals/types'
 import { useMediaQuery } from '@mui/material'
@@ -11,15 +10,18 @@ import {
 	DataGrid,
 	GridColDef,
 	GridRenderCellParams,
-	GridToolbar
+	GridToolbar,
 } from '@mui/x-data-grid'
 import Link from '@src/Link'
 import { mapPayloadToArray, roundNumber } from '@src/utilities'
 import type { NextPage } from 'next'
-import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 const Home: NextPage = () => {
 	const isDesktop = useMediaQuery('(min-width:600px)')
-	const {setAllCourseData} = useCourse()
+	const { data, error } = useSWR('/courses', getCourses)
+	const coursesArray: Course[] = mapPayloadToArray(data, courseFields.NAME)
+	const courses = coursesArray.map((data, i) => ({ ...data, id: i }))
+
 	const columns: GridColDef[] = [
 		{
 			field: courseFields.NAME,
@@ -81,28 +83,7 @@ const Home: NextPage = () => {
 		},
 		{ field: courseFields.ALIASES, headerName: 'Aliases', flex: 0, hide: true },
 	]
-	const [loading, setLoading] = useState<boolean>()
-	const [courses, setCourses] = useState<Course[]>([])
 
-	useEffect(() => {
-		setLoading(true)
-
-		getCourses()
-			.then((payloadCourses) => {
-				const courses: Course[] = mapPayloadToArray(
-					payloadCourses,
-					courseFields.NAME
-				)
-				const coursesWithIds = courses.map((data, i) => ({ ...data, id: i }))
-				setAllCourseData(payloadCourses)
-				setCourses(coursesWithIds)
-				setLoading(false)
-			})
-			.catch((err: any) => {
-				setLoading(false)
-				console.log(err)
-			})
-	}, [])
 	return (
 		<Container maxWidth='xl'>
 			<Box
@@ -115,7 +96,7 @@ const Home: NextPage = () => {
 					textAlign: 'center',
 				}}
 			>
-				<Typography variant='h2' sx={{ mt: 5}} gutterBottom>
+				<Typography variant='h2' sx={{ mt: 5 }} gutterBottom>
 					OMS Courses
 				</Typography>
 				<Typography variant='subtitle1' sx={{ mb: 10 }} gutterBottom>
@@ -128,7 +109,7 @@ const Home: NextPage = () => {
 							disableColumnSelector
 							rows={courses}
 							columns={columns}
-							loading={loading}
+							loading={!data && !error}
 							components={{ Toolbar: GridToolbar }}
 							sx={{ borderRadius: '25px', padding: '20px 10px' }}
 							columnVisibilityModel={{

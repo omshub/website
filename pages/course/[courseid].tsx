@@ -1,12 +1,7 @@
 import { getCourses, getReviews } from '@backend/dbOperations'
 import ReviewCard from '@components/ReviewCard'
-import { useCourse } from '@context/CurrentCourseContext'
 import { DESC, REVIEW_ID } from '@globals/constants'
-import {
-	Course,
-	Review,
-	TKeyMap, TPayloadReviews
-} from '@globals/types'
+import { Course, TKeyMap, TPayloadReviews } from '@globals/types'
 import { useMediaQuery } from '@mui/material'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -23,30 +18,42 @@ import {
 	mapPayloadToArray,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
-	roundNumber
+	roundNumber,
 } from '@src/utilities'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-
+import useSWR, { useSWRConfig } from 'swr'
 type TActiveSemesters = {
 	[semesterTerm: number]: boolean
 }
 
 const CourseId: NextPage = () => {
 	const router = useRouter()
-
-	const [loading, setLoading] = useState<boolean>()
+	const [loading, setLoading] = useState<boolean>(true)
 	const [courseTimeline, setCourseTimeLine] = useState<TKeyMap>({})
 	const [courseYears, setCourseYears] = useState<number[]>([])
 	const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>({})
-	const [reviews, setReviews] = useState<TPayloadReviews>({})
-	const [courseId, setCourseId] = useState<string>('')
 	const [selectedSemester, setSelectedSemester] = useState<string>('')
 	const [selectedYear, setSelectedYear] = useState<number>()
 	const [courseData, setCourseData] = useState<Course>()
-	const {allCourseData, setAllCourseData} = useCourse()
+	const [courseReviews, setCourseReviews] = useState<TPayloadReviews>()
 	const orientation = useMediaQuery('(min-width:600px)')
+
+	const path = router.asPath.split('/')
+	const courseId = path[path.length - 1]
+	const { mutate } = useSWRConfig()
+	const { data: courses } = useSWR('/courses', getCourses)
+	const { data: course_reviews } = useSWR(
+		selectedYear && selectedSemester ? `/course/${courseId}` : null,
+		() => {
+			return getReviews(
+				courseId,
+				String(selectedYear),
+				String(selectedSemester)
+			)
+		}
+	)
 
 	const handleSemester = (
 		event: React.MouseEvent<HTMLElement>,
@@ -63,22 +70,9 @@ const CourseId: NextPage = () => {
 	}
 
 	useEffect(() => {
-		setLoading(true)
-		const path = router.asPath.split('/')
-		const courseId = path[path.length - 1]
-		if (!allCourseData) {
-			getCourses()
-				.then((payloadCourses) => {
-					setAllCourseData(payloadCourses)
-					setCourseId(courseId)
-					setCourseData(payloadCourses[courseId])
-				})
-		}
-		else{
-			setCourseData(allCourseData[courseId])
-		}
-		if (courseData){
-			const courseTimeline = courseData?.reviewsCountsByYearSem
+		if (courses) {
+			setCourseData(courses[courseId])
+			const courseTimeline = courses[courseId].reviewsCountsByYearSem
 			const courseYears = Object.keys(courseTimeline)
 				.map((year) => Number(year))
 				.reverse()
@@ -100,12 +94,16 @@ const CourseId: NextPage = () => {
 			setCourseYears(courseYears)
 			setSelectedSemester(mostRecentSemester)
 			setSelectedYear(mostRecentYear)
-			setCourseId(courseData.courseId)
 			setActiveSemesters(activeSemesters)
+		}
+	}, [courses, courseId])
+
+	useEffect(() => {
+		if (course_reviews) {
+			setCourseReviews(course_reviews)
 			setLoading(false)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [allCourseData,courseData])
+	}, [course_reviews])
 
 	useEffect(() => {
 		setLoading(true)
@@ -113,33 +111,30 @@ const CourseId: NextPage = () => {
 			const newAvailableSemesters: any = Object.keys(
 				courseTimeline[selectedYear]
 			)
-			const newActiveSemesters: any = Object.keys(
-				mapSemesterTermToName
-			).reduce(
+			const newActiveSemesters: any = Object.keys(mapSemesterTermToName).reduce(
 				(attrs, key) => ({
 					...attrs,
 					[key]: !(newAvailableSemesters.indexOf(key.toString()) > -1),
 				}),
 				{}
 			)
-				if (newActiveSemesters[selectedSemester]) {
-					setSelectedSemester(
-						newAvailableSemesters[newAvailableSemesters.length - 1]
-					)
-				}
-				setActiveSemesters(newActiveSemesters)
+			if (newActiveSemesters[selectedSemester]) {
+				setSelectedSemester(
+					newAvailableSemesters[newAvailableSemesters.length - 1]
+				)
 			}
-			getReviews(courseId, String(selectedYear), selectedSemester)
-				.then((reviews) => {
-					if (reviews) {
-						setReviews(reviews)
-						setLoading(false)
-					}
-				})
-				.catch((err) => {
-					setLoading(false)
-					console.log(err)
-				})
+			setActiveSemesters(newActiveSemesters)
+		}
+		mutate(
+			selectedYear && selectedSemester ? `/course/${courseId}` : null,
+			() => {
+				return getReviews(
+					courseId,
+					String(selectedYear),
+					String(selectedSemester)
+				)
+			}
+		)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedYear, selectedSemester])
 
@@ -285,7 +280,7 @@ const CourseId: NextPage = () => {
 							})}
 					</ToggleButtonGroup>
 				</Grid>
-				{loading || !courseData? (
+				{loading || !courseData ? (
 					<Box sx={{ display: 'flex', m: 10 }}>
 						<CircularProgress />
 					</Box>
@@ -293,10 +288,10 @@ const CourseId: NextPage = () => {
 					<>
 						{courseData?.numReviews ? (
 							<>
-								{reviews && (
+								{courseReviews && (
 									<Grid container rowSpacing={5} sx={{ mt: 1 }}>
-										{mapPayloadToArray(reviews, REVIEW_ID, DESC).map(
-											(value: Review) => {
+										{mapPayloadToArray(courseReviews, REVIEW_ID, DESC).map(
+											(value: any) => {
 												return (
 													<Grid
 														sx={{ width: `100%` }}

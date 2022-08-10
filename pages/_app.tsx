@@ -7,7 +7,7 @@ import createEmotionCache from '@src/createEmotionCache'
 import theme from '@src/theme'
 import { AppProps } from 'next/app'
 import Head from 'next/head'
-import {CurrentCourseProvider} from '@context/CurrentCourseContext'
+import { CurrentCourseProvider } from '@context/CurrentCourseContext'
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
 
