@@ -1,10 +1,9 @@
 import SvgIcon from '@mui/material/SvgIcon'
+import { TKeyMap } from '@globals/types'
 
-interface GoogleIconProps {
-	style?: object
-}
+type TGoogleIconProps = TKeyMap
 
-const GoogleIcon = ({ style }: GoogleIconProps) => (
+const GoogleIcon = ({ style }: TGoogleIconProps) => (
 	<SvgIcon {...style}>
 		<svg
 			xmlns='http://www.w3.org/2000/svg'

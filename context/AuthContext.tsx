@@ -12,18 +12,15 @@ import {
 	FacebookAuthProvider,
 	GithubAuthProvider,
 } from 'firebase/auth'
-import { useAlert } from './AlertContext'
+import { useAlert } from '@context/AlertContext'
 import { OAuthProvider } from 'firebase/auth'
+import { TContextProviderProps } from '@context/types'
 const AuthContext = createContext<any>({})
 
 export const useAuth = () => useContext(AuthContext)
 
 // eslint-disable-next-line no-undef
-export const AuthContextProvider = ({
-	children,
-}: {
-	children: React.ReactNode
-}) => {
+export const AuthContextProvider = ({ children }: TContextProviderProps) => {
 	const [user, setUser] = useState<any>(null)
 	const { setAlert } = useAlert()
 

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react'
-import * as React from 'react'
+import { TContextProviderProps } from '@context/types'
 
 interface Alert {
 	type?: string
@@ -8,11 +8,7 @@ interface Alert {
 }
 const AlertContext = createContext<any>({})
 export const useAlert = () => useContext(AlertContext)
-export const AlertContextProvider = ({
-	children,
-}: {
-	children: React.ReactNode
-}) => {
+export const AlertContextProvider = ({ children }: TContextProviderProps) => {
 	const [alert, setAlert] = useState<Alert>()
 	return (
 		<AlertContext.Provider value={{ alert, setAlert }}>
