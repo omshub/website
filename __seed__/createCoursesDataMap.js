@@ -3,7 +3,7 @@
 	the Firebase Firestore db.
 */
 
-/* eslint-disable-file no-unused-vars */
+// eslint-disable-file no-unused-vars
 
 /* --- IMPORTS ---*/
 const reviews = require('../firebase/seed/data/reviews')
@@ -126,7 +126,9 @@ const { getFirestore, setDoc, doc } = require('firebase/firestore')
 const firebaseApp = initializeApp(config) // cf. `./example.env.js` for environment config
 const db = getFirestore(firebaseApp)
 
+const coursesDataMap = require('__seed__/createCoursesDataMap')
+
 ;(async () => {
-	await setDoc(doc('coreData', 'courses', coursesMap)) // creates document `coreData/courses` in Firebase Firestore
+	await setDoc(doc('coreData', 'courses', coursesDataMap)) // creates document `coreData/courses` in Firebase Firestore
 })()
 */
