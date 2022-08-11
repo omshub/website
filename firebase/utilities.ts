@@ -14,9 +14,9 @@ import {
 	getReview,
 	getReviewsRecent50,
 } from './dbOperations'
-import { Course, Review, TPayloadCourses } from '../globals/types'
-import { TDocumentData, TDocumentDataObject } from './documentsDataTypes'
-import { parseReviewId, updateAverages } from './utilityFunctions'
+import { Course, Review, TPayloadCourses } from '@globals/types'
+import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
+import { parseReviewId, updateAverages } from '@backend/utilityFunctions'
 
 const { COURSES } = coreDataDocuments
 
@@ -381,7 +381,7 @@ import {
 	TPayloadPrograms,
 	TPayloadSemesters,
 	TPayloadSpecializations,
-} from '../globals/types'
+} from '@globals/types'
 
 const { DEPARTMENTS, PROGRAMS, SEMESTERS, SPECIALIZATIONS } =
 	coreDataDocuments

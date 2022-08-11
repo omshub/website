@@ -47,7 +47,7 @@ import {
 	getCourse,
 	updateCourse,
 	deleteCourse,
-} from '../firebase/dbOperations' // relative to `/src`
+} from '@backend/dbOperations'
 
 const courseId = 'CS-1927'
 
