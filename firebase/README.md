@@ -10,11 +10,11 @@
 
 `/firebase` contains the backend service for the app, utilizing the [Firebase](https://firebase.google.com/) services Firestore (database), Cloud Functions, and Authentication.
 
-Firestore is a non-relational database, comprised of collections which contain documents.
+Firestore is a non-relational database, comprised of collections which contain documents. Nesting is generally permissible, i.e., `{collectionName}/{documentId}/{subCollectionName}/{subDocumentId}/...` (and so on).
 
 ## General Usage
 
-The principal backend/database "interface" for consumption by the frontend is contained in `firebase/index.ts`. This file organizes exports with respect to the corresponding client-side views/pages and components, as applicable.
+The principal backend/database "interface" intended for consumption by the frontend is contained in `firebase/dbOperations.ts`. This file organizes exports with respect to the corresponding client-side views/pages and components, as applicable.
 
 ## Atomic Operations (Full CRUD)
 
@@ -22,23 +22,21 @@ The full CRUD (create, read, update, delete) operations are defined around the s
 
 The data documents defined in this app, and their corresponding CRUD operations' function calls, are as follows:
 
-(**_core data_**)
+(**_data models_**)
 
-|     Firestore Document     |        Get All         |         Get One         |            Add One            |            Update One            |         Delete One         |
-| :------------------------: | :--------------------: | :---------------------: | :---------------------------: | :------------------------------: | :------------------------: |
-|     `coreData/courses`     |     `getCourses()`     |     `getCourse(id)`     |     `addCourse(id, data)`     |     `updateCourse(id, data)`     |     `deleteCourse(id)`     |
-|   `coreData/departments`   |   `getDepartments()`   |   `getDepartment(id)`   |   `addDepartment(id, data)`   |   `updateDepartment(id, data)`   |   `deleteDepartment(id)`   |
-|    `coreData/programs`     |    `getPrograms()`     |    `getProgram(id)`     |    `addProgram(id, data)`     |    `updateProgram(id, data)`     |    `deleteProgram(id)`     |
-|    `coreData/semesters`    |    `getSemesters()`    |    `getSemester(id)`    |    `addSemester(id, data)`    |    `updateSemester(id, data)`    |    `deleteSemester(id)`    |
-| `coreData/specializations` | `getSpecializations()` | `getSpecialization(id)` | `addSpecialization(id, data)` | `updateSpecialization(id, data)` | `deleteSpecialization(id)` |
+| Data Model |         Firestore Document Reference String         |               Document Primary Key                |
+| :--------: | :-------------------------------------------------: | :-----------------------------------------------: |
+|  `Course`  |                 `coreData/courses`                  |                    `courseId`                     |
+|  `Review`  | `reviewsData/{courseId}/{year}-{semesterTerm}/data` | `reviewId [=] courseId-year-semesterTerm-created` |
 
-(**_reviews data_**)
+(**_operations_**)
 
-|                 Firestore Document                  |    Get All (courseId-year-semesterTerm)    |        Get One        |           Add One           |           Update One           |        Delete One        |
+|                     Data Model                      |    Get All (courseId-year-semesterTerm)    |        Get One        |           Add One           |           Update One           |        Delete One        |
 | :-------------------------------------------------: | :----------------------------------------: | :-------------------: | :-------------------------: | :----------------------------: | :----------------------: |
+|                      `Course`                       |               `getCourses()`               |    `getCourse(id)`    |    `addCourse(id, data)`    |    `updateCourse(id, data)`    |    `deleteCourse(id)`    |
 | `reviewsData/{courseId}/{year}-{semesterTerm}/data` | `getReviews(courseId, year, semesterTerm)` | `getReview(reviewId)` | `addReview(reviewId, data)` | `updateReview(reviewId, data)` | `deleteReview(reviewId)` |
 
-**_N.B._** See `/firebase/documentsDataTypes.ts` for definition of document data fields (i.e., argument `data` per above).
+**_N.B._** See `/globals/types.ts` for definition of document data fields (i.e., argument `data` per above).
 
 Example usage via `courses` document (and similarly for the others):
 
