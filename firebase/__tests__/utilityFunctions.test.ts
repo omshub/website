@@ -1,5 +1,5 @@
 import 'jest-fetch-mock'
-import { Review, TNullableNumber } from '@globals/types'
+import { Review, TCourseId, TNullableNumber, TSemesterId } from '@globals/types'
 import {
 	parseReviewId,
 	TAveragesData,
@@ -112,14 +112,15 @@ describe('firebase utility functions tests', () => {
 	})
 
 	describe('updateAverages() tests', () => {
-		const courseId = 'CS-6465'
+		const courseId: TCourseId = 'CS-6465'
 		const year = 2100
+		const semesterId: TSemesterId = 'sp'
 		const semesterTerm = 1
 		const baseReviewId = `${courseId}-${year}-${semesterTerm}-`
 		const baseDummyCourseData = {
 			courseId,
 			year,
-			semesterId: 'sp',
+			semesterId,
 			isLegacy: false,
 			reviewerId: 'xyz',
 			created: 1234567890,
