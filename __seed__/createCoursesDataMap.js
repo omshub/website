@@ -6,9 +6,9 @@
 // eslint-disable-file no-unused-vars
 
 /* --- IMPORTS ---*/
-const reviews = require('../firebase/seed/data/reviews')
+const reviews = require('./data/reviews')
 // N.B. `coursesData` already contains the computed values resulting from this script
-const coursesData = require('../firebase/seed/data/courses')
+const coursesData = require('./data/courses')
 
 /* --- UTILITIES ---*/
 const computeAverage = (fieldArray, numReviews) =>
