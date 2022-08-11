@@ -75,7 +75,7 @@ export interface User {
 	subjectAreaId?: string
 	workYears?: number
 	specializationId?: TSpecializationId
-	reviewIds: string[] // user's reviews
+	reviews: Review[] // user's reviews
 }
 
 /* --- DATA MODELS (CLIENT-SIDE/STATIC) --- */
