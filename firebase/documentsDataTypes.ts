@@ -6,7 +6,7 @@ import {
 	Review,
 	Semester,
 	Specialization,
-} from '../globals/types'
+} from '@globals/types'
 
 export type TDocumentData =
 	| Course

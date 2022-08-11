@@ -13,31 +13,14 @@ import {
 	getReviews,
 	getReview,
 	getReviewsRecent50,
-	getDepartments,
-	getPrograms,
-	getSemesters,
-	getSpecializations,
 } from './dbOperations'
-import {
-	Course,
-	Department,
-	Program,
-	Semester,
-	Specialization,
-	Review,
-	TPayloadCourses,
-	TPayloadDepartments,
-	TPayloadPrograms,
-	TPayloadSemesters,
-	TPayloadSpecializations,
-} from '../globals/types'
-import { TDocumentData, TDocumentDataObject } from './documentsDataTypes'
-import { parseReviewId, updateAverages } from './utilityFunctions'
+import { Course, Review, TPayloadCourses } from '@globals/types'
+import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
+import { parseReviewId, updateAverages } from '@backend/utilityFunctions'
 
-const { COURSES, DEPARTMENTS, PROGRAMS, SEMESTERS, SPECIALIZATIONS } =
-	coreDataDocuments
+const { COURSES } = coreDataDocuments
 
-/* --- CORE DATA CRUD SUB-OPERATIONS --- */
+/* --- COURSE DATA CRUD SUB-OPERATIONS --- */
 
 export const addOrUpdateCourse = async (
 	courseId: string,
@@ -54,98 +37,6 @@ export const addOrUpdateCourse = async (
 			await setDoc(
 				doc(db, `${baseCollectionCoreData}/${COURSES}`),
 				newCoursesDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-export const addOrUpdateDepartment = async (
-	departmentId: string,
-	departmentData: Department
-) => {
-	try {
-		const departmentsDataDoc = await getDepartments()
-		let newDepartmentsDataDoc: TPayloadDepartments = {}
-		if (departmentsDataDoc) {
-			if (Object.keys(departmentsDataDoc).length) {
-				newDepartmentsDataDoc = { ...departmentsDataDoc }
-			}
-			newDepartmentsDataDoc[departmentId] = departmentData
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${DEPARTMENTS}`),
-				newDepartmentsDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-export const addOrUpdateProgram = async (
-	programId: string,
-	programData: Program
-) => {
-	try {
-		const programsDataDoc = await getPrograms()
-		let newProgramsDataDoc: TPayloadPrograms = {}
-		if (programsDataDoc) {
-			if (Object.keys(programsDataDoc).length) {
-				newProgramsDataDoc = { ...programsDataDoc }
-			}
-			newProgramsDataDoc[programId] = programData
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${PROGRAMS}`),
-				newProgramsDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-export const addOrUpdateSemester = async (
-	semesterId: string,
-	semesterData: Semester
-) => {
-	try {
-		const semestersDataDoc = await getSemesters()
-		let newSemestersDataDoc: TPayloadSemesters = {}
-		if (semestersDataDoc) {
-			if (Object.keys(semestersDataDoc).length) {
-				newSemestersDataDoc = { ...semestersDataDoc }
-			}
-			newSemestersDataDoc[semesterId] = semesterData
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${SEMESTERS}`),
-				newSemestersDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-export const addOrUpdateSpecialization = async (
-	specializationId: string,
-	specializationData: Specialization
-) => {
-	try {
-		const specializationsDataDoc = await getSpecializations()
-		let newSpecializationsDataDoc: TPayloadSpecializations = {}
-		if (specializationsDataDoc) {
-			if (Object.keys(specializationsDataDoc).length) {
-				newSpecializationsDataDoc = { ...specializationsDataDoc }
-			}
-			newSpecializationsDataDoc[specializationId] = specializationData
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${SPECIALIZATIONS}`),
-				newSpecializationsDataDoc
 			)
 		}
 	} catch (e: any) {
@@ -465,3 +356,125 @@ export const updateReviewsRecent50OnDeleteReview = async (reviewId: string) => {
 		throw new Error(e)
 	}
 }
+
+/*
+	The following operations are deprecated. This is generally static/non-dynamic
+	data which is not otherwise dependent on user-generated data in Firestore.
+	Corresponding API has been ported to client-side; cf. `/globals/utilities.ts`
+	for reference.
+*/
+/*
+
+import {
+	getDepartments,
+	getPrograms,
+	getSemesters,
+	getSpecializations,
+} from './dbOperations'
+
+import {
+	Department,
+	Program,
+	Semester,
+	Specialization,
+	TPayloadDepartments,
+	TPayloadPrograms,
+	TPayloadSemesters,
+	TPayloadSpecializations,
+} from '@globals/types'
+
+const { DEPARTMENTS, PROGRAMS, SEMESTERS, SPECIALIZATIONS } =
+	coreDataDocuments
+
+export const addOrUpdateDepartment = async (
+	departmentId: string,
+	departmentData: Department
+) => {
+	try {
+		const departmentsDataDoc = await getDepartments()
+		let newDepartmentsDataDoc: TPayloadDepartments = {}
+		if (departmentsDataDoc) {
+			if (Object.keys(departmentsDataDoc).length) {
+				newDepartmentsDataDoc = { ...departmentsDataDoc }
+			}
+			newDepartmentsDataDoc[departmentId] = departmentData
+			await setDoc(
+				doc(db, `${baseCollectionCoreData}/${DEPARTMENTS}`),
+				newDepartmentsDataDoc
+			)
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const addOrUpdateProgram = async (
+	programId: string,
+	programData: Program
+) => {
+	try {
+		const programsDataDoc = await getPrograms()
+		let newProgramsDataDoc: TPayloadPrograms = {}
+		if (programsDataDoc) {
+			if (Object.keys(programsDataDoc).length) {
+				newProgramsDataDoc = { ...programsDataDoc }
+			}
+			newProgramsDataDoc[programId] = programData
+			await setDoc(
+				doc(db, `${baseCollectionCoreData}/${PROGRAMS}`),
+				newProgramsDataDoc
+			)
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const addOrUpdateSemester = async (
+	semesterId: string,
+	semesterData: Semester
+) => {
+	try {
+		const semestersDataDoc = await getSemesters()
+		let newSemestersDataDoc: TPayloadSemesters = {}
+		if (semestersDataDoc) {
+			if (Object.keys(semestersDataDoc).length) {
+				newSemestersDataDoc = { ...semestersDataDoc }
+			}
+			newSemestersDataDoc[semesterId] = semesterData
+			await setDoc(
+				doc(db, `${baseCollectionCoreData}/${SEMESTERS}`),
+				newSemestersDataDoc
+			)
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const addOrUpdateSpecialization = async (
+	specializationId: string,
+	specializationData: Specialization
+) => {
+	try {
+		const specializationsDataDoc = await getSpecializations()
+		let newSpecializationsDataDoc: TPayloadSpecializations = {}
+		if (specializationsDataDoc) {
+			if (Object.keys(specializationsDataDoc).length) {
+				newSpecializationsDataDoc = { ...specializationsDataDoc }
+			}
+			newSpecializationsDataDoc[specializationId] = specializationData
+			await setDoc(
+				doc(db, `${baseCollectionCoreData}/${SPECIALIZATIONS}`),
+				newSpecializationsDataDoc
+			)
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+*/
