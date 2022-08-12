@@ -12,7 +12,7 @@ import {
 	updateCourse,
 	getReviews,
 	getReview,
-	getReviewsRecentAggregate,
+	getReviewsRecent,
 } from './dbOperations'
 import { Course, Review, TPayloadCourses } from '@globals/types'
 import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
@@ -147,7 +147,7 @@ export const updateCourseDataOnAddReview = async (
 
 export const updateReviewsRecentOnAddReview = async (newReviewData: Review) => {
 	try {
-		let dataArray = await getReviewsRecentAggregate()
+		let dataArray = await getReviewsRecent()
 		if (dataArray && dataArray?.length) {
 			dataArray.unshift(newReviewData)
 			if (dataArray.length > 50) {
@@ -239,7 +239,7 @@ export const updateReviewsRecentOnUpdateReview = async (
 	newReviewData: Review
 ) => {
 	try {
-		let dataArray = await getReviewsRecentAggregate()
+		let dataArray = await getReviewsRecent()
 		if (dataArray && dataArray?.length) {
 			const indexFoundAt = dataArray
 				.map(({ reviewId }: Review) => reviewId)
@@ -328,7 +328,7 @@ export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 
 export const updateReviewsRecentOnDeleteReview = async (reviewId: string) => {
 	try {
-		let dataArray = await getReviewsRecentAggregate()
+		let dataArray = await getReviewsRecent()
 		if (dataArray && dataArray?.length) {
 			const indexFoundAt = dataArray
 				.map(({ reviewId }: Review) => reviewId)

@@ -9,6 +9,7 @@ import {
 import {
 	Course,
 	Review,
+	TCourseId,
 	TPayloadCourses,
 	TPayloadReviews,
 } from '@globals/types'
@@ -92,16 +93,19 @@ export const getReviews = async (
 // N.B. End of array has additional "buffer reviews" (initialized to 20) to
 // guard against net deletion below 50. Return value should be sliced by
 // caller in order to limit to only 50 accordingly, i.e.,:
-//   let reviews = await getReviewsRecentAggregate()
+//   let reviews = await getReviewsRecent()
 //   reviews = reviews?.slice(0, 50)
-export const getReviewsRecentAggregate = async () => {
+export const getReviewsRecent = async (courseId?: TCourseId) => {
 	try {
+		// N.B. use empty args version for non-course-specific/aggregated array
+		const dataId = courseId ?? `_aggregateData`
+
 		const snapshot = await getDoc(
-			doc(db, `${baseCollectionRecentsData}/_aggregateData`)
+			doc(db, `${baseCollectionRecentsData}/${dataId}`)
 		)
 		const data = snapshot.data()
-		const recentReviews: Review[] = data ? data?.data : []
-		return recentReviews
+		const reviewsRecent: Review[] = data ? data?.data : []
+		return reviewsRecent
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
