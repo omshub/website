@@ -1,6 +1,6 @@
 /* 
 	This script generates the initial data object/payload used to seed
-	the Firebase Firestore db.
+	the Firebase Firestore db document `coreData/courses`.
 */
 
 // eslint-disable-file no-unused-vars
