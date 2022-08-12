@@ -9,7 +9,7 @@ coreData
 
 recentsData
   /_aggregateData/data: <Review[]>
-  /{courseId}/data: [Review[]]
+  /{courseId}/data: <Review[]>
 
 reviewsData
   /{courseId}
