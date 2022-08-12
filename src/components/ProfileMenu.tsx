@@ -5,6 +5,7 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 
 import { Avatar } from '@mui/material'
+import Tooltip from '@mui/material/Tooltip'
 
 const ProfileMenu = () => {
 	const { user, logout } = useAuth()
@@ -15,11 +16,13 @@ const ProfileMenu = () => {
 	const menuId = 'primary-search-account-menu'
 	return (
 		<>
-			<Avatar
-				aria-controls={menuId}
-				onClick={handleProfileMenuOpen}
-				src={user?.displayName?.photoURL}
-			/>
+			<Tooltip title='Profile Menu'>
+				<Avatar
+					aria-controls={menuId}
+					onClick={handleProfileMenuOpen}
+					src={user?.displayName?.photoURL}
+				/>
+			</Tooltip>
 			<Menu
 				anchorEl={profileMenuAnchorEl}
 				anchorOrigin={{

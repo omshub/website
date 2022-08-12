@@ -50,8 +50,8 @@ const ReviewForm: any = (props: any) => {
 		}
 
 	const handleBody = (text: string) => {
+		console.log(reviewValues)
 		setReviewValues({ ...reviewValues, ['body']: text })
-		console.log(user)
 	}
 
 	const handleSubmit = () => {
@@ -62,7 +62,7 @@ const ReviewForm: any = (props: any) => {
 			['modified']: Date.now(),
 			['reviewId']: reviewId,
 		})
-		addReview(`reviewId`, reviewValues)
+		addReview(reviewId, reviewValues)
 	}
 	return (
 		<form>

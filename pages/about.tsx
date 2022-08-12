@@ -1,10 +1,8 @@
-import * as React from 'react'
-import type { NextPage } from 'next'
+import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
 import Link from '@src/Link'
+import type { NextPage } from 'next'
 
 const About: NextPage = () => {
 	return (
@@ -21,11 +19,6 @@ const About: NextPage = () => {
 				<Typography variant='h4' component='h1' gutterBottom>
 					Welcome to OMSHub!
 				</Typography>
-				<Box maxWidth='sm'>
-					<Button variant='contained' component={Link} noLinkStyle href='/'>
-						Return to the home page
-					</Button>
-				</Box>
 				<Typography variant='subtitle1' paragraph color='primary' marginTop={2}>
 					About this project
 				</Typography>
