@@ -1,12 +1,12 @@
-import { TNullableNumber } from '@globals/types'
+import { TCourseId, TDepartmentId, TNullableNumber } from '@globals/types'
 
 const LEN_SIMPLE_COURSE_NUMBER = 5 //   DD-CCCC-...     (e.g., CS-6200-...)     [total 5 * `-`]
 const LEN_COMPOUND_COURSE_NUMBER = 6 // DD-CCCC-CCC-... (e.g., CS-8803-O08-...) [total 6 * `-`]
 const SEPARATOR_TOKEN = '-'
 
 export const parseReviewId = (reviewId: string) => {
-	let courseId = ''
-	let departmentId = ''
+	let courseId: TCourseId
+	let departmentId: TDepartmentId
 	let courseNumberA = ''
 	let courseNumberB = ''
 	let year = ''
@@ -14,18 +14,26 @@ export const parseReviewId = (reviewId: string) => {
 
 	const parsedValues = reviewId.split(SEPARATOR_TOKEN)
 
+	// N.B. Ignoring TS compiler in this function body with respect to departmentId + courseNumber
+	// validation, as this is otherwise cumbersome to define systematically/exhaustively
+
 	if (parsedValues.length === LEN_SIMPLE_COURSE_NUMBER) {
+		// @ts-ignore
 		;[departmentId, courseNumberA, year, semesterTerm] = parsedValues
+		// @ts-ignore
 		courseId = `${departmentId}-${courseNumberA}`
 	}
 
 	if (parsedValues.length === LEN_COMPOUND_COURSE_NUMBER) {
+		// @ts-ignore
 		;[departmentId, courseNumberA, courseNumberB, year, semesterTerm] =
 			parsedValues
+		// @ts-ignore
 		courseId = `${departmentId}-${courseNumberA}-${courseNumberB}`
 	}
 
 	return {
+		// @ts-ignore
 		courseId,
 		year,
 		semesterTerm,

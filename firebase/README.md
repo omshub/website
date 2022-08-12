@@ -28,13 +28,15 @@ The data documents defined in this app, and their corresponding CRUD operations'
 | :--------: | :-------------------------------------------------: | :-----------------------------------------------: |
 |  `Course`  |                 `coreData/courses`                  |                    `courseId`                     |
 |  `Review`  | `reviewsData/{courseId}/{year}-{semesterTerm}/data` | `reviewId [=] courseId-year-semesterTerm-created` |
+|   `User`   |                `usersData/{userId}`                 |                     `userId`                      |
 
 (**_operations_**)
 
-|                     Data Model                      |    Get All (courseId-year-semesterTerm)    |        Get One        |           Add One           |           Update One           |        Delete One        |
-| :-------------------------------------------------: | :----------------------------------------: | :-------------------: | :-------------------------: | :----------------------------: | :----------------------: |
-|                      `Course`                       |               `getCourses()`               |    `getCourse(id)`    |    `addCourse(id, data)`    |    `updateCourse(id, data)`    |    `deleteCourse(id)`    |
-| `reviewsData/{courseId}/{year}-{semesterTerm}/data` | `getReviews(courseId, year, semesterTerm)` | `getReview(reviewId)` | `addReview(reviewId, data)` | `updateReview(reviewId, data)` | `deleteReview(reviewId)` |
+| Data Model |    Get All (courseId-year-semesterTerm)    |        Get One        |           Add One           |           Update One           |        Delete One        |
+| :--------: | :----------------------------------------: | :-------------------: | :-------------------------: | :----------------------------: | :----------------------: |
+|  `Course`  |               `getCourses()`               |    `getCourse(id)`    |    `addCourse(id, data)`    |    `updateCourse(id, data)`    |    `deleteCourse(id)`    |
+|  `Review`  | `getReviews(courseId, year, semesterTerm)` | `getReview(reviewId)` | `addReview(reviewId, data)` | `updateReview(reviewId, data)` | `deleteReview(reviewId)` |
+|   `User`   |                   (N/A)                    |     `getUser(id)`     |        `addUser(id)`        |        `updateUser(id)`        |     `deleteUser(id)`     |
 
 **_N.B._** See `/globals/types.ts` for definition of document data fields (i.e., argument `data` per above).
 

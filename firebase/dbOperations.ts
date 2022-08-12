@@ -1,27 +1,30 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
 import { db } from './FirebaseConfig'
 import {
 	coreDataDocuments,
 	baseCollectionCoreData,
 	baseCollectionReviewsData,
-	baseDocumentReviewsRecent50,
+	baseCollectionRecentsData,
+	baseCollectionUsersData,
 } from './constants'
 import {
 	Course,
 	Review,
+	TCourseId,
 	TPayloadCourses,
 	TPayloadReviews,
+	User,
 } from '@globals/types'
 import { parseReviewId } from './utilityFunctions'
 import {
 	addOrUpdateCourse,
 	addOrUpdateReview,
 	updateCourseDataOnAddReview,
-	updateReviewsRecent50OnAddReview,
+	updateReviewsRecentOnAddReview,
 	updateCourseDataOnUpdateReview,
-	updateReviewsRecent50OnUpdateReview,
+	updateReviewsRecentOnUpdateReview,
 	updateCourseDataOnDeleteReview,
-	updateReviewsRecent50OnDeleteReview,
+	updateReviewsRecentOnDeleteReview,
 } from './utilities'
 
 const { COURSES } = coreDataDocuments
@@ -92,14 +95,19 @@ export const getReviews = async (
 // N.B. End of array has additional "buffer reviews" (initialized to 20) to
 // guard against net deletion below 50. Return value should be sliced by
 // caller in order to limit to only 50 accordingly, i.e.,:
-//   let reviews = await getReviewsRecent50()
+//   let reviews = await getReviewsRecent()
 //   reviews = reviews?.slice(0, 50)
-export const getReviewsRecent50 = async () => {
+export const getReviewsRecent = async (courseId?: TCourseId) => {
 	try {
-		const snapshot = await getDoc(doc(db, baseDocumentReviewsRecent50))
+		// N.B. use empty args version for non-course-specific/aggregated array
+		const dataId = courseId ?? `_aggregateData`
+
+		const snapshot = await getDoc(
+			doc(db, `${baseCollectionRecentsData}/${dataId}`)
+		)
 		const data = snapshot.data()
-		const recentReviews50: Review[] = data ? data?.data : []
-		return recentReviews50
+		const reviewsRecent: Review[] = data ? data?.data : []
+		return reviewsRecent
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -122,7 +130,7 @@ export const addReview = async (reviewId: string, reviewData: Review) => {
 	try {
 		await addOrUpdateReview(reviewId, reviewData)
 		await updateCourseDataOnAddReview(reviewId, reviewData)
-		await updateReviewsRecent50OnAddReview(reviewData)
+		await updateReviewsRecentOnAddReview(reviewData)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -133,7 +141,7 @@ export const updateReview = async (reviewId: string, reviewData: Review) => {
 	try {
 		await addOrUpdateReview(reviewId, reviewData)
 		await updateCourseDataOnUpdateReview(reviewId, reviewData)
-		await updateReviewsRecent50OnUpdateReview(reviewData)
+		await updateReviewsRecentOnUpdateReview(reviewData)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -160,8 +168,59 @@ export const deleteReview = async (reviewId: string) => {
 			)
 
 			await updateCourseDataOnDeleteReview(reviewId)
-			await updateReviewsRecent50OnDeleteReview(reviewId)
+			await updateReviewsRecentOnDeleteReview(reviewId)
 		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+/* --- USERS --- */
+export const getUser = async (userId: string) => {
+	try {
+		const snapshot = await getDoc(
+			doc(db, `${baseCollectionUsersData}/${userId}`)
+		)
+		// @ts-ignore -- coerce to `User` entity based on known form of snapshot.data() per Firestore db data
+		const userData: User = snapshot.data() ?? { userId: null, reviews: [] }
+		return userData
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const addUser = async (userId: string) => {
+	try {
+		const newUserData: User = { userId, reviews: [] }
+		await setDoc(doc(db, `${baseCollectionUsersData}/${userId}`), newUserData)
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const editUser = async (userId: string, userData: User) => {
+	try {
+		const oldUserData = await getUser(userId)
+		const updatedUserData = {
+			...oldUserData,
+			...userData,
+		}
+		await setDoc(
+			doc(db, `${baseCollectionUsersData}/${userId}`),
+			updatedUserData
+		)
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const deleteUser = async (userId: string) => {
+	try {
+		await deleteDoc(doc(db, `${baseCollectionUsersData}/${userId}`))
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)

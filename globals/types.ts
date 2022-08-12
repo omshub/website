@@ -70,12 +70,12 @@ export interface Review {
 }
 
 export interface User {
-	userId: string
+	userId: TNullableString // invalid request returns null
 	educationLevelId?: TEducationLevelId
 	subjectAreaId?: string
 	workYears?: number
 	specializationId?: TSpecializationId
-	reviewIds: string[] // user's reviews
+	reviews: Review[] // user's reviews
 }
 
 /* --- DATA MODELS (CLIENT-SIDE/STATIC) --- */

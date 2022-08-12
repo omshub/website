@@ -8,7 +8,6 @@ const { config } = require('./.env')
 const courses = require('./data/courses')
 const departments = require('./data/departments')
 const programs = require('./data/programs')
-const reviews = require('./data/reviews')
 const semesters = require('./data/semesters')
 const specializations = require('./data/specializations')
 
@@ -45,6 +44,10 @@ specializations.forEach((specialization) => {
 })
 
 /* --- REVIEWS DATA --- */
+
+const reviews = require('./data/reviews')
+const recentsMap = require('./data/recents')
+
 const mapSemIdToTerm = {
 	sp: 1,
 	sm: 2,
@@ -67,15 +70,6 @@ _.sortBy(reviews, ['courseId', 'reviewId']).forEach((review) => {
 	reviewsDataMaps[courseId][key][reviewId] = review
 })
 
-const reviewsRecent50 = []
-const BUFFER = 20 // add padding to prevent net deletion below 50 count
-reviews
-	.sort((a, b) => b.created - a.created)
-	.slice(0, 50 + BUFFER)
-	.forEach((review) => {
-		reviewsRecent50.push(review)
-	})
-
 // Seed Firebase Firestore collections in the cloud
 const add = async (collectionName, newDocId, data) =>
 	setDoc(doc(db, collectionName, newDocId), data)
@@ -84,10 +78,14 @@ const add = async (collectionName, newDocId, data) =>
 ;(async () => {
 	await add('coreData', 'courses', coursesMap)
 	await add('coreData', '_coursesLegacySnapshot', coursesMap) // retain separate "legacy snapshot" for "baseline accounting" purposes
-	await add('coreData', 'departments', departmentsMap)
-	await add('coreData', 'programs', programsMap)
-	await add('coreData', 'semesters', semestersMap)
-	await add('coreData', 'specializations', specializationsMap)
+
+	/*
+		N.B. Deprecated -- below are all static data which can be stored client-side instead (cf. `/globals/types.ts`)
+	*/
+	// await add('coreData', 'departments', departmentsMap)
+	// await add('coreData', 'programs', programsMap)
+	// await add('coreData', 'semesters', semestersMap)
+	// await add('coreData', 'specializations', specializationsMap)
 })()
 
 // seed reviews data
@@ -100,4 +98,9 @@ for (const courseId in reviewsDataMaps) {
 	}
 }
 
-;(async () => add('reviewsRecent50', 'reviews', { data: reviewsRecent50 }))()
+// seed recents data (N.B. includes `_aggregateData` array)
+Object.entries(recentsMap).forEach(async ([courseId, reviewsArray]) =>
+	setDoc(doc(db, `recentsData/${courseId}`), {
+		data: reviewsArray,
+	})
+)
