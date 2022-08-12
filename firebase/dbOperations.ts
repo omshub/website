@@ -1,10 +1,11 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
 import { db } from './FirebaseConfig'
 import {
 	coreDataDocuments,
 	baseCollectionCoreData,
 	baseCollectionReviewsData,
 	baseCollectionRecentsData,
+	baseCollectionUsersData,
 } from './constants'
 import {
 	Course,
@@ -12,6 +13,7 @@ import {
 	TCourseId,
 	TPayloadCourses,
 	TPayloadReviews,
+	User,
 } from '@globals/types'
 import { parseReviewId } from './utilityFunctions'
 import {
@@ -168,6 +170,57 @@ export const deleteReview = async (reviewId: string) => {
 			await updateCourseDataOnDeleteReview(reviewId)
 			await updateReviewsRecentOnDeleteReview(reviewId)
 		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+/* --- USERS --- */
+export const getUser = async (userId: string) => {
+	try {
+		const snapshot = await getDoc(
+			doc(db, `${baseCollectionUsersData}/${userId}`)
+		)
+		// @ts-ignore -- coerce to `User` entity based on known form of snapshot.data() per Firestore db data
+		const userData: User = snapshot.data() ?? { userId: null, reviews: [] }
+		return userData
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const addUser = async (userId: string) => {
+	try {
+		const newUserData: User = { userId, reviews: [] }
+		await setDoc(doc(db, `${baseCollectionUsersData}/${userId}`), newUserData)
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const editUser = async (userId: string, userData: User) => {
+	try {
+		const oldUserData = await getUser(userId)
+		const updatedUserData = {
+			...oldUserData,
+			...userData,
+		}
+		await setDoc(
+			doc(db, `${baseCollectionUsersData}/${userId}`),
+			updatedUserData
+		)
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const deleteUser = async (userId: string) => {
+	try {
+		await deleteDoc(doc(db, `${baseCollectionUsersData}/${userId}`))
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)

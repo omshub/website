@@ -70,7 +70,7 @@ export interface Review {
 }
 
 export interface User {
-	userId: string
+	userId: TNullableString // invalid request returns null
 	educationLevelId?: TEducationLevelId
 	subjectAreaId?: string
 	workYears?: number

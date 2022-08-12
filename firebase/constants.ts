@@ -33,3 +33,4 @@ export const queryOperators: TQueryOpKeyMap = {
 export const baseCollectionCoreData = 'coreData'
 export const baseCollectionReviewsData = 'reviewsData'
 export const baseCollectionRecentsData = 'recentsData'
+export const baseCollectionUsersData = 'usersData'
