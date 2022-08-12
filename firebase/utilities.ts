@@ -17,7 +17,7 @@ import {
 import { Course, Review, TCourseId, TPayloadCourses } from '@globals/types'
 import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
 import { parseReviewId, updateAverages } from '@backend/utilityFunctions'
-import { REVIEWS_RECENT_LEN } from '@globals/constants'
+import { NOT_FOUND_ARRAY_INDEX, REVIEWS_RECENT_LEN } from '@globals/constants'
 
 const { COURSES } = coreDataDocuments
 
@@ -192,7 +192,7 @@ const updateReviewsRecent = async ({
 						const indexFoundAt = arrayRecentData
 							.map(({ reviewId }: Review) => reviewId)
 							.indexOf(reviewId)
-						if (indexFoundAt !== -1) {
+						if (indexFoundAt !== NOT_FOUND_ARRAY_INDEX) {
 							arrayRecentData[indexFoundAt] = reviewData
 							await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
 								data: arrayRecentData,
@@ -205,13 +205,13 @@ const updateReviewsRecent = async ({
 					const indexFoundAt = arrayRecentData
 						.map(({ reviewId }: Review) => reviewId)
 						.indexOf(reviewId)
-					if (indexFoundAt !== -1) {
+					if (indexFoundAt !== NOT_FOUND_ARRAY_INDEX) {
 						arrayRecentData = arrayRecentData.filter(
 							(_: Review, index: number) => index !== indexFoundAt
 						)
 						if (arrayRecentData.length > REVIEWS_RECENT_LEN) {
 							// truncate buffer
-							arrayRecentData.pop()
+							arrayRecentData.shift()
 						}
 						await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
 							data: arrayRecentData,
