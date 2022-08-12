@@ -4,7 +4,7 @@ import {
 	coreDataDocuments,
 	baseCollectionCoreData,
 	baseCollectionReviewsData,
-	baseDocumentReviewsRecent50,
+	baseCollectionRecentsData,
 } from './constants'
 import {
 	getCourses,
@@ -12,7 +12,7 @@ import {
 	updateCourse,
 	getReviews,
 	getReview,
-	getReviewsRecent50,
+	getReviewsRecentAggregate,
 } from './dbOperations'
 import { Course, Review, TPayloadCourses } from '@globals/types'
 import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
@@ -145,18 +145,16 @@ export const updateCourseDataOnAddReview = async (
 	}
 }
 
-export const updateReviewsRecent50OnAddReview = async (
-	newReviewData: Review
-) => {
+export const updateReviewsRecentOnAddReview = async (newReviewData: Review) => {
 	try {
-		let dataArray = await getReviewsRecent50()
+		let dataArray = await getReviewsRecentAggregate()
 		if (dataArray && dataArray?.length) {
 			dataArray.unshift(newReviewData)
 			if (dataArray.length > 50) {
 				// maintain buffer size
 				dataArray.pop()
 			}
-			await setDoc(doc(db, baseDocumentReviewsRecent50), { reviews: dataArray })
+			await setDoc(doc(db, baseCollectionRecentsData), { data: dataArray })
 		}
 	} catch (e: any) {
 		console.log(e)
@@ -237,19 +235,19 @@ export const updateCourseDataOnUpdateReview = async (
 	}
 }
 
-export const updateReviewsRecent50OnUpdateReview = async (
+export const updateReviewsRecentOnUpdateReview = async (
 	newReviewData: Review
 ) => {
 	try {
-		let dataArray = await getReviewsRecent50()
+		let dataArray = await getReviewsRecentAggregate()
 		if (dataArray && dataArray?.length) {
 			const indexFoundAt = dataArray
 				.map(({ reviewId }: Review) => reviewId)
 				.indexOf(newReviewData.reviewId)
 			if (indexFoundAt !== -1) {
 				dataArray[indexFoundAt] = newReviewData
-				await setDoc(doc(db, baseDocumentReviewsRecent50), {
-					reviews: dataArray,
+				await setDoc(doc(db, baseCollectionRecentsData), {
+					data: dataArray,
 				})
 			}
 		}
@@ -328,9 +326,9 @@ export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 	}
 }
 
-export const updateReviewsRecent50OnDeleteReview = async (reviewId: string) => {
+export const updateReviewsRecentOnDeleteReview = async (reviewId: string) => {
 	try {
-		let dataArray = await getReviewsRecent50()
+		let dataArray = await getReviewsRecentAggregate()
 		if (dataArray && dataArray?.length) {
 			const indexFoundAt = dataArray
 				.map(({ reviewId }: Review) => reviewId)
@@ -346,8 +344,8 @@ export const updateReviewsRecent50OnDeleteReview = async (reviewId: string) => {
 					dataArray?.pop()
 				}
 
-				await setDoc(doc(db, baseDocumentReviewsRecent50), {
-					reviews: dataArray,
+				await setDoc(doc(db, baseCollectionRecentsData), {
+					data: dataArray,
 				})
 			}
 		}

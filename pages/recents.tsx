@@ -1,4 +1,4 @@
-import { getReviewsRecent50 } from '@backend/dbOperations'
+import { getReviewsRecentAggregate } from '@backend/dbOperations'
 import ReviewCard from '@components/ReviewCard'
 import { Review } from '@globals/types'
 import Box from '@mui/material/Box'
@@ -56,10 +56,10 @@ const Recents: NextPage<RecentsProps> = ({ recent50Reviews }) => {
 
 export default Recents
 export async function getServerSideProps() {
-	const ReviewsRecent50 = await getReviewsRecent50()
+	const ReviewsRecent = await getReviewsRecentAggregate()
 	return {
 		props: {
-			recent50Reviews: ReviewsRecent50,
+			recent50Reviews: ReviewsRecent,
 		},
 	}
 }

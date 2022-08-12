@@ -78,7 +78,7 @@ const add = async (collectionName, newDocId, data) =>
 ;(async () => {
 	await add('coreData', 'courses', coursesMap)
 	await add('coreData', '_coursesLegacySnapshot', coursesMap) // retain separate "legacy snapshot" for "baseline accounting" purposes
-	
+
 	/*
 		N.B. Deprecated -- below are all static data which can be stored client-side instead (cf. `/globals/types.ts`)
 	*/

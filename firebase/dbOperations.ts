@@ -4,7 +4,7 @@ import {
 	coreDataDocuments,
 	baseCollectionCoreData,
 	baseCollectionReviewsData,
-	baseDocumentReviewsRecent50,
+	baseCollectionRecentsData,
 } from './constants'
 import {
 	Course,
@@ -17,11 +17,11 @@ import {
 	addOrUpdateCourse,
 	addOrUpdateReview,
 	updateCourseDataOnAddReview,
-	updateReviewsRecent50OnAddReview,
+	updateReviewsRecentOnAddReview,
 	updateCourseDataOnUpdateReview,
-	updateReviewsRecent50OnUpdateReview,
+	updateReviewsRecentOnUpdateReview,
 	updateCourseDataOnDeleteReview,
-	updateReviewsRecent50OnDeleteReview,
+	updateReviewsRecentOnDeleteReview,
 } from './utilities'
 
 const { COURSES } = coreDataDocuments
@@ -92,14 +92,16 @@ export const getReviews = async (
 // N.B. End of array has additional "buffer reviews" (initialized to 20) to
 // guard against net deletion below 50. Return value should be sliced by
 // caller in order to limit to only 50 accordingly, i.e.,:
-//   let reviews = await getReviewsRecent50()
+//   let reviews = await getReviewsRecentAggregate()
 //   reviews = reviews?.slice(0, 50)
-export const getReviewsRecent50 = async () => {
+export const getReviewsRecentAggregate = async () => {
 	try {
-		const snapshot = await getDoc(doc(db, baseDocumentReviewsRecent50))
+		const snapshot = await getDoc(
+			doc(db, `${baseCollectionRecentsData}/_aggregateData`)
+		)
 		const data = snapshot.data()
-		const recentReviews50: Review[] = data ? data?.data : []
-		return recentReviews50
+		const recentReviews: Review[] = data ? data?.data : []
+		return recentReviews
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -122,7 +124,7 @@ export const addReview = async (reviewId: string, reviewData: Review) => {
 	try {
 		await addOrUpdateReview(reviewId, reviewData)
 		await updateCourseDataOnAddReview(reviewId, reviewData)
-		await updateReviewsRecent50OnAddReview(reviewData)
+		await updateReviewsRecentOnAddReview(reviewData)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -133,7 +135,7 @@ export const updateReview = async (reviewId: string, reviewData: Review) => {
 	try {
 		await addOrUpdateReview(reviewId, reviewData)
 		await updateCourseDataOnUpdateReview(reviewId, reviewData)
-		await updateReviewsRecent50OnUpdateReview(reviewData)
+		await updateReviewsRecentOnUpdateReview(reviewData)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -160,7 +162,7 @@ export const deleteReview = async (reviewId: string) => {
 			)
 
 			await updateCourseDataOnDeleteReview(reviewId)
-			await updateReviewsRecent50OnDeleteReview(reviewId)
+			await updateReviewsRecentOnDeleteReview(reviewId)
 		}
 	} catch (e: any) {
 		console.log(e)

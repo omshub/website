@@ -1,6 +1,6 @@
 /* 
 	This script generates the initial data object/payload used to seed
-	the Firebase Firestore db collection `recents`.
+	the Firebase Firestore db collection `recentsData`.
 */
 
 const reviews = require('./data/reviews')
