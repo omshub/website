@@ -1,5 +1,6 @@
 import '@toast-ui/editor/dist/toastui-editor.css'
 import { Editor } from '@toast-ui/react-editor'
+import DOMPurify from 'isomorphic-dompurify'
 import { useRef } from 'react'
 
 //SSR is currently not supported for toastui
@@ -13,10 +14,12 @@ export default function FormEditor({
 	const editorRef = useRef<Editor>(null)
 
 	function handleChange() {
-		const md = editorRef?.current
+		const dirty = editorRef?.current
 			? editorRef?.current.getInstance().getMarkdown()
 			: ''
-		onChange(md)
+		const clean = DOMPurify.sanitize(dirty, { FORBID_TAGS: ['img'] })
+		onChange(clean)
+		console.log(clean)
 	}
 
 	return (
@@ -24,9 +27,18 @@ export default function FormEditor({
 			height='auto'
 			initialValue={initialValue}
 			onChange={handleChange}
+			initialEditType='wysiwyg'
 			previewStyle='vertical'
 			ref={editorRef}
 			useCommandShortcut={true}
+			toolbarItems={[
+				['heading', 'bold', 'italic', 'strike'],
+				['hr', 'quote'],
+				['ul', 'ol', 'task', 'indent', 'outdent'],
+				['table', 'link'],
+				['code', 'codeblock'],
+			]}
+			customHTMLSanitizer={DOMPurify.sanitize}
 		/>
 	)
 }

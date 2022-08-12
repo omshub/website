@@ -1,6 +1,7 @@
 import { getCourses, getReviews } from '@backend/dbOperations'
 import ReviewCard from '@components/ReviewCard'
 import ReviewForm from '@components/ReviewForm'
+import { useAuth } from '@context/AuthContext'
 import { DESC, REVIEW_ID } from '@globals/constants'
 import { Course, TPayloadReviews } from '@globals/types'
 import FileCopyIcon from '@mui/icons-material/FileCopyOutlined'
@@ -65,6 +66,7 @@ const CourseId: NextPage<CoursePageProps> = ({
 	const [reviewModalOpen, setReviewModalOpen] = useState(false)
 	const handleReviewModalOpen = () => setReviewModalOpen(true)
 	const handleReviewModalClose = () => setReviewModalOpen(false)
+	const { user } = useAuth()
 	const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>(
 		defaultSemesterToggles
 	)
@@ -106,9 +108,13 @@ const CourseId: NextPage<CoursePageProps> = ({
 		{
 			icon: <RateReviewIcon />,
 			name: 'Add Review',
-			clickAction: () => {
-				handleReviewModalOpen()
-			},
+			clickAction: user
+				? () => {
+						handleReviewModalOpen()
+				  }
+				: () => {
+						console.log('Hello')
+				  },
 		},
 	]
 

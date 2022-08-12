@@ -40,13 +40,13 @@ export interface Review {
 	courseId: TCourseId
 	year: number
 	semesterId: TSemesterId
-	isLegacy: boolean
+	isLegacy?: boolean
 	reviewerId: string
 	created: number // Unix timestamp
 	modified: TNullableNumber // Unix timestamp
 	body: string
-	upvotes: number
-	downvotes: number
+	upvotes?: number
+	downvotes?: number
 	/* --- general review data --- */
 	workload: number
 	difficulty: TRatingScale
