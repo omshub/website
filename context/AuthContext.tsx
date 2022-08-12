@@ -1,20 +1,12 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@backend/FirebaseConfig'
-import {
-	fetchSignInMethodsForEmail,
-	sendSignInLinkToEmail,
-	isSignInWithEmailLink,
-	signInWithEmailLink,
-	signInWithPopup,
-	signOut,
-	GoogleAuthProvider,
-	FacebookAuthProvider,
-	GithubAuthProvider,
-} from 'firebase/auth'
 import { useAlert } from '@context/AlertContext'
-import { OAuthProvider } from 'firebase/auth'
 import { TContextProviderProps } from '@context/types'
+import {
+	FacebookAuthProvider, fetchSignInMethodsForEmail, GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, OAuthProvider, onAuthStateChanged, sendSignInLinkToEmail, signInWithEmailLink,
+	signInWithPopup,
+	signOut
+} from 'firebase/auth'
+import { createContext, useContext, useEffect, useState } from 'react'
 const AuthContext = createContext<any>({})
 
 export const useAuth = () => useContext(AuthContext)
@@ -33,7 +25,6 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
 						displayName: user,
 				  })
 				: setUser(null)
-			console.log(user)
 		})
 		// OAuth Providers
 		const email = window.localStorage.getItem('emailForSignIn')

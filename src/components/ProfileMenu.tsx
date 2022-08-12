@@ -1,5 +1,5 @@
-import { useMenu } from '@context/MenuContext'
 import { useAuth } from '@context/AuthContext'
+import { useMenu } from '@context/MenuContext'
 
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
@@ -18,7 +18,7 @@ const ProfileMenu = () => {
 			<Avatar
 				aria-controls={menuId}
 				onClick={handleProfileMenuOpen}
-				src={user.photoURL}
+				src={user?.displayName?.photoURL}
 			/>
 			<Menu
 				anchorEl={profileMenuAnchorEl}
