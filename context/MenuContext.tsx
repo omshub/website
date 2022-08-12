@@ -16,7 +16,18 @@ export const MenuContextProvider = ({ children }: TContextProviderProps) => {
 		setProfileMenuAnchorEl(event.currentTarget)
 	}
 
-	const handleMenuClose = () => {
+	const handleProfileMenuClose = () => {
+		setProfileMenuAnchorEl(null)
+	}
+
+	const [mobileNavMenuAnchorEl, setMobileNavMenuAnchorEl] =
+		React.useState<null | HTMLElement>(null)
+
+	const handleMobileNavMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+		setMobileNavMenuAnchorEl(event.currentTarget)
+	}
+
+	const handleMobileNavMenuClose = () => {
 		setProfileMenuAnchorEl(null)
 	}
 
@@ -28,7 +39,10 @@ export const MenuContextProvider = ({ children }: TContextProviderProps) => {
 				handleLoginModalOpen,
 				handleLoginModalClose,
 				handleProfileMenuOpen,
-				handleMenuClose,
+				handleProfileMenuClose,
+				mobileNavMenuAnchorEl,
+				handleMobileNavMenuOpen,
+				handleMobileNavMenuClose,
 			}}
 		>
 			{children}

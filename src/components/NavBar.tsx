@@ -1,22 +1,36 @@
+import { useAuth } from '@context/AuthContext'
+import { useMenu } from '@context/MenuContext'
 import AppBar from '@mui/material/AppBar'
+import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import { grey } from '@mui/material/colors'
+import Dialog from '@mui/material/Dialog'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import Link from '../Link'
-import Dialog from '@mui/material/Dialog'
 import Login from './LoginContent'
-import { useAuth } from '@context/AuthContext'
-import { useMenu } from '@context/MenuContext'
-import Box from '@mui/material/Box'
+import MobileMenu from './MobileMenu'
 import ProfileMenu from './ProfileMenu'
-
 interface NavBarProps {}
+
+export interface MenuLinksProps {
+	[key: string]: any
+}
 
 export const NavBar = ({ ...props }: NavBarProps) => {
 	const { user } = useAuth()
 	const { loginModalOpen, handleLoginModalOpen, handleLoginModalClose } =
 		useMenu()
+
+	const navigationMenuItems: MenuLinksProps = {
+		Recents: '/recents',
+		About: '/about',
+	}
+
+	const profileMenuItems: MenuLinksProps = {
+		'My Account': '/user/...',
+		'My Reviews': '/user/.../reviews',
+	}
 
 	return (
 		<Box sx={{ flexGrow: 1 }}>
@@ -30,50 +44,53 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 				}}
 				{...props}
 			>
-				<Toolbar sx={{ flexWrap: 'wrap' }}>
-					<Link
-						variant='button'
-						color='text.primary'
-						href='/'
-						sx={{ flexGrow: 1, my: 1, mx: 1.5, textDecoration: 'none' }}
-					>
-						<Typography
-							variant='h6'
-							color='inherit'
-							noWrap
-							sx={{ flexGrow: 1 }}
-						>
-							OMSHub
-						</Typography>
-					</Link>
-					<nav>
+				<Toolbar>
+					<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
 						<Link
 							variant='button'
 							color='text.primary'
-							href='/recents'
+							href='/'
 							sx={{
-								my: 1,
-								mx: 1.5,
+								display: { xs: 'none', md: 'flex' },
+								mr: 1,
 								textDecoration: 'unset',
-								'&:hover': { textDecoration: 'underline' },
+								'&:hover': { textDecoration: 'unset' },
 							}}
 						>
-							Recent Reviews
+							<Typography
+								variant='h6'
+								color='inherit'
+								noWrap
+								sx={{ flexGrow: 1 }}
+							>
+								OMSHub
+							</Typography>
 						</Link>
-						<Link
-							variant='button'
-							color='text.primary'
-							href='/about'
-							sx={{
-								my: 1,
-								mx: 1.5,
-								textDecoration: 'unset',
-								'&:hover': { textDecoration: 'underline' },
-							}}
-						>
-							About
-						</Link>
-					</nav>
+					</Box>
+					<Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
+						{Object.keys(navigationMenuItems).map(
+							(name: string, index: number) => {
+								return (
+									<Link
+										variant='button'
+										color='text.primary'
+										href={`${navigationMenuItems[name]}`}
+										key={index}
+										sx={{
+											my: 1,
+											mx: 1.5,
+											textDecoration: 'unset',
+											'&:hover': { textDecoration: 'underline' },
+										}}
+									>
+										{name}
+									</Link>
+								)
+							}
+						)}
+					</Box>
+					<MobileMenu {...navigationMenuItems} />
+					{/* User Profile Side */}
 					{!user ? (
 						<>
 							<Button
@@ -96,7 +113,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 						</>
 					) : (
 						<Box sx={{ flexGrow: 0 }}>
-							<ProfileMenu />
+							<ProfileMenu {...profileMenuItems} />
 						</Box>
 					)}
 				</Toolbar>

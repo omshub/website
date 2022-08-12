@@ -1,13 +1,12 @@
-import { useState, useEffect } from 'react'
 import { getCourses } from '@backend/dbOperations'
+import { useAlert } from '@context/AlertContext'
 import { courseFields } from '@globals/constants'
 import { Course } from '@globals/types'
 import { useMediaQuery } from '@mui/material'
+import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
-import Alert from '@mui/material/Alert'
-import { useAlert } from '@context/AlertContext'
 import Typography from '@mui/material/Typography'
 import {
 	DataGrid,
@@ -18,6 +17,7 @@ import {
 import Link from '@src/Link'
 import { mapPayloadToArray, roundNumber } from '@src/utilities'
 import type { NextPage } from 'next'
+import { useEffect, useState } from 'react'
 
 interface HomePageProps {
 	allCourseData: Course[]
@@ -58,17 +58,17 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 			type: 'number',
 		},
 		{
-			field: courseFields.AVG_WORKLOAD,
-			headerName: 'Workload (hrs/wk)',
-			flex: isDesktop ? 0.5 : 0,
-			valueGetter: (params: any) => roundNumber(params.row.avgWorkload, 1),
-			type: 'number',
-		},
-		{
 			field: courseFields.AVG_OVERALL,
 			headerName: 'Overall (out of 5)',
 			flex: isDesktop ? 0.5 : 0,
 			valueGetter: (params: any) => roundNumber(params.row.avgOverall, 1),
+			type: 'number',
+		},
+		{
+			field: courseFields.AVG_WORKLOAD,
+			headerName: 'Workload (hrs/wk)',
+			flex: isDesktop ? 0.5 : 0,
+			valueGetter: (params: any) => roundNumber(params.row.avgWorkload, 1),
 			type: 'number',
 		},
 		{
@@ -138,6 +138,7 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 						<DataGrid
 							autoHeight
 							disableColumnSelector
+							hideFooter
 							rows={courses}
 							columns={columns}
 							loading={!allCourseData || loading}
