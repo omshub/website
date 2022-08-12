@@ -1,43 +1,33 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
 import { db } from './FirebaseConfig'
 import {
 	coreDataDocuments,
 	baseCollectionCoreData,
 	baseCollectionReviewsData,
-	baseDocumentReviewsRecent50,
+	baseCollectionRecentsData,
+	baseCollectionUsersData,
 } from './constants'
 import {
 	Course,
-	Department,
-	Program,
 	Review,
-	Semester,
-	Specialization,
+	TCourseId,
 	TPayloadCourses,
-	TPayloadDepartments,
-	TPayloadPrograms,
 	TPayloadReviews,
-	TPayloadSemesters,
-	TPayloadSpecializations,
+	User,
 } from '@globals/types'
 import { parseReviewId } from './utilityFunctions'
 import {
+	addOrUpdateCourse,
 	addOrUpdateReview,
 	updateCourseDataOnAddReview,
-	updateReviewsRecent50OnAddReview,
+	updateReviewsRecentOnAddReview,
 	updateCourseDataOnUpdateReview,
-	updateReviewsRecent50OnUpdateReview,
+	updateReviewsRecentOnUpdateReview,
 	updateCourseDataOnDeleteReview,
-	updateReviewsRecent50OnDeleteReview,
-	addOrUpdateCourse,
-	addOrUpdateDepartment,
-	addOrUpdateProgram,
-	addOrUpdateSemester,
-	addOrUpdateSpecialization,
+	updateReviewsRecentOnDeleteReview,
 } from './utilities'
 
-const { COURSES, DEPARTMENTS, PROGRAMS, SEMESTERS, SPECIALIZATIONS } =
-	coreDataDocuments
+const { COURSES } = coreDataDocuments
 
 /* --- COURSES --- */
 export const getCourses = async () => {
@@ -81,7 +71,195 @@ export const deleteCourse = async (courseId: string) => {
 	}
 }
 
-/* --- DEPARTMENTS --- */
+/* --- REVIEWS (keyed by courseId-year-semesterId) --- */
+export const getReviews = async (
+	courseId: string,
+	year: string,
+	semesterTerm: string
+) => {
+	try {
+		const snapshot = await getDoc(
+			doc(
+				db,
+				`${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`
+			)
+		)
+		const allReviewsData: TPayloadReviews = snapshot.data() ?? {}
+		return allReviewsData
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+// N.B. End of array has additional "buffer reviews" (initialized to 20) to
+// guard against net deletion below 50. Return value should be sliced by
+// caller in order to limit to only 50 accordingly, i.e.,:
+//   let reviews = await getReviewsRecent()
+//   reviews = reviews?.slice(0, 50)
+export const getReviewsRecent = async (courseId?: TCourseId) => {
+	try {
+		// N.B. use empty args version for non-course-specific/aggregated array
+		const dataId = courseId ?? `_aggregateData`
+
+		const snapshot = await getDoc(
+			doc(db, `${baseCollectionRecentsData}/${dataId}`)
+		)
+		const data = snapshot.data()
+		const reviewsRecent: Review[] = data ? data?.data : []
+		return reviewsRecent
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const getReview = async (reviewId: string) => {
+	try {
+		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
+		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
+		const review: Review = reviewsDataDoc[reviewId] ?? {}
+		return review
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const addReview = async (reviewId: string, reviewData: Review) => {
+	try {
+		await addOrUpdateReview(reviewId, reviewData)
+		await updateCourseDataOnAddReview(reviewId, reviewData)
+		await updateReviewsRecentOnAddReview(reviewData)
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const updateReview = async (reviewId: string, reviewData: Review) => {
+	try {
+		await addOrUpdateReview(reviewId, reviewData)
+		await updateCourseDataOnUpdateReview(reviewId, reviewData)
+		await updateReviewsRecentOnUpdateReview(reviewData)
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const deleteReview = async (reviewId: string) => {
+	try {
+		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
+		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
+		if (
+			reviewsDataDoc &&
+			Object.keys(reviewsDataDoc).length &&
+			reviewsDataDoc[reviewId]
+		) {
+			// delete review from collection `reviewsData`
+			delete reviewsDataDoc[reviewId]
+			await setDoc(
+				doc(
+					db,
+					`${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`
+				),
+				reviewsDataDoc
+			)
+
+			await updateCourseDataOnDeleteReview(reviewId)
+			await updateReviewsRecentOnDeleteReview(reviewId)
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+/* --- USERS --- */
+export const getUser = async (userId: string) => {
+	try {
+		const snapshot = await getDoc(
+			doc(db, `${baseCollectionUsersData}/${userId}`)
+		)
+		// @ts-ignore -- coerce to `User` entity based on known form of snapshot.data() per Firestore db data
+		const userData: User = snapshot.data() ?? { userId: null, reviews: [] }
+		return userData
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const addUser = async (userId: string) => {
+	try {
+		const newUserData: User = { userId, reviews: [] }
+		await setDoc(doc(db, `${baseCollectionUsersData}/${userId}`), newUserData)
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const editUser = async (userId: string, userData: User) => {
+	try {
+		const oldUserData = await getUser(userId)
+		const updatedUserData = {
+			...oldUserData,
+			...userData,
+		}
+		await setDoc(
+			doc(db, `${baseCollectionUsersData}/${userId}`),
+			updatedUserData
+		)
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const deleteUser = async (userId: string) => {
+	try {
+		await deleteDoc(doc(db, `${baseCollectionUsersData}/${userId}`))
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+/*
+	The following operations are deprecated. This is generally static/non-dynamic
+	data which is not otherwise dependent on user-generated data in Firestore.
+	Corresponding API has been ported to client-side; cf. `/globals/utilities.ts`
+	for reference.
+*/
+/*
+
+import {
+	Department,
+	Program,
+	Semester,
+	Specialization,
+	TPayloadDepartments,
+	TPayloadPrograms,
+	TPayloadSemesters,
+	TPayloadSpecializations,
+} from '@globals/types'
+import {
+	addOrUpdateDepartment,
+	addOrUpdateProgram,
+	addOrUpdateSemester,
+	addOrUpdateSpecialization,
+} from './utilities'
+
+const {
+	DEPARTMENTS,
+	PROGRAMS,
+	SEMESTERS,
+	SPECIALIZATIONS
+} = coreDataDocuments
+
+// --- DEPARTMENTS --- 
 export const getDepartments = async () => {
 	try {
 		const snapshot = await getDoc(
@@ -127,7 +305,7 @@ export const deleteDepartment = async (departmentId: string) => {
 	}
 }
 
-/* --- PROGRAMS --- */
+// --- PROGRAMS ---
 export const getPrograms = async () => {
 	try {
 		const snapshot = await getDoc(
@@ -168,7 +346,7 @@ export const deleteProgram = async (programId: string) => {
 		throw new Error(e)
 	}
 }
-/* --- SEMESTERS --- */
+// --- SEMESTERS ---
 export const getSemesters = async () => {
 	try {
 		const snapshot = await getDoc(
@@ -212,7 +390,7 @@ export const deleteSemester = async (semesterId: string) => {
 	}
 }
 
-/* --- SPECIALIZATIONS --- */
+// --- SPECIALIZATIONS ---
 export const getSpecializations = async () => {
 	try {
 		const snapshot = await getDoc(
@@ -260,103 +438,4 @@ export const deleteSpecialization = async (specializationId: string) => {
 		throw new Error(e)
 	}
 }
-
-/* --- REVIEWS (keyed by courseId-year-semesterId) --- */
-export const getReviews = async (
-	courseId: string,
-	year: string,
-	semesterTerm: string
-) => {
-	try {
-		const snapshot = await getDoc(
-			doc(
-				db,
-				`${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`
-			)
-		)
-		const allReviewsData: TPayloadReviews = snapshot.data() ?? {}
-		return allReviewsData
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-// N.B. End of array has additional "buffer reviews" (initialized to 20) to
-// guard against net deletion below 50. Return value should be sliced by
-// caller in order to limit to only 50 accordingly, i.e.,:
-//   let reviews = await getReviewsRecent50()
-//   reviews = reviews?.slice(0, 50)
-export const getReviewsRecent50 = async () => {
-	try {
-		const snapshot = await getDoc(doc(db, baseDocumentReviewsRecent50))
-		const data = snapshot.data()
-		const recentReviews50: Review[] = data ? data?.data : []
-		return recentReviews50
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-export const getReview = async (reviewId: string) => {
-	try {
-		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
-		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
-		const review: Review = reviewsDataDoc[reviewId] ?? {}
-		return review
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-export const addReview = async (reviewId: string, reviewData: Review) => {
-	try {
-		await addOrUpdateReview(reviewId, reviewData)
-		await updateCourseDataOnAddReview(reviewId, reviewData)
-		await updateReviewsRecent50OnAddReview(reviewData)
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-export const updateReview = async (reviewId: string, reviewData: Review) => {
-	try {
-		await addOrUpdateReview(reviewId, reviewData)
-		await updateCourseDataOnUpdateReview(reviewId, reviewData)
-		await updateReviewsRecent50OnUpdateReview(reviewData)
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-export const deleteReview = async (reviewId: string) => {
-	try {
-		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
-		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
-		if (
-			reviewsDataDoc &&
-			Object.keys(reviewsDataDoc).length &&
-			reviewsDataDoc[reviewId]
-		) {
-			// delete review from collection `reviewsData`
-			delete reviewsDataDoc[reviewId]
-			await setDoc(
-				doc(
-					db,
-					`${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`
-				),
-				reviewsDataDoc
-			)
-
-			await updateCourseDataOnDeleteReview(reviewId)
-			await updateReviewsRecent50OnDeleteReview(reviewId)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
+*/

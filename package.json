@@ -20,7 +20,8 @@
 		"prettier": "prettier --write .",
 		"post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest",
 		"storybook": "start-storybook -s ./public -p 6006",
-		"build-storybook": "build-storybook -s ./public"
+		"build-storybook": "build-storybook -s ./public",
+		"db:seed": "node ./__seed__/script.js"
 	},
 	"dependencies": {
 		"@babel/core": "^7.0.0",

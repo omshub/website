@@ -4,7 +4,7 @@ import {
 	coreDataDocuments,
 	baseCollectionCoreData,
 	baseCollectionReviewsData,
-	baseDocumentReviewsRecent50,
+	baseCollectionRecentsData,
 } from './constants'
 import {
 	getCourses,
@@ -12,32 +12,16 @@ import {
 	updateCourse,
 	getReviews,
 	getReview,
-	getReviewsRecent50,
-	getDepartments,
-	getPrograms,
-	getSemesters,
-	getSpecializations,
+	getReviewsRecent,
 } from './dbOperations'
-import {
-	Course,
-	Department,
-	Program,
-	Semester,
-	Specialization,
-	Review,
-	TPayloadCourses,
-	TPayloadDepartments,
-	TPayloadPrograms,
-	TPayloadSemesters,
-	TPayloadSpecializations,
-} from '../globals/types'
-import { TDocumentData, TDocumentDataObject } from './documentsDataTypes'
-import { parseReviewId, updateAverages } from './utilityFunctions'
+import { Course, Review, TCourseId, TPayloadCourses } from '@globals/types'
+import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
+import { parseReviewId, updateAverages } from '@backend/utilityFunctions'
+import { REVIEWS_RECENT_LEN } from '@globals/constants'
 
-const { COURSES, DEPARTMENTS, PROGRAMS, SEMESTERS, SPECIALIZATIONS } =
-	coreDataDocuments
+const { COURSES } = coreDataDocuments
 
-/* --- CORE DATA CRUD SUB-OPERATIONS --- */
+/* --- COURSE DATA CRUD SUB-OPERATIONS --- */
 
 export const addOrUpdateCourse = async (
 	courseId: string,
@@ -54,98 +38,6 @@ export const addOrUpdateCourse = async (
 			await setDoc(
 				doc(db, `${baseCollectionCoreData}/${COURSES}`),
 				newCoursesDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-export const addOrUpdateDepartment = async (
-	departmentId: string,
-	departmentData: Department
-) => {
-	try {
-		const departmentsDataDoc = await getDepartments()
-		let newDepartmentsDataDoc: TPayloadDepartments = {}
-		if (departmentsDataDoc) {
-			if (Object.keys(departmentsDataDoc).length) {
-				newDepartmentsDataDoc = { ...departmentsDataDoc }
-			}
-			newDepartmentsDataDoc[departmentId] = departmentData
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${DEPARTMENTS}`),
-				newDepartmentsDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-export const addOrUpdateProgram = async (
-	programId: string,
-	programData: Program
-) => {
-	try {
-		const programsDataDoc = await getPrograms()
-		let newProgramsDataDoc: TPayloadPrograms = {}
-		if (programsDataDoc) {
-			if (Object.keys(programsDataDoc).length) {
-				newProgramsDataDoc = { ...programsDataDoc }
-			}
-			newProgramsDataDoc[programId] = programData
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${PROGRAMS}`),
-				newProgramsDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-export const addOrUpdateSemester = async (
-	semesterId: string,
-	semesterData: Semester
-) => {
-	try {
-		const semestersDataDoc = await getSemesters()
-		let newSemestersDataDoc: TPayloadSemesters = {}
-		if (semestersDataDoc) {
-			if (Object.keys(semestersDataDoc).length) {
-				newSemestersDataDoc = { ...semestersDataDoc }
-			}
-			newSemestersDataDoc[semesterId] = semesterData
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${SEMESTERS}`),
-				newSemestersDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-export const addOrUpdateSpecialization = async (
-	specializationId: string,
-	specializationData: Specialization
-) => {
-	try {
-		const specializationsDataDoc = await getSpecializations()
-		let newSpecializationsDataDoc: TPayloadSpecializations = {}
-		if (specializationsDataDoc) {
-			if (Object.keys(specializationsDataDoc).length) {
-				newSpecializationsDataDoc = { ...specializationsDataDoc }
-			}
-			newSpecializationsDataDoc[specializationId] = specializationData
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${SPECIALIZATIONS}`),
-				newSpecializationsDataDoc
 			)
 		}
 	} catch (e: any) {
@@ -254,19 +146,128 @@ export const updateCourseDataOnAddReview = async (
 	}
 }
 
-export const updateReviewsRecent50OnAddReview = async (
-	newReviewData: Review
-) => {
+// const updateReviewsRecent = async (reviewData: Review, courseId?: TCourseId) => {
+// 	try {
+// 		// N.B. if `courseId` is undefined, updates Firestore document `recentsData/_aggregateData`
+// 		const dataDoc = courseId ?? `_aggregateData`
+// 		let arrayRecentData = await getReviewsRecent(courseId)
+// 		if (arrayRecentData && arrayRecentData?.length) {
+// 			arrayRecentData.push(reviewData)
+// 			if (arrayRecentData.length > REVIEWS_RECENT_LEN) {
+// 				// maintain buffer size
+// 				arrayRecentData.shift()
+// 			}
+// 			await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), { data: arrayRecentData })
+// 		}
+
+// 	} catch(e: any) {
+// 		console.log(e)
+// 		throw new Error(e)
+// 	}
+// }
+
+const ON_ADD_REVIEW = 'ON_ADD_REVIEW'
+const ON_EDIT_REVIEW = 'ON_EDIT_REVIEW'
+const ON_DELETE_REVIEW = 'ON_DELETE_REVIEW'
+type TOperationUpdateRecents =
+	| 'ON_ADD_REVIEW'
+	| 'ON_EDIT_REVIEW'
+	| 'ON_DELETE_REVIEW'
+
+interface ArgsUpdateReviewsRecent {
+	operation: TOperationUpdateRecents
+	reviewId: string
+	courseId?: TCourseId
+	reviewData?: Review
+}
+
+const updateReviewsRecent = async ({
+	operation,
+	reviewData = undefined, // delete only
+	reviewId,
+	courseId = undefined, // update aggregate
+}: ArgsUpdateReviewsRecent) => {
 	try {
-		let dataArray = await getReviewsRecent50()
-		if (dataArray && dataArray?.length) {
-			dataArray.unshift(newReviewData)
-			if (dataArray.length > 50) {
-				// maintain buffer size
-				dataArray.pop()
+		// N.B. if `courseId` is undefined, updates Firestore document `recentsData/_aggregateData`
+		const dataDoc = courseId ?? `_aggregateData`
+		let arrayRecentData = await getReviewsRecent(courseId)
+
+		if (arrayRecentData) {
+			switch (operation) {
+				case ON_ADD_REVIEW: {
+					if (reviewData) {
+						arrayRecentData.push(reviewData)
+						if (arrayRecentData.length > REVIEWS_RECENT_LEN) {
+							// maintain buffer size
+							arrayRecentData.shift()
+						}
+						await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
+							data: arrayRecentData,
+						})
+					}
+					break
+				}
+				case ON_EDIT_REVIEW: {
+					if (reviewData) {
+						const indexFoundAt = arrayRecentData
+							.map(({ reviewId }: Review) => reviewId)
+							.indexOf(reviewId)
+						if (indexFoundAt !== -1) {
+							arrayRecentData[indexFoundAt] = reviewData
+							await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
+								data: arrayRecentData,
+							})
+						}
+					}
+					break
+				}
+				case ON_DELETE_REVIEW: {
+					const indexFoundAt = arrayRecentData
+						.map(({ reviewId }: Review) => reviewId)
+						.indexOf(reviewId)
+					if (indexFoundAt !== -1) {
+						arrayRecentData = arrayRecentData.filter(
+							(_: Review, index: number) => index !== indexFoundAt
+						)
+						if (arrayRecentData.length > REVIEWS_RECENT_LEN) {
+							// truncate buffer
+							arrayRecentData.pop()
+						}
+						await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
+							data: arrayRecentData,
+						})
+					}
+					break
+				}
+				default:
+					break
 			}
-			await setDoc(doc(db, baseDocumentReviewsRecent50), { reviews: dataArray })
 		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const updateReviewsRecentOnAddReview = async (newReviewData: Review) => {
+	try {
+		const { reviewId } = newReviewData
+		const { courseId } = parseReviewId(reviewId)
+
+		// update course
+		await updateReviewsRecent({
+			operation: ON_ADD_REVIEW,
+			reviewId,
+			reviewData: newReviewData,
+			courseId,
+		})
+
+		// update aggregate
+		await updateReviewsRecent({
+			operation: ON_ADD_REVIEW,
+			reviewId,
+			reviewData: newReviewData,
+		})
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -346,22 +347,27 @@ export const updateCourseDataOnUpdateReview = async (
 	}
 }
 
-export const updateReviewsRecent50OnUpdateReview = async (
+export const updateReviewsRecentOnUpdateReview = async (
 	newReviewData: Review
 ) => {
 	try {
-		let dataArray = await getReviewsRecent50()
-		if (dataArray && dataArray?.length) {
-			const indexFoundAt = dataArray
-				.map(({ reviewId }: Review) => reviewId)
-				.indexOf(newReviewData.reviewId)
-			if (indexFoundAt !== -1) {
-				dataArray[indexFoundAt] = newReviewData
-				await setDoc(doc(db, baseDocumentReviewsRecent50), {
-					reviews: dataArray,
-				})
-			}
-		}
+		const { reviewId } = newReviewData
+		const { courseId } = parseReviewId(reviewId)
+
+		// update course
+		await updateReviewsRecent({
+			operation: ON_EDIT_REVIEW,
+			reviewId,
+			reviewData: newReviewData,
+			courseId,
+		})
+
+		// update aggregate
+		await updateReviewsRecent({
+			operation: ON_EDIT_REVIEW,
+			reviewId,
+			reviewData: newReviewData,
+		})
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -437,31 +443,146 @@ export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 	}
 }
 
-export const updateReviewsRecent50OnDeleteReview = async (reviewId: string) => {
+export const updateReviewsRecentOnDeleteReview = async (reviewId: string) => {
 	try {
-		let dataArray = await getReviewsRecent50()
-		if (dataArray && dataArray?.length) {
-			const indexFoundAt = dataArray
-				.map(({ reviewId }: Review) => reviewId)
-				.indexOf(reviewId)
+		const { courseId } = parseReviewId(reviewId)
 
-			if (indexFoundAt !== -1) {
-				dataArray = dataArray.filter(
-					(data: Review, index: number) => index !== indexFoundAt
-				)
+		// update course
+		await updateReviewsRecent({
+			operation: ON_DELETE_REVIEW,
+			reviewId,
+			courseId,
+		})
 
-				if (dataArray?.length > 50) {
-					// truncate buffer
-					dataArray?.pop()
-				}
+		// update aggregate
+		await updateReviewsRecent({
+			operation: ON_DELETE_REVIEW,
+			reviewId,
+		})
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
 
-				await setDoc(doc(db, baseDocumentReviewsRecent50), {
-					reviews: dataArray,
-				})
+/*
+	The following operations are deprecated. This is generally static/non-dynamic
+	data which is not otherwise dependent on user-generated data in Firestore.
+	Corresponding API has been ported to client-side; cf. `/globals/utilities.ts`
+	for reference.
+*/
+/*
+
+import {
+	getDepartments,
+	getPrograms,
+	getSemesters,
+	getSpecializations,
+} from './dbOperations'
+
+import {
+	Department,
+	Program,
+	Semester,
+	Specialization,
+	TPayloadDepartments,
+	TPayloadPrograms,
+	TPayloadSemesters,
+	TPayloadSpecializations,
+} from '@globals/types'
+
+const { DEPARTMENTS, PROGRAMS, SEMESTERS, SPECIALIZATIONS } =
+	coreDataDocuments
+
+export const addOrUpdateDepartment = async (
+	departmentId: string,
+	departmentData: Department
+) => {
+	try {
+		const departmentsDataDoc = await getDepartments()
+		let newDepartmentsDataDoc: TPayloadDepartments = {}
+		if (departmentsDataDoc) {
+			if (Object.keys(departmentsDataDoc).length) {
+				newDepartmentsDataDoc = { ...departmentsDataDoc }
 			}
+			newDepartmentsDataDoc[departmentId] = departmentData
+			await setDoc(
+				doc(db, `${baseCollectionCoreData}/${DEPARTMENTS}`),
+				newDepartmentsDataDoc
+			)
 		}
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
 	}
 }
+
+export const addOrUpdateProgram = async (
+	programId: string,
+	programData: Program
+) => {
+	try {
+		const programsDataDoc = await getPrograms()
+		let newProgramsDataDoc: TPayloadPrograms = {}
+		if (programsDataDoc) {
+			if (Object.keys(programsDataDoc).length) {
+				newProgramsDataDoc = { ...programsDataDoc }
+			}
+			newProgramsDataDoc[programId] = programData
+			await setDoc(
+				doc(db, `${baseCollectionCoreData}/${PROGRAMS}`),
+				newProgramsDataDoc
+			)
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const addOrUpdateSemester = async (
+	semesterId: string,
+	semesterData: Semester
+) => {
+	try {
+		const semestersDataDoc = await getSemesters()
+		let newSemestersDataDoc: TPayloadSemesters = {}
+		if (semestersDataDoc) {
+			if (Object.keys(semestersDataDoc).length) {
+				newSemestersDataDoc = { ...semestersDataDoc }
+			}
+			newSemestersDataDoc[semesterId] = semesterData
+			await setDoc(
+				doc(db, `${baseCollectionCoreData}/${SEMESTERS}`),
+				newSemestersDataDoc
+			)
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+export const addOrUpdateSpecialization = async (
+	specializationId: string,
+	specializationData: Specialization
+) => {
+	try {
+		const specializationsDataDoc = await getSpecializations()
+		let newSpecializationsDataDoc: TPayloadSpecializations = {}
+		if (specializationsDataDoc) {
+			if (Object.keys(specializationsDataDoc).length) {
+				newSpecializationsDataDoc = { ...specializationsDataDoc }
+			}
+			newSpecializationsDataDoc[specializationId] = specializationData
+			await setDoc(
+				doc(db, `${baseCollectionCoreData}/${SPECIALIZATIONS}`),
+				newSpecializationsDataDoc
+			)
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+*/
