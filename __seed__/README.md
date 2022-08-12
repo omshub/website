@@ -13,10 +13,10 @@ recentsData
 
 reviewsData
   /{courseId}
-    /{year-SemesterTerm}/data: <TPayloadReviews>
+    /{year}-{SemesterTerm}/data: <TPayloadReviews>
 
 usersData
-  /{userId}
+  /{userId}: <User>
 ```
 
 **_N.B._** The canonical path format for Firebase Firestore is `{collectionName}/{documentId}/{subCollectionName}/{subDocumentId}/...` and so on.
