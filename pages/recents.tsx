@@ -1,4 +1,4 @@
-import { getReviewsRecentAggregate } from '@backend/dbOperations'
+import { getReviewsRecent } from '@backend/dbOperations'
 import ReviewCard from '@components/ReviewCard'
 import { Review } from '@globals/types'
 import Box from '@mui/material/Box'
@@ -9,10 +9,10 @@ import Typography from '@mui/material/Typography'
 import type { NextPage } from 'next'
 
 interface RecentsProps {
-	recent50Reviews: Review[]
+	reviewsRecent: Review[]
 }
 
-const Recents: NextPage<RecentsProps> = ({ recent50Reviews }) => {
+const Recents: NextPage<RecentsProps> = ({ reviewsRecent }) => {
 	return (
 		<Container maxWidth='lg'>
 			<Box
@@ -30,15 +30,15 @@ const Recents: NextPage<RecentsProps> = ({ recent50Reviews }) => {
 				<Typography variant='subtitle1' color='text.secondary' gutterBottom>
 					{`A Dynamic List of the 50 Most Recent Reviews`}
 				</Typography>
-				{!recent50Reviews ? (
+				{!reviewsRecent ? (
 					<Box sx={{ display: 'flex', m: 10 }}>
 						<CircularProgress />
 					</Box>
 				) : (
 					<>
-						{recent50Reviews && (
+						{reviewsRecent && (
 							<Grid container spacing={3} sx={{ margin: '10px 0' }}>
-								{recent50Reviews.slice(0, 50).map((value: Review) => {
+								{reviewsRecent.slice(0, 50).map((value: Review) => {
 									return (
 										<Grid sx={{ width: `100%` }} key={value.reviewId} item>
 											<ReviewCard {...value}></ReviewCard>
@@ -56,10 +56,10 @@ const Recents: NextPage<RecentsProps> = ({ recent50Reviews }) => {
 
 export default Recents
 export async function getServerSideProps() {
-	const ReviewsRecent = await getReviewsRecentAggregate()
+	const ReviewsRecent = await getReviewsRecent()
 	return {
 		props: {
-			recent50Reviews: ReviewsRecent,
+			reviewsRecent: ReviewsRecent,
 		},
 	}
 }
