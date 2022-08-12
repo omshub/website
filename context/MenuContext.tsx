@@ -9,7 +9,6 @@ export const MenuContextProvider = ({ children }: TContextProviderProps) => {
 	const handleLoginModalOpen = () => setLoginModalOpen(true)
 	const handleLoginModalClose = () => setLoginModalOpen(false)
 
-	
 	const [profileMenuAnchorEl, setProfileMenuAnchorEl] =
 		React.useState<null | HTMLElement>(null)
 

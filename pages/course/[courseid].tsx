@@ -28,7 +28,7 @@ import {
 	mapPayloadToArray,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
-	roundNumber
+	roundNumber,
 } from '@src/utilities'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -49,8 +49,6 @@ interface CoursePageProps {
 	numberOfReviews: number
 }
 
-
-
 const CourseId: NextPage<CoursePageProps> = ({
 	courseData,
 	courseTimeline,
@@ -62,11 +60,11 @@ const CourseId: NextPage<CoursePageProps> = ({
 }) => {
 	const router = useRouter()
 	const [loading, setLoading] = useState<boolean>(false)
-	const [snackBarOpen,setSnackBarOpen] = useState<boolean>(false)
-	const [snackBarMessage,setSnackBarMessage] = useState<string>('')
-	const [reviewModalOpen,setReviewModalOpen] = useState(false)
+	const [snackBarOpen, setSnackBarOpen] = useState<boolean>(false)
+	const [snackBarMessage, setSnackBarMessage] = useState<string>('')
+	const [reviewModalOpen, setReviewModalOpen] = useState(false)
 	const handleReviewModalOpen = () => setReviewModalOpen(true)
-	const handleReviewModalClose = () =>setReviewModalOpen(false)
+	const handleReviewModalClose = () => setReviewModalOpen(false)
 	const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>(
 		defaultSemesterToggles
 	)
@@ -85,10 +83,34 @@ const CourseId: NextPage<CoursePageProps> = ({
 	)
 
 	const actions = [
-		{ icon: <ShareIcon />, name: 'Share Course URL' ,clickAction:()=>{navigator.clipboard.writeText(window.location.href);setSnackBarMessage('Copied Course URL to Clipboard');setSnackBarOpen(true)} },
-		{ icon: <FileCopyIcon />, name: 'Copy Course Name',clickAction:()=>{navigator.clipboard.writeText(`${courseData?.courseId}: ${courseData?.name}`);setSnackBarMessage('Copied Course Name to Clipboard');setSnackBarOpen(true)} },
-		{ icon: <RateReviewIcon />, name: 'Add Review', clickAction:()=>{handleReviewModalOpen()} },
-	];
+		{
+			icon: <ShareIcon />,
+			name: 'Share Course URL',
+			clickAction: () => {
+				navigator.clipboard.writeText(window.location.href)
+				setSnackBarMessage('Copied Course URL to Clipboard')
+				setSnackBarOpen(true)
+			},
+		},
+		{
+			icon: <FileCopyIcon />,
+			name: 'Copy Course Name',
+			clickAction: () => {
+				navigator.clipboard.writeText(
+					`${courseData?.courseId}: ${courseData?.name}`
+				)
+				setSnackBarMessage('Copied Course Name to Clipboard')
+				setSnackBarOpen(true)
+			},
+		},
+		{
+			icon: <RateReviewIcon />,
+			name: 'Add Review',
+			clickAction: () => {
+				handleReviewModalOpen()
+			},
+		},
+	]
 
 	const handleSemester = (
 		event: React.MouseEvent<HTMLElement>,
@@ -103,13 +125,16 @@ const CourseId: NextPage<CoursePageProps> = ({
 	) => {
 		setSelectedYear(newYear)
 	}
-	 const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+	const handleClose = (
+		event: React.SyntheticEvent | Event,
+		reason?: string
+	) => {
 		if (reason === 'clickaway') {
-		return;
+			return
 		}
 
-    setSnackBarOpen(false);
-  	};
+		setSnackBarOpen(false)
+	}
 	useEffect(() => {
 		if (courseData?.numReviews) {
 			setLoading(false)
@@ -229,7 +254,10 @@ const CourseId: NextPage<CoursePageProps> = ({
 									</Card>
 								</Grid>
 								<Grid item xs={12} lg={4}>
-									<Card variant='outlined' sx={{ margin: '10', padding: '5 30' }}>
+									<Card
+										variant='outlined'
+										sx={{ margin: '10', padding: '5 30' }}
+									>
 										<CardContent>
 											<Typography
 												sx={{ fontSize: 14 }}
@@ -242,7 +270,8 @@ const CourseId: NextPage<CoursePageProps> = ({
 												variant='h5'
 												sx={{
 													color: mapColorPalette[Number(courseData.avgOverall)],
-													border: mapColorPalette[Number(courseData.avgOverall)],
+													border:
+														mapColorPalette[Number(courseData.avgOverall)],
 												}}
 											>
 												{roundNumber(Number(courseData.avgOverall), 1) + ' /5'}
@@ -350,27 +379,31 @@ const CourseId: NextPage<CoursePageProps> = ({
 					maxWidth='md'
 					closeAfterTransition
 				>
-					<ReviewForm {...{courseData,handleReviewModalClose}}/>
+					<ReviewForm {...{ courseData, handleReviewModalClose }} />
 				</Dialog>
 				<SpeedDial
-					ariaLabel="Review Dial"
+					ariaLabel='Review Dial'
 					sx={{ position: 'fixed', bottom: 40, right: 40 }}
 					icon={<SpeedDialIcon />}
 				>
 					{actions.map((action) => (
-					<SpeedDialAction
-						key={action.name}
-						icon={action.icon}
-						tooltipTitle={action.name}
-						onClick={action.clickAction}
-					/>
+						<SpeedDialAction
+							key={action.name}
+							icon={action.icon}
+							tooltipTitle={action.name}
+							onClick={action.clickAction}
+						/>
 					))}
 				</SpeedDial>
-				 <Snackbar
+				<Snackbar
 					open={snackBarOpen}
 					autoHideDuration={6000}
 					onClose={handleClose}
-					action={<Button color="secondary" size="small" onClick={handleClose}>Close</Button>}
+					action={
+						<Button color='secondary' size='small' onClick={handleClose}>
+							Close
+						</Button>
+					}
 					message={snackBarMessage}
 				/>
 			</Container>

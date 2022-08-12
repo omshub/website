@@ -2,9 +2,17 @@ import { auth } from '@backend/FirebaseConfig'
 import { useAlert } from '@context/AlertContext'
 import { TContextProviderProps } from '@context/types'
 import {
-	FacebookAuthProvider, fetchSignInMethodsForEmail, GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, OAuthProvider, onAuthStateChanged, sendSignInLinkToEmail, signInWithEmailLink,
+	FacebookAuthProvider,
+	fetchSignInMethodsForEmail,
+	GithubAuthProvider,
+	GoogleAuthProvider,
+	isSignInWithEmailLink,
+	OAuthProvider,
+	onAuthStateChanged,
+	sendSignInLinkToEmail,
+	signInWithEmailLink,
 	signInWithPopup,
-	signOut
+	signOut,
 } from 'firebase/auth'
 import { createContext, useContext, useEffect, useState } from 'react'
 const AuthContext = createContext<any>({})
