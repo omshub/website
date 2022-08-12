@@ -14,9 +14,10 @@ import {
 	getReview,
 	getReviewsRecent,
 } from './dbOperations'
-import { Course, Review, TPayloadCourses } from '@globals/types'
+import { Course, Review, TCourseId, TPayloadCourses } from '@globals/types'
 import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
 import { parseReviewId, updateAverages } from '@backend/utilityFunctions'
+import { REVIEWS_RECENT_LEN } from '@globals/constants'
 
 const { COURSES } = coreDataDocuments
 
@@ -145,17 +146,128 @@ export const updateCourseDataOnAddReview = async (
 	}
 }
 
+// const updateReviewsRecent = async (reviewData: Review, courseId?: TCourseId) => {
+// 	try {
+// 		// N.B. if `courseId` is undefined, updates Firestore document `recentsData/_aggregateData`
+// 		const dataDoc = courseId ?? `_aggregateData`
+// 		let arrayRecentData = await getReviewsRecent(courseId)
+// 		if (arrayRecentData && arrayRecentData?.length) {
+// 			arrayRecentData.push(reviewData)
+// 			if (arrayRecentData.length > REVIEWS_RECENT_LEN) {
+// 				// maintain buffer size
+// 				arrayRecentData.shift()
+// 			}
+// 			await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), { data: arrayRecentData })
+// 		}
+
+// 	} catch(e: any) {
+// 		console.log(e)
+// 		throw new Error(e)
+// 	}
+// }
+
+const ON_ADD_REVIEW = 'ON_ADD_REVIEW'
+const ON_EDIT_REVIEW = 'ON_EDIT_REVIEW'
+const ON_DELETE_REVIEW = 'ON_DELETE_REVIEW'
+type TOperationUpdateRecents =
+	| 'ON_ADD_REVIEW'
+	| 'ON_EDIT_REVIEW'
+	| 'ON_DELETE_REVIEW'
+
+interface ArgsUpdateReviewsRecent {
+	operation: TOperationUpdateRecents
+	reviewId: string
+	courseId?: TCourseId
+	reviewData?: Review
+}
+
+const updateReviewsRecent = async ({
+	operation,
+	reviewData = undefined, // delete only
+	reviewId,
+	courseId = undefined, // update aggregate
+}: ArgsUpdateReviewsRecent) => {
+	try {
+		// N.B. if `courseId` is undefined, updates Firestore document `recentsData/_aggregateData`
+		const dataDoc = courseId ?? `_aggregateData`
+		let arrayRecentData = await getReviewsRecent(courseId)
+
+		if (arrayRecentData) {
+			switch (operation) {
+				case ON_ADD_REVIEW: {
+					if (reviewData) {
+						arrayRecentData.push(reviewData)
+						if (arrayRecentData.length > REVIEWS_RECENT_LEN) {
+							// maintain buffer size
+							arrayRecentData.shift()
+						}
+						await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
+							data: arrayRecentData,
+						})
+					}
+					break
+				}
+				case ON_EDIT_REVIEW: {
+					if (reviewData) {
+						const indexFoundAt = arrayRecentData
+							.map(({ reviewId }: Review) => reviewId)
+							.indexOf(reviewId)
+						if (indexFoundAt !== -1) {
+							arrayRecentData[indexFoundAt] = reviewData
+							await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
+								data: arrayRecentData,
+							})
+						}
+					}
+					break
+				}
+				case ON_DELETE_REVIEW: {
+					const indexFoundAt = arrayRecentData
+						.map(({ reviewId }: Review) => reviewId)
+						.indexOf(reviewId)
+					if (indexFoundAt !== -1) {
+						arrayRecentData = arrayRecentData.filter(
+							(_: Review, index: number) => index !== indexFoundAt
+						)
+						if (arrayRecentData.length > REVIEWS_RECENT_LEN) {
+							// truncate buffer
+							arrayRecentData.pop()
+						}
+						await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
+							data: arrayRecentData,
+						})
+					}
+					break
+				}
+				default:
+					break
+			}
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
 export const updateReviewsRecentOnAddReview = async (newReviewData: Review) => {
 	try {
-		let dataArray = await getReviewsRecent()
-		if (dataArray && dataArray?.length) {
-			dataArray.unshift(newReviewData)
-			if (dataArray.length > 50) {
-				// maintain buffer size
-				dataArray.pop()
-			}
-			await setDoc(doc(db, baseCollectionRecentsData), { data: dataArray })
-		}
+		const { reviewId } = newReviewData
+		const { courseId } = parseReviewId(reviewId)
+
+		// update course
+		await updateReviewsRecent({
+			operation: ON_ADD_REVIEW,
+			reviewId,
+			reviewData: newReviewData,
+			courseId,
+		})
+
+		// update aggregate
+		await updateReviewsRecent({
+			operation: ON_ADD_REVIEW,
+			reviewId,
+			reviewData: newReviewData,
+		})
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -239,18 +351,23 @@ export const updateReviewsRecentOnUpdateReview = async (
 	newReviewData: Review
 ) => {
 	try {
-		let dataArray = await getReviewsRecent()
-		if (dataArray && dataArray?.length) {
-			const indexFoundAt = dataArray
-				.map(({ reviewId }: Review) => reviewId)
-				.indexOf(newReviewData.reviewId)
-			if (indexFoundAt !== -1) {
-				dataArray[indexFoundAt] = newReviewData
-				await setDoc(doc(db, baseCollectionRecentsData), {
-					data: dataArray,
-				})
-			}
-		}
+		const { reviewId } = newReviewData
+		const { courseId } = parseReviewId(reviewId)
+
+		// update course
+		await updateReviewsRecent({
+			operation: ON_EDIT_REVIEW,
+			reviewId,
+			reviewData: newReviewData,
+			courseId,
+		})
+
+		// update aggregate
+		await updateReviewsRecent({
+			operation: ON_EDIT_REVIEW,
+			reviewId,
+			reviewData: newReviewData,
+		})
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -328,27 +445,20 @@ export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 
 export const updateReviewsRecentOnDeleteReview = async (reviewId: string) => {
 	try {
-		let dataArray = await getReviewsRecent()
-		if (dataArray && dataArray?.length) {
-			const indexFoundAt = dataArray
-				.map(({ reviewId }: Review) => reviewId)
-				.indexOf(reviewId)
+		const { courseId } = parseReviewId(reviewId)
 
-			if (indexFoundAt !== -1) {
-				dataArray = dataArray.filter(
-					(data: Review, index: number) => index !== indexFoundAt
-				)
+		// update course
+		await updateReviewsRecent({
+			operation: ON_DELETE_REVIEW,
+			reviewId,
+			courseId,
+		})
 
-				if (dataArray?.length > 50) {
-					// truncate buffer
-					dataArray?.pop()
-				}
-
-				await setDoc(doc(db, baseCollectionRecentsData), {
-					data: dataArray,
-				})
-			}
-		}
+		// update aggregate
+		await updateReviewsRecent({
+			operation: ON_DELETE_REVIEW,
+			reviewId,
+		})
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)

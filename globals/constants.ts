@@ -12,6 +12,11 @@ export const GRADE_ID = 'gradeId'
 export const ASC = 'ASC'
 export const DESC = 'DESC'
 
+// recent reviews array
+export const REVIEWS_RECENT_LEN = 50
+export const REVIEWS_RECENT_BUFFER = 20
+export const REVIEWS_RECENT_TOTAL = REVIEWS_RECENT_LEN + REVIEWS_RECENT_BUFFER
+
 /* --- DATA MODELS FIELDS --- */
 
 // common fields
