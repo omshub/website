@@ -29,7 +29,7 @@ import {
 	mapPayloadToArray,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
-	roundNumber
+	roundNumber,
 } from '@src/utilities'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -39,7 +39,6 @@ import useSWR, { useSWRConfig } from 'swr'
 type TActiveSemesters = {
 	[semesterTerm: number]: boolean
 }
-
 
 interface CoursePageProps {
 	courseData: Course

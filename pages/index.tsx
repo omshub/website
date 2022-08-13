@@ -6,6 +6,7 @@ import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
+
 import {
 	DataGrid,
 	GridColDef,
@@ -90,7 +91,6 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 		},
 		{ field: courseFields.ALIASES, headerName: 'Aliases', flex: 0, hide: true },
 	]
-
 	return (
 		<Container maxWidth='xl'>
 			<Box
