@@ -10,7 +10,7 @@ export const parseReviewId = (reviewId: string) => {
 	let courseNumberA = ''
 	let courseNumberB = ''
 	let year = ''
-	let semesterTerm = ''
+	let semesterTermParsedAsString = ''
 
 	const parsedValues = reviewId.split(SEPARATOR_TOKEN)
 
@@ -19,15 +19,21 @@ export const parseReviewId = (reviewId: string) => {
 
 	if (parsedValues.length === LEN_SIMPLE_COURSE_NUMBER) {
 		// @ts-ignore
-		;[departmentId, courseNumberA, year, semesterTerm] = parsedValues
+		;[departmentId, courseNumberA, year, semesterTermParsedAsString] =
+			parsedValues
 		// @ts-ignore
 		courseId = `${departmentId}-${courseNumberA}`
 	}
 
 	if (parsedValues.length === LEN_COMPOUND_COURSE_NUMBER) {
-		// @ts-ignore
-		;[departmentId, courseNumberA, courseNumberB, year, semesterTerm] =
-			parsedValues
+		;[
+			// @ts-ignore
+			departmentId,
+			courseNumberA,
+			courseNumberB,
+			year,
+			semesterTermParsedAsString,
+		] = parsedValues
 		// @ts-ignore
 		courseId = `${departmentId}-${courseNumberA}-${courseNumberB}`
 	}
@@ -36,7 +42,7 @@ export const parseReviewId = (reviewId: string) => {
 		// @ts-ignore
 		courseId,
 		year,
-		semesterTerm,
+		semesterTerm: semesterTermParsedAsString,
 	}
 }
 

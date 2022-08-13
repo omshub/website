@@ -6,7 +6,7 @@ import {
 	baseCollectionReviewsData,
 	baseCollectionRecentsData,
 	baseCollectionUsersData,
-} from './constants'
+} from '@backend/constants'
 import {
 	Course,
 	Review,
@@ -25,7 +25,10 @@ import {
 	updateReviewsRecentOnUpdateReview,
 	updateCourseDataOnDeleteReview,
 	updateReviewsRecentOnDeleteReview,
-} from './utilities'
+	updateUserDataOnAddReview,
+	updateUserDataOnUpdateReview,
+	updateUserDataOnDeleteReview,
+} from '@backend/utilities'
 
 const { COURSES } = coreDataDocuments
 
@@ -126,29 +129,39 @@ export const getReview = async (reviewId: string) => {
 	}
 }
 
-export const addReview = async (reviewId: string, reviewData: Review) => {
+export const addReview = async (
+	userId: string,
+	reviewId: string,
+	reviewData: Review
+) => {
 	try {
 		await addOrUpdateReview(reviewId, reviewData)
 		await updateCourseDataOnAddReview(reviewId, reviewData)
 		await updateReviewsRecentOnAddReview(reviewData)
+		await updateUserDataOnAddReview(userId, reviewData)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
 	}
 }
 
-export const updateReview = async (reviewId: string, reviewData: Review) => {
+export const updateReview = async (
+	userId: string,
+	reviewId: string,
+	reviewData: Review
+) => {
 	try {
 		await addOrUpdateReview(reviewId, reviewData)
 		await updateCourseDataOnUpdateReview(reviewId, reviewData)
 		await updateReviewsRecentOnUpdateReview(reviewData)
+		await updateUserDataOnUpdateReview(userId, reviewData)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
 	}
 }
 
-export const deleteReview = async (reviewId: string) => {
+export const deleteReview = async (userId: string, reviewId: string) => {
 	try {
 		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
 		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
@@ -169,6 +182,7 @@ export const deleteReview = async (reviewId: string) => {
 
 			await updateCourseDataOnDeleteReview(reviewId)
 			await updateReviewsRecentOnDeleteReview(reviewId)
+			await updateUserDataOnDeleteReview(userId, reviewId)
 		}
 	} catch (e: any) {
 		console.log(e)
@@ -183,7 +197,7 @@ export const getUser = async (userId: string) => {
 			doc(db, `${baseCollectionUsersData}/${userId}`)
 		)
 		// @ts-ignore -- coerce to `User` entity based on known form of snapshot.data() per Firestore db data
-		const userData: User = snapshot.data() ?? { userId: null, reviews: [] }
+		const userData: User = snapshot.data() ?? { userId: null, reviews: {} }
 		return userData
 	} catch (e: any) {
 		console.log(e)
@@ -193,7 +207,7 @@ export const getUser = async (userId: string) => {
 
 export const addUser = async (userId: string) => {
 	try {
-		const newUserData: User = { userId, reviews: [] }
+		const newUserData: User = { userId, reviews: {} }
 		await setDoc(doc(db, `${baseCollectionUsersData}/${userId}`), newUserData)
 	} catch (e: any) {
 		console.log(e)
