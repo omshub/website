@@ -6,12 +6,13 @@ import {
 	baseCollectionReviewsData,
 	baseCollectionRecentsData,
 	baseCollectionUsersData,
-} from './constants'
+} from '@backend/constants'
 import {
 	Course,
 	Review,
 	TCourseId,
 	TPayloadCourses,
+	TPayloadCoursesDataDynamic,
 	TPayloadReviews,
 	User,
 } from '@globals/types'
@@ -25,7 +26,11 @@ import {
 	updateReviewsRecentOnUpdateReview,
 	updateCourseDataOnDeleteReview,
 	updateReviewsRecentOnDeleteReview,
-} from './utilities'
+	updateUserDataOnAddReview,
+	updateUserDataOnUpdateReview,
+	updateUserDataOnDeleteReview,
+	mapDynamicCoursesDataToCourses,
+} from '@backend/utilities'
 
 const { COURSES } = coreDataDocuments
 
@@ -35,8 +40,12 @@ export const getCourses = async () => {
 		const snapshot = await getDoc(
 			doc(db, `${baseCollectionCoreData}/${COURSES}`)
 		)
-		const coursesDataDoc: TPayloadCourses = snapshot.data() ?? {}
-		return coursesDataDoc
+		const coursesDataDoc: TPayloadCoursesDataDynamic = snapshot.data() ?? {}
+		let courses: TPayloadCourses = {}
+		if (coursesDataDoc && Object.keys(coursesDataDoc).length) {
+			courses = mapDynamicCoursesDataToCourses(coursesDataDoc)
+		}
+		return courses
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -126,29 +135,39 @@ export const getReview = async (reviewId: string) => {
 	}
 }
 
-export const addReview = async (reviewId: string, reviewData: Review) => {
+export const addReview = async (
+	userId: string,
+	reviewId: string,
+	reviewData: Review
+) => {
 	try {
 		await addOrUpdateReview(reviewId, reviewData)
 		await updateCourseDataOnAddReview(reviewId, reviewData)
 		await updateReviewsRecentOnAddReview(reviewData)
+		await updateUserDataOnAddReview(userId, reviewData)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
 	}
 }
 
-export const updateReview = async (reviewId: string, reviewData: Review) => {
+export const updateReview = async (
+	userId: string,
+	reviewId: string,
+	reviewData: Review
+) => {
 	try {
 		await addOrUpdateReview(reviewId, reviewData)
 		await updateCourseDataOnUpdateReview(reviewId, reviewData)
 		await updateReviewsRecentOnUpdateReview(reviewData)
+		await updateUserDataOnUpdateReview(userId, reviewData)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
 	}
 }
 
-export const deleteReview = async (reviewId: string) => {
+export const deleteReview = async (userId: string, reviewId: string) => {
 	try {
 		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
 		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
@@ -169,6 +188,7 @@ export const deleteReview = async (reviewId: string) => {
 
 			await updateCourseDataOnDeleteReview(reviewId)
 			await updateReviewsRecentOnDeleteReview(reviewId)
+			await updateUserDataOnDeleteReview(userId, reviewId)
 		}
 	} catch (e: any) {
 		console.log(e)
@@ -183,7 +203,7 @@ export const getUser = async (userId: string) => {
 			doc(db, `${baseCollectionUsersData}/${userId}`)
 		)
 		// @ts-ignore -- coerce to `User` entity based on known form of snapshot.data() per Firestore db data
-		const userData: User = snapshot.data() ?? { userId: null, reviews: [] }
+		const userData: User = snapshot.data() ?? { userId: null, reviews: {} }
 		return userData
 	} catch (e: any) {
 		console.log(e)
@@ -193,7 +213,7 @@ export const getUser = async (userId: string) => {
 
 export const addUser = async (userId: string) => {
 	try {
-		const newUserData: User = { userId, reviews: [] }
+		const newUserData: User = { userId, reviews: {} }
 		await setDoc(doc(db, `${baseCollectionUsersData}/${userId}`), newUserData)
 	} catch (e: any) {
 		console.log(e)
@@ -226,216 +246,3 @@ export const deleteUser = async (userId: string) => {
 		throw new Error(e)
 	}
 }
-
-/*
-	The following operations are deprecated. This is generally static/non-dynamic
-	data which is not otherwise dependent on user-generated data in Firestore.
-	Corresponding API has been ported to client-side; cf. `/globals/utilities.ts`
-	for reference.
-*/
-/*
-
-import {
-	Department,
-	Program,
-	Semester,
-	Specialization,
-	TPayloadDepartments,
-	TPayloadPrograms,
-	TPayloadSemesters,
-	TPayloadSpecializations,
-} from '@globals/types'
-import {
-	addOrUpdateDepartment,
-	addOrUpdateProgram,
-	addOrUpdateSemester,
-	addOrUpdateSpecialization,
-} from './utilities'
-
-const {
-	DEPARTMENTS,
-	PROGRAMS,
-	SEMESTERS,
-	SPECIALIZATIONS
-} = coreDataDocuments
-
-// --- DEPARTMENTS --- 
-export const getDepartments = async () => {
-	try {
-		const snapshot = await getDoc(
-			doc(db, `${baseCollectionCoreData}/${DEPARTMENTS}`)
-		)
-		const departmentsDataDoc: TPayloadDepartments = snapshot.data() ?? {}
-		return departmentsDataDoc
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-export const getDepartment = async (departmentId: string) => {
-	try {
-		const departmentsDataDoc = await getDepartments()
-		return departmentsDataDoc ? departmentsDataDoc[departmentId] : null
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-export const addDepartment = async (
-	departmentId: string,
-	departmentData: Department
-) => addOrUpdateDepartment(departmentId, departmentData)
-export const updateDepartment = async (
-	departmentId: string,
-	departmentData: Department
-) => addOrUpdateDepartment(departmentId, departmentData)
-export const deleteDepartment = async (departmentId: string) => {
-	try {
-		const departmentsDataDoc = await getDepartments()
-		if (departmentsDataDoc && Object.keys(departmentsDataDoc).length) {
-			delete departmentsDataDoc[departmentId]
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${DEPARTMENTS}`),
-				departmentsDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-// --- PROGRAMS ---
-export const getPrograms = async () => {
-	try {
-		const snapshot = await getDoc(
-			doc(db, `${baseCollectionCoreData}/${PROGRAMS}`)
-		)
-		const programsDataDoc: TPayloadPrograms = snapshot.data() ?? {}
-		return programsDataDoc
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-export const getProgram = async (programId: string) => {
-	try {
-		const programsDataDoc = await getPrograms()
-		return programsDataDoc ? programsDataDoc[programId] : null
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-export const addProgram = async (programId: string, programData: Program) =>
-	addOrUpdateProgram(programId, programData)
-export const updateProgram = async (programId: string, programData: Program) =>
-	addOrUpdateProgram(programId, programData)
-export const deleteProgram = async (programId: string) => {
-	try {
-		const programsDataDoc = await getPrograms()
-		if (programsDataDoc && Object.keys(programsDataDoc).length) {
-			delete programsDataDoc[programId]
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${PROGRAMS}`),
-				programsDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-// --- SEMESTERS ---
-export const getSemesters = async () => {
-	try {
-		const snapshot = await getDoc(
-			doc(db, `${baseCollectionCoreData}/${SEMESTERS}`)
-		)
-		const semestersDataDoc: TPayloadSemesters = snapshot.data() ?? {}
-		return semestersDataDoc
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-export const getSemester = async (semesterId: string) => {
-	try {
-		const semestersDataDoc = await getSemesters()
-		return semestersDataDoc ? semestersDataDoc[semesterId] : null
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-export const addSemester = async (semesterId: string, semesterData: Semester) =>
-	addOrUpdateSemester(semesterId, semesterData)
-export const updateSemester = async (
-	semesterId: string,
-	semesterData: Semester
-) => addOrUpdateSemester(semesterId, semesterData)
-export const deleteSemester = async (semesterId: string) => {
-	try {
-		const semestersDataDoc = await getSemesters()
-		if (semestersDataDoc && Object.keys(semestersDataDoc).length) {
-			delete semestersDataDoc[semesterId]
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${SEMESTERS}`),
-				semestersDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-// --- SPECIALIZATIONS ---
-export const getSpecializations = async () => {
-	try {
-		const snapshot = await getDoc(
-			doc(db, `${baseCollectionCoreData}/${SPECIALIZATIONS}`)
-		)
-		const specializationsDataDoc: TPayloadSpecializations =
-			snapshot.data() ?? {}
-		return specializationsDataDoc
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-export const getSpecialization = async (specializationId: string) => {
-	try {
-		const specializationsDataDoc = await getSpecializations()
-		return specializationsDataDoc
-			? specializationsDataDoc[specializationId]
-			: null
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-export const addSpecialization = async (
-	specializationId: string,
-	specializationData: Specialization
-) => addOrUpdateSpecialization(specializationId, specializationData)
-export const updateSpecialization = async (
-	specializationId: string,
-	specializationData: Specialization
-) => addOrUpdateSpecialization(specializationId, specializationData)
-export const deleteSpecialization = async (specializationId: string) => {
-	try {
-		const specializationsDataDoc = await getSpecializations()
-		if (specializationsDataDoc && Object.keys(specializationsDataDoc).length) {
-			delete specializationsDataDoc[specializationId]
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${SPECIALIZATIONS}`),
-				specializationsDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-*/

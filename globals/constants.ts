@@ -17,6 +17,8 @@ export const REVIEWS_RECENT_LEN = 50
 export const REVIEWS_RECENT_BUFFER = 20
 export const REVIEWS_RECENT_TOTAL = REVIEWS_RECENT_LEN + REVIEWS_RECENT_BUFFER
 
+export const NOT_FOUND_ARRAY_INDEX = -1
+
 /* --- DATA MODELS FIELDS --- */
 
 // common fields

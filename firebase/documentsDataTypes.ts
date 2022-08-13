@@ -1,19 +1,5 @@
-import {
-	TObjectKey,
-	Course,
-	Department,
-	Program,
-	Review,
-	Semester,
-	Specialization,
-} from '@globals/types'
+import { TObjectKey, Course, Review, User } from '@globals/types'
 
-export type TDocumentData =
-	| Course
-	| Department
-	| Program
-	| Review
-	| Semester
-	| Specialization
+export type TDocumentData = Course | Review | User
 
 export type TDocumentDataObject = { [key: TObjectKey]: TDocumentData }

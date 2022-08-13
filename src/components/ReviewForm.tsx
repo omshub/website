@@ -13,7 +13,7 @@ import {
 	Controller,
 	DefaultValues,
 	SubmitHandler,
-	useForm
+	useForm,
 } from 'react-hook-form'
 
 const DynamicEditor = dynamic(() => import('@components/FormEditor'), {

@@ -1,9 +1,7 @@
-import { getCourses } from '@backend/dbOperations'
-import { useAlert } from '@context/AlertContext'
+import backend from '@backend/index'
 import { courseFields } from '@globals/constants'
 import { Course } from '@globals/types'
 import { useMediaQuery } from '@mui/material'
-import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
@@ -17,7 +15,8 @@ import {
 import Link from '@src/Link'
 import { mapPayloadToArray, roundNumber } from '@src/utilities'
 import type { NextPage } from 'next'
-import { useEffect, useState } from 'react'
+
+const { getCourses } = backend
 
 interface HomePageProps {
 	allCourseData: Course[]
@@ -25,6 +24,11 @@ interface HomePageProps {
 
 const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 	const isDesktop = useMediaQuery('(min-width:600px)')
+	const coursesArray: Course[] = mapPayloadToArray(
+		allCourseData,
+		courseFields.NAME
+	)
+	const courses = coursesArray.map((data, i) => ({ ...data, id: i }))
 
 	const columns: GridColDef[] = [
 		{
@@ -58,17 +62,17 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 			type: 'number',
 		},
 		{
-			field: courseFields.AVG_OVERALL,
-			headerName: 'Overall (out of 5)',
-			flex: isDesktop ? 0.5 : 0,
-			valueGetter: (params: any) => roundNumber(params.row.avgOverall, 1),
-			type: 'number',
-		},
-		{
 			field: courseFields.AVG_WORKLOAD,
 			headerName: 'Workload (hrs/wk)',
 			flex: isDesktop ? 0.5 : 0,
 			valueGetter: (params: any) => roundNumber(params.row.avgWorkload, 1),
+			type: 'number',
+		},
+		{
+			field: courseFields.AVG_OVERALL,
+			headerName: 'Overall (out of 5)',
+			flex: isDesktop ? 0.5 : 0,
+			valueGetter: (params: any) => roundNumber(params.row.avgOverall, 1),
 			type: 'number',
 		},
 		{
@@ -86,37 +90,9 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 		},
 		{ field: courseFields.ALIASES, headerName: 'Aliases', flex: 0, hide: true },
 	]
-	const [loading, setLoading] = useState<boolean>()
-	const [courses, setCourses] = useState<Course[]>([])
 
-	useEffect(() => {
-		setLoading(true)
-
-		getCourses()
-			.then((payloadCourses) => {
-				const courses: Course[] = mapPayloadToArray(
-					payloadCourses,
-					courseFields.NAME
-				)
-				const coursesWithIds = courses.map((data, i) => ({ ...data, id: i }))
-				setCourses(coursesWithIds)
-				setLoading(false)
-			})
-			.catch((err: any) => {
-				setLoading(false)
-				console.log(err)
-			})
-	}, [])
-	const { alert } = useAlert()
 	return (
-		<Container maxWidth='lg'>
-			<Box>
-				{alert && (
-					<Alert severity={alert.severity} variant={alert.variant}>
-						{alert.text}
-					</Alert>
-				)}
-			</Box>
+		<Container maxWidth='xl'>
 			<Box
 				sx={{
 					my: 4,
@@ -138,10 +114,9 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 						<DataGrid
 							autoHeight
 							disableColumnSelector
-							hideFooter
 							rows={courses}
 							columns={columns}
-							loading={!allCourseData || loading}
+							loading={!allCourseData}
 							components={{ Toolbar: GridToolbar }}
 							sx={{ borderRadius: '25px', padding: '20px 10px' }}
 							columnVisibilityModel={{

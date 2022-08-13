@@ -1,5 +1,5 @@
 import {
-	courses,
+	coursesDataStatic,
 	departments,
 	educationLevels,
 	grades,
@@ -21,8 +21,9 @@ import {
 
 /* --- STATIC DATA GETTERS --- */
 
-export const getCoursesDataStatic = () => courses
-export const getCourseDataStatic = (courseId: TCourseId) => courses[courseId]
+export const getCoursesDataStatic = () => coursesDataStatic
+export const getCourseDataStatic = (courseId: TCourseId) =>
+	coursesDataStatic[courseId]
 
 export const getDepartments = () => departments
 export const getDepartment = (departmentId: TDepartmentId) =>

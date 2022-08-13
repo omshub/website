@@ -1,4 +1,4 @@
-import { getReviewsRecent } from '@backend/dbOperations'
+import backend from '@backend/index'
 import ReviewCard from '@components/ReviewCard'
 import { Review } from '@globals/types'
 import Box from '@mui/material/Box'
@@ -7,6 +7,8 @@ import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import type { NextPage } from 'next'
+
+const { getReviewsRecent } = backend
 
 interface RecentsProps {
 	reviewsRecent: Review[]

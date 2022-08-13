@@ -14,19 +14,29 @@ type TReviewsCountsByYearSemObject = {
 	[yearKey: TObjectKey]: { [semesterTermKey: TObjectKey]: number }
 }
 
+type TUserReviews = {
+	[reviewId: string]: Review
+}
+
 export type TProviderName = 'Google' | 'Facebook' | 'Github' | 'Apple'
 
 /* --- DATA MODELS (API/DYNAMIC) --- */
 
-export interface Course {
+// maintained and updated client-side/statically
+export interface CourseDataStatic {
 	courseId: TCourseId
-	name: TCourseName
+	name: string
 	departmentId: TDepartmentId
 	courseNumber: string
-	url: string
+	url: TNullableString // url may be null (i.e., no existing page)
 	aliases: string[]
 	isDeprecated: boolean
 	isFoundational: boolean
+}
+
+// maintained and updated by API/Firestore
+export interface CourseDataDynamic {
+	courseId: TCourseId
 	numReviews: number
 	avgWorkload: TNullableNumber
 	avgDifficulty: TNullableNumber
@@ -35,18 +45,20 @@ export interface Course {
 	reviewsCountsByYearSem: TReviewsCountsByYearSemObject
 }
 
+export interface Course extends CourseDataStatic, CourseDataDynamic {}
+
 export interface Review {
 	reviewId: string
 	courseId: TCourseId
 	year: number
 	semesterId: TSemesterId
-	isLegacy?: boolean
-	reviewerId: string
+	isLegacy: boolean
+	reviewerId: string // `userId` of review author
 	created: number // Unix timestamp
 	modified: TNullableNumber // Unix timestamp
 	body: string
-	upvotes?: number
-	downvotes?: number
+	upvotes: number
+	downvotes: number
 	/* --- general review data --- */
 	workload: number
 	difficulty: TRatingScale
@@ -77,7 +89,7 @@ export interface User {
 	subjectAreaId?: string
 	workYears?: number
 	specializationId?: TSpecializationId
-	reviews: Review[] // user's reviews
+	reviews: TUserReviews
 }
 
 /* --- DATA MODELS (CLIENT-SIDE/STATIC) --- */
@@ -126,14 +138,15 @@ export interface Grade {
 	name: TGradeName
 }
 
-export interface CourseDataStatic {
-	courseId: TCourseId
-	name: string
-	departmentId: TDepartmentId
-	courseNumber: string
+/* --- PAYLOADS --- */
+
+export type TPayloadCoursesDataStatic = {
+	[courseId: string]: CourseDataStatic
 }
 
-/* --- PAYLOADS --- */
+export type TPayloadCoursesDataDynamic = {
+	[courseId: string]: CourseDataDynamic
+}
 
 export type TPayloadCourses = {
 	[courseId: string]: Course
@@ -177,10 +190,6 @@ export type TPayloadProgrammingLanguages = {
 
 export type TPayloadGrades = {
 	[gradeId: string]: Grade
-}
-
-export type TPayloadCoursesDataStatic = {
-	[courseId: string]: CourseDataStatic
 }
 
 /* --- DATA MODELS TYPEDEFS --- */
@@ -435,6 +444,15 @@ export type TCourseId =
 	| 'PUBP-6501'
 	| 'PUBP-6502'
 	| 'PUBP-6725'
+// | 'VIP-6600' // IGNORE -- ambiguous departmentId
+
+// course names references:
+//   https://catalog.gatech.edu/coursesaz/cs/
+//   https://catalog.gatech.edu/coursesaz/cse/
+//   https://catalog.gatech.edu/coursesaz/inta/
+//   https://catalog.gatech.edu/coursesaz/isye/
+//   https://catalog.gatech.edu/coursesaz/mgt/
+//   https://catalog.gatech.edu/coursesaz/pubp/
 
 export type TCourseName =
 	| 'Introduction to Information Security'
@@ -541,3 +559,4 @@ export type TCourseName =
 	| 'Information Policy and Management'
 	| 'Information and Communications Technology Policy'
 	| 'Information Security Policies and Strategies'
+// | 'Vertically Integrated Projects' // IGNORE -- ambiguous departmentId
