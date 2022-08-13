@@ -14,6 +14,10 @@ type TReviewsCountsByYearSemObject = {
 	[yearKey: TObjectKey]: { [semesterTermKey: TObjectKey]: number }
 }
 
+type TUserReviews = {
+	[reviewId: string]: Review
+}
+
 /* --- DATA MODELS (API/DYNAMIC) --- */
 
 export interface Course {
@@ -75,7 +79,7 @@ export interface User {
 	subjectAreaId?: string
 	workYears?: number
 	specializationId?: TSpecializationId
-	reviews: Review[] // user's reviews
+	reviews: TUserReviews
 }
 
 /* --- DATA MODELS (CLIENT-SIDE/STATIC) --- */

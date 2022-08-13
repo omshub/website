@@ -5,7 +5,8 @@ import {
 	baseCollectionCoreData,
 	baseCollectionReviewsData,
 	baseCollectionRecentsData,
-} from './constants'
+	baseCollectionUsersData,
+} from '@backend/constants'
 import {
 	getCourses,
 	getCourse,
@@ -13,11 +14,12 @@ import {
 	getReviews,
 	getReview,
 	getReviewsRecent,
-} from './dbOperations'
+	getUser,
+} from '@backend/dbOperations'
 import { Course, Review, TCourseId, TPayloadCourses } from '@globals/types'
 import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
 import { parseReviewId, updateAverages } from '@backend/utilityFunctions'
-import { REVIEWS_RECENT_LEN } from '@globals/constants'
+import { NOT_FOUND_ARRAY_INDEX, REVIEWS_RECENT_LEN } from '@globals/constants'
 
 const { COURSES } = coreDataDocuments
 
@@ -48,6 +50,149 @@ export const addOrUpdateCourse = async (
 
 /* --- REVIEWS DATA CRUD SUB-OPERATIONS --- */
 
+// utilities
+
+const ON_ADD_REVIEW = 'ON_ADD_REVIEW'
+const ON_EDIT_REVIEW = 'ON_EDIT_REVIEW'
+const ON_DELETE_REVIEW = 'ON_DELETE_REVIEW'
+type TOperationUpdateOnReviewEvent =
+	| 'ON_ADD_REVIEW'
+	| 'ON_EDIT_REVIEW'
+	| 'ON_DELETE_REVIEW'
+
+interface ArgsUpdateReviewsRecent {
+	operation: TOperationUpdateOnReviewEvent
+	reviewData?: Review
+	reviewId: string
+	courseId?: TCourseId
+}
+
+const updateReviewsRecent = async ({
+	operation,
+	reviewData = undefined, // delete only
+	reviewId,
+	courseId = undefined, // update aggregate
+}: ArgsUpdateReviewsRecent) => {
+	try {
+		// N.B. if `courseId` is undefined, updates Firestore document `recentsData/_aggregateData`
+		const dataDoc = courseId ?? `_aggregateData`
+		let arrayRecentData = await getReviewsRecent(courseId)
+
+		if (arrayRecentData) {
+			switch (operation) {
+				case ON_ADD_REVIEW: {
+					if (reviewData) {
+						arrayRecentData.push(reviewData)
+						if (arrayRecentData.length > REVIEWS_RECENT_LEN) {
+							// maintain buffer size
+							arrayRecentData.shift()
+						}
+						await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
+							data: arrayRecentData,
+						})
+					}
+					break
+				}
+				case ON_EDIT_REVIEW: {
+					if (reviewData) {
+						const indexFoundAt = arrayRecentData
+							.map(({ reviewId }: Review) => reviewId)
+							.indexOf(reviewId)
+						if (indexFoundAt !== NOT_FOUND_ARRAY_INDEX) {
+							arrayRecentData[indexFoundAt] = reviewData
+							await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
+								data: arrayRecentData,
+							})
+						}
+					}
+					break
+				}
+				case ON_DELETE_REVIEW: {
+					const indexFoundAt = arrayRecentData
+						.map(({ reviewId }: Review) => reviewId)
+						.indexOf(reviewId)
+					if (indexFoundAt !== NOT_FOUND_ARRAY_INDEX) {
+						arrayRecentData = arrayRecentData.filter(
+							(_: Review, index: number) => index !== indexFoundAt
+						)
+						if (arrayRecentData.length > REVIEWS_RECENT_LEN) {
+							// truncate buffer
+							arrayRecentData.shift()
+						}
+						await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
+							data: arrayRecentData,
+						})
+					}
+					break
+				}
+				default:
+					break
+			}
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+interface ArgsUpdateUser {
+	operation: TOperationUpdateOnReviewEvent
+	reviewData?: Review
+	reviewId: string
+	userId: string
+}
+
+const updateUser = async ({
+	operation,
+	reviewData = undefined, // delete only
+	reviewId,
+	userId,
+}: ArgsUpdateUser) => {
+	try {
+		const userData = await getUser(userId)
+
+		if (userData) {
+			switch (operation) {
+				case ON_ADD_REVIEW: {
+					if (reviewData) {
+						userData.reviews[reviewId] = reviewData
+						await setDoc(
+							doc(db, `${baseCollectionUsersData}/${userId}`),
+							userData
+						)
+					}
+					break
+				}
+				case ON_EDIT_REVIEW: {
+					if (reviewData && userData.reviews[reviewId]) {
+						userData.reviews[reviewId] = reviewData
+						await setDoc(
+							doc(db, `${baseCollectionUsersData}/${userId}`),
+							userData
+						)
+					}
+					break
+				}
+				case ON_DELETE_REVIEW: {
+					if (userData.reviews[reviewId]) {
+						delete userData.reviews[reviewId]
+						await setDoc(
+							doc(db, `${baseCollectionUsersData}/${userId}`),
+							userData
+						)
+					}
+					break
+				}
+				default:
+					break
+			}
+		}
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
 export const addOrUpdateReview = async (
 	reviewId: string,
 	reviewData: TDocumentData
@@ -74,6 +219,8 @@ export const addOrUpdateReview = async (
 		throw new Error(e)
 	}
 }
+
+// updates on add review
 
 export const updateCourseDataOnAddReview = async (
 	reviewId: string,
@@ -146,109 +293,6 @@ export const updateCourseDataOnAddReview = async (
 	}
 }
 
-// const updateReviewsRecent = async (reviewData: Review, courseId?: TCourseId) => {
-// 	try {
-// 		// N.B. if `courseId` is undefined, updates Firestore document `recentsData/_aggregateData`
-// 		const dataDoc = courseId ?? `_aggregateData`
-// 		let arrayRecentData = await getReviewsRecent(courseId)
-// 		if (arrayRecentData && arrayRecentData?.length) {
-// 			arrayRecentData.push(reviewData)
-// 			if (arrayRecentData.length > REVIEWS_RECENT_LEN) {
-// 				// maintain buffer size
-// 				arrayRecentData.shift()
-// 			}
-// 			await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), { data: arrayRecentData })
-// 		}
-
-// 	} catch(e: any) {
-// 		console.log(e)
-// 		throw new Error(e)
-// 	}
-// }
-
-const ON_ADD_REVIEW = 'ON_ADD_REVIEW'
-const ON_EDIT_REVIEW = 'ON_EDIT_REVIEW'
-const ON_DELETE_REVIEW = 'ON_DELETE_REVIEW'
-type TOperationUpdateRecents =
-	| 'ON_ADD_REVIEW'
-	| 'ON_EDIT_REVIEW'
-	| 'ON_DELETE_REVIEW'
-
-interface ArgsUpdateReviewsRecent {
-	operation: TOperationUpdateRecents
-	reviewId: string
-	courseId?: TCourseId
-	reviewData?: Review
-}
-
-const updateReviewsRecent = async ({
-	operation,
-	reviewData = undefined, // delete only
-	reviewId,
-	courseId = undefined, // update aggregate
-}: ArgsUpdateReviewsRecent) => {
-	try {
-		// N.B. if `courseId` is undefined, updates Firestore document `recentsData/_aggregateData`
-		const dataDoc = courseId ?? `_aggregateData`
-		let arrayRecentData = await getReviewsRecent(courseId)
-
-		if (arrayRecentData) {
-			switch (operation) {
-				case ON_ADD_REVIEW: {
-					if (reviewData) {
-						arrayRecentData.push(reviewData)
-						if (arrayRecentData.length > REVIEWS_RECENT_LEN) {
-							// maintain buffer size
-							arrayRecentData.shift()
-						}
-						await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
-							data: arrayRecentData,
-						})
-					}
-					break
-				}
-				case ON_EDIT_REVIEW: {
-					if (reviewData) {
-						const indexFoundAt = arrayRecentData
-							.map(({ reviewId }: Review) => reviewId)
-							.indexOf(reviewId)
-						if (indexFoundAt !== -1) {
-							arrayRecentData[indexFoundAt] = reviewData
-							await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
-								data: arrayRecentData,
-							})
-						}
-					}
-					break
-				}
-				case ON_DELETE_REVIEW: {
-					const indexFoundAt = arrayRecentData
-						.map(({ reviewId }: Review) => reviewId)
-						.indexOf(reviewId)
-					if (indexFoundAt !== -1) {
-						arrayRecentData = arrayRecentData.filter(
-							(_: Review, index: number) => index !== indexFoundAt
-						)
-						if (arrayRecentData.length > REVIEWS_RECENT_LEN) {
-							// truncate buffer
-							arrayRecentData.pop()
-						}
-						await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
-							data: arrayRecentData,
-						})
-					}
-					break
-				}
-				default:
-					break
-			}
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
 export const updateReviewsRecentOnAddReview = async (newReviewData: Review) => {
 	try {
 		const { reviewId } = newReviewData
@@ -273,6 +317,27 @@ export const updateReviewsRecentOnAddReview = async (newReviewData: Review) => {
 		throw new Error(e)
 	}
 }
+
+export const updateUserDataOnAddReview = async (
+	userId: string,
+	newReviewData: Review
+) => {
+	try {
+		const { reviewId } = newReviewData
+
+		await updateUser({
+			operation: ON_ADD_REVIEW,
+			reviewId,
+			reviewData: newReviewData,
+			userId,
+		})
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+// updates on update review
 
 export const updateCourseDataOnUpdateReview = async (
 	reviewId: string,
@@ -374,6 +439,27 @@ export const updateReviewsRecentOnUpdateReview = async (
 	}
 }
 
+export const updateUserDataOnUpdateReview = async (
+	userId: string,
+	newReviewData: Review
+) => {
+	try {
+		const { reviewId } = newReviewData
+
+		await updateUser({
+			operation: ON_EDIT_REVIEW,
+			reviewId,
+			reviewData: newReviewData,
+			userId,
+		})
+	} catch (e: any) {
+		console.log(e)
+		throw new Error(e)
+	}
+}
+
+// updates on delete review
+
 export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 	try {
 		let { courseId, year, semesterTerm } = parseReviewId(reviewId)
@@ -465,124 +551,18 @@ export const updateReviewsRecentOnDeleteReview = async (reviewId: string) => {
 	}
 }
 
-/*
-	The following operations are deprecated. This is generally static/non-dynamic
-	data which is not otherwise dependent on user-generated data in Firestore.
-	Corresponding API has been ported to client-side; cf. `/globals/utilities.ts`
-	for reference.
-*/
-/*
-
-import {
-	getDepartments,
-	getPrograms,
-	getSemesters,
-	getSpecializations,
-} from './dbOperations'
-
-import {
-	Department,
-	Program,
-	Semester,
-	Specialization,
-	TPayloadDepartments,
-	TPayloadPrograms,
-	TPayloadSemesters,
-	TPayloadSpecializations,
-} from '@globals/types'
-
-const { DEPARTMENTS, PROGRAMS, SEMESTERS, SPECIALIZATIONS } =
-	coreDataDocuments
-
-export const addOrUpdateDepartment = async (
-	departmentId: string,
-	departmentData: Department
+export const updateUserDataOnDeleteReview = async (
+	userId: string,
+	reviewId: string
 ) => {
 	try {
-		const departmentsDataDoc = await getDepartments()
-		let newDepartmentsDataDoc: TPayloadDepartments = {}
-		if (departmentsDataDoc) {
-			if (Object.keys(departmentsDataDoc).length) {
-				newDepartmentsDataDoc = { ...departmentsDataDoc }
-			}
-			newDepartmentsDataDoc[departmentId] = departmentData
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${DEPARTMENTS}`),
-				newDepartmentsDataDoc
-			)
-		}
+		await updateUser({
+			operation: ON_DELETE_REVIEW,
+			reviewId,
+			userId,
+		})
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
 	}
 }
-
-export const addOrUpdateProgram = async (
-	programId: string,
-	programData: Program
-) => {
-	try {
-		const programsDataDoc = await getPrograms()
-		let newProgramsDataDoc: TPayloadPrograms = {}
-		if (programsDataDoc) {
-			if (Object.keys(programsDataDoc).length) {
-				newProgramsDataDoc = { ...programsDataDoc }
-			}
-			newProgramsDataDoc[programId] = programData
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${PROGRAMS}`),
-				newProgramsDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-export const addOrUpdateSemester = async (
-	semesterId: string,
-	semesterData: Semester
-) => {
-	try {
-		const semestersDataDoc = await getSemesters()
-		let newSemestersDataDoc: TPayloadSemesters = {}
-		if (semestersDataDoc) {
-			if (Object.keys(semestersDataDoc).length) {
-				newSemestersDataDoc = { ...semestersDataDoc }
-			}
-			newSemestersDataDoc[semesterId] = semesterData
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${SEMESTERS}`),
-				newSemestersDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-
-export const addOrUpdateSpecialization = async (
-	specializationId: string,
-	specializationData: Specialization
-) => {
-	try {
-		const specializationsDataDoc = await getSpecializations()
-		let newSpecializationsDataDoc: TPayloadSpecializations = {}
-		if (specializationsDataDoc) {
-			if (Object.keys(specializationsDataDoc).length) {
-				newSpecializationsDataDoc = { ...specializationsDataDoc }
-			}
-			newSpecializationsDataDoc[specializationId] = specializationData
-			await setDoc(
-				doc(db, `${baseCollectionCoreData}/${SPECIALIZATIONS}`),
-				newSpecializationsDataDoc
-			)
-		}
-	} catch (e: any) {
-		console.log(e)
-		throw new Error(e)
-	}
-}
-*/

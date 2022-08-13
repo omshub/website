@@ -14,7 +14,15 @@ Firestore is a non-relational database, comprised of collections which contain d
 
 ## General Usage
 
-The principal backend/database "interface" intended for consumption by the frontend is contained in `firebase/dbOperations.ts`. This file organizes exports with respect to the corresponding client-side views/pages and components, as applicable.
+The principal backend/database "interface" intended for consumption by the frontend is contained in `firebase/index.ts`.
+
+For example:
+
+```ts
+import backend from '@backend/index'
+
+const { getCourses } = backend
+```
 
 ## Atomic Operations (Full CRUD)
 
@@ -32,25 +40,22 @@ The data documents defined in this app, and their corresponding CRUD operations'
 
 (**_operations_**)
 
-| Data Model |    Get All (courseId-year-semesterTerm)    |        Get One        |           Add One           |           Update One           |        Delete One        |
-| :--------: | :----------------------------------------: | :-------------------: | :-------------------------: | :----------------------------: | :----------------------: |
-|  `Course`  |               `getCourses()`               |    `getCourse(id)`    |    `addCourse(id, data)`    |    `updateCourse(id, data)`    |    `deleteCourse(id)`    |
-|  `Review`  | `getReviews(courseId, year, semesterTerm)` | `getReview(reviewId)` | `addReview(reviewId, data)` | `updateReview(reviewId, data)` | `deleteReview(reviewId)` |
-|   `User`   |                   (N/A)                    |     `getUser(id)`     |        `addUser(id)`        |        `updateUser(id)`        |     `deleteUser(id)`     |
+| Data Model |    Get All (courseId-year-semesterTerm)    |        Get One        |               Add One               |               Update One               |            Delete One            |
+| :--------: | :----------------------------------------: | :-------------------: | :---------------------------------: | :------------------------------------: | :------------------------------: |
+|  `Course`  |               `getCourses()`               |    `getCourse(id)`    |        `addCourse(id, data)`        |        `updateCourse(id, data)`        |        `deleteCourse(id)`        |
+|  `Review`  | `getReviews(courseId, year, semesterTerm)` | `getReview(reviewId)` | `addReview(userId, reviewId, data)` | `updateReview(userId, reviewId, data)` | `deleteReview(userId, reviewId)` |
+|   `User`   |                   (N/A)                    |     `getUser(id)`     |            `addUser(id)`            |            `updateUser(id)`            |         `deleteUser(id)`         |
 
 **_N.B._** See `/globals/types.ts` for definition of document data fields (i.e., argument `data` per above).
 
 Example usage via `courses` document (and similarly for the others):
 
 ```ts
-import {
-	addCourse,
-	getCourses,
-	getCourse,
-	updateCourse,
-	deleteCourse,
-} from '@backend/dbOperations'
+import backend from '@backend/index'
 
+const { addCourse, getCourses, getCourse, updateCourse, deleteCourse } = backend
+
+// N.B. Requires corresponding addition/update in `/globals/types`
 const courseId = 'CS-1927'
 
 // CREATE

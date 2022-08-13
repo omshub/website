@@ -6,10 +6,6 @@ type TDataDocumentsObject = {
 
 export const coreDataDocuments: TDataDocumentsObject = {
 	COURSES: 'courses',
-	DEPARTMENTS: 'departments',
-	PROGRAMS: 'programs',
-	SEMESTERS: 'semesters',
-	SPECIALIZATIONS: 'specializations',
 }
 
 // reference: https://firebase.google.com/docs/firestore/query-data/queries#query_operators
