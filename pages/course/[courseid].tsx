@@ -35,11 +35,10 @@ import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import useSWR, { useSWRConfig } from 'swr'
+
 type TActiveSemesters = {
 	[semesterTerm: number]: boolean
 }
-
-const { getCourses, getReviews } = backend
 
 interface CoursePageProps {
 	courseData: Course
@@ -51,6 +50,8 @@ interface CoursePageProps {
 	defaultReviews: TPayloadReviews
 	numberOfReviews: number
 }
+
+const { getCourses, getReviews } = backend
 
 const CourseId: NextPage<CoursePageProps> = ({
 	courseData,
@@ -114,9 +115,7 @@ const CourseId: NextPage<CoursePageProps> = ({
 				? () => {
 						handleReviewModalOpen()
 				  }
-				: () => {
-						console.log('Hello')
-				  },
+				: () => {},
 		},
 	]
 

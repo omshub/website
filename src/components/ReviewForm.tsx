@@ -1,6 +1,7 @@
 import { useAuth } from '@context/AuthContext'
 import { Review } from '@globals/types'
-import { TextField } from '@mui/material'
+import { Button, TextField } from '@mui/material'
+import Alert from '@mui/material/Alert'
 import Grid from '@mui/material/Grid'
 import InputAdornment from '@mui/material/InputAdornment'
 import InputLabel from '@mui/material/InputLabel'
@@ -38,7 +39,12 @@ const ReviewForm: any = (props: any) => {
 		created: Date.now(),
 		modified: Date.now(),
 	}
-	const { control, handleSubmit } = useForm<Review>({
+	const {
+		control,
+		handleSubmit,
+		getValues,
+		formState: { errors, isDirty, isValid },
+	} = useForm<Review>({
 		mode: 'all',
 		reValidateMode: 'onChange',
 		defaultValues: ReviewFormDefaults,
@@ -46,7 +52,7 @@ const ReviewForm: any = (props: any) => {
 		context: undefined,
 		criteriaMode: 'firstError',
 		shouldFocusError: true,
-		shouldUnregister: true,
+		shouldUnregister: false,
 	})
 	const onSubmit: SubmitHandler<Review> = (data: Review) => {
 		const reviewId = `${courseData.courseId}-${data.year}-${data.semesterId}`
@@ -57,8 +63,8 @@ const ReviewForm: any = (props: any) => {
 			['modified']: Date.now(),
 		}
 		console.log(reviewValues)
-		// addReview(reviewId, reviewValues)
 		handleReviewModalClose()
+		// addReview(reviewId, reviewValues)
 	}
 
 	return (
@@ -85,13 +91,23 @@ const ReviewForm: any = (props: any) => {
 						control={control}
 						name='semesterId'
 						render={({ field }) => (
-							<Select fullWidth {...field} label='Semester'>
+							<Select fullWidth {...field} error={Boolean(errors.semesterId)}>
 								<MenuItem value={'sp'}>Spring</MenuItem>
 								<MenuItem value={'sm'}>Summer</MenuItem>
 								<MenuItem value={'fa'}>Fall</MenuItem>
 							</Select>
 						)}
+						rules={{
+							validate: {
+								validateSemesterGivenYear: (value) => {
+									return validateSemesterYear(value, getValues()['year'])
+								},
+							},
+						}}
 					></Controller>
+					{errors.semesterId && (
+						<Alert severity='error'>Error for Semester</Alert>
+					)}
 				</Grid>
 				<Grid item xs={12} lg={12}>
 					<InputLabel id='review-form-year'>Year</InputLabel>
@@ -99,7 +115,7 @@ const ReviewForm: any = (props: any) => {
 						control={control}
 						name='year'
 						render={({ field }) => (
-							<Select {...field} fullWidth label='Year'>
+							<Select {...field} fullWidth error={Boolean(errors.year)}>
 								{yearRange.map((year) => {
 									return (
 										<MenuItem key={year} value={year}>
@@ -109,6 +125,13 @@ const ReviewForm: any = (props: any) => {
 								})}
 							</Select>
 						)}
+						rules={{
+							validate: {
+								validateYearGivenSemester: (value) => {
+									return validateSemesterYear(getValues()['semesterId'], value)
+								},
+							},
+						}}
 					></Controller>
 				</Grid>
 				<Grid item xs={12} lg={12}>
@@ -160,7 +183,15 @@ const ReviewForm: any = (props: any) => {
 						)}
 					></Controller>
 				</Grid>
-				<input type='submit' />
+				<Grid textAlign='center' item xs={12} lg={12}>
+					<Button
+						disabled={!isDirty || !isValid}
+						variant='contained'
+						onClick={handleSubmit(onSubmit)}
+					>
+						Submit
+					</Button>
+				</Grid>
 			</Grid>
 		</form>
 	)
@@ -168,11 +199,28 @@ const ReviewForm: any = (props: any) => {
 
 const getYearRange = () => {
 	const currentYear = new Date().getFullYear()
-	const programStart = 2013
+	const programStart = 2014
 	const limitYear = 5
 	return Array.from(
 		{ length: currentYear - programStart - limitYear },
 		(_, i) => currentYear + i * -1
 	)
 }
+
+const validateSemesterYear = (semester: string, year: number) => {
+	const semesterMap: any = {
+		sp: new Date('02-01-' + new Date().getFullYear()),
+		sm: new Date('06-01-' + new Date().getFullYear()),
+		fa: new Date('09-01-' + new Date().getFullYear()),
+	}
+	const compareDate = semesterMap[semester]
+	if (new Date(year) < new Date()) {
+		return true
+	}
+	if (new Date() > compareDate) {
+		return true
+	}
+	return false
+}
+
 export default ReviewForm
