@@ -12,6 +12,7 @@ import {
 	Review,
 	TCourseId,
 	TPayloadCourses,
+	TPayloadCoursesDataDynamic,
 	TPayloadReviews,
 	User,
 } from '@globals/types'
@@ -28,6 +29,7 @@ import {
 	updateUserDataOnAddReview,
 	updateUserDataOnUpdateReview,
 	updateUserDataOnDeleteReview,
+	mapDynamicCoursesDataToCourses,
 } from '@backend/utilities'
 
 const { COURSES } = coreDataDocuments
@@ -38,8 +40,12 @@ export const getCourses = async () => {
 		const snapshot = await getDoc(
 			doc(db, `${baseCollectionCoreData}/${COURSES}`)
 		)
-		const coursesDataDoc: TPayloadCourses = snapshot.data() ?? {}
-		return coursesDataDoc
+		const coursesDataDoc: TPayloadCoursesDataDynamic = snapshot.data() ?? {}
+		let courses: TPayloadCourses = {}
+		if (coursesDataDoc && Object.keys(coursesDataDoc).length) {
+			courses = mapDynamicCoursesDataToCourses(coursesDataDoc)
+		}
+		return courses
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
