@@ -20,6 +20,7 @@ type TUserReviews = {
 
 export type TProviderName = 'Google' | 'Facebook' | 'Github' | 'Apple'
 
+
 /* --- DATA MODELS (API/DYNAMIC) --- */
 
 // maintained and updated client-side/statically

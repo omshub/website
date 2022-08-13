@@ -40,6 +40,8 @@ type TActiveSemesters = {
 	[semesterTerm: number]: boolean
 }
 
+const { getCourses, getReviews } = backend
+
 interface CoursePageProps {
 	courseData: Course
 	courseTimeline: number[]
