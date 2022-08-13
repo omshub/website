@@ -1,18 +1,18 @@
 import {
-	// courses
+	/* --- COURSES --- */
 	getCourses,
 	getCourse,
 	addCourse,
 	updateCourse,
 	deleteCourse,
-	// reviews
+	/* --- REVIEWS --- */
 	getReviews,
 	getReviewsRecent,
 	getReview,
 	addReview,
 	updateReview,
 	deleteReview,
-	// user
+	/* --- USERS --- */
 	getUser,
 	addUser,
 	editUser,
@@ -20,20 +20,20 @@ import {
 } from '@backend/dbOperations'
 
 const backend = {
-	// courses
+	/* --- COURSES --- */
 	getCourses,
 	getCourse,
 	addCourse,
 	updateCourse,
 	deleteCourse,
-	// reviews
+	/* --- REVIEWS --- */
 	getReviews,
 	getReviewsRecent,
 	getReview,
 	addReview,
 	updateReview,
 	deleteReview,
-	// user
+	/* --- USERS --- */
 	getUser,
 	addUser,
 	editUser,
