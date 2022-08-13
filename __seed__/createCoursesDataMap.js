@@ -7,8 +7,8 @@
 
 /* --- IMPORTS ---*/
 const reviews = require('./data/reviews')
-// N.B. `coursesData` already contains the computed values resulting from this script
-const coursesData = require('./data/courses')
+// N.B. `coursesDataDynamic` already contains the computed values resulting from this script
+const coursesDataDynamic = require('./data/courses')
 
 /* --- UTILITIES ---*/
 const computeAverage = (fieldArray, numReviews) =>
@@ -33,34 +33,17 @@ reviews.forEach(({ courseId }) => {
 })
 
 // initialize `courseDataMap` with static data, and field `numReviews`
-const coursesDataMap = {}
-coursesData.forEach(
-	({
-		courseId,
-		name,
-		departmentId,
-		courseNumber,
-		url,
-		aliases,
-		isDeprecated,
-		isFoundational,
-	}) =>
-		(coursesDataMap[courseId] = {
-			courseId,
-			name,
-			departmentId,
-			courseNumber,
-			url,
-			aliases,
-			isDeprecated,
-			isFoundational,
+const coursesDataDynamicMap = {}
+coursesDataDynamic.forEach(
+	({ courseId }) =>
+		(coursesDataDynamicMap[courseId] = {
 			numReviews: numReviewsMap[courseId] ? numReviewsMap[courseId] : 0,
 		})
 )
 
 // add additional dynamic fields (averages and `reviewsCountsByYearSem` map)
-Object.keys(coursesDataMap).forEach((courseId) => {
-	const numReviews = coursesDataMap[courseId].numReviews
+Object.keys(coursesDataDynamicMap).forEach((courseId) => {
+	const numReviews = coursesDataDynamicMap[courseId].numReviews
 	const avgStaffSupport = null // N.B. field `staffSupport` was not collected in the legacy platform
 	let avgWorkload = 0
 	let avgDifficulty = 0
@@ -69,7 +52,7 @@ Object.keys(coursesDataMap).forEach((courseId) => {
 
 	const courseReviews = reviews.filter((review) => review.courseId === courseId)
 
-	coursesDataMap[courseId].avgStaffSupport = avgStaffSupport
+	coursesDataDynamicMap[courseId].avgStaffSupport = avgStaffSupport
 
 	const workloads = Object.entries(courseReviews).map(
 		([_, { workload }]) => workload
@@ -78,7 +61,7 @@ Object.keys(coursesDataMap).forEach((courseId) => {
 		numReviews && workloads.length
 			? computeAverage(workloads, numReviews)
 			: null
-	coursesDataMap[courseId].avgWorkload = avgWorkload
+	coursesDataDynamicMap[courseId].avgWorkload = avgWorkload
 
 	const difficulties = Object.entries(courseReviews).map(
 		([_, { difficulty }]) => difficulty
@@ -87,14 +70,14 @@ Object.keys(coursesDataMap).forEach((courseId) => {
 		numReviews && workloads.length
 			? computeAverage(difficulties, numReviews)
 			: null
-	coursesDataMap[courseId].avgDifficulty = avgDifficulty
+	coursesDataDynamicMap[courseId].avgDifficulty = avgDifficulty
 
 	const overalls = Object.entries(courseReviews).map(
 		([_, { overall }]) => overall
 	)
 	avgOverall =
 		numReviews && workloads.length ? computeAverage(overalls, numReviews) : null
-	coursesDataMap[courseId].avgOverall = avgOverall
+	coursesDataDynamicMap[courseId].avgOverall = avgOverall
 
 	const yearSemArray = Object.entries(courseReviews).map(
 		([_, { year, semesterId }]) => [year, mapSemesterIdToTerm[semesterId]]
@@ -112,11 +95,12 @@ Object.keys(coursesDataMap).forEach((courseId) => {
 			reviewsCountsByYearSem[year][semesterTerm] + 1
 	})
 
-	coursesDataMap[courseId].reviewsCountsByYearSem = reviewsCountsByYearSem
+	coursesDataDynamicMap[courseId].reviewsCountsByYearSem =
+		reviewsCountsByYearSem
 })
 
 /* --- EXPORT COURSES DATA MAP OBJECT ---*/
-module.exports = coursesDataMap
+module.exports = coursesDataDynamicMap
 
 // REFERENCE ONLY: example call to seed the Firestore db (cf. `./script.js` for full seeding script)
 /*
@@ -126,9 +110,9 @@ const { getFirestore, setDoc, doc } = require('firebase/firestore')
 const firebaseApp = initializeApp(config) // cf. `./example.env.js` for environment config
 const db = getFirestore(firebaseApp)
 
-const coursesDataMap = require('__seed__/createCoursesDataMap')
+const coursesDataDynamicMap = require('__seed__/createCoursesDataMap')
 
 ;(async () => {
-	await setDoc(doc('coreData', 'courses', coursesDataMap)) // creates document `coreData/courses` in Firebase Firestore
+	await setDoc(doc('coreData', 'courses', coursesDataDynamicMap)) // creates document `coreData/courses` in Firebase Firestore
 })()
 */

@@ -16,14 +16,35 @@ import {
 	getReviewsRecent,
 	getUser,
 } from '@backend/dbOperations'
-import { Course, Review, TCourseId, TPayloadCourses } from '@globals/types'
+import {
+	Course,
+	Review,
+	TCourseId,
+	TPayloadCourses,
+	TPayloadCoursesDataDynamic,
+} from '@globals/types'
 import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
 import { parseReviewId, updateAverages } from '@backend/utilityFunctions'
 import { NOT_FOUND_ARRAY_INDEX, REVIEWS_RECENT_LEN } from '@globals/constants'
+import { getCoursesDataStatic } from '@globals/utilities'
 
 const { COURSES } = coreDataDocuments
 
 /* --- COURSE DATA CRUD SUB-OPERATIONS --- */
+
+export const mapDynamicCoursesDataToCourses = (
+	coursesDataDynamic: TPayloadCoursesDataDynamic
+) => {
+	const coursesDataStatic = getCoursesDataStatic()
+	const courses: TPayloadCourses = {}
+	Object.keys(coursesDataStatic).forEach((courseId) => {
+		courses[courseId] = {
+			...coursesDataStatic[courseId],
+			...coursesDataDynamic[courseId],
+		}
+	})
+	return courses
+}
 
 export const addOrUpdateCourse = async (
 	courseId: string,
