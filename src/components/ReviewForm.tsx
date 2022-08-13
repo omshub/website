@@ -14,7 +14,7 @@ import {
 	Controller,
 	DefaultValues,
 	SubmitHandler,
-	useForm,
+	useForm
 } from 'react-hook-form'
 
 const DynamicEditor = dynamic(() => import('@components/FormEditor'), {
@@ -199,10 +199,10 @@ const ReviewForm: any = (props: any) => {
 
 const getYearRange = () => {
 	const currentYear = new Date().getFullYear()
-	const programStart = 2014
+	const programStart = 2013
 	const limitYear = 5
 	return Array.from(
-		{ length: currentYear - programStart - limitYear },
+		{ length: currentYear - programStart - limitYear + 1 },
 		(_, i) => currentYear + i * -1
 	)
 }
