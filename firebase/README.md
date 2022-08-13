@@ -14,7 +14,15 @@ Firestore is a non-relational database, comprised of collections which contain d
 
 ## General Usage
 
-The principal backend/database "interface" intended for consumption by the frontend is contained in `firebase/dbOperations.ts`. This file organizes exports with respect to the corresponding client-side views/pages and components, as applicable.
+The principal backend/database "interface" intended for consumption by the frontend is contained in `firebase/index.ts`.
+
+For example:
+
+```ts
+import backend from '@backend/index'
+
+const { getCourses } = backend
+```
 
 ## Atomic Operations (Full CRUD)
 

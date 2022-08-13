@@ -1,4 +1,4 @@
-import { getCourses, getReviews } from '@backend/dbOperations'
+import backend from '@backend/index'
 import ReviewCard from '@components/ReviewCard'
 import { DESC, REVIEW_ID } from '@globals/constants'
 import { Course, TPayloadReviews } from '@globals/types'
@@ -27,6 +27,8 @@ import useSWR, { useSWRConfig } from 'swr'
 type TActiveSemesters = {
 	[semesterTerm: number]: boolean
 }
+
+const { getCourses, getReviews } = backend
 
 interface CoursePageProps {
 	courseData: Course

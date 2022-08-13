@@ -1,4 +1,4 @@
-import { getCourses } from '@backend/dbOperations'
+import backend from '@backend/index'
 import { courseFields } from '@globals/constants'
 import { Course } from '@globals/types'
 import { useMediaQuery } from '@mui/material'
@@ -15,6 +15,8 @@ import {
 import Link from '@src/Link'
 import { mapPayloadToArray, roundNumber } from '@src/utilities'
 import type { NextPage } from 'next'
+
+const { getCourses } = backend
 
 interface HomePageProps {
 	allCourseData: Course[]
