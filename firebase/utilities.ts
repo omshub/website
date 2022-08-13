@@ -25,7 +25,7 @@ import {
 } from '@globals/types'
 import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
 import { parseReviewId, updateAverages } from '@backend/utilityFunctions'
-import { NOT_FOUND_ARRAY_INDEX, REVIEWS_RECENT_LEN } from '@globals/constants'
+import { NOT_FOUND_ARRAY_INDEX, REVIEWS_RECENT_TOTAL } from '@globals/constants'
 import { getCoursesDataStatic } from '@globals/utilities'
 
 const { COURSES } = coreDataDocuments
@@ -104,7 +104,7 @@ const updateReviewsRecent = async ({
 				case ON_ADD_REVIEW: {
 					if (reviewData) {
 						arrayRecentData.push(reviewData)
-						if (arrayRecentData.length > REVIEWS_RECENT_LEN) {
+						if (arrayRecentData.length > REVIEWS_RECENT_TOTAL) {
 							// maintain buffer size
 							arrayRecentData.shift()
 						}
@@ -136,7 +136,7 @@ const updateReviewsRecent = async ({
 						arrayRecentData = arrayRecentData.filter(
 							(_: Review, index: number) => index !== indexFoundAt
 						)
-						if (arrayRecentData.length > REVIEWS_RECENT_LEN) {
+						if (arrayRecentData.length > REVIEWS_RECENT_TOTAL) {
 							// truncate buffer
 							arrayRecentData.shift()
 						}
