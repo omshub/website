@@ -32,11 +32,11 @@ The data documents defined in this app, and their corresponding CRUD operations'
 
 (**_operations_**)
 
-| Data Model |    Get All (courseId-year-semesterTerm)    |        Get One        |           Add One           |           Update One           |        Delete One        |
-| :--------: | :----------------------------------------: | :-------------------: | :-------------------------: | :----------------------------: | :----------------------: |
-|  `Course`  |               `getCourses()`               |    `getCourse(id)`    |    `addCourse(id, data)`    |    `updateCourse(id, data)`    |    `deleteCourse(id)`    |
-|  `Review`  | `getReviews(courseId, year, semesterTerm)` | `getReview(reviewId)` | `addReview(reviewId, data)` | `updateReview(reviewId, data)` | `deleteReview(reviewId)` |
-|   `User`   |                   (N/A)                    |     `getUser(id)`     |        `addUser(id)`        |        `updateUser(id)`        |     `deleteUser(id)`     |
+| Data Model |    Get All (courseId-year-semesterTerm)    |        Get One        |               Add One               |               Update One               |            Delete One            |
+| :--------: | :----------------------------------------: | :-------------------: | :---------------------------------: | :------------------------------------: | :------------------------------: |
+|  `Course`  |               `getCourses()`               |    `getCourse(id)`    |        `addCourse(id, data)`        |        `updateCourse(id, data)`        |        `deleteCourse(id)`        |
+|  `Review`  | `getReviews(courseId, year, semesterTerm)` | `getReview(reviewId)` | `addReview(userId, reviewId, data)` | `updateReview(userId, reviewId, data)` | `deleteReview(userId, reviewId)` |
+|   `User`   |                   (N/A)                    |     `getUser(id)`     |            `addUser(id)`            |            `updateUser(id)`            |         `deleteUser(id)`         |
 
 **_N.B._** See `/globals/types.ts` for definition of document data fields (i.e., argument `data` per above).
 
