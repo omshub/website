@@ -51,14 +51,11 @@ The data documents defined in this app, and their corresponding CRUD operations'
 Example usage via `courses` document (and similarly for the others):
 
 ```ts
-import {
-	addCourse,
-	getCourses,
-	getCourse,
-	updateCourse,
-	deleteCourse,
-} from '@backend/dbOperations'
+import backend from '@backend/index'
 
+const { addCourse, getCourses, getCourse, updateCourse, deleteCourse } = backend
+
+// N.B. Requires corresponding addition/update in `/globals/types`
 const courseId = 'CS-1927'
 
 // CREATE
