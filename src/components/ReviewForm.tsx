@@ -1,8 +1,6 @@
-import { addReview } from '@backend/dbOperations'
 import { useAuth } from '@context/AuthContext'
 import { Review } from '@globals/types'
-import { Button, SelectChangeEvent, TextField } from '@mui/material'
-import FormControl from '@mui/material/FormControl'
+import { TextField } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import InputAdornment from '@mui/material/InputAdornment'
 import InputLabel from '@mui/material/InputLabel'
@@ -11,7 +9,13 @@ import Rating from '@mui/material/Rating'
 import Select from '@mui/material/Select'
 import Typography from '@mui/material/Typography'
 import dynamic from 'next/dynamic'
-import { ChangeEvent, SyntheticEvent, useState } from 'react'
+import {
+	Controller,
+	DefaultValues,
+	SubmitHandler,
+	useForm
+} from 'react-hook-form'
+
 const DynamicEditor = dynamic(() => import('@components/FormEditor'), {
 	ssr: false,
 })
@@ -20,52 +24,45 @@ const ReviewForm: any = (props: any) => {
 	const { user } = useAuth()
 	const { courseData, handleReviewModalClose } = props
 	const yearRange = getYearRange()
-	const [reviewValues, setReviewValues] = useState<Review>({
+
+	const ReviewFormDefaults: DefaultValues<Review> = {
 		reviewId: '',
 		courseId: courseData.courseId,
 		year: Number(`${new Date().getFullYear()}`),
 		semesterId: 'sm',
-		body: '',
+		body: `Type review here for ${courseData.courseId}: ${courseData.name}!`,
 		workload: 21,
 		overall: 5,
 		difficulty: 5,
 		reviewerId: user?.uid,
 		created: Date.now(),
 		modified: Date.now(),
-	})
-
-	const handleChange =
-		(prop: keyof Review) =>
-		(
-			event:
-				| ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-				| SelectChangeEvent<string>
-		) => {
-			setReviewValues({ ...reviewValues, [prop]: event.target.value })
-		}
-
-	const handleRating =
-		(prop: keyof Review) => (event: SyntheticEvent, value: number | null) => {
-			setReviewValues({ ...reviewValues, [prop]: value })
-		}
-
-	const handleBody = (text: string) => {
-		console.log(reviewValues)
-		setReviewValues({ ...reviewValues, ['body']: text })
 	}
-
-	const handleSubmit = () => {
-		const reviewId = `${courseData.courseId}-${reviewValues.year}-${reviewValues.semesterId}`
-		setReviewValues({
-			...reviewValues,
+	const { control, handleSubmit } = useForm<Review>({
+		mode: 'all',
+		reValidateMode: 'onChange',
+		defaultValues: ReviewFormDefaults,
+		resolver: undefined,
+		context: undefined,
+		criteriaMode: 'firstError',
+		shouldFocusError: true,
+		shouldUnregister: true,
+	})
+	const onSubmit: SubmitHandler<Review> = (data: Review) => {
+		const reviewId = `${courseData.courseId}-${data.year}-${data.semesterId}`
+		const reviewValues = {
+			...data,
+			['reviewId']: reviewId,
 			['created']: Date.now(),
 			['modified']: Date.now(),
-			['reviewId']: reviewId,
-		})
-		addReview(reviewId, reviewValues)
+		}
+		console.log(reviewValues)
+		// addReview(reviewId, reviewValues)
+		handleReviewModalClose()
 	}
+
 	return (
-		<form>
+		<form onSubmit={handleSubmit(onSubmit)}>
 			<Grid
 				container
 				rowSpacing={4}
@@ -77,96 +74,93 @@ const ReviewForm: any = (props: any) => {
 					<TextField
 						disabled
 						fullWidth
-						id='outlined-disabled'
+						id='review-form-course-name'
 						label='Course Name'
 						defaultValue={courseData.courseId}
 					/>
 				</Grid>
 				<Grid item xs={12} lg={12}>
-					<FormControl fullWidth>
-						<InputLabel id='test-select-label'>Semester</InputLabel>
-						<Select
-							label='Semester'
-							value={reviewValues.semesterId}
-							onChange={handleChange('semesterId')}
-							defaultValue={reviewValues.semesterId}
-						>
-							<MenuItem value={'sp'}>Spring</MenuItem>
-							<MenuItem value={'sm'}>Summer</MenuItem>
-							<MenuItem value={'fa'}>Fall</MenuItem>
-						</Select>
-					</FormControl>
+					<InputLabel id='review-form-semester'>Semester</InputLabel>
+					<Controller
+						control={control}
+						name='semesterId'
+						render={({ field }) => (
+							<Select fullWidth {...field} label='Semester'>
+								<MenuItem value={'sp'}>Spring</MenuItem>
+								<MenuItem value={'sm'}>Summer</MenuItem>
+								<MenuItem value={'fa'}>Fall</MenuItem>
+							</Select>
+						)}
+					></Controller>
 				</Grid>
 				<Grid item xs={12} lg={12}>
-					<FormControl fullWidth>
-						<InputLabel id='test-select-label'>Year</InputLabel>
-						<Select
-							label='Year'
-							value={String(reviewValues.year)}
-							onChange={handleChange('year')}
-							defaultValue={String(reviewValues.year)}
-						>
-							{yearRange.map((year) => {
-								return (
-									<MenuItem key={year} value={year}>
-										<>{year}</>
-									</MenuItem>
-								)
-							})}
-						</Select>
-					</FormControl>
+					<InputLabel id='review-form-year'>Year</InputLabel>
+					<Controller
+						control={control}
+						name='year'
+						render={({ field }) => (
+							<Select {...field} fullWidth label='Year'>
+								{yearRange.map((year) => {
+									return (
+										<MenuItem key={year} value={year}>
+											<>{year}</>
+										</MenuItem>
+									)
+								})}
+							</Select>
+						)}
+					></Controller>
 				</Grid>
 				<Grid item xs={12} lg={12}>
-					<TextField
-						type='number'
-						label='Workload Selection'
-						defaultValue={'21'}
-						onChange={handleChange('workload')}
-						InputProps={{
-							endAdornment: (
-								<InputAdornment position='end'>hr/wk</InputAdornment>
-							),
-						}}
-						fullWidth
-					/>
+					<InputLabel id='review-form-workload'>Workload</InputLabel>
+					<Controller
+						control={control}
+						name='workload'
+						render={({ field }) => (
+							<TextField
+								{...field}
+								InputProps={{
+									endAdornment: (
+										<InputAdornment position='end'>hr/wk</InputAdornment>
+									),
+								}}
+								fullWidth
+							/>
+						)}
+					></Controller>
 				</Grid>
 				<Grid item xs={12} md={6} lg={6} textAlign='center'>
 					<Typography component='legend'>Difficulty</Typography>
-					<Rating
-						name='Difficulty Selection'
-						value={reviewValues.difficulty}
-						onChange={handleRating('difficulty')}
-						size='large'
-					/>
+					<Controller
+						control={control}
+						name='difficulty'
+						render={({ field }) => <Rating {...field} size='large' />}
+					></Controller>
 				</Grid>
 				<Grid item xs={12} md={6} lg={6} textAlign='center'>
 					<Typography component='legend'>Overall</Typography>
-					<Rating
-						name='Overall Selection'
-						value={reviewValues.overall}
-						onChange={handleRating('overall')}
-						size='large'
-					/>
+					<Controller
+						control={control}
+						name='overall'
+						render={({ field }) => <Rating {...field} size='large' />}
+					></Controller>
 				</Grid>
 				<Grid item xs={12} lg={12}>
 					<Typography sx={{ mb: 1 }} component='legend'>
 						Review
 					</Typography>
-					<DynamicEditor
-						initialValue={`Type review here for ${courseData.courseId}: ${courseData.name}!`}
-						onChange={handleBody}
-					/>
+					<Controller
+						control={control}
+						name='body'
+						render={({ field }) => (
+							<DynamicEditor
+								{...field}
+								initialValue={String(ReviewFormDefaults.body)}
+							/>
+						)}
+					></Controller>
 				</Grid>
-				<Button
-					variant='outlined'
-					sx={{ textAlign: 'right', my: 5 }}
-					onClick={() => {
-						handleSubmit()
-						handleReviewModalClose()
-					}}
-				>
-					Submit
-				</Button>
+				<input type='submit' />
 			</Grid>
 		</form>
 	)

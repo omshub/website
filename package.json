@@ -39,6 +39,7 @@
 		"next": "12.1.5",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
+		"react-hook-form": "^7.34.0",
 		"react-markdown": "^8.0.3",
 		"swr": "^1.3.0",
 		"tsconfig-paths-webpack-plugin": "^4.0.0"

@@ -5,9 +5,8 @@ import { Avatar, Container } from '@mui/material'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Tooltip from '@mui/material/Tooltip'
-import { MenuLinksProps } from './NavBar'
 
-const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
+const ProfileMenu = () => {
 	const { user, logout } = useAuth()
 	const { profileMenuAnchorEl, handleProfileMenuOpen, handleProfileMenuClose } =
 		useMenu()
@@ -35,13 +34,13 @@ const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
 					open={isProfileMenuOpen}
 					onClose={handleProfileMenuClose}
 				>
-					{Object.keys(profileMenuItems).map((key: string, index: number) => {
+					{/* {Object.keys(profileMenuItems).map((key: string, index: number) => {
 						return (
 							<MenuItem key={index} onClick={handleProfileMenuClose}>
 								{key}
 							</MenuItem>
 						)
-					})}
+					})} */}
 					<MenuItem
 						onClick={() => {
 							handleProfileMenuClose()

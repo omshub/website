@@ -4,6 +4,7 @@ import DOMPurify from 'isomorphic-dompurify'
 import { useRef } from 'react'
 
 //SSR is currently not supported for toastui
+
 export default function FormEditor({
 	initialValue,
 	onChange,
