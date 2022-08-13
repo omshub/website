@@ -137,9 +137,9 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 									filterModel: {
 										items: [
 											{
-												columnField: courseFields.IS_DEPRECATED,
-												operatorValue: 'is',
-												value: 'false',
+												columnField: courseFields.NUM_REVIEWS,
+												operatorValue: '>',
+												value: 0,
 											},
 										],
 									},
