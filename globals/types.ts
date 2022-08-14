@@ -447,13 +447,15 @@ export type TCourseId =
 	| 'PUBP-6725'
 // | 'VIP-6600' // IGNORE -- ambiguous departmentId
 
-// course names references:
-//   https://catalog.gatech.edu/coursesaz/cs/
-//   https://catalog.gatech.edu/coursesaz/cse/
-//   https://catalog.gatech.edu/coursesaz/inta/
-//   https://catalog.gatech.edu/coursesaz/isye/
-//   https://catalog.gatech.edu/coursesaz/mgt/
-//   https://catalog.gatech.edu/coursesaz/pubp/
+/*
+	course names references:
+	https://catalog.gatech.edu/coursesaz/cs/
+	https://catalog.gatech.edu/coursesaz/cse/
+	https://catalog.gatech.edu/coursesaz/inta/
+	https://catalog.gatech.edu/coursesaz/isye/
+	https://catalog.gatech.edu/coursesaz/mgt/
+	https://catalog.gatech.edu/coursesaz/pubp/
+*/
 
 export type TCourseName =
 	| 'Introduction to Information Security'
