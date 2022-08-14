@@ -14,7 +14,7 @@ type TReviewsCountsByYearSemObject = {
 	[yearKey: TObjectKey]: { [semesterTermKey: TObjectKey]: number }
 }
 
-type TUserReviews = {
+export type TUserReviews = {
 	[reviewId: string]: Review
 }
 
