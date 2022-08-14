@@ -14,7 +14,7 @@ import {
 	Controller,
 	DefaultValues,
 	SubmitHandler,
-	useForm,
+	useForm
 } from 'react-hook-form'
 
 const DynamicEditor = dynamic(() => import('@components/FormEditor'), {
@@ -35,7 +35,6 @@ const ReviewForm: any = (props: any) => {
 		workload: 10,
 		overall: 5,
 		difficulty: 5,
-		staffSupport: 5,
 		reviewerId: user?.uid,
 		created: Date.now(),
 		modified: Date.now(),
@@ -151,14 +150,6 @@ const ReviewForm: any = (props: any) => {
 								fullWidth
 							/>
 						)}
-					></Controller>
-				</Grid>
-				<Grid item xs={12} md={4} lg={4} textAlign='center'>
-					<Typography component='legend'>Staff Support</Typography>
-					<Controller
-						control={control}
-						name='staffSupport'
-						render={({ field }) => <Rating {...field} size='large' />}
 					></Controller>
 				</Grid>
 				<Grid item xs={12} md={4} lg={4} textAlign='center'>
