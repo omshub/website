@@ -31,10 +31,11 @@ const ReviewForm: any = (props: any) => {
 		courseId: courseData.courseId,
 		year: Number(`${new Date().getFullYear()}`),
 		semesterId: 'sm',
-		body: `Type review here for ${courseData.courseId}: ${courseData.name}!`,
-		workload: 21,
+		body: ` `,
+		workload: 10,
 		overall: 5,
 		difficulty: 5,
+		staffSupport: 5,
 		reviewerId: user?.uid,
 		created: Date.now(),
 		modified: Date.now(),
@@ -152,7 +153,15 @@ const ReviewForm: any = (props: any) => {
 						)}
 					></Controller>
 				</Grid>
-				<Grid item xs={12} md={6} lg={6} textAlign='center'>
+				<Grid item xs={12} md={4} lg={4} textAlign='center'>
+					<Typography component='legend'>Staff Support</Typography>
+					<Controller
+						control={control}
+						name='staffSupport'
+						render={({ field }) => <Rating {...field} size='large' />}
+					></Controller>
+				</Grid>
+				<Grid item xs={12} md={4} lg={4} textAlign='center'>
 					<Typography component='legend'>Difficulty</Typography>
 					<Controller
 						control={control}
@@ -160,7 +169,7 @@ const ReviewForm: any = (props: any) => {
 						render={({ field }) => <Rating {...field} size='large' />}
 					></Controller>
 				</Grid>
-				<Grid item xs={12} md={6} lg={6} textAlign='center'>
+				<Grid item xs={12} md={4} lg={4} textAlign='center'>
 					<Typography component='legend'>Overall</Typography>
 					<Controller
 						control={control}
