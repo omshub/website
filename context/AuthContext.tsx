@@ -1,6 +1,8 @@
 import { auth } from '@backend/FirebaseConfig'
+import backend from '@backend/index'
 import { useAlert } from '@context/AlertContext'
 import { TContextProviderProps } from '@context/types'
+import { TUserReviews } from '@globals/types'
 import {
 	FacebookAuthProvider,
 	fetchSignInMethodsForEmail,
@@ -16,23 +18,26 @@ import {
 } from 'firebase/auth'
 import { createContext, useContext, useEffect, useState } from 'react'
 const AuthContext = createContext<any>({})
+const { getUser } = backend
 
 export const useAuth = () => useContext(AuthContext)
 
 // eslint-disable-next-line no-undef
 export const AuthContextProvider = ({ children }: TContextProviderProps) => {
 	const [user, setUser] = useState<any>(null)
+	const [userReviews, setUserReviews] = useState<TUserReviews>()
 	const { setAlert } = useAlert()
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user: any) => {
 			user
-				? setUser({
-						uid: user.uid,
-						email: user.email,
-						displayName: user,
-				  })
+				? setUser({ uid: user.uid, email: user.email, displayName: user })
 				: setUser(null)
+			user
+				? getUser(user.uid).then((results) => {
+						setUserReviews(results['reviews'])
+				  })
+				: setUserReviews(undefined)
 		})
 		// OAuth Providers
 		const email = window.localStorage.getItem('emailForSignIn')
@@ -76,7 +81,6 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
 		signInWithPopup(auth, currentProviderAuth)
 			.then((result) => {
 				// This gives you a Google Access Token. You can use it to access the Google API.
-				console.log(result)
 				currentProvider.credentialFromResult(result)
 				// const token = credential.accessToken;
 				// The signed-in user info.
@@ -133,7 +137,7 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
 
 	return (
 		<AuthContext.Provider
-			value={{ user, signInWithProvider, signWithMagic, logout }}
+			value={{ user, userReviews, signInWithProvider, signWithMagic, logout }}
 		>
 			{children}
 		</AuthContext.Provider>

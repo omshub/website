@@ -1,21 +1,22 @@
-import { doc, setDoc } from 'firebase/firestore'
-import { db } from './FirebaseConfig'
 import {
-	coreDataDocuments,
 	baseCollectionCoreData,
-	baseCollectionReviewsData,
 	baseCollectionRecentsData,
+	baseCollectionReviewsData,
 	baseCollectionUsersData,
+	coreDataDocuments,
 } from '@backend/constants'
 import {
-	getCourses,
 	getCourse,
-	updateCourse,
-	getReviews,
+	getCourses,
 	getReview,
+	getReviews,
 	getReviewsRecent,
 	getUser,
+	updateCourse,
 } from '@backend/dbOperations'
+import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
+import { parseReviewId, updateAverages } from '@backend/utilityFunctions'
+import { NOT_FOUND_ARRAY_INDEX, REVIEWS_RECENT_TOTAL } from '@globals/constants'
 import {
 	Course,
 	Review,
@@ -23,10 +24,9 @@ import {
 	TPayloadCourses,
 	TPayloadCoursesDataDynamic,
 } from '@globals/types'
-import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
-import { parseReviewId, updateAverages } from '@backend/utilityFunctions'
-import { NOT_FOUND_ARRAY_INDEX, REVIEWS_RECENT_TOTAL } from '@globals/constants'
 import { getCoursesDataStatic } from '@globals/utilities'
+import { doc, setDoc } from 'firebase/firestore'
+import { db } from './FirebaseConfig'
 
 const { COURSES } = coreDataDocuments
 
@@ -220,6 +220,7 @@ export const addOrUpdateReview = async (
 ) => {
 	try {
 		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
+		console.log(semesterTerm)
 		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
 		let newDataDoc: TDocumentDataObject = {}
 		if (reviewsDataDoc) {

@@ -61,8 +61,8 @@ export interface Review {
 	downvotes: number
 	/* --- general review data --- */
 	workload: number
-	difficulty: TRatingScale
-	overall: TRatingScale
+	difficulty: TRatingScale | 0
+	overall: TRatingScale | 0
 	staffSupport?: TRatingScale // N.B. not previously implemented in legacy data
 	/* --- course logistics review data --- */
 	isRecommended?: boolean

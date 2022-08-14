@@ -90,6 +90,7 @@ const CourseId: NextPage<CoursePageProps> = ({
 	const actions = [
 		{
 			icon: <ShareIcon />,
+			enabled: true,
 			name: 'Share Course URL',
 			clickAction: () => {
 				navigator.clipboard.writeText(window.location.href)
@@ -99,6 +100,7 @@ const CourseId: NextPage<CoursePageProps> = ({
 		},
 		{
 			icon: <FileCopyIcon />,
+			enabled: true,
 			name: 'Copy Course Name',
 			clickAction: () => {
 				navigator.clipboard.writeText(
@@ -110,6 +112,7 @@ const CourseId: NextPage<CoursePageProps> = ({
 		},
 		{
 			icon: <RateReviewIcon />,
+			enabled: user ? true : false,
 			name: 'Add Review',
 			clickAction: user
 				? () => {
@@ -393,14 +396,21 @@ const CourseId: NextPage<CoursePageProps> = ({
 					sx={{ position: 'fixed', bottom: 40, right: 40 }}
 					icon={<SpeedDialIcon />}
 				>
-					{actions.map((action) => (
-						<SpeedDialAction
-							key={action.name}
-							icon={action.icon}
-							tooltipTitle={action.name}
-							onClick={action.clickAction}
-						/>
-					))}
+					{actions
+						.flatMap((action) => {
+							if (!action.enabled) {
+								return []
+							}
+							return action
+						})
+						.map((action) => (
+							<SpeedDialAction
+								key={action.name}
+								icon={action.icon}
+								tooltipTitle={action.name}
+								onClick={action.clickAction}
+							/>
+						))}
 				</SpeedDial>
 				<Snackbar
 					open={snackBarOpen}
