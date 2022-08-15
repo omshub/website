@@ -17,7 +17,7 @@ import {
 	Controller,
 	DefaultValues,
 	SubmitHandler,
-	useForm
+	useForm,
 } from 'react-hook-form'
 const { addReview } = backend
 
@@ -164,6 +164,7 @@ const ReviewForm: any = (props: any) => {
 									</MenuItem>
 								)
 							})}
+							ge
 						</Select>
 					)}
 					rules={{
@@ -207,6 +208,7 @@ const ReviewForm: any = (props: any) => {
 							defaultValue={null}
 							type='number'
 							InputProps={{
+								inputMode: 'numeric',
 								endAdornment: (
 									<InputAdornment position='end'>hr/wk</InputAdornment>
 								),
@@ -216,11 +218,20 @@ const ReviewForm: any = (props: any) => {
 					)}
 					rules={{
 						min: '1',
+						max: '168',
+						validate: {
+							validateIsNumber: (value: number) => value > 0,
+						},
 					}}
 				></Controller>
 				{errors.workload && errors.workload.type === 'min' && (
 					<Alert severity='error'>
 						{`Please enter a workload greater than 0`}
+					</Alert>
+				)}
+				{errors.workload && errors.workload.type === 'max' && (
+					<Alert severity='error'>
+						{`Please enter a workload less than 168`}
 					</Alert>
 				)}
 			</Grid>
