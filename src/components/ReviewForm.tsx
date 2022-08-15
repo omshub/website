@@ -256,7 +256,7 @@ const ReviewForm: any = (props: any) => {
 						min: '1',
 						max: '168',
 						validate: {
-							validateIsNumber: (value: number) => value > 0,
+							validateIsNumber: (value: TNullableNumber) => value ? value > 0 : false,
 						},
 					}}
 				></Controller>
