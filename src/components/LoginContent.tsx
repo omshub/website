@@ -1,13 +1,13 @@
-import { Grid } from '@mui/material'
-import type { NextPage } from 'next'
 import { useAuth } from '@context/AuthContext'
 import { useMenu } from '@context/MenuContext'
-import Stack from '@mui/material/Stack'
-import SocialButton from './SocialButton'
-import TextField from '@mui/material/TextField'
-import { useState } from 'react'
-import Typography from '@mui/material/Typography'
 import { TProviderName } from '@globals/types'
+import { Grid } from '@mui/material'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import type { NextPage } from 'next'
+import { useState } from 'react'
+import SocialButton from './SocialButton'
 
 const Login: NextPage = () => {
 	const { signInWithProvider, signWithMagic } = useAuth()
@@ -17,7 +17,7 @@ const Login: NextPage = () => {
 		setEmail(event?.target?.value)
 	}
 	const handleKeyPress = (event: any) => {
-		if (event?.charCode == 13) {
+		if (event?.charCode === 13) {
 			signWithMagic(email)
 			handleLoginModalClose()
 		}

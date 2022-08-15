@@ -17,7 +17,7 @@ import {
 	Controller,
 	DefaultValues,
 	SubmitHandler,
-	useForm,
+	useForm
 } from 'react-hook-form'
 const { addReview } = backend
 
@@ -67,7 +67,6 @@ const ReviewForm: any = (props: any) => {
 		shouldFocusError: true,
 		shouldUnregister: false,
 	})
-	console.log(userReviews)
 	const onSubmit: SubmitHandler<Review> = async (data: Review) => {
 		const goodSubmission = await trigger()
 		if (goodSubmission) {
