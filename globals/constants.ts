@@ -19,6 +19,8 @@ export const REVIEWS_RECENT_TOTAL = REVIEWS_RECENT_LEN + REVIEWS_RECENT_BUFFER
 
 export const NOT_FOUND_ARRAY_INDEX = -1
 
+export const MAX_HOURS_PER_WEEK = 168 // 24*7
+
 /* --- DATA MODELS FIELDS --- */
 
 // common fields

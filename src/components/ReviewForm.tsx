@@ -1,7 +1,15 @@
 import backend from '@backend/index'
 import { useAlert } from '@context/AlertContext'
 import { useAuth } from '@context/AuthContext'
-import { Review, TUserReviews } from '@globals/types'
+import {
+	TCourseId,
+	TNullableNumber,
+	TNullableString,
+	TRatingScale,
+	TSemesterId,
+	TUserReviews,
+} from '@globals/types'
+import { SEMESTER_ID } from '@globals/constants'
 import { Button, TextField } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import Grid from '@mui/material/Grid'
@@ -17,7 +25,7 @@ import {
 	Controller,
 	DefaultValues,
 	SubmitHandler,
-	useForm
+	useForm,
 } from 'react-hook-form'
 const { addReview } = backend
 
@@ -25,22 +33,36 @@ const DynamicEditor = dynamic(() => import('@components/FormEditor'), {
 	ssr: false,
 })
 
+interface ReviewFormInputs {
+	reviewId: string
+	courseId: TCourseId
+	year: TNullableNumber
+	semesterId: TSemesterId | null
+	body: string
+	workload: TNullableNumber
+	overall: TRatingScale | null
+	difficulty: TRatingScale | null
+	reviewerId: TNullableString
+	created: number
+	modified: number
+}
+
 const ReviewForm: any = (props: any) => {
 	const { user, userReviews } = useAuth()
 	const { setAlert } = useAlert()
 	const { courseData, handleReviewModalClose } = props
 	const yearRange = getYearRange()
 
-	const ReviewFormDefaults: DefaultValues<Review> = {
+	const ReviewFormDefaults: DefaultValues<ReviewFormInputs> = {
 		reviewId: '',
 		courseId: courseData.courseId,
-		year: Number(`${new Date().getFullYear()}`),
-		semesterId: 'sm',
-		body: ` `,
-		workload: 5,
-		overall: 0,
-		difficulty: 0,
-		reviewerId: user?.uid,
+		year: null,
+		semesterId: null,
+		body: '',
+		workload: null,
+		overall: null,
+		difficulty: null,
+		reviewerId: user?.uid ?? null,
 		created: Date.now(),
 		modified: Date.now(),
 	}
@@ -57,7 +79,7 @@ const ReviewForm: any = (props: any) => {
 		clearErrors,
 		trigger,
 		formState: { errors, isDirty, isValid },
-	} = useForm<Review>({
+	} = useForm<ReviewFormInputs>({
 		mode: 'all',
 		reValidateMode: 'onChange',
 		defaultValues: ReviewFormDefaults,
@@ -67,24 +89,39 @@ const ReviewForm: any = (props: any) => {
 		shouldFocusError: true,
 		shouldUnregister: false,
 	})
-	const onSubmit: SubmitHandler<Review> = async (data: Review) => {
+	const onSubmit: SubmitHandler<ReviewFormInputs> = async (
+		data: ReviewFormInputs
+	) => {
 		const goodSubmission = await trigger()
 		if (goodSubmission) {
-			const reviewId = `${courseData.courseId}-${data.year}-${
-				mapSemsterIdToTerm[data.semesterId]
-			}-${data.created}`
+			// TODO: Replace `!`s with type/value checking and exit prematurely with error state set appropriately if invalid
+			const reviewerId = data.reviewerId!
+			const semesterId = data.semesterId!
+			const year = Number(data.year!)
+			const reviewId = `${courseData.courseId}-${year}-${mapSemsterIdToTerm[semesterId]}-${data.created}`
+			const workload = Number(data.workload!)
+			const overall = Number(data.overall!)
+			const difficulty = Number(data.difficulty!)
 			const reviewValues = {
 				...data,
-				['reviewId']: reviewId,
+				reviewId,
+				reviewerId,
+				year,
 				['created']: Date.now(),
 				['modified']: Date.now(),
+				semesterId,
+				workload,
+				overall,
+				difficulty,
+				upvotes: 0,
+				downvotes: 0,
+				isLegacy: false,
 			}
-			addReview(user?.uid, reviewId, reviewValues)
+			// @ts-ignore -- rely on upstream processing to validate that `reviewValues` is a valid `Review` immediately prior to calling `addReview()` with it
+			await addReview(user?.uid, reviewId, reviewValues)
 			setAlert({
 				severity: 'success',
-				text: `Successful review submission for ${data.courseId} for ${
-					mapSemesterIdToName[data.semesterId]
-				} ${data.year}`,
+				text: `Successful review submission for ${data.courseId} for ${mapSemesterIdToName[semesterId]} ${data.year}`,
 				variant: 'outlined',
 			})
 			handleReviewModalClose()
@@ -112,7 +149,7 @@ const ReviewForm: any = (props: any) => {
 				<InputLabel id='review-form-semester'>Semester</InputLabel>
 				<Controller
 					control={control}
-					name='semesterId'
+					name={SEMESTER_ID}
 					render={({ field }) => (
 						<Select fullWidth {...field} error={Boolean(errors.semesterId)}>
 							<MenuItem value={'sp'}>Spring</MenuItem>
@@ -131,7 +168,7 @@ const ReviewForm: any = (props: any) => {
 									userReviews,
 									courseData.courseId,
 									semester,
-									getValues()['year']
+									getValues()?.year
 								)
 							},
 						},
@@ -140,10 +177,10 @@ const ReviewForm: any = (props: any) => {
 				{errors.semesterId &&
 					errors.semesterId.type === 'validateSemesterGivenYear' && (
 						<Alert severity='error'>{`Please wait until ${
-							fallbackDates[getValues()['semesterId']]
+							fallbackDates[getValues()?.semesterId!]
 						} to review ${courseData?.courseId} for semester ${
-							mapSemesterIdToName[`${getValues()['semesterId']}`]
-						} ${getValues()['year']}`}</Alert>
+							mapSemesterIdToName[`${getValues()?.semesterId!}`]
+						} ${getValues()?.year!}`}</Alert>
 					)}
 				{errors.semesterId &&
 					errors.semesterId.type === 'validateNotTakenCourse' && (
@@ -169,14 +206,14 @@ const ReviewForm: any = (props: any) => {
 					rules={{
 						validate: {
 							validateYearGivenSemester: (year) => {
-								clearErrors('semesterId')
-								return validateSemesterYear(getValues()['semesterId'], year)
+								clearErrors(SEMESTER_ID)
+								return validateSemesterYear(getValues()?.semesterId, year)
 							},
 							validateNotTakenCourse: (year) => {
 								return validateUserNotTakenCourse(
 									userReviews,
 									courseData.courseId,
-									getValues()['semesterId'],
+									getValues()?.semesterId,
 									year
 								)
 							},
@@ -185,9 +222,9 @@ const ReviewForm: any = (props: any) => {
 				></Controller>
 				{errors.year && errors.year.type === 'validateYearGivenSemester' && (
 					<Alert severity='error'>{`Please wait until ${
-						fallbackDates[getValues()['semesterId']]
+						fallbackDates[getValues()?.semesterId!]
 					} to review ${courseData?.courseId} for semester ${
-						mapSemesterIdToName[`${getValues()['semesterId']}`]
+						mapSemesterIdToName[`${getValues()?.semesterId!}`]
 					} ${getValues()['year']}`}</Alert>
 				)}
 				{errors.year && errors.year.type === 'validateNotTakenCourse' && (
@@ -287,31 +324,38 @@ const getYearRange = () => {
 	)
 }
 
-const validateSemesterYear = (semester: string, year: number) => {
-	const semesterMap: any = {
-		sp: new Date('02-01-' + new Date().getFullYear()),
-		sm: new Date('06-01-' + new Date().getFullYear()),
-		fa: new Date('09-01-' + new Date().getFullYear()),
-	}
-	const compareDate = semesterMap[semester]
-	if (year < new Date().getFullYear()) {
+const validateSemesterYear = (
+	semester: TNullableString,
+	year: TNullableNumber
+) => {
+	if (semester && year) {
+		const semesterMap: any = {
+			sp: new Date('02-01-' + new Date().getFullYear()),
+			sm: new Date('06-01-' + new Date().getFullYear()),
+			fa: new Date('09-01-' + new Date().getFullYear()),
+		}
+		const compareDate = semesterMap[semester]
+		if (year < new Date().getFullYear()) {
+			return true
+		}
+		if (new Date() < compareDate) {
+			return false
+		}
 		return true
 	}
-	if (new Date() < compareDate) {
-		return false
-	}
-	return true
 }
 
 const validateUserNotTakenCourse = (
 	userReviews: TUserReviews | undefined,
 	courseId: string,
-	semester: string,
-	year: number
+	semester: TNullableString,
+	year: TNullableNumber
 ) => {
-	const objKey = `${courseId}-${year}-${semester}`
-	if (typeof userReviews !== 'undefined') {
-		return !(objKey in userReviews)
+	if (semester && year) {
+		const objKey = `${courseId}-${year}-${semester}`
+		if (typeof userReviews !== 'undefined') {
+			return !(objKey in userReviews)
+		}
 	}
 }
 export default ReviewForm
