@@ -76,7 +76,6 @@ const ReviewForm: any = (props: any) => {
 		control,
 		handleSubmit,
 		getValues,
-		clearErrors,
 		trigger,
 		formState: { errors, isDirty, isValid },
 	} = useForm<ReviewFormInputs>({
@@ -161,7 +160,6 @@ const ReviewForm: any = (props: any) => {
 						required: true,
 						validate: {
 							validateSemesterGivenYear: (semester) => {
-								clearErrors('year')
 								return validateSemesterYear(semester, getValues()['year'])
 							},
 							validateNotTakenCourse: (semester) => {
@@ -209,7 +207,6 @@ const ReviewForm: any = (props: any) => {
 						required: true,
 						validate: {
 							validateYearGivenSemester: (year) => {
-								clearErrors(SEMESTER_ID)
 								return validateSemesterYear(getValues()?.semesterId, year)
 							},
 							validateNotTakenCourse: (year) => {
