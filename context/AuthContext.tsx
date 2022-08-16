@@ -1,3 +1,4 @@
+import { addUser } from '@backend/dbOperations'
 import { auth } from '@backend/FirebaseConfig'
 import backend from '@backend/index'
 import { useAlert } from '@context/AlertContext'
@@ -30,14 +31,19 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user: any) => {
-			user
-				? setUser({ uid: user.uid, email: user.email, displayName: user })
-				: setUser(null)
-			user
-				? getUser(user.uid).then((results) => {
+			if (user) {
+				setUser({ uid: user.uid, email: user.email, displayName: user })
+				getUser(user.uid)
+					.then((results) => {
 						setUserReviews(results['reviews'])
-				  })
-				: setUserReviews(undefined)
+					})
+					.catch(() => {
+						addUser(user.uid)
+					})
+			} else {
+				setUser(null)
+				setUserReviews(undefined)
+			}
 		})
 		// OAuth Providers
 		const email = window.localStorage.getItem('emailForSignIn')

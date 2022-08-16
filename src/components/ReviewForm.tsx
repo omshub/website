@@ -242,7 +242,7 @@ const ReviewForm: any = (props: any) => {
 					render={({ field }) => (
 						<TextField
 							{...field}
-							defaultValue={null}
+							defaultValue={undefined}
 							type='number'
 							InputProps={{
 								inputMode: 'numeric',
@@ -358,18 +358,16 @@ const validateSemesterYear = (
 }
 
 const validateUserNotTakenCourse = (
-	userReviews: TUserReviews | undefined,
+	userReviews: TUserReviews | {},
 	courseId: string,
 	semester: TNullableString,
 	year: TNullableNumber
 ) => {
 	if (semester && year) {
 		const objKey = `${courseId}-${year}-${mapSemsterIdToTerm[semester]}`
-		if (typeof userReviews !== 'undefined') {
-			return Object.keys(userReviews).find((key) => key.includes(objKey))
-				? false
-				: true
-		}
+		return Object.keys(userReviews).find((key) => key.includes(objKey))
+			? false
+			: true
 	}
 }
 export default ReviewForm
