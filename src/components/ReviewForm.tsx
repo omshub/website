@@ -1,6 +1,7 @@
 import backend from '@backend/index'
 import { useAlert } from '@context/AlertContext'
 import { useAuth } from '@context/AuthContext'
+import { SEMESTER_ID } from '@globals/constants'
 import {
 	TCourseId,
 	TNullableNumber,
@@ -9,7 +10,6 @@ import {
 	TSemesterId,
 	TUserReviews,
 } from '@globals/types'
-import { SEMESTER_ID } from '@globals/constants'
 import { Button, TextField } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import Grid from '@mui/material/Grid'
@@ -58,7 +58,7 @@ const ReviewForm: any = (props: any) => {
 		courseId: courseData.courseId,
 		year: null,
 		semesterId: null,
-		body: '',
+		body: ' ',
 		workload: null,
 		overall: null,
 		difficulty: null,
@@ -182,6 +182,7 @@ const ReviewForm: any = (props: any) => {
 							mapSemesterIdToName[`${getValues()?.semesterId!}`]
 						} ${getValues()?.year!}`}</Alert>
 					)}
+				{/* {console.log(errors)} */}
 				{errors.semesterId &&
 					errors.semesterId.type === 'validateNotTakenCourse' && (
 						<Alert severity='error'>{`You've already reviewed this course for the semester and year!`}</Alert>
@@ -256,7 +257,8 @@ const ReviewForm: any = (props: any) => {
 						min: '1',
 						max: '168',
 						validate: {
-							validateIsNumber: (value: TNullableNumber) => value ? value > 0 : false,
+							validateIsNumber: (value: TNullableNumber) =>
+								value ? value > 0 : false,
 						},
 					}}
 				></Controller>
@@ -306,7 +308,7 @@ const ReviewForm: any = (props: any) => {
 					render={({ field }) => (
 						<DynamicEditor
 							{...field}
-							initialValue={ReviewFormDefaults.body || ''}
+							initialValue={ReviewFormDefaults.body || ' '}
 						/>
 					)}
 				></Controller>
@@ -362,9 +364,11 @@ const validateUserNotTakenCourse = (
 	year: TNullableNumber
 ) => {
 	if (semester && year) {
-		const objKey = `${courseId}-${year}-${semester}`
+		const objKey = `${courseId}-${year}-${mapSemsterIdToTerm[semester]}`
 		if (typeof userReviews !== 'undefined') {
-			return !(objKey in userReviews)
+			return Object.keys(userReviews).find((key) => key.includes(objKey))
+				? false
+				: true
 		}
 	}
 }
