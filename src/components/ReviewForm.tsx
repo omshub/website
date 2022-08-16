@@ -93,15 +93,20 @@ const ReviewForm: any = (props: any) => {
 		data: ReviewFormInputs
 	) => {
 		const goodSubmission = await trigger()
-		if (goodSubmission) {
+		if (
+			goodSubmission &&
+			Object.values(data).every(
+				(x) => x != null && x != '' && x != 0 && x != undefined
+			)
+		) {
 			// TODO: Replace `!`s with type/value checking and exit prematurely with error state set appropriately if invalid
-			const reviewerId = data.reviewerId!
-			const semesterId = data.semesterId!
+			const reviewerId = String(data.reviewerId)
+			const semesterId = String(data.semesterId)
 			const year = Number(data.year!)
 			const reviewId = `${courseData.courseId}-${year}-${mapSemsterIdToTerm[semesterId]}-${data.created}`
-			const workload = Number(data.workload!)
-			const overall = Number(data.overall!)
-			const difficulty = Number(data.difficulty!)
+			const workload = Number(data.workload)
+			const overall = Number(data.overall)
+			const difficulty = Number(data.difficulty)
 			const reviewValues = {
 				...data,
 				reviewId,
