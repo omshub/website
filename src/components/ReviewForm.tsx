@@ -158,6 +158,7 @@ const ReviewForm: any = (props: any) => {
 						</Select>
 					)}
 					rules={{
+						required: true,
 						validate: {
 							validateSemesterGivenYear: (semester) => {
 								clearErrors('year')
@@ -205,6 +206,7 @@ const ReviewForm: any = (props: any) => {
 						</Select>
 					)}
 					rules={{
+						required: true,
 						validate: {
 							validateYearGivenSemester: (year) => {
 								clearErrors(SEMESTER_ID)
@@ -256,6 +258,7 @@ const ReviewForm: any = (props: any) => {
 					rules={{
 						min: '1',
 						max: '168',
+						required: true,
 						validate: {
 							validateIsNumber: (value: TNullableNumber) =>
 								value ? value > 0 : false,
@@ -281,6 +284,7 @@ const ReviewForm: any = (props: any) => {
 					name='difficulty'
 					render={({ field }) => <Rating {...field} size='large' />}
 					rules={{
+						required: true,
 						min: '1',
 					}}
 				></Controller>
@@ -294,6 +298,7 @@ const ReviewForm: any = (props: any) => {
 						<Rating {...field} defaultValue={0} size='large' />
 					)}
 					rules={{
+						required: true,
 						min: '1',
 					}}
 				></Controller>
