@@ -2,6 +2,7 @@ import backend from '@backend/index'
 import ReviewCard from '@components/ReviewCard'
 import { DESC, REVIEW_ID } from '@globals/constants'
 import { Course, TPayloadReviews } from '@globals/types'
+import LinkIcon from '@mui/icons-material/Link'
 import { useMediaQuery } from '@mui/material'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -9,6 +10,7 @@ import CardContent from '@mui/material/CardContent'
 import CircularProgress from '@mui/material/CircularProgress'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
+import Link from '@mui/material/Link'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Typography from '@mui/material/Typography'
@@ -126,7 +128,6 @@ const CourseId: NextPage<CoursePageProps> = ({
 		setLoading(false)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedYear, selectedSemester])
-
 	return (
 		<Container maxWidth='lg'>
 			<Box
@@ -141,6 +142,23 @@ const CourseId: NextPage<CoursePageProps> = ({
 				<Typography variant='h4' color='text.secondary' gutterBottom>
 					{courseData?.name}
 				</Typography>
+				{courseData && courseData?.url && (
+					<Link href={courseData.url} target='_blank'>
+						<Box
+							sx={{
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}
+						>
+							<LinkIcon />
+							<Typography variant='subtitle1' color='text.secondary'>
+								{'Course Website'}
+							</Typography>
+						</Box>
+					</Link>
+				)}
+
 				{courseData &&
 					courseData?.avgWorkload &&
 					courseData?.avgDifficulty &&
