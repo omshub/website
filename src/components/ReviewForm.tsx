@@ -76,6 +76,7 @@ const ReviewForm: any = (props: any) => {
 		control,
 		handleSubmit,
 		getValues,
+		clearErrors,
 		trigger,
 		formState: { errors, isDirty, isValid },
 	} = useForm<ReviewFormInputs>({
@@ -145,48 +146,6 @@ const ReviewForm: any = (props: any) => {
 				/>
 			</Grid>
 			<Grid item xs={12} lg={12}>
-				<InputLabel id='review-form-semester'>Semester</InputLabel>
-				<Controller
-					control={control}
-					name={SEMESTER_ID}
-					render={({ field }) => (
-						<Select fullWidth {...field} error={Boolean(errors.semesterId)}>
-							<MenuItem value={'sp'}>Spring</MenuItem>
-							<MenuItem value={'sm'}>Summer</MenuItem>
-							<MenuItem value={'fa'}>Fall</MenuItem>
-						</Select>
-					)}
-					rules={{
-						required: true,
-						validate: {
-							validateSemesterGivenYear: (semester) => {
-								return validateSemesterYear(semester, getValues()['year'])
-							},
-							validateNotTakenCourse: (semester) => {
-								return validateUserNotTakenCourse(
-									userReviews,
-									courseData.courseId,
-									semester,
-									getValues()?.year
-								)
-							},
-						},
-					}}
-				></Controller>
-				{errors.semesterId &&
-					errors.semesterId.type === 'validateSemesterGivenYear' && (
-						<Alert severity='error'>{`Please wait until ${
-							fallbackDates[getValues()?.semesterId!]
-						} to review ${courseData?.courseId} for semester ${
-							mapSemesterIdToName[`${getValues()?.semesterId!}`]
-						} ${getValues()?.year!}`}</Alert>
-					)}
-				{errors.semesterId &&
-					errors.semesterId.type === 'validateNotTakenCourse' && (
-						<Alert severity='error'>{`You've already reviewed this course for the semester and year!`}</Alert>
-					)}
-			</Grid>
-			<Grid item xs={12} lg={12}>
 				<InputLabel id='review-form-year'>Year</InputLabel>
 				<Controller
 					control={control}
@@ -206,6 +165,7 @@ const ReviewForm: any = (props: any) => {
 						required: true,
 						validate: {
 							validateYearGivenSemester: (year) => {
+								clearErrors(SEMESTER_ID)
 								return validateSemesterYear(getValues()?.semesterId, year)
 							},
 							validateNotTakenCourse: (year) => {
@@ -231,6 +191,49 @@ const ReviewForm: any = (props: any) => {
 						{`You've already reviewed this course for the semester and year!`}
 					</Alert>
 				)}
+			</Grid>
+			<Grid item xs={12} lg={12}>
+				<InputLabel id='review-form-semester'>Semester</InputLabel>
+				<Controller
+					control={control}
+					name={SEMESTER_ID}
+					render={({ field }) => (
+						<Select fullWidth {...field} error={Boolean(errors.semesterId)}>
+							<MenuItem value={'sp'}>Spring</MenuItem>
+							<MenuItem value={'sm'}>Summer</MenuItem>
+							<MenuItem value={'fa'}>Fall</MenuItem>
+						</Select>
+					)}
+					rules={{
+						required: true,
+						validate: {
+							validateSemesterGivenYear: (semester) => {
+								clearErrors('year')
+								return validateSemesterYear(semester, getValues()['year'])
+							},
+							validateNotTakenCourse: (semester) => {
+								return validateUserNotTakenCourse(
+									userReviews,
+									courseData.courseId,
+									semester,
+									getValues()?.year
+								)
+							},
+						},
+					}}
+				></Controller>
+				{errors.semesterId &&
+					errors.semesterId.type === 'validateSemesterGivenYear' && (
+						<Alert severity='error'>{`Please wait until ${
+							fallbackDates[getValues()?.semesterId!]
+						} to review ${courseData?.courseId} for semester ${
+							mapSemesterIdToName[`${getValues()?.semesterId!}`]
+						} ${getValues()?.year!}`}</Alert>
+					)}
+				{errors.semesterId &&
+					errors.semesterId.type === 'validateNotTakenCourse' && (
+						<Alert severity='error'>{`You've already reviewed this course for the semester and year!`}</Alert>
+					)}
 			</Grid>
 			<Grid item xs={12} lg={12}>
 				<InputLabel id='review-form-workload'>Workload</InputLabel>
