@@ -26,12 +26,12 @@ import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Typography from '@mui/material/Typography'
 import {
-	mapColorPalette,
-	mapColorPaletteInverted,
 	mapPayloadToArray,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
-	roundNumber
+	mapRatingToColor,
+	mapRatingToColorInverted,
+	roundNumber,
 } from '@src/utilities'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -193,20 +193,20 @@ const CourseId: NextPage<CoursePageProps> = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedYear, selectedSemester])
 	return (
-			<Container maxWidth='lg'>
-				<Box
-					sx={{
-						my: 4,
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'center',
-						alignItems: 'center',
-					}}
-				>
-					<Typography variant='h4' color='text.secondary' gutterBottom>
-						{courseData?.name}
-					</Typography>
-					{courseData && courseData?.url && (
+		<Container maxWidth='lg'>
+			<Box
+				sx={{
+					my: 4,
+					display: 'flex',
+					flexDirection: 'column',
+					justifyContent: 'center',
+					alignItems: 'center',
+				}}
+			>
+				<Typography variant='h4' color='text.secondary' gutterBottom>
+					{courseData?.name}
+				</Typography>
+				{courseData && courseData?.url && (
 					<Link href={courseData.url} target='_blank'>
 						<Box
 							sx={{
@@ -221,225 +221,232 @@ const CourseId: NextPage<CoursePageProps> = ({
 							</Typography>
 						</Box>
 					</Link>
-					)}
-					{courseData &&
-						courseData?.avgWorkload &&
-						courseData?.avgDifficulty &&
-						courseData.avgOverall && (
-							<Grid
-								sx={{ my: 1 }}
-								container
-								direction='row'
-								spacing={4}
-								justifyContent='center'
-							>
-								<Grid item xs={12} lg={4}>
-									<Card variant='outlined' sx={{ padding: '5 30' }}>
-										<CardContent>
-											<Typography
-												sx={{ fontSize: 14 }}
-												color='text.secondary'
-												gutterBottom
-											>
-												{`Average Workload`}
-											</Typography>
-											<Typography variant='h5'>
-												{roundNumber(Number(courseData?.avgWorkload), 1) +
-													' hrs/wk'}
-											</Typography>
-										</CardContent>
-									</Card>
-								</Grid>
-								<Grid item xs={12} lg={4}>
-									<Card variant='outlined' sx={{ padding: '5 30' }}>
-										<CardContent>
-											<Typography
-												sx={{ fontSize: 14 }}
-												color='text.secondary'
-												gutterBottom
-											>
-												{`Average Difficulty`}
-											</Typography>
-											<Typography
-												variant='h5'
-												sx={{
-													color:
-														mapColorPaletteInverted[
-															Number(courseData?.avgDifficulty)
-														],
-													border:
-														mapColorPaletteInverted[
-															Number(courseData?.avgDifficulty)
-														],
-												}}
-											>
-												{roundNumber(Number(courseData?.avgDifficulty), 1) +
-													' /5'}
-											</Typography>
-										</CardContent>
-									</Card>
-								</Grid>
-								<Grid item xs={12} lg={4}>
-									<Card
-										variant='outlined'
-										sx={{ margin: '10', padding: '5 30' }}
-									>
-										<CardContent>
-											<Typography
-												sx={{ fontSize: 14 }}
-												color='text.secondary'
-												gutterBottom
-											>
-												{`Average Overall`}
-											</Typography>
-											<Typography
-												variant='h5'
-												sx={{
-													color: mapColorPalette[Number(courseData.avgOverall)],
-													border:
-														mapColorPalette[Number(courseData.avgOverall)],
-												}}
-											>
-												{roundNumber(Number(courseData.avgOverall), 1) + ' /5'}
-											</Typography>
-										</CardContent>
-									</Card>
-								</Grid>
+				)}
+				{courseData &&
+					courseData?.avgWorkload &&
+					courseData?.avgDifficulty &&
+					courseData.avgOverall && (
+						<Grid
+							sx={{ my: 1 }}
+							container
+							direction='row'
+							spacing={4}
+							justifyContent='center'
+						>
+							<Grid item xs={12} lg={4}>
+								<Card variant='outlined' sx={{ padding: '5 30' }}>
+									<CardContent>
+										<Typography
+											sx={{ fontSize: 14 }}
+											color='text.secondary'
+											gutterBottom
+										>
+											{`Average Workload`}
+										</Typography>
+										<Typography variant='h5'>
+											{roundNumber(Number(courseData?.avgWorkload), 1) +
+												' hrs/wk'}
+										</Typography>
+									</CardContent>
+								</Card>
 							</Grid>
-						)}
-					<Grid>
-						<ToggleButtonGroup
-							value={selectedSemester}
-							onChange={handleSemester}
-							exclusive={true}
-							aria-label='year selection'
-							size='large'
-							orientation={`${orientation ? `horizontal` : `vertical`}`}
-							sx={{ my: 2, width: `100%`, justifyContent: 'center' }}
-						>
-							{activeSemesters &&
-								Object.entries(activeSemesters).map(
-									([key, value]: [string, boolean], index: number) => {
-										return (
-											<ToggleButton
-												value={key}
-												key={index}
-												disabled={Boolean(value) || selectedSemester === key}
-											>
-												<Typography variant='body1'>
-													{mapSemesterTermToName[Number(key)]}{' '}
-													{mapSemesterTermToEmoji[Number(key)]}
-												</Typography>
-											</ToggleButton>
-										)
-									}
-								)}
-						</ToggleButtonGroup>
-						<ToggleButtonGroup
-							value={selectedYear}
-							onChange={handleYear}
-							exclusive={true}
-							aria-label='year selection'
-							size='large'
-							orientation={`${orientation ? `horizontal` : `vertical`}`}
-							sx={{ my: 2, width: `100%`, justifyContent: 'center' }}
-						>
-							{courseYears &&
-								courseYears.map((year: number, index: number) => {
+							<Grid item xs={12} lg={4}>
+								<Card
+									variant='outlined'
+									sx={{
+										padding: '5 30',
+										borderColor: mapRatingToColorInverted(
+											Number(courseData?.avgDifficulty)
+										),
+									}}
+								>
+									<CardContent>
+										<Typography
+											sx={{ fontSize: 14 }}
+											color='text.secondary'
+											gutterBottom
+										>
+											{`Average Difficulty`}
+										</Typography>
+										<Typography
+											variant='h5'
+											sx={{
+												color: mapRatingToColorInverted(
+													Number(courseData?.avgDifficulty)
+												),
+											}}
+										>
+											{roundNumber(Number(courseData?.avgDifficulty), 1) +
+												' /5'}
+										</Typography>
+									</CardContent>
+								</Card>
+							</Grid>
+							<Grid item xs={12} lg={4}>
+								<Card
+									variant='outlined'
+									sx={{
+										margin: '10',
+										padding: '5 30',
+										borderColor: mapRatingToColor(
+											Number(courseData.avgOverall)
+										),
+									}}
+								>
+									<CardContent>
+										<Typography
+											sx={{ fontSize: 14 }}
+											color='text.secondary'
+											gutterBottom
+										>
+											{`Average Overall`}
+										</Typography>
+										<Typography
+											variant='h5'
+											sx={{
+												color: mapRatingToColor(Number(courseData.avgOverall)),
+											}}
+										>
+											{roundNumber(Number(courseData.avgOverall), 1) + ' /5'}
+										</Typography>
+									</CardContent>
+								</Card>
+							</Grid>
+						</Grid>
+					)}
+				<Grid>
+					<ToggleButtonGroup
+						value={selectedSemester}
+						onChange={handleSemester}
+						exclusive={true}
+						aria-label='year selection'
+						size='large'
+						orientation={`${orientation ? `horizontal` : `vertical`}`}
+						sx={{ my: 2, width: `100%`, justifyContent: 'center' }}
+					>
+						{activeSemesters &&
+							Object.entries(activeSemesters).map(
+								([key, value]: [string, boolean], index: number) => {
 									return (
 										<ToggleButton
-											value={year}
+											value={key}
 											key={index}
-											disabled={selectedYear === year}
+											disabled={Boolean(value) || selectedSemester === key}
 										>
-											<Typography variant='body2'>{year}</Typography>
+											<Typography variant='body1'>
+												{mapSemesterTermToName[Number(key)]}{' '}
+												{mapSemesterTermToEmoji[Number(key)]}
+											</Typography>
 										</ToggleButton>
 									)
-								})}
-						</ToggleButtonGroup>
-					</Grid>
-					{loading ? (
-						<Box sx={{ display: 'flex', m: 10 }}>
-							<CircularProgress />
-						</Box>
-					) : (
-						<>
-							{courseData?.numReviews ? (
-								<>
-									{courseReviews && (
-										<Grid container rowSpacing={5} sx={{ mt: 1 }}>
-											{mapPayloadToArray(courseReviews, REVIEW_ID, DESC).map(
-												(value: any) => {
-													return (
-														<Grid
-															sx={{ width: `100%` }}
-															key={value.reviewId}
-															item
-														>
-															<ReviewCard {...value}></ReviewCard>
-														</Grid>
-													)
-												}
-											)}
-										</Grid>
-									)}
-								</>
-							) : (
-								<>
-									<Typography
-										variant='h3'
-										color='text.secondary'
-										style={{ textAlign: 'center' }}
-										gutterBottom
-									>
-										{`Aww shucks no reviews 🥲`}
-									</Typography>
-								</>
+								}
 							)}
-						</>
-					)}
-				</Box>
-				<Dialog
-					open={reviewModalOpen}
-					onClose={handleReviewModalClose}
-					maxWidth='md'
-					closeAfterTransition
-				>
-					<ReviewForm {...{ courseData, handleReviewModalClose }} />
-				</Dialog>
-				<SpeedDial
-					ariaLabel='Review Dial'
-					sx={{ position: 'fixed', bottom: 40, right: 40 }}
-					icon={<SpeedDialIcon />}
-				>
-					{actions
-						.flatMap((action) => {
-							if (!action.enabled) {
-								return []
-							}
-							return action
-						})
-						.map((action) => (
-							<SpeedDialAction
-								key={action.name}
-								icon={action.icon}
-								tooltipTitle={action.name}
-								onClick={action.clickAction}
-							/>
-						))}
-				</SpeedDial>
-				<Snackbar
-					open={snackBarOpen}
-					autoHideDuration={6000}
-					onClose={handleClose}
-					action={
-						<Button color='secondary' size='small' onClick={handleClose}>
-							Close
-						</Button>
-					}
-					message={snackBarMessage}
-				/>
-			</Container>
+					</ToggleButtonGroup>
+					<ToggleButtonGroup
+						value={selectedYear}
+						onChange={handleYear}
+						exclusive={true}
+						aria-label='year selection'
+						size='large'
+						orientation={`${orientation ? `horizontal` : `vertical`}`}
+						sx={{ my: 2, width: `100%`, justifyContent: 'center' }}
+					>
+						{courseYears &&
+							courseYears.map((year: number, index: number) => {
+								return (
+									<ToggleButton
+										value={year}
+										key={index}
+										disabled={selectedYear === year}
+									>
+										<Typography variant='body2'>{year}</Typography>
+									</ToggleButton>
+								)
+							})}
+					</ToggleButtonGroup>
+				</Grid>
+				{loading ? (
+					<Box sx={{ display: 'flex', m: 10 }}>
+						<CircularProgress />
+					</Box>
+				) : (
+					<>
+						{courseData?.numReviews ? (
+							<>
+								{courseReviews && (
+									<Grid container rowSpacing={5} sx={{ mt: 1 }}>
+										{mapPayloadToArray(courseReviews, REVIEW_ID, DESC).map(
+											(value: any) => {
+												return (
+													<Grid
+														sx={{ width: `100%` }}
+														key={value.reviewId}
+														item
+													>
+														<ReviewCard {...value}></ReviewCard>
+													</Grid>
+												)
+											}
+										)}
+									</Grid>
+								)}
+							</>
+						) : (
+							<>
+								<Typography
+									variant='h3'
+									color='text.secondary'
+									style={{ textAlign: 'center' }}
+									gutterBottom
+								>
+									{`Aww shucks no reviews 🥲`}
+								</Typography>
+							</>
+						)}
+					</>
+				)}
+			</Box>
+			<Dialog
+				open={reviewModalOpen}
+				onClose={handleReviewModalClose}
+				maxWidth='md'
+				closeAfterTransition
+			>
+				<ReviewForm {...{ courseData, handleReviewModalClose }} />
+			</Dialog>
+			<SpeedDial
+				ariaLabel='Review Dial'
+				sx={{ position: 'fixed', bottom: 40, right: 40 }}
+				icon={<SpeedDialIcon />}
+			>
+				{actions
+					.flatMap((action) => {
+						if (!action.enabled) {
+							return []
+						}
+						return action
+					})
+					.map((action) => (
+						<SpeedDialAction
+							key={action.name}
+							icon={action.icon}
+							tooltipTitle={action.name}
+							onClick={action.clickAction}
+						/>
+					))}
+			</SpeedDial>
+			<Snackbar
+				open={snackBarOpen}
+				autoHideDuration={6000}
+				onClose={handleClose}
+				action={
+					<Button color='secondary' size='small' onClick={handleClose}>
+						Close
+					</Button>
+				}
+				message={snackBarMessage}
+			/>
+		</Container>
 	)
 }
 

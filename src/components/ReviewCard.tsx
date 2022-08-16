@@ -10,10 +10,10 @@ import { grey } from '@mui/material/colors'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import {
-	mapColorPalette,
-	mapColorPaletteInverted,
 	mapDifficulty,
 	mapOverall,
+	mapRatingToColor,
+	mapRatingToColorInverted,
 	mapSemesterIdToName,
 } from '@src/utilities'
 import { toBlob } from 'html-to-image'
@@ -117,8 +117,8 @@ const ReviewCard = ({
 								<Chip
 									label={`Difficulty: ${mapDifficulty[difficulty]}`}
 									sx={{
-										color: mapColorPaletteInverted[difficulty],
-										borderColor: mapColorPaletteInverted[difficulty],
+										color: mapRatingToColorInverted(difficulty),
+										borderColor: mapRatingToColorInverted(difficulty),
 									}}
 									variant='outlined'
 								></Chip>
@@ -127,8 +127,8 @@ const ReviewCard = ({
 								<Chip
 									label={`Overall: ${mapOverall[overall]}`}
 									sx={{
-										color: mapColorPalette[overall],
-										borderColor: mapColorPalette[overall],
+										color: mapRatingToColor(overall),
+										borderColor: mapRatingToColor(overall),
 									}}
 									variant='outlined'
 									color='primary'
