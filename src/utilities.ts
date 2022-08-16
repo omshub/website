@@ -4,7 +4,7 @@ import {
 	canopyLime,
 	newHorizon,
 	olympicTeal,
-	RATCap
+	RATCap,
 } from '@src/colorPalette'
 
 type TMapFields = {
@@ -82,14 +82,15 @@ export const mapRatingToColor = (rating: Number) => {
 		5: canopyLime,
 	}
 
-	return mapColorPalette[Math.round(rating.valueOf())];
+	return mapColorPalette[Math.round(rating.valueOf())]
 }
 
 /**
  * Same as mapRatingToColor, except low values are "good" and higher values "bad"
  * @see mapRatingToColor
  */
-export const mapRatingToColorInverted = (rating: Number) => mapRatingToColor(-rating + 6);
+export const mapRatingToColorInverted = (rating: Number) =>
+	mapRatingToColor(-rating + 6)
 
 export const mapPayloadToArray = (
 	map: TObject | undefined,
