@@ -20,7 +20,7 @@ import {
 	mapRatingToColorInverted,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
-	roundNumber
+	roundNumber,
 } from '@src/utilities'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -152,10 +152,7 @@ const CourseId: NextPage<CoursePageProps> = ({
 							}}
 						>
 							<LinkIcon />
-							<Typography
-								variant='subtitle1'
-								color='text.secondary'
-							>
+							<Typography variant='subtitle1' color='text.secondary'>
 								{'Course Website'}
 							</Typography>
 						</Box>
