@@ -5,6 +5,7 @@ import { useAuth } from '@context/AuthContext'
 import { DESC, REVIEW_ID } from '@globals/constants'
 import { Course, TPayloadReviews } from '@globals/types'
 import FileCopyIcon from '@mui/icons-material/FileCopyOutlined'
+import LinkIcon from '@mui/icons-material/Link'
 import RateReviewIcon from '@mui/icons-material/RateReview'
 import ShareIcon from '@mui/icons-material/Share'
 import { useMediaQuery } from '@mui/material'
@@ -16,6 +17,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Container from '@mui/material/Container'
 import Dialog from '@mui/material/Dialog'
 import Grid from '@mui/material/Grid'
+import Link from '@mui/material/Link'
 import Snackbar from '@mui/material/Snackbar'
 import SpeedDial from '@mui/material/SpeedDial'
 import SpeedDialAction from '@mui/material/SpeedDialAction'
@@ -29,7 +31,7 @@ import {
 	mapPayloadToArray,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
-	roundNumber,
+	roundNumber
 } from '@src/utilities'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -190,9 +192,7 @@ const CourseId: NextPage<CoursePageProps> = ({
 		setLoading(false)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedYear, selectedSemester])
-
 	return (
-		<>
 			<Container maxWidth='lg'>
 				<Box
 					sx={{
@@ -206,6 +206,22 @@ const CourseId: NextPage<CoursePageProps> = ({
 					<Typography variant='h4' color='text.secondary' gutterBottom>
 						{courseData?.name}
 					</Typography>
+					{courseData && courseData?.url && (
+					<Link href={courseData.url} target='_blank'>
+						<Box
+							sx={{
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}
+						>
+							<LinkIcon />
+							<Typography variant='subtitle1' color='text.secondary'>
+								{'Course Website'}
+							</Typography>
+						</Box>
+					</Link>
+					)}
 					{courseData &&
 						courseData?.avgWorkload &&
 						courseData?.avgDifficulty &&
@@ -424,7 +440,6 @@ const CourseId: NextPage<CoursePageProps> = ({
 					message={snackBarMessage}
 				/>
 			</Container>
-		</>
 	)
 }
 
