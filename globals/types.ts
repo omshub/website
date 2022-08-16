@@ -390,6 +390,9 @@ export type TCourseId =
 	| 'CS-8803-O06'
 	| 'CS-8803-O08'
 	| 'CS-8803-O12'
+	| 'CS-8803-O13'
+	| 'CS-8803-O15'
+	| 'CS-8803-O17'
 	| 'CS-8803-OC1'
 	| 'CS-8813'
 	| 'CSE-6040'
@@ -446,13 +449,15 @@ export type TCourseId =
 	| 'PUBP-6725'
 // | 'VIP-6600' // IGNORE -- ambiguous departmentId
 
-// course names references:
-//   https://catalog.gatech.edu/coursesaz/cs/
-//   https://catalog.gatech.edu/coursesaz/cse/
-//   https://catalog.gatech.edu/coursesaz/inta/
-//   https://catalog.gatech.edu/coursesaz/isye/
-//   https://catalog.gatech.edu/coursesaz/mgt/
-//   https://catalog.gatech.edu/coursesaz/pubp/
+/*
+	course names references:
+	https://catalog.gatech.edu/coursesaz/cs/
+	https://catalog.gatech.edu/coursesaz/cse/
+	https://catalog.gatech.edu/coursesaz/inta/
+	https://catalog.gatech.edu/coursesaz/isye/
+	https://catalog.gatech.edu/coursesaz/mgt/
+	https://catalog.gatech.edu/coursesaz/pubp/
+*/
 
 export type TCourseName =
 	| 'Introduction to Information Security'
@@ -505,6 +510,9 @@ export type TCourseName =
 	| 'Biomedical Analytics'
 	| 'Compilers: Theory and Practice'
 	| 'Systems Issues in Cloud Computing'
+	| 'Quantum Computing'
+	| 'Computing Law'
+	| 'Global Entrepreneurship'
 	| 'Security Operations and Incidence Response'
 	| 'Malware Analysis and Defense'
 	| 'Computing for Data Analysis: Methods and Tools'
