@@ -48,7 +48,7 @@ export interface CourseDataDynamic {
 export interface Course extends CourseDataStatic, CourseDataDynamic {}
 
 export interface Review {
-	reviewId: string
+	reviewId: string // format: `reviewId` === `courseId-year-semesterTerm-created`
 	courseId: TCourseId
 	year: number
 	semesterId: TSemesterId
@@ -61,8 +61,8 @@ export interface Review {
 	downvotes: number
 	/* --- general review data --- */
 	workload: number
-	difficulty: TRatingScale | 0
-	overall: TRatingScale | 0
+	difficulty: TRatingScale
+	overall: TRatingScale
 	staffSupport?: TRatingScale // N.B. not previously implemented in legacy data
 	/* --- course logistics review data --- */
 	isRecommended?: boolean
