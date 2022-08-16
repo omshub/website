@@ -13,9 +13,9 @@ import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Typography from '@mui/material/Typography'
 import {
-	mapColorPalette,
-	mapColorPaletteInverted,
 	mapPayloadToArray,
+	mapRatingToColor,
+	mapRatingToColorInverted,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
 	roundNumber,
@@ -168,7 +168,15 @@ const CourseId: NextPage<CoursePageProps> = ({
 								</Card>
 							</Grid>
 							<Grid item xs={12} lg={4}>
-								<Card variant='outlined' sx={{ padding: '5 30' }}>
+								<Card
+									variant='outlined'
+									sx={{
+										padding: '5 30',
+										borderColor: mapRatingToColorInverted(
+											Number(courseData?.avgDifficulty)
+										),
+									}}
+								>
 									<CardContent>
 										<Typography
 											sx={{ fontSize: 14 }}
@@ -180,14 +188,9 @@ const CourseId: NextPage<CoursePageProps> = ({
 										<Typography
 											variant='h5'
 											sx={{
-												color:
-													mapColorPaletteInverted[
-														Number(courseData?.avgDifficulty)
-													],
-												border:
-													mapColorPaletteInverted[
-														Number(courseData?.avgDifficulty)
-													],
+												color: mapRatingToColorInverted(
+													Number(courseData?.avgDifficulty)
+												),
 											}}
 										>
 											{roundNumber(Number(courseData?.avgDifficulty), 1) +
@@ -197,7 +200,16 @@ const CourseId: NextPage<CoursePageProps> = ({
 								</Card>
 							</Grid>
 							<Grid item xs={12} lg={4}>
-								<Card variant='outlined' sx={{ margin: '10', padding: '5 30' }}>
+								<Card
+									variant='outlined'
+									sx={{
+										margin: '10',
+										padding: '5 30',
+										borderColor: mapRatingToColor(
+											Number(courseData.avgOverall)
+										),
+									}}
+								>
 									<CardContent>
 										<Typography
 											sx={{ fontSize: 14 }}
@@ -209,8 +221,7 @@ const CourseId: NextPage<CoursePageProps> = ({
 										<Typography
 											variant='h5'
 											sx={{
-												color: mapColorPalette[Number(courseData.avgOverall)],
-												border: mapColorPalette[Number(courseData.avgOverall)],
+												color: mapRatingToColor(Number(courseData.avgOverall)),
 											}}
 										>
 											{roundNumber(Number(courseData.avgOverall), 1) + ' /5'}

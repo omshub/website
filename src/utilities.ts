@@ -4,7 +4,7 @@ import {
 	canopyLime,
 	newHorizon,
 	olympicTeal,
-	RATCap,
+	RATCap
 } from '@src/colorPalette'
 
 type TMapFields = {
@@ -33,22 +33,6 @@ export const mapStaffSupport: TMapFields = {
 	3: 'Neutral',
 	4: 'Supportive',
 	5: 'Strong Support',
-}
-
-export const mapColorPalette: TMapFields = {
-	1: newHorizon,
-	2: RATCap,
-	3: boldBlue,
-	4: olympicTeal,
-	5: canopyLime,
-}
-
-export const mapColorPaletteInverted: TMapFields = {
-	1: canopyLime,
-	2: olympicTeal,
-	3: boldBlue,
-	4: RATCap,
-	5: newHorizon,
 }
 
 export const mapSemesterTermToName: TMapFields = {
@@ -85,6 +69,27 @@ type TSortKey =
 	| 'specializationId'
 	| 'userId'
 type TSortDirection = 'ASC' | 'DESC'
+
+/**
+ * Returns a hex color string from a 1-5 rating, with 1 being "bad" and 5 being "good"
+ */
+export const mapRatingToColor = (rating: Number) => {
+	const mapColorPalette: TMapFields = {
+		1: newHorizon,
+		2: RATCap,
+		3: boldBlue,
+		4: olympicTeal,
+		5: canopyLime,
+	}
+
+	return mapColorPalette[Math.round(rating.valueOf())];
+}
+
+/**
+ * Same as mapRatingToColor, except low values are "good" and higher values "bad"
+ * @see mapRatingToColor
+ */
+export const mapRatingToColorInverted = (rating: Number) => mapRatingToColor(-rating + 6);
 
 export const mapPayloadToArray = (
 	map: TObject | undefined,
