@@ -108,7 +108,7 @@ export const getReviews = async (
 //   reviews = reviews?.slice(0, 50)
 export const getReviewsRecent = async (courseId?: TCourseId) => {
 	try {
-		// N.B. use empty args version for non-course-specific/aggregated array
+		// N.B. use undefined `courseId` arg form for non-course-specific/aggregated array
 		const dataId = courseId ?? `_aggregateData`
 
 		const snapshot = await getDoc(
@@ -116,6 +116,9 @@ export const getReviewsRecent = async (courseId?: TCourseId) => {
 		)
 		const data = snapshot.data()
 		const reviewsRecent: Review[] = data ? data?.data : []
+		if (reviewsRecent?.length) {
+			reviewsRecent.sort((a, b) => b.created - a.created)
+		}
 		return reviewsRecent
 	} catch (e: any) {
 		console.log(e)
