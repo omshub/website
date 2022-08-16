@@ -181,7 +181,6 @@ const ReviewForm: any = (props: any) => {
 							mapSemesterIdToName[`${getValues()?.semesterId!}`]
 						} ${getValues()?.year!}`}</Alert>
 					)}
-				{/* {console.log(errors)} */}
 				{errors.semesterId &&
 					errors.semesterId.type === 'validateNotTakenCourse' && (
 						<Alert severity='error'>{`You've already reviewed this course for the semester and year!`}</Alert>
@@ -343,10 +342,11 @@ const validateSemesterYear = (
 	year: TNullableNumber
 ) => {
 	if (semester && year) {
+		const currentYear = new Date().getFullYear()
 		const semesterMap: any = {
-			sp: new Date('02-01-' + new Date().getFullYear()),
-			sm: new Date('06-01-' + new Date().getFullYear()),
-			fa: new Date('09-01-' + new Date().getFullYear()),
+			sp: new Date(`02/01/${currentYear}`),
+			sm: new Date(`06/01/${currentYear}`),
+			fa: new Date(`09/01/${currentYear}`),
 		}
 		const compareDate = semesterMap[semester]
 		if (year < new Date().getFullYear()) {
