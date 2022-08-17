@@ -1,5 +1,4 @@
 import { TCourseId, TDepartmentId, TNullableNumber } from '@globals/types'
-
 const LEN_SIMPLE_COURSE_NUMBER = 5 //   DD-CCCC-...     (e.g., CS-6200-...)     [total 5 * `-`]
 const LEN_COMPOUND_COURSE_NUMBER = 6 // DD-CCCC-CCC-... (e.g., CS-8803-O08-...) [total 6 * `-`]
 const SEPARATOR_TOKEN = '-'
@@ -61,7 +60,7 @@ export const updateAverage = ({
 	oldValue = 0, // 0 for add new value
 	newValue = 0, // 0 for delete existing value
 }: TAveragesData) => {
-	if (newCount === 0) {
+	if (newCount <= 0) {
 		return null
 	}
 
@@ -79,6 +78,7 @@ export const updateAverage = ({
 }
 
 type TAveragesInputData = {
+	courseId: TCourseId
 	// N.B. `avg`s are null when `numReviews` === 0
 	avgWorkload?: TNullableNumber
 	avgDifficulty?: TNullableNumber
@@ -101,19 +101,20 @@ type TAveragesInputData = {
 // This function converts input averages to output averages based on
 // review add, edit, or delete
 export const updateAverages = ({
+	courseId,
 	oldCount,
 	newCount,
 	oldWorkload,
 	oldDifficulty,
 	oldOverall,
-	// oldStaffSupport,
+	oldStaffSupport,
 	newWorkload,
 	newDifficulty,
 	newOverall,
-	// newStaffSupport,
+	newStaffSupport,
 	avgWorkload,
 	avgDifficulty,
-	// avgStaffSupport,
+	avgStaffSupport,
 	avgOverall,
 }: TAveragesInputData) => ({
 	avgWorkload: updateAverage({
@@ -137,12 +138,127 @@ export const updateAverages = ({
 		oldValue: oldOverall,
 		newValue: newOverall,
 	}),
-	// TODO: implement additional logic for `avgStaffSupport`
-	// avgStaffSupport: updateAverage({
-	// 	oldAverage: avgStaffSupport,
-	// 	oldCount,
-	// 	newCount,
-	// 	oldValue: oldStaffSupport,
-	// 	newValue: newStaffSupport,
-	// }),
+	// non-legacy fields -- requires backing out old/legacy numReviews
+	avgStaffSupport: updateAverage({
+		oldAverage: avgStaffSupport,
+		oldCount: oldCount
+			? oldCount - mapCourseToLegacyNumReviews[courseId]
+			: undefined,
+		newCount: newCount - mapCourseToLegacyNumReviews[courseId],
+		oldValue: oldStaffSupport,
+		newValue: newStaffSupport,
+	}),
 })
+
+type TMapCourseToLegacyNumReviews = {
+	[courseId: string]: number
+}
+export const mapCourseToLegacyNumReviews: TMapCourseToLegacyNumReviews = {
+	'CS-6035': 398,
+	'CS-6150': 2,
+	'CS-6200': 256,
+	'CS-6210': 85,
+	'CS-6238': 29,
+	'CS-6250': 326,
+	'CS-6260': 39,
+	'CS-6262': 126,
+	'CS-6263': 74,
+	'CS-6264': 4,
+	'CS-6265': 20,
+	'CS-6266': 0,
+	'CS-6290': 88,
+	'CS-6291': 35,
+	'CS-6300': 233,
+	'CS-6310': 156,
+	'CS-6340': 136,
+	'CS-6400': 230,
+	'CS-6440': 83,
+	'CS-6457': 13,
+	'CS-6460': 89,
+	'CS-6465': 1,
+	'CS-6475': 153,
+	'CS-6476': 162,
+	'CS-6515': 270,
+	'CS-6601': 236,
+	'CS-6603': 49,
+	'CS-6675': 5,
+	'CS-6726': 0,
+	'CS-6727': 0,
+	'CS-6747': 7,
+	'CS-6750': 210,
+	'CS-6795': 2,
+	'CS-7210': 31,
+	'CS-7280': 24,
+	'CS-7450': 0,
+	'CS-7470': 2,
+	'CS-7632': 16,
+	'CS-7637': 216,
+	'CS-7638': 237,
+	'CS-7639': 32,
+	'CS-7641': 285,
+	'CS-7642': 181,
+	'CS-7643': 70,
+	'CS-7646': 339,
+	'CS-8803-O04': 10,
+	'CS-8803-O05': 0,
+	'CS-8803-O06': 0,
+	'CS-8803-O08': 16,
+	'CS-8803-O12': 9,
+	'CS-8803-O13': 0,
+	'CS-8803-O15': 0,
+	'CS-8803-O17': 0,
+	'CS-8803-OC1': 7,
+	'CS-8813': 0,
+	'CSE-6040': 110,
+	'CSE-6140': 0,
+	'CSE-6220': 67,
+	'CSE-6240': 0,
+	'CSE-6242': 260,
+	'CSE-6250': 61,
+	'CSE-6742': 4,
+	'ECE-6150': 0,
+	'ECE-6266': 0,
+	'ECE-6320': 0,
+	'ECE-6323': 0,
+	'ECE-8803a': 0,
+	'ECE-8803c': 0,
+	'ECE-8803d': 0,
+	'ECE-8803e': 1,
+	'ECE-8803g': 0,
+	'ECE-8803h': 0,
+	'ECE-8813': 0,
+	'ECE-8823': 0,
+	'ECE-8843': 1,
+	'ECE-8853': 0,
+	'ECE-8863': 0,
+	'ECE-8873': 0,
+	'INTA-6014': 0,
+	'INTA-6103': 7,
+	'INTA-6450': 20,
+	'INTA-8803G': 0,
+	'ISYE-6402': 32,
+	'ISYE-6404': 0,
+	'ISYE-6413': 0,
+	'ISYE-6414': 90,
+	'ISYE-6416': 1,
+	'ISYE-6420': 57,
+	'ISYE-6501': 150,
+	'ISYE-6644': 99,
+	'ISYE-6650': 1,
+	'ISYE-6669': 42,
+	'ISYE-6740': 35,
+	'ISYE-7406': 18,
+	'ISYE-8803': 32,
+	'MGT-6203': 107,
+	'MGT-6311': 25,
+	'MGT-6727': 10,
+	'MGT-6748': 4,
+	'MGT-8803': 83,
+	'MGT-8813': 15,
+	'MGT-8823': 13,
+	'PUBP-6111': 1,
+	'PUBP-6266': 0,
+	'PUBP-6501': 8,
+	'PUBP-6502': 3,
+	'PUBP-6725': 17,
+}

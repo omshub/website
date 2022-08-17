@@ -276,6 +276,7 @@ export const updateCourseDataOnAddReview = async (
 				avgOverall,
 				// avgStaffSupport // TODO: implement additional logic for `avgStaffSupport`
 			} = updateAverages({
+				courseId,
 				oldCount,
 				newCount,
 				newWorkload,
@@ -399,6 +400,7 @@ export const updateCourseDataOnUpdateReview = async (
 				avgOverall,
 				// avgStaffSupport // TODO: implement additional logic for `avgStaffSupport`
 			} = updateAverages({
+				courseId,
 				oldCount,
 				newCount,
 				oldWorkload,
@@ -512,6 +514,7 @@ export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 				avgOverall,
 				// avgStaffSupport // TODO: implement additional logic for `avgStaffSupport`
 			} = updateAverages({
+				courseId,
 				oldCount,
 				newCount,
 				oldWorkload,
