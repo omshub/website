@@ -220,7 +220,6 @@ export const addOrUpdateReview = async (
 ) => {
 	try {
 		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
-		console.log(semesterTerm)
 		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
 		let newDataDoc: TDocumentDataObject = {}
 		if (reviewsDataDoc) {

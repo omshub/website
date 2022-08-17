@@ -33,7 +33,6 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user: any) => {
 			if (user) {
-				console.log(user)
 				setUser(user)
 				getUser(user.uid)
 					.then((results) => {

@@ -87,7 +87,7 @@ const ReviewForm: any = (props: any) => {
 		context: undefined,
 		criteriaMode: 'firstError',
 		shouldFocusError: true,
-		shouldUnregister: false,
+		shouldUnregister: true,
 	})
 	const onSubmit: SubmitHandler<ReviewFormInputs> = async (
 		data: ReviewFormInputs
@@ -166,7 +166,10 @@ const ReviewForm: any = (props: any) => {
 						required: true,
 						validate: {
 							validateYearGivenSemester: (year) => {
-								clearErrors(SEMESTER_ID)
+								if (year != getValues()?.year) {
+									clearErrors(SEMESTER_ID)
+								}
+
 								return validateSemesterYear(getValues()?.semesterId, year)
 							},
 							validateNotTakenCourse: (year) => {
@@ -209,6 +212,9 @@ const ReviewForm: any = (props: any) => {
 						required: true,
 						validate: {
 							validateSemesterGivenYear: (semester) => {
+								if (semester != getValues()?.semesterId) {
+									clearErrors('year')
+								}
 								clearErrors('year')
 								return validateSemesterYear(semester, getValues()['year'])
 							},
