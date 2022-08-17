@@ -1,5 +1,6 @@
 import { useAuth } from '@context/AuthContext'
 import { useMenu } from '@context/MenuContext'
+import { FirebaseAuthUser } from '@context/types'
 
 import { Avatar, Container } from '@mui/material'
 import Menu from '@mui/material/Menu'
@@ -7,7 +8,15 @@ import MenuItem from '@mui/material/MenuItem'
 import Tooltip from '@mui/material/Tooltip'
 
 const ProfileMenu = () => {
-	const { user, logout } = useAuth()
+	const authContext = useAuth()
+
+	let user: FirebaseAuthUser | null = null
+	let logout = () => {}
+
+	if (authContext) {
+		;({ user, logout } = authContext)
+	}
+
 	const { profileMenuAnchorEl, handleProfileMenuOpen, handleProfileMenuClose } =
 		useMenu()
 
@@ -20,7 +29,7 @@ const ProfileMenu = () => {
 					<Avatar
 						aria-controls={menuId}
 						onClick={handleProfileMenuOpen}
-						src={user?.photoURL}
+						src={user?.photoURL ?? undefined}
 					/>
 				</Tooltip>
 				<Menu

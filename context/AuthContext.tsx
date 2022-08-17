@@ -1,6 +1,6 @@
 import { auth } from '@backend/FirebaseConfig'
 import { useAlert } from '@context/AlertContext'
-import { TContextProviderProps } from '@context/types'
+import { TContextProviderProps, FirebaseAuthUser, TSignInAction } from '@context/types'
 import {
 	FacebookAuthProvider,
 	fetchSignInMethodsForEmail,
@@ -13,14 +13,19 @@ import {
 	signInWithEmailLink,
 	signInWithPopup,
 	signOut,
-	UserInfo,
 } from 'firebase/auth'
 import { createContext, useContext, useEffect, useState } from 'react'
-const AuthContext = createContext<any>({})
+
+type TAuthContext = {
+	user: FirebaseAuthUser | null
+	signInWithProvider: TSignInAction
+	signWithMagic: TSignInAction
+	logout: () => void
+}
+
+const AuthContext = createContext<TAuthContext | null>(null)
 
 export const useAuth = () => useContext(AuthContext)
-
-type FirebaseAuthUser = UserInfo
 
 // eslint-disable-next-line no-undef
 export const AuthContextProvider = ({ children }: TContextProviderProps) => {

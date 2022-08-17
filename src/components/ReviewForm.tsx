@@ -2,8 +2,10 @@ import { addUser, getUser } from '@backend/dbOperations'
 import backend from '@backend/index'
 import { useAlert } from '@context/AlertContext'
 import { useAuth } from '@context/AuthContext'
+import { FirebaseAuthUser } from '@context/types'
 import { SEMESTER_ID } from '@globals/constants'
 import {
+	Course,
 	TNullableNumber,
 	TNullableString,
 	TRatingScale,
@@ -44,11 +46,25 @@ interface ReviewFormInputs {
 	difficulty: TRatingScale | null
 }
 
-const ReviewForm: any = (props: any) => {
-	const { user } = useAuth()
+type TPropsReviewForm = {
+	courseData: Course
+	handleReviewModalClose: () => void
+}
+
+const ReviewForm = ({
+	courseData,
+	handleReviewModalClose,
+}: TPropsReviewForm) => {
+	const authContext = useAuth()
+
+	let user: FirebaseAuthUser | null = null
+
+	if (authContext) {
+		;({ user } = authContext)
+	}
+
 	const { setAlert } = useAlert()
 	const [userReviews, setUserReviews] = useState<TUserReviews>({})
-	const { courseData, handleReviewModalClose } = props
 	const router = useRouter()
 
 	const yearRange = getYearRange()
@@ -87,57 +103,77 @@ const ReviewForm: any = (props: any) => {
 	const onSubmit: SubmitHandler<ReviewFormInputs> = async (
 		data: ReviewFormInputs
 	) => {
-		const goodSubmission = await trigger()
+		const isGoodSubmission = await trigger()
+
+		const hasNonNullDataValues = Object.values(data).every(
+			(x) => x != null && x != '' && x != 0 && x != undefined
+		)
+
 		if (
-			goodSubmission &&
-			Object.values(data).every(
-				(x) => x != null && x != '' && x != 0 && x != undefined
-			) &&
-			courseData
+			isGoodSubmission &&
+			courseData &&
+			user &&
+			user.uid &&
+			hasNonNullDataValues
 		) {
 			const currentTime = Date.now()
-			const reviewerId = user?.uid
+			const reviewerId = user.uid
 			const reviewId = `${courseData.courseId}-${data.year}-${
 				mapSemsterIdToTerm[String(data.semesterId)]
 			}-${currentTime}`
+			const courseId = courseData.courseId
+			// TODO: add parsing logic to retain only chars `0-9` and `.` from `data.workload` input string
+			const workload = Number(data.workload)
+			const difficulty = Number(data.difficulty) as TRatingScale
+			const overall = Number(data.overall) as TRatingScale
+			const semesterId = data.semesterId as TSemesterId
+			const year = Number(data.year)
+
 			const reviewValues = {
 				...data,
-				['courseId']: courseData.courseId,
-				['reviewerId']: reviewerId,
-				['reviewId']: reviewId,
+				courseId,
+				reviewerId,
+				reviewId,
 				['created']: currentTime,
 				['modified']: currentTime,
+				semesterId,
 				upvotes: 0,
 				downvotes: 0,
 				isLegacy: false,
+				year,
+				workload,
+				difficulty,
+				overall,
 			}
-			// @ts-ignore -- rely on upstream processing to validate that `reviewValues` is a valid `Review` immediately prior to calling `addReview()` with it
-			await addReview(user?.uid, reviewId, reviewValues)
+
+			await addReview(user.uid, reviewId, reviewValues)
+
 			setAlert({
 				severity: 'success',
-				text: `Successful review submission for ${courseData.courseId} for ${
-					mapSemesterIdToName[String(data.semesterId)]
-				} ${data.year}`,
+				text: `Successful review submission for ${courseData.courseId} for ${mapSemesterIdToName[semesterId]} ${data.year}`,
 				variant: 'outlined',
 			})
+
 			handleReviewModalClose()
 			router.reload()
 		}
 	}
-	{
-		console.log(userReviews)
-	}
+
 	useEffect(() => {
-		getUser(user?.uid).then((results) => {
-			if (results?.userId) {
-				setUserReviews(results['reviews'])
-			} else {
-				addUser(user.uid)
-				setUserReviews({})
-			}
-		})
+		if (user) {
+			getUser(user.uid).then((results) => {
+				if (results.userId) {
+					setUserReviews(results['reviews'])
+				} else if (user && user.uid) {
+					addUser(user.uid)
+					setUserReviews({})
+				}
+			})
+		} else {
+			setUserReviews({})
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, [user])
 
 	return (
 		<Grid

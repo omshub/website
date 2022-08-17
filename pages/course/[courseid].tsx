@@ -2,6 +2,7 @@ import backend from '@backend/index'
 import ReviewCard from '@components/ReviewCard'
 import ReviewForm from '@components/ReviewForm'
 import { useAuth } from '@context/AuthContext'
+import { FirebaseAuthUser } from '@context/types'
 import { DESC, REVIEW_ID } from '@globals/constants'
 import { Course, TPayloadReviews } from '@globals/types'
 import FileCopyIcon from '@mui/icons-material/FileCopyOutlined'
@@ -71,7 +72,13 @@ const CourseId: NextPage<CoursePageProps> = ({
 	const [reviewModalOpen, setReviewModalOpen] = useState(false)
 	const handleReviewModalOpen = () => setReviewModalOpen(true)
 	const handleReviewModalClose = () => setReviewModalOpen(false)
-	const { user } = useAuth()
+
+	const authContext = useAuth()
+	let user: FirebaseAuthUser | null = null
+	if (authContext) {
+		;({ user } = authContext)
+	}
+
 	const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>(
 		defaultSemesterToggles
 	)

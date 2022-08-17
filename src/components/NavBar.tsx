@@ -1,5 +1,6 @@
 import { useAuth } from '@context/AuthContext'
 import { useMenu } from '@context/MenuContext'
+import { FirebaseAuthUser } from '@context/types'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -11,6 +12,7 @@ import Link from '../Link'
 import Login from './LoginContent'
 import MobileMenu from './MobileMenu'
 import ProfileMenu from './ProfileMenu'
+
 interface NavBarProps {}
 
 export interface MenuLinksProps {
@@ -18,7 +20,14 @@ export interface MenuLinksProps {
 }
 
 export const NavBar = ({ ...props }: NavBarProps) => {
-	const { user } = useAuth()
+	const authContext = useAuth()
+
+	let user: FirebaseAuthUser | null = null
+
+	if (authContext) {
+		;({ user } = authContext)
+	}
+
 	const { loginModalOpen, handleLoginModalOpen, handleLoginModalClose } =
 		useMenu()
 

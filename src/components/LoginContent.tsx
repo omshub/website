@@ -1,5 +1,6 @@
 import { useAuth } from '@context/AuthContext'
 import { useMenu } from '@context/MenuContext'
+import { TSignInAction } from '@context/types'
 import { TProviderName } from '@globals/types'
 import { Grid } from '@mui/material'
 import Stack from '@mui/material/Stack'
@@ -10,9 +11,18 @@ import { useState } from 'react'
 import SocialButton from './SocialButton'
 
 const Login: NextPage = () => {
-	const { signInWithProvider, signWithMagic } = useAuth()
+	const authContext = useAuth()
+
+	// eslint-disable-next-line no-unused-vars
+	let signInWithProvider: TSignInAction = (email: string) => {}
+	// eslint-disable-next-line no-unused-vars
+	let signWithMagic: TSignInAction  = (email: string) => {}
+
+	if (authContext) {
+		;({ signInWithProvider, signWithMagic } = authContext)
+	}
 	const { handleLoginModalClose } = useMenu()
-	const [email, setEmail] = useState()
+	const [email, setEmail] = useState<string>('')
 	const handleEmailChange = (event: any) => {
 		setEmail(event?.target?.value)
 	}
