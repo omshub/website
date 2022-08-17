@@ -20,6 +20,7 @@ import Select from '@mui/material/Select'
 import Typography from '@mui/material/Typography'
 import { mapSemesterIdToName, mapSemsterIdToTerm } from '@src/utilities'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router'
 import {
 	Controller,
 	DefaultValues,
@@ -45,6 +46,8 @@ const ReviewForm: any = (props: any) => {
 	const { user, userReviews } = useAuth()
 	const { setAlert } = useAlert()
 	const { courseData, handleReviewModalClose } = props
+	const router = useRouter()
+
 	const yearRange = getYearRange()
 
 	const ReviewFormDefaults: DefaultValues<ReviewFormInputs> = {
@@ -115,6 +118,7 @@ const ReviewForm: any = (props: any) => {
 				variant: 'outlined',
 			})
 			handleReviewModalClose()
+			router.reload()
 		}
 	}
 
@@ -162,6 +166,8 @@ const ReviewForm: any = (props: any) => {
 								return validateSemesterYear(getValues()?.semesterId, year)
 							},
 							validateNotTakenCourse: (year) => {
+								clearErrors(SEMESTER_ID)
+
 								return validateUserNotTakenCourse(
 									userReviews,
 									courseData.courseId,
@@ -204,10 +210,10 @@ const ReviewForm: any = (props: any) => {
 								if (semester != getValues()?.semesterId) {
 									clearErrors('year')
 								}
-								clearErrors('year')
 								return validateSemesterYear(semester, getValues()['year'])
 							},
 							validateNotTakenCourse: (semester) => {
+								clearErrors('year')
 								return validateUserNotTakenCourse(
 									userReviews,
 									courseData.courseId,
