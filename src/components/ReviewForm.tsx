@@ -3,7 +3,6 @@ import { useAlert } from '@context/AlertContext'
 import { useAuth } from '@context/AuthContext'
 import { SEMESTER_ID } from '@globals/constants'
 import {
-	TCourseId,
 	TNullableNumber,
 	TNullableString,
 	TRatingScale,
@@ -34,17 +33,12 @@ const DynamicEditor = dynamic(() => import('@components/FormEditor'), {
 })
 
 interface ReviewFormInputs {
-	reviewId: string
-	courseId: TCourseId
 	year: TNullableNumber
 	semesterId: TSemesterId | null
 	body: string
 	workload: TNullableNumber
 	overall: TRatingScale | null
 	difficulty: TRatingScale | null
-	reviewerId: TNullableString
-	created: number
-	modified: number
 }
 
 const ReviewForm: any = (props: any) => {
@@ -54,17 +48,12 @@ const ReviewForm: any = (props: any) => {
 	const yearRange = getYearRange()
 
 	const ReviewFormDefaults: DefaultValues<ReviewFormInputs> = {
-		reviewId: '',
-		courseId: courseData.courseId,
 		year: null,
 		semesterId: null,
 		body: ' ',
 		workload: null,
 		overall: null,
 		difficulty: null,
-		reviewerId: user?.uid ?? null,
-		created: Date.now(),
-		modified: Date.now(),
 	}
 
 	const fallbackDates = {
@@ -93,27 +82,25 @@ const ReviewForm: any = (props: any) => {
 		data: ReviewFormInputs
 	) => {
 		const goodSubmission = await trigger()
-
-		if (goodSubmission) {
-			// TODO: Replace `!`s with type/value checking and exit prematurely with error state set appropriately if invalid
-			const reviewerId = String(data.reviewerId)
-			const semesterId = String(data.semesterId)
-			const year = Number(data.year!)
-			const reviewId = `${courseData.courseId}-${year}-${mapSemsterIdToTerm[semesterId]}-${data.created}`
-			const workload = Number(data.workload)
-			const overall = Number(data.overall)
-			const difficulty = Number(data.difficulty)
+		if (
+			goodSubmission &&
+			Object.values(data).every(
+				(x) => x != null && x != '' && x != 0 && x != undefined
+			) &&
+			courseData
+		) {
+			const currentTime = Date.now()
+			const reviewerId = user?.uid
+			const reviewId = `${courseData.courseId}-${data.year}-${
+				mapSemsterIdToTerm[String(data.semesterId)]
+			}-${currentTime}`
 			const reviewValues = {
 				...data,
-				reviewId,
-				reviewerId,
-				year,
-				['created']: Date.now(),
-				['modified']: Date.now(),
-				semesterId,
-				workload,
-				overall,
-				difficulty,
+				['courseId']: courseData.courseId,
+				['reviewerId']: reviewerId,
+				['reviewId']: reviewId,
+				['created']: currentTime,
+				['modified']: currentTime,
 				upvotes: 0,
 				downvotes: 0,
 				isLegacy: false,
@@ -122,7 +109,9 @@ const ReviewForm: any = (props: any) => {
 			await addReview(user?.uid, reviewId, reviewValues)
 			setAlert({
 				severity: 'success',
-				text: `Successful review submission for ${data.courseId} for ${mapSemesterIdToName[semesterId]} ${data.year}`,
+				text: `Successful review submission for ${courseData.courseId} for ${
+					mapSemesterIdToName[String(data.semesterId)]
+				} ${data.year}`,
 				variant: 'outlined',
 			})
 			handleReviewModalClose()
