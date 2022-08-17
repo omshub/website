@@ -1,3 +1,4 @@
+import { addUser, getUser } from '@backend/dbOperations'
 import backend from '@backend/index'
 import { useAlert } from '@context/AlertContext'
 import { useAuth } from '@context/AuthContext'
@@ -21,6 +22,7 @@ import Typography from '@mui/material/Typography'
 import { mapSemesterIdToName, mapSemsterIdToTerm } from '@src/utilities'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import {
 	Controller,
 	DefaultValues,
@@ -43,8 +45,9 @@ interface ReviewFormInputs {
 }
 
 const ReviewForm: any = (props: any) => {
-	const { user, userReviews } = useAuth()
+	const { user } = useAuth()
 	const { setAlert } = useAlert()
+	const [userReviews, setUserReviews] = useState<TUserReviews>({})
 	const { courseData, handleReviewModalClose } = props
 	const router = useRouter()
 
@@ -121,6 +124,20 @@ const ReviewForm: any = (props: any) => {
 			router.reload()
 		}
 	}
+	{
+		console.log(userReviews)
+	}
+	useEffect(() => {
+		getUser(user?.uid).then((results) => {
+			if (results?.userId) {
+				setUserReviews(results['reviews'])
+			} else {
+				addUser(user.uid)
+				setUserReviews({})
+			}
+		})
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	return (
 		<Grid

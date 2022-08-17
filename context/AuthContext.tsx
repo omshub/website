@@ -1,9 +1,6 @@
-import { addUser } from '@backend/dbOperations'
 import { auth } from '@backend/FirebaseConfig'
-import backend from '@backend/index'
 import { useAlert } from '@context/AlertContext'
 import { TContextProviderProps } from '@context/types'
-import { TUserReviews } from '@globals/types'
 import {
 	FacebookAuthProvider,
 	fetchSignInMethodsForEmail,
@@ -20,7 +17,6 @@ import {
 } from 'firebase/auth'
 import { createContext, useContext, useEffect, useState } from 'react'
 const AuthContext = createContext<any>({})
-const { getUser } = backend
 
 export const useAuth = () => useContext(AuthContext)
 
@@ -29,31 +25,19 @@ type FirebaseAuthUser = UserInfo
 // eslint-disable-next-line no-undef
 export const AuthContextProvider = ({ children }: TContextProviderProps) => {
 	const [user, setUser] = useState<FirebaseAuthUser | null>(null)
-	const [userReviews, setUserReviews] = useState<TUserReviews>()
 	const { setAlert } = useAlert()
 
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, (user: FirebaseAuthUser | null) => {
-			if (user) {
-				setUser(user)
-				getUser(user.uid)
-					.then((results) => {
-						if (results?.userId) {
-							setUserReviews(results['reviews'])
-						} else {
-							addUser(user.uid)
-							setUserReviews({})
-						}
-					})
-					.catch((error) => {
-						console.log(error)
-						setUser(null)
-					})
-			} else {
-				setUser(null)
-				setUserReviews(undefined)
+		const unsubscribe = onAuthStateChanged(
+			auth,
+			(user: FirebaseAuthUser | null) => {
+				if (user) {
+					setUser(user)
+				} else {
+					setUser(null)
+				}
 			}
-		})
+		)
 		// OAuth Providers
 		const email = window.localStorage.getItem('emailForSignIn')
 
@@ -152,7 +136,7 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
 
 	return (
 		<AuthContext.Provider
-			value={{ user, userReviews, signInWithProvider, signWithMagic, logout }}
+			value={{ user, signInWithProvider, signWithMagic, logout }}
 		>
 			{children}
 		</AuthContext.Provider>
