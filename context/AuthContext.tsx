@@ -16,6 +16,7 @@ import {
 	signInWithEmailLink,
 	signInWithPopup,
 	signOut,
+	User,
 } from 'firebase/auth'
 import { createContext, useContext, useEffect, useState } from 'react'
 const AuthContext = createContext<any>({})
@@ -25,20 +26,26 @@ export const useAuth = () => useContext(AuthContext)
 
 // eslint-disable-next-line no-undef
 export const AuthContextProvider = ({ children }: TContextProviderProps) => {
-	const [user, setUser] = useState<any>(null)
+	const [user, setUser] = useState<User | null>(null)
 	const [userReviews, setUserReviews] = useState<TUserReviews>()
 	const { setAlert } = useAlert()
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user: any) => {
 			if (user) {
-				setUser({ uid: user.uid, email: user.email, displayName: user })
+				console.log(user)
+				setUser(user)
 				getUser(user.uid)
 					.then((results) => {
-						setUserReviews(results['reviews'])
+						if (results?.userId) {
+							setUserReviews(results['reviews'])
+						} else {
+							addUser(user.uid)
+							setUserReviews({})
+						}
 					})
-					.catch(() => {
-						addUser(user.uid)
+					.catch((error) => {
+						console.log(error)
 					})
 			} else {
 				setUser(null)

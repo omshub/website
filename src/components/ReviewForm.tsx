@@ -93,12 +93,8 @@ const ReviewForm: any = (props: any) => {
 		data: ReviewFormInputs
 	) => {
 		const goodSubmission = await trigger()
-		if (
-			goodSubmission &&
-			Object.values(data).every(
-				(x) => x != null && x != '' && x != 0 && x != undefined
-			)
-		) {
+
+		if (goodSubmission) {
 			// TODO: Replace `!`s with type/value checking and exit prematurely with error state set appropriately if invalid
 			const reviewerId = String(data.reviewerId)
 			const semesterId = String(data.semesterId)

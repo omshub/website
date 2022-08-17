@@ -20,7 +20,7 @@ const ProfileMenu = () => {
 					<Avatar
 						aria-controls={menuId}
 						onClick={handleProfileMenuOpen}
-						src={user?.displayName?.photoURL}
+						src={user?.photoURL}
 					/>
 				</Tooltip>
 				<Menu

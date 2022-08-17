@@ -20,7 +20,6 @@ export default function FormEditor({
 			: ''
 		const clean = DOMPurify.sanitize(dirty, { FORBID_TAGS: ['img'] })
 		onChange(clean)
-		console.log(clean)
 	}
 
 	return (
