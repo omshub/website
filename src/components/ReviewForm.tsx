@@ -122,7 +122,6 @@ const ReviewForm = ({
 				mapSemsterIdToTerm[String(data.semesterId)]
 			}-${currentTime}`
 			const courseId = courseData.courseId
-			// TODO: add parsing logic to retain only chars `0-9` and `.` from `data.workload` input string
 			const workload = Number(data.workload)
 			const difficulty = Number(data.difficulty) as TRatingScale
 			const overall = Number(data.overall) as TRatingScale
@@ -300,6 +299,13 @@ const ReviewForm = ({
 							{...field}
 							defaultValue={undefined}
 							type='number'
+							onChange={(event: any) => {
+								const double = parseFloat(event.target.value)
+								if (double) {
+									return field.onChange(double)
+								}
+								return
+							}}
 							InputProps={{
 								inputMode: 'numeric',
 								endAdornment: (

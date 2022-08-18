@@ -1,6 +1,10 @@
 import { auth } from '@backend/FirebaseConfig'
 import { useAlert } from '@context/AlertContext'
-import { TContextProviderProps, FirebaseAuthUser, TSignInAction } from '@context/types'
+import {
+	TContextProviderProps,
+	FirebaseAuthUser,
+	TSignInAction,
+} from '@context/types'
 import {
 	FacebookAuthProvider,
 	fetchSignInMethodsForEmail,

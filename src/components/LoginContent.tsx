@@ -16,7 +16,7 @@ const Login: NextPage = () => {
 	// eslint-disable-next-line no-unused-vars
 	let signInWithProvider: TSignInAction = (email: string) => {}
 	// eslint-disable-next-line no-unused-vars
-	let signWithMagic: TSignInAction  = (email: string) => {}
+	let signWithMagic: TSignInAction = (email: string) => {}
 
 	if (authContext) {
 		;({ signInWithProvider, signWithMagic } = authContext)
