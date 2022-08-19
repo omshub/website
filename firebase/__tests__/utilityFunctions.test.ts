@@ -19,7 +19,7 @@ const mapReviewsDataToAverages = (reviewsData: Review[]) => ({
 		reviewsData.map(({ difficulty }) => difficulty)
 	),
 	avgOverall: computeAverage(reviewsData.map(({ overall }) => overall)),
-	// TODO: implement additional logic for `avgStaffSupport`
+	// TODO: implement additional logic for `avgStaffSupport` in test harness
 	// avgStaffSupport: computeAverage(
 	// 	reviewsData.map(({ staffSupport }) => staffSupport)
 	// ),
@@ -134,7 +134,7 @@ describe('firebase utility functions tests', () => {
 		let avgWorkload: number
 		let avgDifficulty: number
 		let avgOverall: number
-		// let avgStaffSupport: number // TODO: implement additional logic for `avgStaffSupport`
+		// let avgStaffSupport: number // TODO: implement additional logic for `avgStaffSupport` in test harness
 
 		beforeEach(() => {
 			oldReviewsData = [
@@ -169,7 +169,7 @@ describe('firebase utility functions tests', () => {
 				avgWorkload,
 				avgDifficulty,
 				avgOverall,
-				// avgStaffSupport // TODO: implement additional logic for `avgStaffSupport`
+				// avgStaffSupport, // TODO: implement additional logic for `avgStaffSupport` in test harness
 			} = mapReviewsDataToAverages(oldReviewsData))
 		})
 
@@ -177,13 +177,13 @@ describe('firebase utility functions tests', () => {
 			const newReviewsData: Review[] = []
 			const newCount = newReviewsData.length
 
-			const updatedAverages = updateAverages({ newCount })
+			const updatedAverages = updateAverages({ courseId, newCount })
 
 			const expectedUpdatedAverages = {
 				avgWorkload: null,
 				avgDifficulty: null,
 				avgOverall: null,
-				// avgStaffSupport: null, // TODO: implement additional logic for `avgStaffSupport`
+				avgStaffSupport: null,
 			}
 
 			expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
@@ -203,6 +203,7 @@ describe('firebase utility functions tests', () => {
 			const newCount = newReviewsData.length
 
 			const updatedAverages = updateAverages({
+				courseId,
 				oldCount,
 				newCount,
 				newWorkload: addReviewData.workload,
@@ -212,12 +213,23 @@ describe('firebase utility functions tests', () => {
 				avgWorkload,
 				avgDifficulty,
 				avgOverall,
-				// avgStaffSupport, // TODO: implement additional logic for `avgStaffSupport`
+				// avgStaffSupport, // TODO: implement additional logic for `avgStaffSupport` in test harness
 			})
 
 			const expectedUpdatedAverages = mapReviewsDataToAverages(newReviewsData)
+			const {
+				avgDifficulty: expectedAvgDifficulty,
+				avgWorkload: expectedAvgWorkload,
+				avgOverall: expectedAverageOverall,
+			} = expectedUpdatedAverages
 
-			expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
+			expect(updatedAverages).toEqual(
+				expect.objectContaining({
+					avgDifficulty: expectedAvgDifficulty,
+					avgWorkload: expectedAvgWorkload,
+					avgOverall: expectedAverageOverall,
+				})
+			)
 		})
 
 		it('computes updated averages for updated review', () => {
@@ -245,6 +257,7 @@ describe('firebase utility functions tests', () => {
 			const newCount = newReviewsData.length
 
 			const updatedAverages = updateAverages({
+				courseId,
 				oldCount,
 				newCount,
 				oldWorkload: oldReviewData?.workload,
@@ -258,12 +271,23 @@ describe('firebase utility functions tests', () => {
 				avgWorkload,
 				avgDifficulty,
 				avgOverall,
-				// avgStaffSupport, // TODO: implement additional logic for `avgStaffSupport`
+				// avgStaffSupport, // TODO: implement additional logic for `avgStaffSupport` in test harness
 			})
 
 			const expectedUpdatedAverages = mapReviewsDataToAverages(newReviewsData)
+			const {
+				avgDifficulty: expectedAvgDifficulty,
+				avgWorkload: expectedAvgWorkload,
+				avgOverall: expectedAverageOverall,
+			} = expectedUpdatedAverages
 
-			expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
+			expect(updatedAverages).toEqual(
+				expect.objectContaining({
+					avgDifficulty: expectedAvgDifficulty,
+					avgWorkload: expectedAvgWorkload,
+					avgOverall: expectedAverageOverall,
+				})
+			)
 		})
 
 		it('computes updated averages for deleted review', () => {
@@ -280,6 +304,7 @@ describe('firebase utility functions tests', () => {
 			const newCount = newReviewsData.length
 
 			const updatedAverages = updateAverages({
+				courseId,
 				oldCount,
 				newCount,
 				oldWorkload: oldReviewData?.workload,
@@ -289,12 +314,23 @@ describe('firebase utility functions tests', () => {
 				avgWorkload,
 				avgDifficulty,
 				avgOverall,
-				// avgStaffSupport, // TODO: implement additional logic for `avgStaffSupport`
+				// avgStaffSupport, // TODO: implement additional logic for `avgStaffSupport` in test harness
 			})
 
 			const expectedUpdatedAverages = mapReviewsDataToAverages(newReviewsData)
+			const {
+				avgDifficulty: expectedAvgDifficulty,
+				avgWorkload: expectedAvgWorkload,
+				avgOverall: expectedAverageOverall,
+			} = expectedUpdatedAverages
 
-			expect(updatedAverages).toStrictEqual(expectedUpdatedAverages)
+			expect(updatedAverages).toEqual(
+				expect.objectContaining({
+					avgDifficulty: expectedAvgDifficulty,
+					avgWorkload: expectedAvgWorkload,
+					avgOverall: expectedAverageOverall,
+				})
+			)
 		})
 	})
 })
