@@ -37,8 +37,8 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 	}
 
 	const profileMenuItems: MenuLinksProps = {
-		'My Account': '/user/...',
-		'My Reviews': '/user/.../reviews',
+		// 'My Account': '/user/...',
+		'My Reviews': '/user/reviews',
 	}
 
 	return (
