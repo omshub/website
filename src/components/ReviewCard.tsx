@@ -1,5 +1,6 @@
 import { Review } from '@globals/types'
 import { getCourseDataStatic } from '@globals/utilities'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
 import { Button, IconButton, Snackbar, Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
@@ -28,6 +29,7 @@ const ReviewCard = ({
 	created,
 	year,
 	courseId,
+	isLegacy,
 }: Review) => {
 	const timestamp = new Date(created).toLocaleDateString()
 	const { name: courseName } = getCourseDataStatic(courseId)
@@ -107,6 +109,17 @@ const ReviewCard = ({
 							justifyContent='flex-start'
 							alignItems='flex-start'
 						>
+							{isLegacy && (
+								<Grid item>
+									<Chip
+										title='This review was originally collected on https://omscentral.com'
+										icon={<ErrorOutlineIcon />}
+										color='warning'
+										label='Legacy'
+										variant='outlined'
+									/>
+								</Grid>
+							)}
 							<Grid item>
 								<Chip
 									label={`Workload: ${workload} hr/wk`}
