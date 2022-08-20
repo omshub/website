@@ -12,6 +12,7 @@ import {
 	TSemesterId,
 	TUserReviews,
 } from '@globals/types'
+import { isGTEmail } from '@globals/utilities'
 import { Button, TextField } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import Grid from '@mui/material/Grid'
@@ -161,8 +162,9 @@ const ReviewForm = ({
 			getUser(user.uid).then((results) => {
 				if (results.userId) {
 					setUserReviews(results['reviews'])
-				} else if (user && user.uid) {
-					addUser(user.uid)
+				} else if (user && user.uid && user.email) {
+					const hasGTEmail = isGTEmail(user.email)
+					addUser(user.uid, hasGTEmail)
 					setUserReviews({})
 				}
 			})

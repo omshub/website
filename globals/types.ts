@@ -85,6 +85,7 @@ export interface Review {
 
 export interface User {
 	userId: TNullableString // invalid request returns null
+	hasGTEmail: boolean
 	educationLevelId?: TEducationLevelId
 	subjectAreaId?: string
 	workYears?: number

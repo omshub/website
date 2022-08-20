@@ -21,6 +21,8 @@ export const NOT_FOUND_ARRAY_INDEX = -1
 
 export const MAX_HOURS_PER_WEEK = 168 // 24*7
 
+export const GATECH_DOMAIN = '@gatech.edu'
+
 /* --- DATA MODELS FIELDS --- */
 
 // common fields

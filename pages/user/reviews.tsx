@@ -13,6 +13,7 @@ import type { NextPage } from 'next'
 import { useEffect, useState } from 'react'
 
 import { addUser, getUser } from '@backend/dbOperations'
+import { isGTEmail } from '@globals/utilities'
 
 const UserReviews: NextPage = () => {
 	const [loading, setLoading] = useState<boolean>(true)
@@ -31,8 +32,9 @@ const UserReviews: NextPage = () => {
 			getUser(user.uid).then((results) => {
 				if (results.userId) {
 					setUserReviews(results['reviews'])
-				} else if (user && user.uid) {
-					addUser(user.uid)
+				} else if (user && user.uid && user.email) {
+					const hasGTEmail = isGTEmail(user.email)
+					addUser(user.uid, hasGTEmail)
 					setUserReviews({})
 				}
 				setLoading(false)

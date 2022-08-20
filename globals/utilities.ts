@@ -20,6 +20,7 @@ import {
 	TSpecializationId,
 	TSubjectAreaId,
 } from '@globals/types'
+import { GATECH_DOMAIN } from './constants'
 
 /* --- STATIC DATA GETTERS --- */
 
@@ -67,3 +68,8 @@ export const mapDynamicCoursesDataToCourses = (
 	})
 	return courses
 }
+
+/* --- UTILITY FUNCTIONS --- */
+
+export const isGTEmail = (userEmail: string) =>
+	userEmail.toLowerCase().includes(GATECH_DOMAIN)

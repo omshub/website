@@ -212,9 +212,9 @@ export const getUser = async (userId: string) => {
 	}
 }
 
-export const addUser = async (userId: string) => {
+export const addUser = async (userId: string, hasGTEmail: boolean = false) => {
 	try {
-		const newUserData: User = { userId, reviews: {} }
+		const newUserData: User = { userId, hasGTEmail, reviews: {} }
 		await setDoc(doc(db, `${baseCollectionUsersData}/${userId}`), newUserData)
 	} catch (e: any) {
 		console.log(e)
