@@ -117,16 +117,14 @@ const ReviewForm = ({
 			hasNonNullDataValues
 		) {
 			const currentTime = Date.now()
-			const reviewerId = user.uid
-			const reviewId = `${courseData.courseId}-${data.year}-${
-				mapSemsterIdToTerm[String(data.semesterId)]
-			}-${currentTime}`
 			const courseId = courseData.courseId
+			const semesterId = data.semesterId as TSemesterId
+			const year = Number(data.year)
+			const reviewerId = user.uid
+			const reviewId = `${courseId}-${data.year}-${mapSemsterIdToTerm[semesterId]}-${currentTime}`
 			const workload = Number(data.workload)
 			const difficulty = Number(data.difficulty) as TRatingScale
 			const overall = Number(data.overall) as TRatingScale
-			const semesterId = data.semesterId as TSemesterId
-			const year = Number(data.year)
 
 			const reviewValues = {
 				...data,
@@ -149,7 +147,7 @@ const ReviewForm = ({
 
 			setAlert({
 				severity: 'success',
-				text: `Successful review submission for ${courseData.courseId} for ${mapSemesterIdToName[semesterId]} ${data.year}`,
+				text: `Successful review submission for ${courseId} for ${mapSemesterIdToName[semesterId]} ${year}`,
 				variant: 'outlined',
 			})
 
