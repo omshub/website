@@ -1,3 +1,5 @@
+// N.B. Deprecated -- see `/globals/staticDataModels.ts` instead
+
 module.exports = [
 	{
 		departmentId: 'CS',

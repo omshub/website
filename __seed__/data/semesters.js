@@ -1,3 +1,5 @@
+// N.B. Deprecated -- see `/globals/staticDataModels.ts` instead
+
 module.exports = [
 	{ semesterId: 'sp', term: 1, name: 'Spring' },
 	{ semesterId: 'sm', term: 2, name: 'Summer' },

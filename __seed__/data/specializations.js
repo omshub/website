@@ -1,3 +1,5 @@
+// N.B. Deprecated -- see `/globals/staticDataModels.ts` instead
+
 module.exports = [
 	{ specializationId: 'a:at', name: 'Analytical Tools', programId: 'a' },
 	{ specializationId: 'a:ba', name: 'Business Analytics', programId: 'a' },
