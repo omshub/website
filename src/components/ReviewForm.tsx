@@ -119,6 +119,7 @@ const ReviewForm = ({
 			courseData &&
 			user &&
 			user.uid &&
+			user.email &&
 			hasNonNullDataValues
 		) {
 			const currentTime = Date.now()
@@ -130,6 +131,7 @@ const ReviewForm = ({
 			const workload = Number(data.workload)
 			const difficulty = Number(data.difficulty) as TRatingScale
 			const overall = Number(data.overall) as TRatingScale
+			const isGTVerifiedReviewer = isGTEmail(user.email)
 
 			const reviewValues = {
 				...data,
@@ -146,6 +148,7 @@ const ReviewForm = ({
 				workload,
 				difficulty,
 				overall,
+				isGTVerifiedReviewer,
 			}
 
 			await addReview(user.uid, reviewId, reviewValues)

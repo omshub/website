@@ -54,6 +54,7 @@ export interface Review {
 	semesterId: TSemesterId
 	isLegacy: boolean
 	reviewerId: string // `userId` of review author
+	isGTVerifiedReviewer?: boolean
 	created: number // Unix timestamp
 	modified: TNullableNumber // Unix timestamp
 	body: string

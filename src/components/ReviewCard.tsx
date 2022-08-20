@@ -19,6 +19,7 @@ import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
+import { techGold } from '@src/colorPalette'
 
 import {
 	mapDifficulty,
@@ -31,6 +32,7 @@ import { toBlob } from 'html-to-image'
 import { useRouter } from 'next/router'
 import { SyntheticEvent, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+
 const ReviewCard = ({
 	reviewId,
 	body,
@@ -42,6 +44,7 @@ const ReviewCard = ({
 	year,
 	courseId,
 	isLegacy,
+	isGTVerifiedReviewer = false,
 }: Review) => {
 	const authContext = useAuth()
 	const router = useRouter()
@@ -132,6 +135,11 @@ const ReviewCard = ({
 									Reviewed on {timestamp}
 								</Typography>
 							</Grid>
+							{isGTVerifiedReviewer && (
+								<Grid item xs={12}>
+									<Typography color={techGold}>Verified GT Email</Typography>
+								</Grid>
+							)}
 						</Grid>
 					</Box>
 					<Box
