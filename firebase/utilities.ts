@@ -18,13 +18,11 @@ import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
 import { parseReviewId, updateAverages } from '@backend/utilityFunctions'
 import { NOT_FOUND_ARRAY_INDEX, REVIEWS_RECENT_TOTAL } from '@globals/constants'
 import {
-	Course,
+	CourseDataDynamic,
 	Review,
 	TCourseId,
-	TPayloadCourses,
 	TPayloadCoursesDataDynamic,
 } from '@globals/types'
-import { getCoursesDataStatic } from '@globals/utilities'
 import { doc, setDoc } from 'firebase/firestore'
 import { db } from './FirebaseConfig'
 
@@ -32,27 +30,13 @@ const { COURSES } = coreDataDocuments
 
 /* --- COURSE DATA CRUD SUB-OPERATIONS --- */
 
-export const mapDynamicCoursesDataToCourses = (
-	coursesDataDynamic: TPayloadCoursesDataDynamic
-) => {
-	const coursesDataStatic = getCoursesDataStatic()
-	const courses: TPayloadCourses = {}
-	Object.keys(coursesDataStatic).forEach((courseId) => {
-		courses[courseId] = {
-			...coursesDataStatic[courseId],
-			...coursesDataDynamic[courseId],
-		}
-	})
-	return courses
-}
-
 export const addOrUpdateCourse = async (
 	courseId: string,
-	courseData: Course
+	courseData: CourseDataDynamic
 ) => {
 	try {
 		const coursesDataDoc = await getCourses()
-		let newCoursesDataDoc: TPayloadCourses = {}
+		let newCoursesDataDoc: TPayloadCoursesDataDynamic = {}
 		if (coursesDataDoc) {
 			if (Object.keys(coursesDataDoc).length) {
 				newCoursesDataDoc = { ...coursesDataDoc }

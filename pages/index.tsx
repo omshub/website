@@ -1,6 +1,7 @@
 import backend from '@backend/index'
 import { courseFields } from '@globals/constants'
 import { Course } from '@globals/types'
+import { mapDynamicCoursesDataToCourses } from '@globals/utilities'
 import { useMediaQuery } from '@mui/material'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
@@ -156,7 +157,8 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 export default Home
 
 export async function getServerSideProps() {
-	const coursesData = await getCourses()
+	const coursesDataDynamic = await getCourses()
+	const coursesData = mapDynamicCoursesDataToCourses(coursesDataDynamic)
 	return {
 		props: {
 			allCourseData: coursesData,

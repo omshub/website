@@ -5,6 +5,7 @@ import { useAuth } from '@context/AuthContext'
 import { FirebaseAuthUser } from '@context/types'
 import { DESC, REVIEW_ID } from '@globals/constants'
 import { Course, TPayloadReviews } from '@globals/types'
+import { mapDynamicCoursesDataToCourses } from '@globals/utilities'
 import FileCopyIcon from '@mui/icons-material/FileCopyOutlined'
 import LinkIcon from '@mui/icons-material/Link'
 import RateReviewIcon from '@mui/icons-material/RateReview'
@@ -464,7 +465,8 @@ interface PageProps {
 }
 export async function getServerSideProps(context: PageProps) {
 	const { courseid } = context.query
-	const allCourseData = await getCourses()
+	const allCourseDataDynamic = await getCourses()
+	const allCourseData = mapDynamicCoursesDataToCourses(allCourseDataDynamic)
 	const currentCourseData = allCourseData[courseid]
 	if (currentCourseData.numReviews) {
 		const courseTimeline = currentCourseData.reviewsCountsByYearSem

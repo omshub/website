@@ -8,10 +8,9 @@ import {
 	baseCollectionUsersData,
 } from '@backend/constants'
 import {
-	Course,
+	CourseDataDynamic,
 	Review,
 	TCourseId,
-	TPayloadCourses,
 	TPayloadCoursesDataDynamic,
 	TPayloadReviews,
 	User,
@@ -29,7 +28,6 @@ import {
 	updateUserDataOnAddReview,
 	updateUserDataOnUpdateReview,
 	updateUserDataOnDeleteReview,
-	mapDynamicCoursesDataToCourses,
 } from '@backend/utilities'
 
 const { COURSES } = coreDataDocuments
@@ -41,11 +39,7 @@ export const getCourses = async () => {
 			doc(db, `${baseCollectionCoreData}/${COURSES}`)
 		)
 		const coursesDataDoc: TPayloadCoursesDataDynamic = snapshot.data() ?? {}
-		let courses: TPayloadCourses = {}
-		if (coursesDataDoc && Object.keys(coursesDataDoc).length) {
-			courses = mapDynamicCoursesDataToCourses(coursesDataDoc)
-		}
-		return courses
+		return coursesDataDoc
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -60,10 +54,14 @@ export const getCourse = async (courseId: string) => {
 		throw new Error(e)
 	}
 }
-export const addCourse = async (courseId: string, courseData: Course) =>
-	addOrUpdateCourse(courseId, courseData)
-export const updateCourse = async (courseId: string, courseData: Course) =>
-	addOrUpdateCourse(courseId, courseData)
+export const addCourse = async (
+	courseId: string,
+	courseData: CourseDataDynamic
+) => addOrUpdateCourse(courseId, courseData)
+export const updateCourse = async (
+	courseId: string,
+	courseData: CourseDataDynamic
+) => addOrUpdateCourse(courseId, courseData)
 export const deleteCourse = async (courseId: string) => {
 	try {
 		const coursesDataDoc = await getCourses()

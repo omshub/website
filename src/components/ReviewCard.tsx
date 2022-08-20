@@ -84,8 +84,8 @@ const ReviewCard = ({
 	}
 
 	const handleDeleteReview = async () => {
-		if (user) {
-			await deleteReview(user?.uid, reviewId)
+		if (user && user.uid && reviewId) {
+			await deleteReview(user.uid, reviewId)
 			handleDeleteDialogClose()
 			router.reload()
 		}

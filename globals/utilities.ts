@@ -13,6 +13,8 @@ import {
 	TDepartmentId,
 	TEducationLevelId,
 	TGradeId,
+	TPayloadCourses,
+	TPayloadCoursesDataDynamic,
 	TProgramId,
 	TSemesterId,
 	TSpecializationId,
@@ -49,3 +51,19 @@ export const getSubjectArea = (subjectAreaId: TSubjectAreaId) =>
 
 export const getGrades = () => grades
 export const getGrade = (gradeId: TGradeId) => grades[gradeId]
+
+/* --- MAPPERS --- */
+
+export const mapDynamicCoursesDataToCourses = (
+	coursesDataDynamic: TPayloadCoursesDataDynamic
+) => {
+	const coursesDataStatic = getCoursesDataStatic()
+	const courses: TPayloadCourses = {}
+	Object.keys(coursesDataStatic).forEach((courseId) => {
+		courses[courseId] = {
+			...coursesDataStatic[courseId],
+			...coursesDataDynamic[courseId],
+		}
+	})
+	return courses
+}
