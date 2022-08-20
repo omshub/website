@@ -106,8 +106,12 @@ const ReviewForm = ({
 	) => {
 		const isGoodSubmission = await trigger()
 
-		const hasNonNullDataValues = Object.values(data).every(
-			(x) => x != null && x != '' && x != 0 && x != undefined
+		const hasNonNullDataValues = Boolean(
+			data.year &&
+				data.semesterId &&
+				data.difficulty &&
+				data.overall &&
+				data.workload
 		)
 
 		if (
