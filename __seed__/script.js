@@ -70,6 +70,11 @@ _.sortBy(reviews, ['courseId', 'reviewId']).forEach((review) => {
 	reviewsDataMaps[courseId][key][reviewId] = review
 })
 
+const reviewsDataMapFlat = {}
+reviews.forEach((review) => {
+	reviewsDataMapFlat[review.reviewId] = review
+})
+
 // Seed Firebase Firestore collections in the cloud
 const add = async (collectionName, newDocId, data) =>
 	setDoc(doc(db, collectionName, newDocId), data)
@@ -89,6 +94,8 @@ const add = async (collectionName, newDocId, data) =>
 })()
 
 // seed reviews data
+
+// nested to minimize ops
 for (const courseId in reviewsDataMaps) {
 	const yearSem = reviewsDataMaps[courseId]
 	for (const yearSemId in yearSem) {
@@ -96,6 +103,12 @@ for (const courseId in reviewsDataMaps) {
 		;(async () =>
 			add(`reviewsData/${courseId}/${yearSemId}`, 'data', reviewData))()
 	}
+}
+
+// flat
+for (const reviewId in reviewsDataMapFlat) {
+	const data = reviewsDataMapFlat[reviewId]
+	;(async () => add('_reviewsDataFlat', reviewId, data))()
 }
 
 // seed recents data (N.B. includes `_aggregateData` array)
