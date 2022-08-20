@@ -1,9 +1,10 @@
-import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
+import { doc, setDoc, deleteDoc } from 'firebase/firestore'
 import { db } from './FirebaseConfig'
 import {
 	coreDataDocuments,
 	baseCollectionCoreData,
 	baseCollectionReviewsData,
+	baseCollectionReviewsDataFlat,
 	baseCollectionRecentsData,
 	baseCollectionUsersData,
 } from '@backend/constants'
@@ -28,6 +29,9 @@ import {
 	updateUserDataOnAddReview,
 	updateUserDataOnUpdateReview,
 	updateUserDataOnDeleteReview,
+	getOneDoc,
+	addOrEditDoc,
+	delDoc,
 } from '@backend/utilities'
 
 const { COURSES } = coreDataDocuments
@@ -35,9 +39,7 @@ const { COURSES } = coreDataDocuments
 /* --- COURSES --- */
 export const getCourses = async () => {
 	try {
-		const snapshot = await getDoc(
-			doc(db, `${baseCollectionCoreData}/${COURSES}`)
-		)
+		const snapshot = await getOneDoc(baseCollectionCoreData, COURSES)
 		const coursesDataDoc: TPayloadCoursesDataDynamic = snapshot.data() ?? {}
 		return coursesDataDoc
 	} catch (e: any) {
@@ -85,11 +87,9 @@ export const getReviews = async (
 	semesterTerm: string
 ) => {
 	try {
-		const snapshot = await getDoc(
-			doc(
-				db,
-				`${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}/data`
-			)
+		const snapshot = await getOneDoc(
+			`${baseCollectionReviewsData}/${courseId}/${year}-${semesterTerm}`,
+			'data'
 		)
 		const allReviewsData: TPayloadReviews = snapshot.data() ?? {}
 		return allReviewsData
@@ -109,9 +109,7 @@ export const getReviewsRecent = async (courseId?: TCourseId) => {
 		// N.B. use undefined `courseId` arg form for non-course-specific/aggregated array
 		const dataId = courseId ?? `_aggregateData`
 
-		const snapshot = await getDoc(
-			doc(db, `${baseCollectionRecentsData}/${dataId}`)
-		)
+		const snapshot = await getOneDoc(baseCollectionRecentsData, dataId)
 		const data = snapshot.data()
 		const reviewsRecent: Review[] = data ? data?.data : []
 		if (reviewsRecent?.length) {
@@ -126,10 +124,10 @@ export const getReviewsRecent = async (courseId?: TCourseId) => {
 
 export const getReview = async (reviewId: string) => {
 	try {
-		const { courseId, year, semesterTerm } = parseReviewId(reviewId)
-		const reviewsDataDoc = await getReviews(courseId, year, semesterTerm)
-		const review: Review = reviewsDataDoc[reviewId] ?? {}
-		return review
+		const snapshot = await getOneDoc(baseCollectionReviewsDataFlat, reviewId)
+		// @ts-ignore -- coerce to `Review` entity based on known form of snapshot.data() per Firestore db data
+		const reviewData: Review = snapshot.data() ?? {}
+		return reviewData
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -146,6 +144,7 @@ export const addReview = async (
 		await updateCourseDataOnAddReview(reviewId, reviewData)
 		await updateReviewsRecentOnAddReview(reviewData)
 		await updateUserDataOnAddReview(userId, reviewData)
+		await addOrEditDoc(baseCollectionReviewsDataFlat, reviewId, reviewData)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -162,6 +161,7 @@ export const updateReview = async (
 		await updateCourseDataOnUpdateReview(reviewId, reviewData)
 		await updateReviewsRecentOnUpdateReview(reviewData)
 		await updateUserDataOnUpdateReview(userId, reviewData)
+		await addOrEditDoc(baseCollectionReviewsDataFlat, reviewId, reviewData)
 	} catch (e: any) {
 		console.log(e)
 		throw new Error(e)
@@ -190,6 +190,7 @@ export const deleteReview = async (userId: string, reviewId: string) => {
 			await updateCourseDataOnDeleteReview(reviewId)
 			await updateReviewsRecentOnDeleteReview(reviewId)
 			await updateUserDataOnDeleteReview(userId, reviewId)
+			await delDoc(baseCollectionReviewsDataFlat, reviewId)
 		}
 	} catch (e: any) {
 		console.log(e)
@@ -200,11 +201,13 @@ export const deleteReview = async (userId: string, reviewId: string) => {
 /* --- USERS --- */
 export const getUser = async (userId: string) => {
 	try {
-		const snapshot = await getDoc(
-			doc(db, `${baseCollectionUsersData}/${userId}`)
-		)
+		const snapshot = await getOneDoc(baseCollectionUsersData, userId)
 		// @ts-ignore -- coerce to `User` entity based on known form of snapshot.data() per Firestore db data
-		const userData: User = snapshot.data() ?? { userId: null, reviews: {} }
+		const userData: User = snapshot.data() ?? {
+			userId: null,
+			hasGTEmail: false,
+			reviews: {},
+		}
 		return userData
 	} catch (e: any) {
 		console.log(e)

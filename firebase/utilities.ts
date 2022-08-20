@@ -14,7 +14,11 @@ import {
 	getUser,
 	updateCourse,
 } from '@backend/dbOperations'
-import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
+import {
+	TDocumentData,
+	TDocumentDataId,
+	TDocumentDataObject,
+} from '@backend/documentsDataTypes'
 import { parseReviewId, updateAverages } from '@backend/utilityFunctions'
 import { NOT_FOUND_ARRAY_INDEX, REVIEWS_RECENT_TOTAL } from '@globals/constants'
 import {
@@ -23,10 +27,28 @@ import {
 	TCourseId,
 	TPayloadCoursesDataDynamic,
 } from '@globals/types'
-import { doc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
 import { db } from './FirebaseConfig'
 
 const { COURSES } = coreDataDocuments
+
+/* --- GENERIC CRUD SUB-OPERATIONS (FOR FLAT COLLECTIONS) --- */
+
+export const getOneDoc = async (
+	collectionPathString: string,
+	documentId: TDocumentDataId
+) => getDoc(doc(db, collectionPathString, documentId))
+
+export const addOrEditDoc = async (
+	collectionPathString: string,
+	documentId: TDocumentDataId,
+	documentData: TDocumentData
+) => setDoc(doc(db, collectionPathString, documentId), documentData)
+
+export const delDoc = async (
+	collectionPathString: string,
+	documentId: TDocumentDataId
+) => deleteDoc(doc(db, collectionPathString, documentId))
 
 /* --- COURSE DATA CRUD SUB-OPERATIONS --- */
 
