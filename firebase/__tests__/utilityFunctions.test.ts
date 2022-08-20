@@ -117,12 +117,13 @@ describe('firebase utility functions tests', () => {
 		const semesterId: TSemesterId = 'sp'
 		const semesterTerm = 1
 		const baseReviewId = `${courseId}-${year}-${semesterTerm}-`
-		const baseDummyCourseData = {
+		const baseDummyReviewData = {
 			courseId,
 			year,
 			semesterId,
 			isLegacy: false,
 			reviewerId: 'xyz',
+			isGTVerifiedReviewer: false,
 			created: 1234567890,
 			modified: null,
 			body: '',
@@ -139,7 +140,7 @@ describe('firebase utility functions tests', () => {
 		beforeEach(() => {
 			oldReviewsData = [
 				{
-					...baseDummyCourseData,
+					...baseDummyReviewData,
 					reviewId: baseReviewId + '1',
 					workload: 10,
 					difficulty: 3,
@@ -147,7 +148,7 @@ describe('firebase utility functions tests', () => {
 					staffSupport: 3,
 				},
 				{
-					...baseDummyCourseData,
+					...baseDummyReviewData,
 					reviewId: baseReviewId + '2',
 					workload: 15,
 					difficulty: 4,
@@ -155,7 +156,7 @@ describe('firebase utility functions tests', () => {
 					staffSupport: 3,
 				},
 				{
-					...baseDummyCourseData,
+					...baseDummyReviewData,
 					reviewId: baseReviewId + '3',
 					workload: 5,
 					difficulty: 1,
@@ -191,7 +192,7 @@ describe('firebase utility functions tests', () => {
 
 		it('computes updated averages for added review', () => {
 			const addReviewData: Review = {
-				...baseDummyCourseData,
+				...baseDummyReviewData,
 				reviewId: baseReviewId + '4',
 				workload: 7,
 				difficulty: 2,
@@ -240,7 +241,7 @@ describe('firebase utility functions tests', () => {
 			)
 
 			const updatedReviewData: Review = {
-				...baseDummyCourseData,
+				...baseDummyReviewData,
 				reviewId,
 				workload: 7,
 				difficulty: 2,

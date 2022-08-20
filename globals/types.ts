@@ -25,7 +25,7 @@ export type TProviderName = 'Google' | 'Facebook' | 'Github' | 'Apple'
 // maintained and updated client-side/statically
 export interface CourseDataStatic {
 	courseId: TCourseId
-	name: string
+	name: TCourseName
 	departmentId: TDepartmentId
 	courseNumber: string
 	url: TNullableString // url may be null (i.e., no existing page)
@@ -54,7 +54,7 @@ export interface Review {
 	semesterId: TSemesterId
 	isLegacy: boolean
 	reviewerId: string // `userId` of review author
-	isGTVerifiedReviewer?: boolean
+	isGTVerifiedReviewer: boolean
 	created: number // Unix timestamp
 	modified: TNullableNumber // Unix timestamp
 	body: string
