@@ -72,4 +72,7 @@ export const mapDynamicCoursesDataToCourses = (
 /* --- UTILITY FUNCTIONS --- */
 
 export const isGTEmail = (userEmail: string) =>
-	userEmail.toLowerCase().includes(GATECH_DOMAIN)
+	userEmail
+		.toLowerCase()
+		.slice(userEmail.length - GATECH_DOMAIN.length)
+		.includes(GATECH_DOMAIN)
