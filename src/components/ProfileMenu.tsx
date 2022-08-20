@@ -1,13 +1,16 @@
 import { useAuth } from '@context/AuthContext'
 import { useMenu } from '@context/MenuContext'
 import { FirebaseAuthUser } from '@context/types'
+import Link from '../Link'
 
 import { Avatar, Container } from '@mui/material'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Tooltip from '@mui/material/Tooltip'
-
-const ProfileMenu = () => {
+export interface MenuLinksProps {
+	[key: string]: any
+}
+const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
 	const authContext = useAuth()
 
 	let user: FirebaseAuthUser | null = null
@@ -43,13 +46,25 @@ const ProfileMenu = () => {
 					open={isProfileMenuOpen}
 					onClose={handleProfileMenuClose}
 				>
-					{/* {Object.keys(profileMenuItems).map((key: string, index: number) => {
+					{Object.keys(profileMenuItems).map((key: string, index: number) => {
 						return (
 							<MenuItem key={index} onClick={handleProfileMenuClose}>
-								{key}
+								<Link
+									color='text.primary'
+									href={`${profileMenuItems[key]}`}
+									as={`${profileMenuItems[key]}`}
+									sx={{
+										display: { xs: 'none', md: 'flex' },
+										mr: 1,
+										textDecoration: 'unset',
+										'&:hover': { textDecoration: 'unset' },
+									}}
+								>
+									{key}
+								</Link>
 							</MenuItem>
 						)
-					})} */}
+					})}
 					<MenuItem
 						onClick={() => {
 							handleProfileMenuClose()
