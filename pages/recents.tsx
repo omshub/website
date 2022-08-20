@@ -40,13 +40,14 @@ const Recents: NextPage<RecentsProps> = ({ reviewsRecent }) => {
 					<>
 						{reviewsRecent && (
 							<Grid container spacing={3} sx={{ margin: '10px 0' }}>
-								{reviewsRecent.slice(0, 50).map((value: Review) => {
-									return (
+								{reviewsRecent
+									.reverse()
+									.slice(0, 50)
+									.map((value: Review) => (
 										<Grid sx={{ width: `100%` }} key={value.reviewId} item>
 											<ReviewCard {...value}></ReviewCard>
 										</Grid>
-									)
-								})}
+									))}
 							</Grid>
 						)}
 					</>

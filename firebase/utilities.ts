@@ -142,10 +142,6 @@ const updateReviewsRecent = async ({
 						arrayRecentData = arrayRecentData.filter(
 							(_: Review, index: number) => index !== indexFoundAt
 						)
-						if (arrayRecentData.length > REVIEWS_RECENT_TOTAL) {
-							// truncate buffer
-							arrayRecentData.shift()
-						}
 						await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
 							data: arrayRecentData,
 						})

@@ -99,11 +99,11 @@ export const getReviews = async (
 	}
 }
 
-// N.B. End of array has additional "buffer reviews" (initialized to 20) to
+// N.B. Start of array has additional "buffer reviews" (initialized to 20) to
 // guard against net deletion below 50. Return value should be sliced by
 // caller in order to limit to only 50 accordingly, i.e.,:
 //   let reviews = await getReviewsRecent()
-//   reviews = reviews?.slice(0, 50)
+//   reviews = reviews?.reverse().slice(0, 50)
 export const getReviewsRecent = async (courseId?: TCourseId) => {
 	try {
 		// N.B. use undefined `courseId` arg form for non-course-specific/aggregated array
@@ -113,7 +113,7 @@ export const getReviewsRecent = async (courseId?: TCourseId) => {
 		const data = snapshot.data()
 		const reviewsRecent: Review[] = data ? data?.data : []
 		if (reviewsRecent?.length) {
-			reviewsRecent.sort((a, b) => b.created - a.created)
+			reviewsRecent.sort((a, b) => a.created - b.created)
 		}
 		return reviewsRecent
 	} catch (e: any) {
