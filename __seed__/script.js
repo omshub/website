@@ -106,6 +106,10 @@ for (const courseId in reviewsDataMaps) {
 }
 
 // flat
+const msg =
+	'This is a placeholder only, created here to prevent landing on large-read collections on initial load of Firestore UI. WARNING: Clicking on `_reviewsDataFlat` will cause 500+ read operations, therefore, only access it via Firestore UI if necessary.'
+;(async () => add('__dummy', 'do-not-use', { msg }))()
+
 for (const reviewId in reviewsDataMapFlat) {
 	const data = reviewsDataMapFlat[reviewId]
 	;(async () => add('_reviewsDataFlat', reviewId, data))()
