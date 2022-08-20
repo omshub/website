@@ -1,5 +1,6 @@
 import backend from '@backend/index'
 import ReviewCard from '@components/ReviewCard'
+import { REVIEWS_RECENT_LEN } from '@globals/constants'
 import { Review } from '@globals/types'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -29,7 +30,7 @@ const Recents: NextPage<RecentsProps> = ({ reviewsRecent }) => (
 				{`Recent Reviews`}
 			</Typography>
 			<Typography variant='subtitle1' color='text.secondary' gutterBottom>
-				{`A Dynamic List of the 50 Most Recent Reviews`}
+				{`A Dynamic List of the ${REVIEWS_RECENT_LEN} Most Recent Reviews`}
 			</Typography>
 			{!reviewsRecent ? (
 				<Box sx={{ display: 'flex', m: 10 }}>
@@ -40,8 +41,8 @@ const Recents: NextPage<RecentsProps> = ({ reviewsRecent }) => (
 					{reviewsRecent && (
 						<Grid container spacing={3} sx={{ margin: '10px 0' }}>
 							{reviewsRecent
-								.reverse()
-								.slice(0, 50)
+								.sort((a, b) => b.created - a.created)
+								.slice(0, REVIEWS_RECENT_LEN)
 								.map((value: Review) => (
 									<Grid sx={{ width: `100%` }} key={value.reviewId} item>
 										<ReviewCard {...value}></ReviewCard>
