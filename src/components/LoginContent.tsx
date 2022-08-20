@@ -60,20 +60,18 @@ const Login: NextPage = () => {
 						sx={{ textAlign: 'center' }}
 						label={`🔮 Enter an email address`}
 					></TextField>
-					{providers.map((provider: TProviderName, index) => {
-						return (
-							<>
-								<SocialButton
-									key={index}
-									onClick={() => {
-										signInWithProvider(provider)
-										handleLoginModalClose()
-									}}
-									provider={provider}
-								></SocialButton>
-							</>
-						)
-					})}
+					{providers.map((provider: TProviderName, index) => (
+						<>
+							<SocialButton
+								key={index}
+								onClick={() => {
+									signInWithProvider(provider)
+									handleLoginModalClose()
+								}}
+								provider={provider}
+							></SocialButton>
+						</>
+					))}
 				</Stack>
 			</Grid>
 		</Grid>

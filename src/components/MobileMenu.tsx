@@ -40,25 +40,23 @@ const MobileMenu = (navigationMenuItems: MenuLinksProps) => {
 					}}
 				>
 					{Object.keys(navigationMenuItems).map(
-						(key: string, index: number) => {
-							return (
-								<MenuItem key={index} onClick={handleMobileNavMenuClose}>
-									<Link
-										color='text.primary'
-										href={navigationMenuItems[key]}
-										key={index}
-										sx={{
-											my: 1,
-											mx: 1.5,
-											textDecoration: 'unset',
-											'&:hover': { textDecoration: 'underline' },
-										}}
-									>
-										{key}
-									</Link>
-								</MenuItem>
-							)
-						}
+						(key: string, index: number) => (
+							<MenuItem key={index} onClick={handleMobileNavMenuClose}>
+								<Link
+									color='text.primary'
+									href={navigationMenuItems[key]}
+									key={index}
+									sx={{
+										my: 1,
+										mx: 1.5,
+										textDecoration: 'unset',
+										'&:hover': { textDecoration: 'underline' },
+									}}
+								>
+									{key}
+								</Link>
+							</MenuItem>
+						)
 					)}
 				</Menu>
 			</Container>

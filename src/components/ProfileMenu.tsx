@@ -46,25 +46,23 @@ const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
 					open={isProfileMenuOpen}
 					onClose={handleProfileMenuClose}
 				>
-					{Object.keys(profileMenuItems).map((key: string, index: number) => {
-						return (
-							<MenuItem key={index} onClick={handleProfileMenuClose}>
-								<Link
-									color='text.primary'
-									href={`${profileMenuItems[key]}`}
-									as={`${profileMenuItems[key]}`}
-									sx={{
-										display: { xs: 'none', md: 'flex' },
-										mr: 1,
-										textDecoration: 'unset',
-										'&:hover': { textDecoration: 'unset' },
-									}}
-								>
-									{key}
-								</Link>
-							</MenuItem>
-						)
-					})}
+					{Object.keys(profileMenuItems).map((key: string, index: number) => (
+						<MenuItem key={index} onClick={handleProfileMenuClose}>
+							<Link
+								color='text.primary'
+								href={`${profileMenuItems[key]}`}
+								as={`${profileMenuItems[key]}`}
+								sx={{
+									display: { xs: 'none', md: 'flex' },
+									mr: 1,
+									textDecoration: 'unset',
+									'&:hover': { textDecoration: 'unset' },
+								}}
+							>
+								{key}
+							</Link>
+						</MenuItem>
+					))}
 					<MenuItem
 						onClick={() => {
 							handleProfileMenuClose()

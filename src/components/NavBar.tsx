@@ -78,24 +78,22 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 					</Box>
 					<Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
 						{Object.keys(navigationMenuItems).map(
-							(name: string, index: number) => {
-								return (
-									<Link
-										variant='button'
-										color='text.primary'
-										href={`${navigationMenuItems[name]}`}
-										key={index}
-										sx={{
-											my: 1,
-											mx: 1.5,
-											textDecoration: 'unset',
-											'&:hover': { textDecoration: 'underline' },
-										}}
-									>
-										{name}
-									</Link>
-								)
-							}
+							(name: string, index: number) => (
+								<Link
+									variant='button'
+									color='text.primary'
+									href={`${navigationMenuItems[name]}`}
+									key={index}
+									sx={{
+										my: 1,
+										mx: 1.5,
+										textDecoration: 'unset',
+										'&:hover': { textDecoration: 'underline' },
+									}}
+								>
+									{name}
+								</Link>
+							)
 						)}
 					</Box>
 					<MobileMenu {...navigationMenuItems} />

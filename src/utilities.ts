@@ -130,6 +130,5 @@ export const mapPayloadToArray = (
 	return outputArray
 }
 
-export const roundNumber = (number: number, fixed: number) => {
-	return (Math.round(number * 10) / 10).toFixed(fixed)
-}
+export const roundNumber = (number: number, fixed: number) =>
+	(Math.round(number * 10) / 10).toFixed(fixed)

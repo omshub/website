@@ -334,20 +334,18 @@ const CourseId: NextPage<CoursePageProps> = ({
 					>
 						{activeSemesters &&
 							Object.entries(activeSemesters).map(
-								([key, value]: [string, boolean], index: number) => {
-									return (
-										<ToggleButton
-											value={key}
-											key={index}
-											disabled={Boolean(value) || selectedSemester === key}
-										>
-											<Typography variant='body1'>
-												{mapSemesterTermToName[Number(key)]}{' '}
-												{mapSemesterTermToEmoji[Number(key)]}
-											</Typography>
-										</ToggleButton>
-									)
-								}
+								([key, value]: [string, boolean], index: number) => (
+									<ToggleButton
+										value={key}
+										key={index}
+										disabled={Boolean(value) || selectedSemester === key}
+									>
+										<Typography variant='body1'>
+											{mapSemesterTermToName[Number(key)]}{' '}
+											{mapSemesterTermToEmoji[Number(key)]}
+										</Typography>
+									</ToggleButton>
+								)
 							)}
 					</ToggleButtonGroup>
 					<ToggleButtonGroup
@@ -384,17 +382,11 @@ const CourseId: NextPage<CoursePageProps> = ({
 								{courseReviews && (
 									<Grid container rowSpacing={5} sx={{ mt: 1 }}>
 										{mapPayloadToArray(courseReviews, REVIEW_ID, DESC).map(
-											(value: any) => {
-												return (
-													<Grid
-														sx={{ width: `100%` }}
-														key={value.reviewId}
-														item
-													>
-														<ReviewCard {...value}></ReviewCard>
-													</Grid>
-												)
-											}
+											(value: any) => (
+												<Grid sx={{ width: `100%` }} key={value.reviewId} item>
+													<ReviewCard {...value}></ReviewCard>
+												</Grid>
+											)
 										)}
 									</Grid>
 								)}
