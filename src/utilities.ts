@@ -1,6 +1,6 @@
 import { ASC, EMOJI_FALL, EMOJI_SPRING, EMOJI_SUMMER } from '@globals/constants'
 import { semesters } from '@globals/staticDataModels'
-import { TKeyMap } from '@globals/types'
+import { TKeyMap, TRatingScale } from '@globals/types'
 import {
 	boldBlue,
 	canopyLime,
@@ -9,11 +9,12 @@ import {
 	RATCap,
 } from '@src/colorPalette'
 
-type TMapFields = {
-	[key: number]: string
+type TMapRatings = {
+	// eslint-disable-next-line no-unused-vars
+	[rating in TRatingScale]: string
 }
 
-export const mapDifficulty: TMapFields = {
+export const mapDifficulty: TMapRatings = {
 	1: 'Very Easy',
 	2: 'Easy',
 	3: 'Neutral',
@@ -21,7 +22,7 @@ export const mapDifficulty: TMapFields = {
 	5: 'Very Hard',
 }
 
-export const mapOverall: TMapFields = {
+export const mapOverall: TMapRatings = {
 	1: 'Strongly Disliked',
 	2: 'Disliked',
 	3: 'Neutral',
@@ -29,7 +30,7 @@ export const mapOverall: TMapFields = {
 	5: 'Strongly Liked',
 }
 
-export const mapStaffSupport: TMapFields = {
+export const mapStaffSupport: TMapRatings = {
 	1: 'Little/No Support',
 	2: 'Some Support',
 	3: 'Neutral',
@@ -37,13 +38,13 @@ export const mapStaffSupport: TMapFields = {
 	5: 'Strong Support',
 }
 
-export const mapSemesterTermToName: TMapFields = {
+export const mapSemesterTermToName: TKeyMap = {
 	1: semesters.sp.name,
 	2: semesters.sm.name,
 	3: semesters.fa.name,
 }
 
-export const mapSemesterTermToEmoji: TMapFields = {
+export const mapSemesterTermToEmoji: TKeyMap = {
 	1: EMOJI_SPRING,
 	2: EMOJI_SUMMER,
 	3: EMOJI_FALL,
@@ -65,7 +66,7 @@ export const mapSemesterIdToName: TKeyMap = {
  * Returns a hex color string from a 1-5 rating, with 1 being "bad" and 5 being "good"
  */
 export const mapRatingToColor = (rating: Number) => {
-	const mapColorPalette: TMapFields = {
+	const mapColorPalette: TMapRatings = {
 		1: newHorizon,
 		2: RATCap,
 		3: boldBlue,
@@ -73,7 +74,9 @@ export const mapRatingToColor = (rating: Number) => {
 		5: canopyLime,
 	}
 
-	return mapColorPalette[Math.round(rating.valueOf())]
+	const roundedRating = Math.round(rating.valueOf()) as TRatingScale
+
+	return mapColorPalette[roundedRating]
 }
 
 /**
