@@ -1,4 +1,4 @@
-import { ASC } from '@globals/constants'
+import { ASC, EMOJI_FALL, EMOJI_SPRING, EMOJI_SUMMER } from '@globals/constants'
 import {
 	boldBlue,
 	canopyLime,
@@ -42,9 +42,9 @@ export const mapSemesterTermToName: TMapFields = {
 }
 
 export const mapSemesterTermToEmoji: TMapFields = {
-	1: '🌱',
-	2: '🌞',
-	3: '🍂',
+	1: EMOJI_SPRING,
+	2: EMOJI_SUMMER,
+	3: EMOJI_FALL,
 }
 
 export const mapSemsterIdToTerm: TObject = {

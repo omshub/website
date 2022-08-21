@@ -21,8 +21,15 @@ export const NOT_FOUND_ARRAY_INDEX = -1
 
 export const MAX_HOURS_PER_WEEK = 168 // 24*7
 
+// email domains
 export const DOMAIN_GATECH = '@gatech.edu'
 export const DOMAIN_OUTLOOK = '@outlook.com'
+
+// emojis -- reference: https://www.fileformat.info
+export const EMOJI_NO_REVIEWS = '\uD83E\uDD72' // 🥲
+export const EMOJI_SPRING = '\uD83C\uDF31' // 🌱
+export const EMOJI_SUMMER = '\uD83C\uDF1E' // 🌞
+export const EMOJI_FALL = '\uD83C\uDF42' // 🍂
 
 /* --- DATA MODELS FIELDS --- */
 

@@ -3,7 +3,7 @@ import ReviewCard from '@components/ReviewCard'
 import ReviewForm from '@components/ReviewForm'
 import { useAuth } from '@context/AuthContext'
 import { FirebaseAuthUser } from '@context/types'
-import { DESC, REVIEW_ID } from '@globals/constants'
+import { DESC, EMOJI_NO_REVIEWS, REVIEW_ID } from '@globals/constants'
 import { Course, Review, TPayloadReviews } from '@globals/types'
 import { mapDynamicCoursesDataToCourses } from '@globals/utilities'
 import FileCopyIcon from '@mui/icons-material/FileCopyOutlined'
@@ -399,7 +399,7 @@ const CourseId: NextPage<CoursePageProps> = ({
 									style={{ textAlign: 'center' }}
 									gutterBottom
 								>
-									Aww shucks no reviews &#x1F972;
+									{`Aww shucks no reviews ${EMOJI_NO_REVIEWS}`}
 								</Typography>
 							</>
 						)}

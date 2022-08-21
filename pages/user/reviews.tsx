@@ -1,7 +1,7 @@
 import ReviewCard from '@components/ReviewCard'
 import { useAuth } from '@context/AuthContext'
 import { FirebaseAuthUser } from '@context/types'
-import { DESC, REVIEW_ID } from '@globals/constants'
+import { DESC, EMOJI_NO_REVIEWS, REVIEW_ID } from '@globals/constants'
 import { Review, TUserReviews } from '@globals/types'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -93,7 +93,7 @@ const UserReviews: NextPage = () => {
 										style={{ textAlign: 'center' }}
 										gutterBottom
 									>
-										Aww shucks no reviews &#x1F972;
+										{`Aww shucks no reviews ${EMOJI_NO_REVIEWS}`}
 									</Typography>
 								</>
 							)}
