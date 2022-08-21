@@ -20,7 +20,7 @@ import {
 	TSpecializationId,
 	TSubjectAreaId,
 } from '@globals/types'
-import { GATECH_DOMAIN } from './constants'
+import { GATECH_DOMAIN, OUTLOOK_DOMAIN } from './constants'
 
 /* --- STATIC DATA GETTERS --- */
 
@@ -76,3 +76,9 @@ export const isGTEmail = (userEmail: string) =>
 		.toLowerCase()
 		.slice(userEmail.length - GATECH_DOMAIN.length)
 		.includes(GATECH_DOMAIN)
+
+export const isOutlookEmail = (userEmail: string) =>
+	userEmail
+		.toLowerCase()
+		.slice(userEmail.length - OUTLOOK_DOMAIN.length)
+		.includes(OUTLOOK_DOMAIN)

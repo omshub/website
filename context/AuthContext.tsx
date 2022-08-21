@@ -5,6 +5,7 @@ import {
 	FirebaseAuthUser,
 	TSignInAction,
 } from '@context/types'
+import { isGTEmail, isOutlookEmail } from '@globals/utilities'
 import {
 	FacebookAuthProvider,
 	fetchSignInMethodsForEmail,
@@ -77,9 +78,14 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
 		}).then(() => {
 			// Save the users email to verify it after they access their email
 			window.localStorage.setItem('emailForSignIn', email)
+			const additionalInstructions =
+				isGTEmail(email) || isOutlookEmail(email)
+					? ' NOTE: gatech.edu or outlook.com domain may require release from Quarantine. See https://security.microsoft.com/quarantine'
+					: ''
+			const text = `A Magic Link was sent to ${email}! Check your spam folder just in-case.${additionalInstructions}`
 			setAlert({
 				severity: 'success',
-				text: `A Magic Link was sent to ${email}! Check your spam folder just in-case.`,
+				text,
 				variant: 'outlined',
 			})
 		})
