@@ -40,6 +40,7 @@ const { COURSES } = coreDataDocuments
 export const getCourses = async () => {
 	try {
 		const snapshot = await getOneDoc(baseCollectionCoreData, COURSES)
+		// @ts-ignore -- `TPayloadCoursesDataDynamic` is known/expected form
 		const coursesDataDoc: TPayloadCoursesDataDynamic = snapshot.data() ?? {}
 		return coursesDataDoc
 	} catch (e: any) {
@@ -47,7 +48,8 @@ export const getCourses = async () => {
 		throw new Error(e)
 	}
 }
-export const getCourse = async (courseId: string) => {
+
+export const getCourse = async (courseId: TCourseId) => {
 	try {
 		const coursesDataDoc = await getCourses()
 		return coursesDataDoc ? coursesDataDoc[courseId] : null
@@ -56,15 +58,18 @@ export const getCourse = async (courseId: string) => {
 		throw new Error(e)
 	}
 }
+
 export const addCourse = async (
-	courseId: string,
+	courseId: TCourseId,
 	courseData: CourseDataDynamic
 ) => addOrUpdateCourse(courseId, courseData)
+
 export const updateCourse = async (
-	courseId: string,
+	courseId: TCourseId,
 	courseData: CourseDataDynamic
 ) => addOrUpdateCourse(courseId, courseData)
-export const deleteCourse = async (courseId: string) => {
+
+export const deleteCourse = async (courseId: TCourseId) => {
 	try {
 		const coursesDataDoc = await getCourses()
 		if (coursesDataDoc && Object.keys(coursesDataDoc).length) {

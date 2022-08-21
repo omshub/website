@@ -53,11 +53,12 @@ export const delDoc = async (
 /* --- COURSE DATA CRUD SUB-OPERATIONS --- */
 
 export const addOrUpdateCourse = async (
-	courseId: string,
+	courseId: TCourseId,
 	courseData: CourseDataDynamic
 ) => {
 	try {
 		const coursesDataDoc = await getCourses()
+		// @ts-ignore -- newCoursesDataDoc is populated in subsequent logic
 		let newCoursesDataDoc: TPayloadCoursesDataDynamic = {}
 		if (coursesDataDoc) {
 			if (Object.keys(coursesDataDoc).length) {

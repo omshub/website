@@ -13,10 +13,10 @@ import SocialButton from '@components/SocialButton'
 const Login: NextPage = () => {
 	const authContext = useAuth()
 
-	// eslint-disable-next-line no-unused-vars
+	/* eslint-disable no-unused-vars */
 	let signInWithProvider: TSignInAction = (email: string) => {}
-	// eslint-disable-next-line no-unused-vars
 	let signWithMagic: TSignInAction = (email: string) => {}
+	/* eslint-enable no-unused-vars */
 
 	if (authContext) {
 		;({ signInWithProvider, signWithMagic } = authContext)

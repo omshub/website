@@ -75,7 +75,7 @@ export interface Review {
 	hasMandatoryReadings?: boolean
 	hasProgrammingAssignments?: boolean
 	hasProvidedDevEnv?: boolean
-	programmingLanguagesIds?: TProgramLanguageId[]
+	programmingLanguagesIds?: TProgrammingLanguageId[]
 	/* --- user background review data --- */
 	preparation?: TRatingScale
 	omsCoursesTaken?: TNullableNumber
@@ -131,7 +131,7 @@ export interface SubjectArea {
 }
 
 export interface ProgrammingLanguage {
-	programmingLanguageId: TProgramLanguageId
+	programmingLanguageId: TProgrammingLanguageId
 	name: TProgrammingLanguageName
 }
 
@@ -142,32 +142,34 @@ export interface Grade {
 
 /* --- PAYLOADS --- */
 
+/* eslint-disable no-unused-vars */
+
 export type TPayloadCoursesDataStatic = {
-	[courseId: string]: CourseDataStatic
+	[courseId in TCourseId]: CourseDataStatic
 }
 
 export type TPayloadCoursesDataDynamic = {
-	[courseId: string]: CourseDataDynamic
+	[courseId in TCourseId]: CourseDataDynamic
 }
 
 export type TPayloadCourses = {
-	[courseId: string]: Course
+	[courseId in TCourseId]: Course
 }
 
 export type TPayloadDepartments = {
-	[departmentId: string]: Department
+	[departmentId in TDepartmentId]: Department
 }
 
 export type TPayloadPrograms = {
-	[programId: string]: Program
+	[programId in TProgramId]: Program
 }
 
 export type TPayloadSemesters = {
-	[semesterId: string]: Semester
+	[semesterId in TSemesterId]: Semester
 }
 
 export type TPayloadSpecializations = {
-	[specializationId: string]: Specialization
+	[specializationId in TSpecializationId]: Specialization
 }
 
 export type TPayloadReviews = {
@@ -179,20 +181,22 @@ export type TPayloadUsers = {
 }
 
 export type TPayloadEducationLevels = {
-	[educationLevelId: string]: EducationLevel
+	[educationLevelId in TEducationLevelId]: EducationLevel
 }
 
 export type TPayloadSubjectAreas = {
-	[subjectAreaId: string]: SubjectArea
+	[subjectAreaId in TSubjectAreaId]: SubjectArea
 }
 
 export type TPayloadProgrammingLanguages = {
-	[programmingLanguageId: string]: ProgrammingLanguage
+	[programmingLanguageId in TProgrammingLanguageId]: ProgrammingLanguage
 }
 
 export type TPayloadGrades = {
-	[gradeId: string]: Grade
+	[gradeId in TGradeId]: Grade
 }
+
+/* eslint-enable no-unused-vars */
 
 /* --- DATA MODELS TYPEDEFS --- */
 
@@ -245,7 +249,7 @@ export type TSpecializationName =
 	| 'Information Security'
 	| 'Policy'
 
-export type TProgramLanguageId =
+export type TProgrammingLanguageId =
 	| 'c'
 	| 'cpp'
 	| 'cs'

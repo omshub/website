@@ -59,8 +59,10 @@ export const mapDynamicCoursesDataToCourses = (
 	coursesDataDynamic: TPayloadCoursesDataDynamic
 ) => {
 	const coursesDataStatic = getCoursesDataStatic()
+	// @ts-ignore -- courses is populated in subsequent `forEach`
 	const courses: TPayloadCourses = {}
-	Object.keys(coursesDataStatic).forEach((courseId) => {
+	// @ts-ignore -- `TCourseId` is guaranteed by `coursesDataStatic`
+	Object.keys(coursesDataStatic).forEach((courseId: TCourseId) => {
 		courses[courseId] = {
 			...coursesDataStatic[courseId],
 			...coursesDataDynamic[courseId],
