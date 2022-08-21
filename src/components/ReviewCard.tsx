@@ -32,6 +32,8 @@ import { toBlob } from 'html-to-image'
 import { useRouter } from 'next/router'
 import { SyntheticEvent, useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import stringWidth from 'string-width'
 
 const { deleteReview } = backend
 
@@ -209,7 +211,17 @@ const ReviewCard = ({
 						</Grid>
 					</Box>
 					<article>
-						<ReactMarkdown>{body}</ReactMarkdown>
+						<ReactMarkdown
+							remarkPlugins={[
+								[
+									remarkGfm,
+									{ singleTilde: false },
+									{ stringLength: stringWidth },
+								],
+							]}
+						>
+							{body}
+						</ReactMarkdown>
 					</article>
 					<Grid textAlign='right'>
 						{/* Not User View */}
