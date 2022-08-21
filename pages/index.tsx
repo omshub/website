@@ -1,11 +1,13 @@
 import backend from '@backend/index'
 import { courseFields } from '@globals/constants'
 import { Course } from '@globals/types'
+import { mapDynamicCoursesDataToCourses } from '@globals/utilities'
 import { useMediaQuery } from '@mui/material'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
+
 import {
 	DataGrid,
 	GridColDef,
@@ -90,7 +92,6 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 		},
 		{ field: courseFields.ALIASES, headerName: 'Aliases', flex: 0, hide: true },
 	]
-
 	return (
 		<Container maxWidth='xl'>
 			<Box
@@ -156,7 +157,8 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 export default Home
 
 export async function getServerSideProps() {
-	const coursesData = await getCourses()
+	const coursesDataDynamic = await getCourses()
+	const coursesData = mapDynamicCoursesDataToCourses(coursesDataDynamic)
 	return {
 		props: {
 			allCourseData: coursesData,

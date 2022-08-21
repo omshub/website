@@ -1,58 +1,65 @@
-import { doc, setDoc } from 'firebase/firestore'
-import { db } from './FirebaseConfig'
 import {
-	coreDataDocuments,
 	baseCollectionCoreData,
-	baseCollectionReviewsData,
 	baseCollectionRecentsData,
+	baseCollectionReviewsData,
 	baseCollectionUsersData,
+	coreDataDocuments,
 } from '@backend/constants'
 import {
-	getCourses,
 	getCourse,
-	updateCourse,
-	getReviews,
+	getCourses,
 	getReview,
+	getReviews,
 	getReviewsRecent,
 	getUser,
+	updateCourse,
 } from '@backend/dbOperations'
 import {
-	Course,
-	Review,
-	TCourseId,
-	TPayloadCourses,
-	TPayloadCoursesDataDynamic,
-} from '@globals/types'
-import { TDocumentData, TDocumentDataObject } from '@backend/documentsDataTypes'
+	TDocumentData,
+	TDocumentDataId,
+	TDocumentDataObject,
+} from '@backend/documentsDataTypes'
 import { parseReviewId, updateAverages } from '@backend/utilityFunctions'
 import { NOT_FOUND_ARRAY_INDEX, REVIEWS_RECENT_TOTAL } from '@globals/constants'
-import { getCoursesDataStatic } from '@globals/utilities'
+import {
+	CourseDataDynamic,
+	Review,
+	TCourseId,
+	TPayloadCoursesDataDynamic,
+} from '@globals/types'
+import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
+import { db } from '@backend/FirebaseConfig'
 
 const { COURSES } = coreDataDocuments
 
+/* --- GENERIC CRUD SUB-OPERATIONS (FOR FLAT COLLECTIONS) --- */
+
+export const getOneDoc = async (
+	collectionPathString: string,
+	documentId: TDocumentDataId
+) => getDoc(doc(db, collectionPathString, documentId))
+
+export const addOrEditDoc = async (
+	collectionPathString: string,
+	documentId: TDocumentDataId,
+	documentData: TDocumentData
+) => setDoc(doc(db, collectionPathString, documentId), documentData)
+
+export const delDoc = async (
+	collectionPathString: string,
+	documentId: TDocumentDataId
+) => deleteDoc(doc(db, collectionPathString, documentId))
+
 /* --- COURSE DATA CRUD SUB-OPERATIONS --- */
 
-export const mapDynamicCoursesDataToCourses = (
-	coursesDataDynamic: TPayloadCoursesDataDynamic
-) => {
-	const coursesDataStatic = getCoursesDataStatic()
-	const courses: TPayloadCourses = {}
-	Object.keys(coursesDataStatic).forEach((courseId) => {
-		courses[courseId] = {
-			...coursesDataStatic[courseId],
-			...coursesDataDynamic[courseId],
-		}
-	})
-	return courses
-}
-
 export const addOrUpdateCourse = async (
-	courseId: string,
-	courseData: Course
+	courseId: TCourseId,
+	courseData: CourseDataDynamic
 ) => {
 	try {
 		const coursesDataDoc = await getCourses()
-		let newCoursesDataDoc: TPayloadCourses = {}
+		// @ts-ignore -- newCoursesDataDoc is populated in subsequent logic
+		let newCoursesDataDoc: TPayloadCoursesDataDynamic = {}
 		if (coursesDataDoc) {
 			if (Object.keys(coursesDataDoc).length) {
 				newCoursesDataDoc = { ...coursesDataDoc }
@@ -136,10 +143,6 @@ const updateReviewsRecent = async ({
 						arrayRecentData = arrayRecentData.filter(
 							(_: Review, index: number) => index !== indexFoundAt
 						)
-						if (arrayRecentData.length > REVIEWS_RECENT_TOTAL) {
-							// truncate buffer
-							arrayRecentData.shift()
-						}
 						await setDoc(doc(db, `${baseCollectionRecentsData}/${dataDoc}`), {
 							data: arrayRecentData,
 						})
@@ -248,7 +251,13 @@ export const updateCourseDataOnAddReview = async (
 	reviewData: Review
 ) => {
 	try {
+		// @ts-ignore -- intended semantics in this context is `Number`
 		let { courseId, year, semesterTerm } = parseReviewId(reviewId)
+		// @ts-ignore -- intended semantics in this context is `Number`
+		year = Number(year)
+		// @ts-ignore -- intended semantics in this context is `Number`
+		semesterTerm = Number(semesterTerm)
+
 		const courseDataDoc = await getCourse(courseId)
 		if (courseDataDoc) {
 			let {
@@ -289,13 +298,16 @@ export const updateCourseDataOnAddReview = async (
 				avgStaffSupport,
 			}))
 
-			if (!reviewsCountsByYearSem[year][semesterTerm]) {
-				// no previous reviews in year-semesterTerm
-				reviewsCountsByYearSem[year][semesterTerm] = 1
-			} else {
-				reviewsCountsByYearSem[year][semesterTerm] =
-					reviewsCountsByYearSem[year][semesterTerm] + 1
+			if (!reviewsCountsByYearSem[year]) {
+				reviewsCountsByYearSem[year] = {}
 			}
+
+			if (!reviewsCountsByYearSem[year][semesterTerm]) {
+				reviewsCountsByYearSem[year][semesterTerm] = 0
+			}
+
+			reviewsCountsByYearSem[year][semesterTerm] =
+				reviewsCountsByYearSem[year][semesterTerm] + 1
 
 			const updatedCourseData = {
 				...courseDataDoc,
@@ -485,7 +497,13 @@ export const updateUserDataOnUpdateReview = async (
 
 export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 	try {
+		// @ts-ignore -- intended semantics in this context is `Number`
 		let { courseId, year, semesterTerm } = parseReviewId(reviewId)
+		// @ts-ignore -- intended semantics in this context is `Number`
+		year = Number(year)
+		// @ts-ignore -- intended semantics in this context is `Number`
+		semesterTerm = Number(semesterTerm)
+
 		const courseDataDoc = await getCourse(courseId)
 		if (courseDataDoc) {
 			let {
@@ -533,6 +551,11 @@ export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 			} else {
 				reviewsCountsByYearSem[year][semesterTerm] =
 					reviewsCountsByYearSem[year][semesterTerm] - 1
+			}
+
+			// remove year if no remaining year-sem's
+			if (Object.keys(reviewsCountsByYearSem[year]).length === 0) {
+				delete reviewsCountsByYearSem[year]
 			}
 
 			const updatedCourseData = {

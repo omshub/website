@@ -5,7 +5,6 @@ const _ = require('lodash')
 // N.B. See `./example.env.js` for how to populate `.env.js`
 const { config } = require('./.env')
 
-const courses = require('./data/courses')
 const departments = require('./data/departments')
 const programs = require('./data/programs')
 const semesters = require('./data/semesters')
@@ -18,10 +17,7 @@ const db = getFirestore(firebaseApp)
 // convert seed data from array form to map form
 
 /* --- CORE DATA --- */
-const coursesMap = {}
-courses.forEach((course) => {
-	coursesMap[course.courseId] = course
-})
+const coursesMap = require('./createCoursesDataMap')
 
 const departmentsMap = {}
 departments.forEach((department) => {
@@ -46,7 +42,7 @@ specializations.forEach((specialization) => {
 /* --- REVIEWS DATA --- */
 
 const reviews = require('./data/reviews')
-const recentsMap = require('./data/recents')
+const recentsMap = require('./createRecentsDataMap')
 
 const mapSemIdToTerm = {
 	sp: 1,
@@ -70,6 +66,11 @@ _.sortBy(reviews, ['courseId', 'reviewId']).forEach((review) => {
 	reviewsDataMaps[courseId][key][reviewId] = review
 })
 
+const reviewsDataMapFlat = {}
+reviews.forEach((review) => {
+	reviewsDataMapFlat[review.reviewId] = review
+})
+
 // Seed Firebase Firestore collections in the cloud
 const add = async (collectionName, newDocId, data) =>
 	setDoc(doc(db, collectionName, newDocId), data)
@@ -89,6 +90,8 @@ const add = async (collectionName, newDocId, data) =>
 })()
 
 // seed reviews data
+
+// nested to minimize ops
 for (const courseId in reviewsDataMaps) {
 	const yearSem = reviewsDataMaps[courseId]
 	for (const yearSemId in yearSem) {
@@ -98,9 +101,19 @@ for (const courseId in reviewsDataMaps) {
 	}
 }
 
+// flat
+const msg =
+	'This is a placeholder only, created here to prevent landing on large-read collections on initial load of Firestore UI. WARNING: Clicking on `_reviewsDataFlat` will cause 500+ read operations, therefore, only access it via Firestore UI if necessary.'
+;(async () => add('__dummy', 'do-not-use', { msg }))()
+
+for (const reviewId in reviewsDataMapFlat) {
+	const data = reviewsDataMapFlat[reviewId]
+	;(async () => add('_reviewsDataFlat', reviewId, data))()
+}
+
 // seed recents data (N.B. includes `_aggregateData` array)
 Object.entries(recentsMap).forEach(async ([courseId, reviewsArray]) =>
 	setDoc(doc(db, `recentsData/${courseId}`), {
-		data: reviewsArray,
+		data: reviewsArray.sort((a, b) => a.created - b.created),
 	})
 )

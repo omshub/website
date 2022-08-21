@@ -123,7 +123,7 @@ export const specializations: TPayloadSpecializations = {
 export const educationLevels: TPayloadEducationLevels = {
 	bach: { educationLevelId: 'bach', name: 'Bachelor' },
 	mast: { educationLevelId: 'mast', name: 'Master' },
-	doc: { educationLevelId: 'phd', name: 'Doctorate (PhD)' },
+	phd: { educationLevelId: 'phd', name: 'Doctorate (PhD)' },
 }
 
 export const subjectAreas: TPayloadSubjectAreas = {
@@ -135,7 +135,7 @@ export const subjectAreas: TPayloadSubjectAreas = {
 	cs: { subjectAreaId: 'cs', name: 'Computer Science' },
 	econ: { subjectAreaId: 'econ', name: 'Economics' },
 	engrElec: { subjectAreaId: 'engrElec', name: 'Electrical Engineering' },
-	engrCmp: { subjectAreaId: 'engrComp', name: 'Computer Engineering' },
+	engrComp: { subjectAreaId: 'engrComp', name: 'Computer Engineering' },
 	engrInd: { subjectAreaId: 'engrInd', name: 'Industrial Engineering' },
 	engrOther: { subjectAreaId: 'engrOther', name: 'Other Engineering' },
 	fin: { subjectAreaId: 'fin', name: 'Finance' },

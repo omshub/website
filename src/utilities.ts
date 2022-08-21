@@ -1,4 +1,6 @@
-import { ASC } from '@globals/constants'
+import { ASC, EMOJI_FALL, EMOJI_SPRING, EMOJI_SUMMER } from '@globals/constants'
+import { semesters } from '@globals/staticDataModels'
+import { TKeyMap, TRatingScale } from '@globals/types'
 import {
 	boldBlue,
 	canopyLime,
@@ -7,11 +9,12 @@ import {
 	RATCap,
 } from '@src/colorPalette'
 
-type TMapFields = {
-	[key: number]: string
+type TMapRatings = {
+	// eslint-disable-next-line no-unused-vars
+	[rating in TRatingScale]: string
 }
 
-export const mapDifficulty: TMapFields = {
+export const mapDifficulty: TMapRatings = {
 	1: 'Very Easy',
 	2: 'Easy',
 	3: 'Neutral',
@@ -19,7 +22,7 @@ export const mapDifficulty: TMapFields = {
 	5: 'Very Hard',
 }
 
-export const mapOverall: TMapFields = {
+export const mapOverall: TMapRatings = {
 	1: 'Strongly Disliked',
 	2: 'Disliked',
 	3: 'Neutral',
@@ -27,7 +30,7 @@ export const mapOverall: TMapFields = {
 	5: 'Strongly Liked',
 }
 
-export const mapStaffSupport: TMapFields = {
+export const mapStaffSupport: TMapRatings = {
 	1: 'Little/No Support',
 	2: 'Some Support',
 	3: 'Neutral',
@@ -35,46 +38,35 @@ export const mapStaffSupport: TMapFields = {
 	5: 'Strong Support',
 }
 
-export const mapSemesterTermToName: TMapFields = {
-	1: 'Spring',
-	2: 'Summer',
-	3: 'Fall',
+export const mapSemesterTermToName: TKeyMap = {
+	1: semesters.sp.name,
+	2: semesters.sm.name,
+	3: semesters.fa.name,
 }
 
-export const mapSemesterTermToEmoji: TMapFields = {
-	1: '🌱',
-	2: '🌞',
-	3: '🍂',
+export const mapSemesterTermToEmoji: TKeyMap = {
+	1: EMOJI_SPRING,
+	2: EMOJI_SUMMER,
+	3: EMOJI_FALL,
 }
 
-export const mapSemsterIdToTerm: TObject = {
-	sp: 1,
-	sm: 2,
-	fa: 3,
+export const mapSemsterIdToTerm: TKeyMap = {
+	sp: semesters.sp.term,
+	sm: semesters.sm.term,
+	fa: semesters.fa.term,
 }
 
-export const mapSemesterIdToName: TObject = {
-	sp: 'Spring',
-	sm: 'Summer',
-	fa: 'Fall',
+export const mapSemesterIdToName: TKeyMap = {
+	sp: semesters.sp.name,
+	sm: semesters.sm.name,
+	fa: semesters.fa.name,
 }
-type TObject = {
-	[key: string | number]: any
-}
-type TSortKey =
-	| 'courseId'
-	| 'departmentId'
-	| 'programId'
-	| 'semesterId'
-	| 'specializationId'
-	| 'userId'
-type TSortDirection = 'ASC' | 'DESC'
 
 /**
  * Returns a hex color string from a 1-5 rating, with 1 being "bad" and 5 being "good"
  */
 export const mapRatingToColor = (rating: Number) => {
-	const mapColorPalette: TMapFields = {
+	const mapColorPalette: TMapRatings = {
 		1: newHorizon,
 		2: RATCap,
 		3: boldBlue,
@@ -82,7 +74,9 @@ export const mapRatingToColor = (rating: Number) => {
 		5: canopyLime,
 	}
 
-	return mapColorPalette[Math.round(rating.valueOf())]
+	const roundedRating = Math.round(rating.valueOf()) as TRatingScale
+
+	return mapColorPalette[roundedRating]
 }
 
 /**
@@ -92,14 +86,25 @@ export const mapRatingToColor = (rating: Number) => {
 export const mapRatingToColorInverted = (rating: Number) =>
 	mapRatingToColor(-rating + 6)
 
+type TSortKey =
+	| 'courseId'
+	| 'departmentId'
+	| 'programId'
+	| 'semesterId'
+	| 'specializationId'
+	| 'userId'
+type TSortDirection = 'ASC' | 'DESC'
+
 export const mapPayloadToArray = (
-	map: TObject | undefined,
+	map: TKeyMap | undefined,
 	sortKey?: TSortKey | string,
 	sortDirection?: TSortDirection
 ) => {
 	const outputArray = []
-	for (const key in map) {
-		outputArray.push(map[key])
+	if (map) {
+		for (const key in map) {
+			outputArray.push(map[key])
+		}
 	}
 	if (sortKey) {
 		if (!sortDirection) {
@@ -117,16 +122,15 @@ export const mapPayloadToArray = (
 			}
 
 			if (typeof valA === 'number' && typeof valB === 'number') {
-				return isAscendingSortFactor * (valA - valB) ? 1 : -1
+				return isAscendingSortFactor * (valA - valB)
 			}
 
-			// default fallthrough
+			// default fallthrough (returns elements in original order)
 			return -1
 		})
 	}
 	return outputArray
 }
 
-export const roundNumber = (number: number, fixed: number) => {
-	return (Math.round(number * 10) / 10).toFixed(fixed)
-}
+export const roundNumber = (number: number, fixed: number) =>
+	(Math.round(number * 10) / 10).toFixed(fixed)

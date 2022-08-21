@@ -32,7 +32,7 @@ reviews.forEach(({ courseId }) => {
 	}
 })
 
-// initialize `courseDataMap` with static data, and field `numReviews`
+// initialize `courseDataMap` with field `numReviews`
 const coursesDataDynamicMap = {}
 coursesDataDynamic.forEach(
 	({ courseId }) =>

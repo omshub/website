@@ -1,36 +1,48 @@
 import backend from '@backend/index'
 import ReviewCard from '@components/ReviewCard'
-import { DESC, REVIEW_ID } from '@globals/constants'
-import { Course, TPayloadReviews } from '@globals/types'
+import ReviewForm from '@components/ReviewForm'
+import { useAuth } from '@context/AuthContext'
+import { FirebaseAuthUser } from '@context/types'
+import { DESC, EMOJI_NO_REVIEWS, REVIEW_ID } from '@globals/constants'
+import { Course, Review, TCourseId, TPayloadReviews } from '@globals/types'
+import { mapDynamicCoursesDataToCourses } from '@globals/utilities'
+import FileCopyIcon from '@mui/icons-material/FileCopyOutlined'
 import LinkIcon from '@mui/icons-material/Link'
+import RateReviewIcon from '@mui/icons-material/RateReview'
+import ShareIcon from '@mui/icons-material/Share'
 import { useMediaQuery } from '@mui/material'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CircularProgress from '@mui/material/CircularProgress'
 import Container from '@mui/material/Container'
+import Dialog from '@mui/material/Dialog'
 import Grid from '@mui/material/Grid'
 import Link from '@mui/material/Link'
+import Snackbar from '@mui/material/Snackbar'
+import SpeedDial from '@mui/material/SpeedDial'
+import SpeedDialAction from '@mui/material/SpeedDialAction'
+import SpeedDialIcon from '@mui/material/SpeedDialIcon'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Typography from '@mui/material/Typography'
 import {
 	mapPayloadToArray,
-	mapRatingToColor,
-	mapRatingToColorInverted,
 	mapSemesterTermToEmoji,
 	mapSemesterTermToName,
+	mapRatingToColor,
+	mapRatingToColorInverted,
 	roundNumber,
 } from '@src/utilities'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import useSWR, { useSWRConfig } from 'swr'
+
 type TActiveSemesters = {
 	[semesterTerm: number]: boolean
 }
-
-const { getCourses, getReviews } = backend
 
 interface CoursePageProps {
 	courseData: Course
@@ -43,6 +55,8 @@ interface CoursePageProps {
 	numberOfReviews: number
 }
 
+const { getCourses, getReviews } = backend
+
 const CourseId: NextPage<CoursePageProps> = ({
 	courseData,
 	courseTimeline,
@@ -54,6 +68,18 @@ const CourseId: NextPage<CoursePageProps> = ({
 }) => {
 	const router = useRouter()
 	const [loading, setLoading] = useState<boolean>(false)
+	const [snackBarOpen, setSnackBarOpen] = useState<boolean>(false)
+	const [snackBarMessage, setSnackBarMessage] = useState<string>('')
+	const [reviewModalOpen, setReviewModalOpen] = useState(false)
+	const handleReviewModalOpen = () => setReviewModalOpen(true)
+	const handleReviewModalClose = () => setReviewModalOpen(false)
+
+	const authContext = useAuth()
+	let user: FirebaseAuthUser | null = null
+	if (authContext) {
+		;({ user } = authContext)
+	}
+
 	const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>(
 		defaultSemesterToggles
 	)
@@ -65,11 +91,47 @@ const CourseId: NextPage<CoursePageProps> = ({
 	const orientation = useMediaQuery('(min-width:600px)')
 
 	const path = router.asPath.split('/')
-	const courseId = path[path.length - 1]
+	const courseId = path[path.length - 1] as TCourseId
 	const { mutate } = useSWRConfig()
 	const { data: course_reviews } = useSWR(
 		`/course/${courseId}/${selectedYear}/${selectedSemester}`
 	)
+
+	const actions = [
+		{
+			icon: <ShareIcon />,
+			enabled: true,
+			name: 'Share Course URL',
+			clickAction: () => {
+				navigator.clipboard.writeText(window.location.href)
+				setSnackBarMessage('Copied Course URL to Clipboard')
+				setSnackBarOpen(true)
+			},
+		},
+		{
+			icon: <FileCopyIcon />,
+			enabled: true,
+			name: 'Copy Course Name',
+			clickAction: () => {
+				navigator.clipboard.writeText(
+					`${courseData?.courseId}: ${courseData?.name}`
+				)
+				setSnackBarMessage('Copied Course Name to Clipboard')
+				setSnackBarOpen(true)
+			},
+		},
+		{
+			icon: <RateReviewIcon />,
+			enabled: user ? true : false,
+			name: 'Add Review',
+			clickAction: user
+				? () => {
+						handleReviewModalOpen()
+				  }
+				: () => {},
+		},
+	]
+
 	const handleSemester = (
 		event: React.MouseEvent<HTMLElement>,
 		newSemester: string
@@ -82,6 +144,16 @@ const CourseId: NextPage<CoursePageProps> = ({
 		newYear: number
 	) => {
 		setSelectedYear(newYear)
+	}
+	const handleClose = (
+		event: React.SyntheticEvent | Event,
+		reason?: string
+	) => {
+		if (reason === 'clickaway') {
+			return
+		}
+
+		setSnackBarOpen(false)
 	}
 	useEffect(() => {
 		if (courseData?.numReviews) {
@@ -158,7 +230,6 @@ const CourseId: NextPage<CoursePageProps> = ({
 						</Box>
 					</Link>
 				)}
-
 				{courseData &&
 					courseData?.avgWorkload &&
 					courseData?.avgDifficulty &&
@@ -263,20 +334,18 @@ const CourseId: NextPage<CoursePageProps> = ({
 					>
 						{activeSemesters &&
 							Object.entries(activeSemesters).map(
-								([key, value]: [string, boolean], index: number) => {
-									return (
-										<ToggleButton
-											value={key}
-											key={index}
-											disabled={Boolean(value) || selectedSemester === key}
-										>
-											<Typography variant='body1'>
-												{mapSemesterTermToName[Number(key)]}{' '}
-												{mapSemesterTermToEmoji[Number(key)]}
-											</Typography>
-										</ToggleButton>
-									)
-								}
+								([key, value]: [string, boolean], index: number) => (
+									<ToggleButton
+										value={key}
+										key={index}
+										disabled={Boolean(value) || selectedSemester === key}
+									>
+										<Typography variant='body1'>
+											{mapSemesterTermToName[Number(key)]}{' '}
+											{mapSemesterTermToEmoji[Number(key)]}
+										</Typography>
+									</ToggleButton>
+								)
 							)}
 					</ToggleButtonGroup>
 					<ToggleButtonGroup
@@ -313,17 +382,11 @@ const CourseId: NextPage<CoursePageProps> = ({
 								{courseReviews && (
 									<Grid container rowSpacing={5} sx={{ mt: 1 }}>
 										{mapPayloadToArray(courseReviews, REVIEW_ID, DESC).map(
-											(value: any) => {
-												return (
-													<Grid
-														sx={{ width: `100%` }}
-														key={value.reviewId}
-														item
-													>
-														<ReviewCard {...value}></ReviewCard>
-													</Grid>
-												)
-											}
+											(value: Review) => (
+												<Grid sx={{ width: `100%` }} key={value.reviewId} item>
+													<ReviewCard {...value}></ReviewCard>
+												</Grid>
+											)
 										)}
 									</Grid>
 								)}
@@ -336,13 +399,53 @@ const CourseId: NextPage<CoursePageProps> = ({
 									style={{ textAlign: 'center' }}
 									gutterBottom
 								>
-									{`Aww shucks no reviews 🥲`}
+									{`Aww shucks no reviews ${EMOJI_NO_REVIEWS}`}
 								</Typography>
 							</>
 						)}
 					</>
 				)}
 			</Box>
+			<Dialog
+				open={reviewModalOpen}
+				onClose={handleReviewModalClose}
+				maxWidth='md'
+				closeAfterTransition
+			>
+				<ReviewForm {...{ courseData, handleReviewModalClose }} />
+			</Dialog>
+			<SpeedDial
+				ariaLabel='Review Dial'
+				sx={{ position: 'fixed', bottom: 40, right: 40 }}
+				icon={<SpeedDialIcon />}
+			>
+				{actions
+					.flatMap((action) => {
+						if (!action.enabled) {
+							return []
+						}
+						return action
+					})
+					.map((action) => (
+						<SpeedDialAction
+							key={action.name}
+							icon={action.icon}
+							tooltipTitle={action.name}
+							onClick={action.clickAction}
+						/>
+					))}
+			</SpeedDial>
+			<Snackbar
+				open={snackBarOpen}
+				autoHideDuration={6000}
+				onClose={handleClose}
+				action={
+					<Button color='secondary' size='small' onClick={handleClose}>
+						Close
+					</Button>
+				}
+				message={snackBarMessage}
+			/>
 		</Container>
 	)
 }
@@ -352,10 +455,13 @@ export default CourseId
 interface PageProps {
 	query: { courseid: string }
 }
+
 export async function getServerSideProps(context: PageProps) {
 	const { courseid } = context.query
-	const allCourseData = await getCourses()
-	const currentCourseData = allCourseData[courseid]
+	const courseId = courseid as TCourseId
+	const allCourseDataDynamic = await getCourses()
+	const allCourseData = mapDynamicCoursesDataToCourses(allCourseDataDynamic)
+	const currentCourseData = allCourseData[courseId]
 	if (currentCourseData.numReviews) {
 		const courseTimeline = currentCourseData.reviewsCountsByYearSem
 		const courseYears = Object.keys(courseTimeline)
@@ -374,7 +480,7 @@ export async function getServerSideProps(context: PageProps) {
 			{}
 		)
 		const courseReviews = await getReviews(
-			courseid,
+			courseId,
 			String(mostRecentYear),
 			String(mostRecentSemester)
 		)
