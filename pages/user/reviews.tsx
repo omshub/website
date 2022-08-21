@@ -93,7 +93,7 @@ const UserReviews: NextPage = () => {
 										style={{ textAlign: 'center' }}
 										gutterBottom
 									>
-										{`Aww shucks no reviews 🥲`}
+										Aww shucks no reviews &#x1F972;
 									</Typography>
 								</>
 							)}
