@@ -497,7 +497,13 @@ export const updateUserDataOnUpdateReview = async (
 
 export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 	try {
+		// @ts-ignore -- intended semantics in this context is `Number`
 		let { courseId, year, semesterTerm } = parseReviewId(reviewId)
+		// @ts-ignore -- intended semantics in this context is `Number`
+		year = Number(year)
+		// @ts-ignore -- intended semantics in this context is `Number`
+		semesterTerm = Number(semesterTerm)
+
 		const courseDataDoc = await getCourse(courseId)
 		if (courseDataDoc) {
 			let {
@@ -545,6 +551,11 @@ export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
 			} else {
 				reviewsCountsByYearSem[year][semesterTerm] =
 					reviewsCountsByYearSem[year][semesterTerm] - 1
+			}
+
+			// remove year if no remaining year-sem's
+			if (Object.keys(reviewsCountsByYearSem[year]).length === 0) {
+				delete reviewsCountsByYearSem[year]
 			}
 
 			const updatedCourseData = {

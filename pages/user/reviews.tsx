@@ -71,17 +71,15 @@ const UserReviews: NextPage = () => {
 								<>
 									{userReviews && (
 										<Grid container rowSpacing={5} sx={{ mt: 1 }}>
-											{mapPayloadToArray(userReviews, reviewFields.CREATED, DESC).map(
-												(value: Review) => (
-													<Grid
-														sx={{ width: `100%` }}
-														key={value.reviewId}
-														item
-													>
-														<ReviewCard {...value}></ReviewCard>
-													</Grid>
-												)
-											)}
+											{mapPayloadToArray(
+												userReviews,
+												reviewFields.CREATED,
+												DESC
+											).map((value: Review) => (
+												<Grid sx={{ width: `100%` }} key={value.reviewId} item>
+													<ReviewCard {...value}></ReviewCard>
+												</Grid>
+											))}
 										</Grid>
 									)}
 								</>
