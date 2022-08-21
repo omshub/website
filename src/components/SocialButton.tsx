@@ -58,13 +58,13 @@ const providers: TProviders = {
 		SocialIcon: <AppleIcon style={{ margin: '0 10px' }} />,
 	},
 }
-const SocialButton = ({ ...props }: SocialButtonProps) => {
-	const { style, SocialIcon } = providers[`${props.provider}`]
+const SocialButton = ({ provider, key, onClick }: SocialButtonProps) => {
+	const { style, SocialIcon } = providers[`${provider}`]
 	return (
 		<>
-			<Button key={props.key} onClick={props.onClick} style={style}>
+			<Button key={key} onClick={onClick} style={style}>
 				{SocialIcon}
-				{`Sign in with ${props.provider}`}
+				{`Sign in with ${provider}`}
 			</Button>
 		</>
 	)
