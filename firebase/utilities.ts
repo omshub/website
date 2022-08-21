@@ -251,6 +251,7 @@ export const updateCourseDataOnAddReview = async (
 	reviewData: Review
 ) => {
 	try {
+		// @ts-ignore -- intended semantics in this context is `Number`
 		let { courseId, year, semesterTerm } = parseReviewId(reviewId)
 		// @ts-ignore -- intended semantics in this context is `Number`
 		year = Number(year)
@@ -297,24 +298,11 @@ export const updateCourseDataOnAddReview = async (
 				avgStaffSupport,
 			}))
 
-			const isFirstReviewForCourse =
-				Object.keys(reviewsCountsByYearSem).length === 0
-
-			if (isFirstReviewForCourse) {
+			if (!reviewsCountsByYearSem[year]) {
 				reviewsCountsByYearSem[year] = {}
 			}
 
-			const isFirstReviewForYear =
-				!isFirstReviewForCourse && !reviewsCountsByYearSem[year]
-
-			if (isFirstReviewForYear) {
-				reviewsCountsByYearSem[year] = {}
-			}
-
-			const isFirstReviewForYearSem =
-				Object.keys(reviewsCountsByYearSem[year]).length === 0
-
-			if (isFirstReviewForYearSem) {
+			if (!reviewsCountsByYearSem[year][semesterTerm]) {
 				reviewsCountsByYearSem[year][semesterTerm] = 0
 			}
 

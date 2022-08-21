@@ -1,7 +1,7 @@
 import ReviewCard from '@components/ReviewCard'
 import { useAuth } from '@context/AuthContext'
 import { FirebaseAuthUser } from '@context/types'
-import { DESC, EMOJI_NO_REVIEWS, REVIEW_ID } from '@globals/constants'
+import { DESC, EMOJI_NO_REVIEWS, reviewFields } from '@globals/constants'
 import { Review, TUserReviews } from '@globals/types'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -71,7 +71,7 @@ const UserReviews: NextPage = () => {
 								<>
 									{userReviews && (
 										<Grid container rowSpacing={5} sx={{ mt: 1 }}>
-											{mapPayloadToArray(userReviews, REVIEW_ID, DESC).map(
+											{mapPayloadToArray(userReviews, reviewFields.CREATED, DESC).map(
 												(value: Review) => (
 													<Grid
 														sx={{ width: `100%` }}
