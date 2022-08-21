@@ -202,12 +202,9 @@ export const deleteReview = async (userId: string, reviewId: string) => {
 export const getUser = async (userId: string) => {
 	try {
 		const snapshot = await getOneDoc(baseCollectionUsersData, userId)
+		const nullUser: User = { userId: null, hasGTEmail: false, reviews: {} }
 		// @ts-ignore -- coerce to `User` entity based on known form of snapshot.data() per Firestore db data
-		const userData: User = snapshot.data() ?? {
-			userId: null,
-			hasGTEmail: false,
-			reviews: {},
-		}
+		const userData: User = snapshot.data() ?? nullUser
 		return userData
 	} catch (e: any) {
 		console.log(e)
