@@ -124,7 +124,7 @@ export const mapPayloadToArray = (
 				return isAscendingSortFactor * (valA - valB)
 			}
 
-			// default fallthrough
+			// default fallthrough (returns elements in original order)
 			return -1
 		})
 	}
