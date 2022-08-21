@@ -7,9 +7,11 @@ import { Avatar, Container } from '@mui/material'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Tooltip from '@mui/material/Tooltip'
+
 export interface MenuLinksProps {
 	[key: string]: any
 }
+
 const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
 	const authContext = useAuth()
 
@@ -75,4 +77,5 @@ const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
 		</>
 	)
 }
+
 export default ProfileMenu

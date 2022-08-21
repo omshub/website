@@ -2,7 +2,9 @@ import { TContextProviderProps } from '@context/types'
 import React, { createContext, useContext, useState } from 'react'
 
 const MenuContext = createContext<any>({})
+
 export const useMenu = () => useContext(MenuContext)
+
 export const MenuContextProvider = ({ children }: TContextProviderProps) => {
 	const [loginModalOpen, setLoginModalOpen] = useState(false)
 

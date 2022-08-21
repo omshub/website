@@ -63,4 +63,5 @@ const MobileMenu = (navigationMenuItems: MenuLinksProps) => {
 		</>
 	)
 }
+
 export default MobileMenu

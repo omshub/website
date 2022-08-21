@@ -35,6 +35,7 @@ import {
 	SubmitHandler,
 	useForm,
 } from 'react-hook-form'
+
 const { addReview } = backend
 
 const DynamicEditor = dynamic(() => import('@components/FormEditor'), {
@@ -53,6 +54,11 @@ interface ReviewFormInputs {
 type TPropsReviewForm = {
 	courseData: Course
 	handleReviewModalClose: () => void
+}
+
+type TSemesterMap = {
+	// eslint-disable-next-line no-unused-vars
+	[semesterId in TSemesterId]: Date
 }
 
 const ReviewForm = ({
@@ -423,12 +429,13 @@ const validateSemesterYear = (
 ) => {
 	if (semester && year) {
 		const currentYear = new Date().getFullYear()
-		const semesterMap: any = {
+		const semesterMap: TSemesterMap = {
 			sp: new Date(`02/01/${currentYear}`),
 			sm: new Date(`06/01/${currentYear}`),
 			fa: new Date(`09/01/${currentYear}`),
 		}
-		const compareDate = semesterMap[semester]
+		// @ts-ignore -- semester is TSemesterId in this usage/context
+		const compareDate = semesterMap[semester] as Date
 		if (year < new Date().getFullYear()) {
 			return true
 		}
@@ -452,4 +459,5 @@ const validateUserNotTakenCourse = (
 			: true
 	}
 }
+
 export default ReviewForm

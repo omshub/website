@@ -57,6 +57,7 @@ const Recents: NextPage<RecentsProps> = ({ reviewsRecent }) => (
 )
 
 export default Recents
+
 export async function getServerSideProps() {
 	const ReviewsRecent = await getReviewsRecent()
 	return {

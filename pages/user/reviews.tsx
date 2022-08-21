@@ -2,7 +2,7 @@ import ReviewCard from '@components/ReviewCard'
 import { useAuth } from '@context/AuthContext'
 import { FirebaseAuthUser } from '@context/types'
 import { DESC, REVIEW_ID } from '@globals/constants'
-import { TUserReviews } from '@globals/types'
+import { Review, TUserReviews } from '@globals/types'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import Container from '@mui/material/Container'
@@ -72,16 +72,13 @@ const UserReviews: NextPage = () => {
 									{userReviews && (
 										<Grid container rowSpacing={5} sx={{ mt: 1 }}>
 											{mapPayloadToArray(userReviews, REVIEW_ID, DESC).map(
-												(value: any) => (
+												(value: Review) => (
 													<Grid
 														sx={{ width: `100%` }}
 														key={value.reviewId}
 														item
 													>
-														<ReviewCard
-															{...value}
-															isUserReviewsView={true}
-														></ReviewCard>
+														<ReviewCard {...value}></ReviewCard>
 													</Grid>
 												)
 											)}

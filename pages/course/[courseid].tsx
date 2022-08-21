@@ -4,7 +4,7 @@ import ReviewForm from '@components/ReviewForm'
 import { useAuth } from '@context/AuthContext'
 import { FirebaseAuthUser } from '@context/types'
 import { DESC, REVIEW_ID } from '@globals/constants'
-import { Course, TPayloadReviews } from '@globals/types'
+import { Course, Review, TPayloadReviews } from '@globals/types'
 import { mapDynamicCoursesDataToCourses } from '@globals/utilities'
 import FileCopyIcon from '@mui/icons-material/FileCopyOutlined'
 import LinkIcon from '@mui/icons-material/Link'
@@ -382,7 +382,7 @@ const CourseId: NextPage<CoursePageProps> = ({
 								{courseReviews && (
 									<Grid container rowSpacing={5} sx={{ mt: 1 }}>
 										{mapPayloadToArray(courseReviews, REVIEW_ID, DESC).map(
-											(value: any) => (
+											(value: Review) => (
 												<Grid sx={{ width: `100%` }} key={value.reviewId} item>
 													<ReviewCard {...value}></ReviewCard>
 												</Grid>
@@ -455,6 +455,7 @@ export default CourseId
 interface PageProps {
 	query: { courseid: string }
 }
+
 export async function getServerSideProps(context: PageProps) {
 	const { courseid } = context.query
 	const allCourseDataDynamic = await getCourses()

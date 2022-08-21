@@ -4,6 +4,7 @@ import FacebookIcon from '@mui/icons-material/Facebook'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import AppleIcon from '@mui/icons-material/Apple'
 import { TKeyMap, TProviderName } from '@globals/types'
+import { EmotionJSX } from '@emotion/react/types/jsx-namespace'
 
 interface SocialButtonProps {
 	key?: number
@@ -12,10 +13,12 @@ interface SocialButtonProps {
 	style?: object
 	onClick?: () => void
 }
+
 interface Provider {
 	style: TKeyMap
-	SocialIcon: any
+	SocialIcon: EmotionJSX.Element
 }
+
 type TProviders = {
 	// eslint-disable-next-line no-unused-vars
 	[provider in TProviderName]: Provider
