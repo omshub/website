@@ -1,5 +1,6 @@
 import { ASC, EMOJI_FALL, EMOJI_SPRING, EMOJI_SUMMER } from '@globals/constants'
 import { semesters } from '@globals/staticDataModels'
+import { TKeyMap } from '@globals/types'
 import {
 	boldBlue,
 	canopyLime,
@@ -48,13 +49,13 @@ export const mapSemesterTermToEmoji: TMapFields = {
 	3: EMOJI_FALL,
 }
 
-export const mapSemsterIdToTerm: TObject = {
+export const mapSemsterIdToTerm: TKeyMap = {
 	sp: semesters.sp.term,
 	sm: semesters.sm.term,
 	fa: semesters.fa.term,
 }
 
-export const mapSemesterIdToName: TObject = {
+export const mapSemesterIdToName: TKeyMap = {
 	sp: semesters.sp.name,
 	sm: semesters.sm.name,
 	fa: semesters.fa.name,
@@ -82,9 +83,6 @@ export const mapRatingToColor = (rating: Number) => {
 export const mapRatingToColorInverted = (rating: Number) =>
 	mapRatingToColor(-rating + 6)
 
-type TObject = {
-	[key: string | number]: any
-}
 type TSortKey =
 	| 'courseId'
 	| 'departmentId'
@@ -95,7 +93,7 @@ type TSortKey =
 type TSortDirection = 'ASC' | 'DESC'
 
 export const mapPayloadToArray = (
-	map: TObject | undefined,
+	map: TKeyMap | undefined,
 	sortKey?: TSortKey | string,
 	sortDirection?: TSortDirection
 ) => {
