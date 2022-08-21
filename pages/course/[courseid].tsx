@@ -91,7 +91,7 @@ const CourseId: NextPage<CoursePageProps> = ({
 	const orientation = useMediaQuery('(min-width:600px)')
 
 	const path = router.asPath.split('/')
-	const courseId = path[path.length - 1]
+	const courseId = path[path.length - 1] as TCourseId
 	const { mutate } = useSWRConfig()
 	const { data: course_reviews } = useSWR(
 		`/course/${courseId}/${selectedYear}/${selectedSemester}`
@@ -480,7 +480,7 @@ export async function getServerSideProps(context: PageProps) {
 			{}
 		)
 		const courseReviews = await getReviews(
-			courseid,
+			courseId,
 			String(mostRecentYear),
 			String(mostRecentSemester)
 		)

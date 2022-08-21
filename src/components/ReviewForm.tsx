@@ -9,6 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 
 import {
 	Course,
+	TCourseId,
 	TNullableNumber,
 	TNullableString,
 	TRatingScale,
@@ -448,7 +449,7 @@ const validateSemesterYear = (
 
 const validateUserNotTakenCourse = (
 	userReviews: TUserReviews | {},
-	courseId: string,
+	courseId: TCourseId,
 	semester: TNullableString,
 	year: TNullableNumber
 ) => {

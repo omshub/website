@@ -87,7 +87,7 @@ export const deleteCourse = async (courseId: TCourseId) => {
 
 /* --- REVIEWS (keyed by courseId-year-semesterId) --- */
 export const getReviews = async (
-	courseId: string,
+	courseId: TCourseId,
 	year: string,
 	semesterTerm: string
 ) => {

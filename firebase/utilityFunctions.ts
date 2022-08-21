@@ -144,8 +144,10 @@ export const updateAverages = ({
 })
 
 type TMapCourseToLegacyNumReviews = {
-	[courseId: string]: number
+	// eslint-disable-next-line no-unused-vars
+	[courseId in TCourseId]: number
 }
+
 export const mapCourseToLegacyNumReviews: TMapCourseToLegacyNumReviews = {
 	'CS-6035': 398,
 	'CS-6150': 2,
