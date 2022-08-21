@@ -20,7 +20,7 @@ import {
 	TSpecializationId,
 	TSubjectAreaId,
 } from '@globals/types'
-import { DOMAIN_GATECH, DOMAIN_OUTLOOK } from './constants'
+import { DOMAIN_GATECH, DOMAIN_OUTLOOK } from '@globals/constants'
 
 /* --- STATIC DATA GETTERS --- */
 

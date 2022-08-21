@@ -1,7 +1,7 @@
 import { useAuth } from '@context/AuthContext'
 import { useMenu } from '@context/MenuContext'
 import { FirebaseAuthUser } from '@context/types'
-import Link from '../Link'
+import Link from '@src/Link'
 
 import { Avatar, Container } from '@mui/material'
 import Menu from '@mui/material/Menu'

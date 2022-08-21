@@ -8,10 +8,10 @@ import { grey } from '@mui/material/colors'
 import Dialog from '@mui/material/Dialog'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import Link from '../Link'
-import Login from './LoginContent'
-import MobileMenu from './MobileMenu'
-import ProfileMenu from './ProfileMenu'
+import Link from '@src/Link'
+import Login from '@components/LoginContent'
+import MobileMenu from '@components/MobileMenu'
+import ProfileMenu from '@components/ProfileMenu'
 
 interface NavBarProps {}
 

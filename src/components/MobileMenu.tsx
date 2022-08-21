@@ -1,7 +1,7 @@
 import { useMenu } from '@context/MenuContext'
 import MenuIcon from '@mui/icons-material/Menu'
 import { Container, IconButton, Link, Menu, MenuItem } from '@mui/material'
-import { MenuLinksProps } from './NavBar'
+import { MenuLinksProps } from '@components/NavBar'
 
 const MobileMenu = (navigationMenuItems: MenuLinksProps) => {
 	const {

@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import type { NextPage } from 'next'
 import { useState } from 'react'
-import SocialButton from './SocialButton'
+import SocialButton from '@components/SocialButton'
 
 const Login: NextPage = () => {
 	const authContext = useAuth()

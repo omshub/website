@@ -1,5 +1,5 @@
 import { doc, setDoc, deleteDoc } from 'firebase/firestore'
-import { db } from './FirebaseConfig'
+import { db } from '@backend/FirebaseConfig'
 import {
 	coreDataDocuments,
 	baseCollectionCoreData,
@@ -16,7 +16,7 @@ import {
 	TPayloadReviews,
 	User,
 } from '@globals/types'
-import { parseReviewId } from './utilityFunctions'
+import { parseReviewId } from '@backend/utilityFunctions'
 import {
 	addOrUpdateCourse,
 	addOrUpdateReview,

@@ -28,7 +28,7 @@ import {
 	TPayloadCoursesDataDynamic,
 } from '@globals/types'
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
-import { db } from './FirebaseConfig'
+import { db } from '@backend/FirebaseConfig'
 
 const { COURSES } = coreDataDocuments
 

@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles'
 import { red } from '@mui/material/colors'
-import { navyBlue, techGold } from './colorPalette'
+import { navyBlue, techGold } from '@src/colorPalette'
 
 // Create a theme instance.
 const theme = createTheme({
