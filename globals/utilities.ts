@@ -20,7 +20,7 @@ import {
 	TSpecializationId,
 	TSubjectAreaId,
 } from '@globals/types'
-import { GATECH_DOMAIN, OUTLOOK_DOMAIN } from './constants'
+import { DOMAIN_GATECH, DOMAIN_OUTLOOK } from './constants'
 
 /* --- STATIC DATA GETTERS --- */
 
@@ -74,11 +74,11 @@ export const mapDynamicCoursesDataToCourses = (
 export const isGTEmail = (userEmail: string) =>
 	userEmail
 		.toLowerCase()
-		.slice(userEmail.length - GATECH_DOMAIN.length)
-		.includes(GATECH_DOMAIN)
+		.slice(userEmail.length - DOMAIN_GATECH.length)
+		.includes(DOMAIN_GATECH)
 
 export const isOutlookEmail = (userEmail: string) =>
 	userEmail
 		.toLowerCase()
-		.slice(userEmail.length - OUTLOOK_DOMAIN.length)
-		.includes(OUTLOOK_DOMAIN)
+		.slice(userEmail.length - DOMAIN_OUTLOOK.length)
+		.includes(DOMAIN_OUTLOOK)
