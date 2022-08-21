@@ -11,6 +11,7 @@ import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Chip from '@mui/material/Chip'
+import CircularProgress from '@mui/material/CircularProgress'
 import { grey } from '@mui/material/colors'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
@@ -55,6 +56,7 @@ const ReviewCard = ({
 	const { name: courseName } = getCourseDataStatic(courseId)
 	const [snackBarOpen, setSnackBarOpen] = useState<boolean>(false)
 	const clipboardRef = useRef<HTMLDivElement>(null)
+	const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 	const { deleteReview } = backend
 	if (authContext) {
 		;({ user } = authContext)
@@ -87,11 +89,13 @@ const ReviewCard = ({
 	}
 
 	const handleDeleteReview = async () => {
+		setIsSubmitting(true)
 		if (user && user.uid && reviewId) {
 			await deleteReview(user.uid, reviewId)
 			handleDeleteDialogClose()
 			router.reload()
 		}
+		setIsSubmitting(false)
 	}
 	return (
 		<div ref={clipboardRef!}>
@@ -237,7 +241,16 @@ const ReviewCard = ({
 										</DialogContentText>
 									</DialogContent>
 									<DialogActions>
-										<Button onClick={handleDeleteReview}>Full Send!</Button>
+										{isSubmitting ? (
+											<CircularProgress />
+										) : (
+											<Button
+												disabled={isSubmitting}
+												onClick={handleDeleteReview}
+											>
+												Full Send!
+											</Button>
+										)}
 										<Button onClick={handleDeleteDialogClose}>
 											Take me Back!
 										</Button>

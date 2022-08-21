@@ -4,6 +4,9 @@ import { useAlert } from '@context/AlertContext'
 import { useAuth } from '@context/AuthContext'
 import { FirebaseAuthUser } from '@context/types'
 import { SEMESTER_ID } from '@globals/constants'
+
+import CircularProgress from '@mui/material/CircularProgress'
+
 import {
 	Course,
 	TNullableNumber,
@@ -66,6 +69,7 @@ const ReviewForm = ({
 
 	const { setAlert } = useAlert()
 	const [userReviews, setUserReviews] = useState<TUserReviews>({})
+	const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 	const router = useRouter()
 
 	const yearRange = getYearRange()
@@ -104,6 +108,7 @@ const ReviewForm = ({
 	const onSubmit: SubmitHandler<ReviewFormInputs> = async (
 		data: ReviewFormInputs
 	) => {
+		setIsSubmitting(true)
 		const isGoodSubmission = await trigger()
 
 		const hasNonNullDataValues = Boolean(
@@ -150,7 +155,6 @@ const ReviewForm = ({
 				overall,
 				isGTVerifiedReviewer,
 			}
-
 			await addReview(user.uid, reviewId, reviewValues)
 
 			setAlert({
@@ -162,6 +166,7 @@ const ReviewForm = ({
 			handleReviewModalClose()
 			router.reload()
 		}
+		setIsSubmitting(false)
 	}
 
 	useEffect(() => {
@@ -386,13 +391,17 @@ const ReviewForm = ({
 				></Controller>
 			</Grid>
 			<Grid textAlign='center' item xs={12} lg={12}>
-				<Button
-					disabled={!isDirty || !isValid}
-					variant='contained'
-					onClick={handleSubmit(onSubmit)}
-				>
-					Submit
-				</Button>
+				{isSubmitting ? (
+					<CircularProgress />
+				) : (
+					<Button
+						disabled={!isDirty || !isValid || isSubmitting}
+						variant='contained'
+						onClick={handleSubmit(onSubmit)}
+					>
+						Submit
+					</Button>
+				)}
 			</Grid>
 		</Grid>
 	)
