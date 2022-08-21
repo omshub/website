@@ -31,7 +31,7 @@ import {
 } from '@src/utilities'
 import { toBlob } from 'html-to-image'
 import { useRouter } from 'next/router'
-import { SyntheticEvent, useRef, useState } from 'react'
+import { SyntheticEvent, useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 const ReviewCard = ({
@@ -58,6 +58,12 @@ const ReviewCard = ({
 	const clipboardRef = useRef<HTMLDivElement>(null)
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 	const { deleteReview } = backend
+	const [isFireFox, setIsFireFox] = useState<boolean>(false)
+	useEffect(() => {
+		navigator.userAgent.match(`Firefox`)
+			? setIsFireFox(true)
+			: setIsFireFox(false)
+	}, [])
 	if (authContext) {
 		;({ user } = authContext)
 	}
@@ -205,11 +211,13 @@ const ReviewCard = ({
 					</article>
 					<Grid textAlign='right'>
 						{/* Not User View */}
-						<Tooltip title='Screenshot Review'>
-							<IconButton onClick={handleCopyToClipboard}>
-								<PhotoCameraIcon />
-							</IconButton>
-						</Tooltip>
+						{!isFireFox && (
+							<Tooltip title='Screenshot Review'>
+								<IconButton onClick={handleCopyToClipboard}>
+									<PhotoCameraIcon />
+								</IconButton>
+							</Tooltip>
+						)}
 						<Snackbar
 							open={snackBarOpen}
 							autoHideDuration={6000}
