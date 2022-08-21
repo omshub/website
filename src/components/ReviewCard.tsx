@@ -60,7 +60,8 @@ const ReviewCard = ({
 	const clipboardRef = useRef<HTMLDivElement>(null)
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
-	const isFirefox = navigator.userAgent.match('Firefox') ? true : false
+	// reference: https://stackoverflow.com/questions/60399243/node-js-referenceerror-navigator-is-not-defined
+	const isFirefox = global.navigator.userAgent.match('Firefox') ? true : false
 
 	if (authContext) {
 		;({ user } = authContext)
