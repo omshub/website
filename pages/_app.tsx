@@ -19,34 +19,30 @@ interface MyAppProps extends AppProps {
 	fallback: object
 }
 
-export default function MyApp(props: MyAppProps) {
-	const {
-		Component,
-		emotionCache = clientSideEmotionCache,
-		pageProps: { ...pageProps },
-	} = props
-	return (
-		<CacheProvider value={emotionCache}>
-			<AlertContextProvider>
-				<AuthContextProvider>
-					<Head>
-						<meta
-							name='viewport'
-							content='initial-scale=1, width=device-width'
-						/>
-						<title>OMSHub</title>
-					</Head>
-					<ThemeProvider theme={theme}>
-						<CssBaseline />
-						<MenuContextProvider>
-							<NavBar />
-							<AlertBar />
-						</MenuContextProvider>
-						<Component {...pageProps} />
-					</ThemeProvider>
-					{/* <Copyright /> */}
-				</AuthContextProvider>
-			</AlertContextProvider>
-		</CacheProvider>
-	)
-}
+const MyApp = ({
+	Component,
+	emotionCache = clientSideEmotionCache,
+	pageProps,
+}: MyAppProps) => (
+	<CacheProvider value={emotionCache}>
+		<AlertContextProvider>
+			<AuthContextProvider>
+				<Head>
+					<meta name='viewport' content='initial-scale=1, width=device-width' />
+					<title>OMSHub</title>
+				</Head>
+				<ThemeProvider theme={theme}>
+					<CssBaseline />
+					<MenuContextProvider>
+						<NavBar />
+						<AlertBar />
+					</MenuContextProvider>
+					<Component {...pageProps} />
+				</ThemeProvider>
+				{/* <Copyright /> */}
+			</AuthContextProvider>
+		</AlertContextProvider>
+	</CacheProvider>
+)
+
+export default MyApp
