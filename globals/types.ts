@@ -111,7 +111,7 @@ export interface Program {
 export interface Semester {
 	semesterId: TSemesterId
 	term: TSemesterTerm
-	name: string
+	name: TSemesterName
 }
 
 export interface Specialization {
@@ -219,6 +219,7 @@ export type TProgramName = 'Analytics' | 'Computer Science' | 'Cybersecurity'
 
 export type TSemesterId = 'sp' | 'sm' | 'fa'
 export type TSemesterTerm = 1 | 2 | 3
+export type TSemesterName = 'Spring' | 'Summer' | 'Fall'
 
 export type TSpecializationId =
 	| 'a:at'

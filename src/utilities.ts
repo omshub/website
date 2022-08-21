@@ -1,4 +1,5 @@
 import { ASC, EMOJI_FALL, EMOJI_SPRING, EMOJI_SUMMER } from '@globals/constants'
+import { semesters } from '@globals/staticDataModels'
 import {
 	boldBlue,
 	canopyLime,
@@ -36,9 +37,9 @@ export const mapStaffSupport: TMapFields = {
 }
 
 export const mapSemesterTermToName: TMapFields = {
-	1: 'Spring',
-	2: 'Summer',
-	3: 'Fall',
+	1: semesters.sp.name,
+	2: semesters.sm.name,
+	3: semesters.fa.name,
 }
 
 export const mapSemesterTermToEmoji: TMapFields = {
@@ -48,15 +49,15 @@ export const mapSemesterTermToEmoji: TMapFields = {
 }
 
 export const mapSemsterIdToTerm: TObject = {
-	sp: 1,
-	sm: 2,
-	fa: 3,
+	sp: semesters.sp.term,
+	sm: semesters.sm.term,
+	fa: semesters.fa.term,
 }
 
 export const mapSemesterIdToName: TObject = {
-	sp: 'Spring',
-	sm: 'Summer',
-	fa: 'Fall',
+	sp: semesters.sp.name,
+	sm: semesters.sm.name,
+	fa: semesters.fa.name,
 }
 
 /**
