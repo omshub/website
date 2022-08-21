@@ -32,6 +32,7 @@ import { toBlob } from 'html-to-image'
 import { useRouter } from 'next/router'
 import { SyntheticEvent, useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
 import stringWidth from 'string-width'
 
@@ -219,6 +220,7 @@ const ReviewCard = ({
 									{ stringLength: stringWidth },
 								],
 							]}
+							rehypePlugins={[rehypeRaw]}
 						>
 							{body}
 						</ReactMarkdown>
