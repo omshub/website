@@ -21,7 +21,6 @@ import DialogTitle from '@mui/material/DialogTitle'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { techGold } from '@src/colorPalette'
-
 import {
 	mapDifficulty,
 	mapOverall,
@@ -31,7 +30,7 @@ import {
 } from '@src/utilities'
 import { toBlob } from 'html-to-image'
 import { useRouter } from 'next/router'
-import { SyntheticEvent, useRef, useState } from 'react'
+import { SyntheticEvent, useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 const { deleteReview } = backend
@@ -60,8 +59,12 @@ const ReviewCard = ({
 	const clipboardRef = useRef<HTMLDivElement>(null)
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
-	// reference: https://stackoverflow.com/questions/60399243/node-js-referenceerror-navigator-is-not-defined
-	const isFirefox = global.navigator.userAgent.match('Firefox') ? true : false
+	const [isFirefox, setIsFirefox] = useState<boolean>(false)
+	useEffect(() => {
+		navigator.userAgent.match(`Firefox`)
+			? setIsFirefox(true)
+			: setIsFirefox(false)
+	}, [])
 
 	if (authContext) {
 		;({ user } = authContext)
@@ -251,16 +254,23 @@ const ReviewCard = ({
 										{isSubmitting ? (
 											<CircularProgress />
 										) : (
-											<Button
-												disabled={isSubmitting}
-												onClick={handleDeleteReview}
-											>
-												Full Send!
-											</Button>
+											<>
+												<Button
+													color='warning'
+													disabled={isSubmitting}
+													onClick={handleDeleteReview}
+												>
+													Full Send!
+												</Button>
+												<Button
+													color='success'
+													disabled={isSubmitting}
+													onClick={handleDeleteDialogClose}
+												>
+													Take me Back!
+												</Button>
+											</>
 										)}
-										<Button onClick={handleDeleteDialogClose}>
-											Take me Back!
-										</Button>
 									</DialogActions>
 								</Dialog>
 							</>
