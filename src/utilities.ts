@@ -120,7 +120,7 @@ export const mapPayloadToArray = (
 			}
 
 			if (typeof valA === 'number' && typeof valB === 'number') {
-				return isAscendingSortFactor * (valA - valB) ? 1 : -1
+				return isAscendingSortFactor * (valA - valB)
 			}
 
 			// default fallthrough
