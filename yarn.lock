@@ -3020,7 +3020,7 @@
     ts-dedent "^2.0.0"
     util-deprecate "^1.0.2"
 
-"@storybook/client-logger@6.5.10", "@storybook/client-logger@^6.4.0 || >=6.5.0-0":
+"@storybook/client-logger@6.5.10", "@storybook/client-logger@^6.4.0":
   version "6.5.10"
   resolved "https://registry.yarnpkg.com/@storybook/client-logger/-/client-logger-6.5.10.tgz#cfea823a5b8444409daa74f854c5d05367986b34"
   integrity sha512-/xA0MHOevXev68hyLMQw8Qo8KczSIdXOxliAgrycMTkDmw5eKeA8TP7B8zP3wGuq/e3MrdD9/8MWhb/IQBNC3w==
@@ -3237,7 +3237,7 @@
     lodash "^4.17.21"
     regenerator-runtime "^0.13.7"
 
-"@storybook/instrumenter@6.5.10", "@storybook/instrumenter@^6.4.0 || >=6.5.0-0":
+"@storybook/instrumenter@6.5.10", "@storybook/instrumenter@^6.4.0":
   version "6.5.10"
   resolved "https://registry.yarnpkg.com/@storybook/instrumenter/-/instrumenter-6.5.10.tgz#5443f5fdb25ddb589ede2e2f0147becaffd405cb"
   integrity sha512-3yKJW68wTnGYEts2mJQG6M7ZE+fe54fuy5lBBzRtvWnC15uWTxuaiFp2kxH5b+stSCi4m71ws45RNiEafdBgEQ==
@@ -3474,13 +3474,13 @@
     read-pkg-up "^7.0.1"
     regenerator-runtime "^0.13.7"
 
-"@storybook/testing-library@^0.0.11":
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/@storybook/testing-library/-/testing-library-0.0.11.tgz#c07a3b5a76049ea9f9e66c557b506c2b061a93d6"
-  integrity sha512-8KbKx3s1e+uF3oWlPdyXRpZa6xtCsCHtXh1nCTisMA6P5YcSDaCg59NXIOVIQCAwKvjRomlqMJH8JL1WyOzeVg==
+"@storybook/testing-library@^0.0.13":
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/@storybook/testing-library/-/testing-library-0.0.13.tgz#417c87d4ea62895092ec5fdf67027ae201254f45"
+  integrity sha512-vRMeIGer4EjJkTgI8sQyK9W431ekPWYCWL//OmSDJ64IT3h7FnW7Xg6p+eqM3oII98/O5pcya5049GxnjaPtxw==
   dependencies:
-    "@storybook/client-logger" "^6.4.0 || >=6.5.0-0"
-    "@storybook/instrumenter" "^6.4.0 || >=6.5.0-0"
+    "@storybook/client-logger" "^6.4.0"
+    "@storybook/instrumenter" "^6.4.0"
     "@testing-library/dom" "^8.3.0"
     "@testing-library/user-event" "^13.2.1"
     ts-dedent "^2.2.0"
