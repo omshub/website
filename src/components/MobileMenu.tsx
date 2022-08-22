@@ -59,18 +59,18 @@ const MobileMenu = (navigationMenuItems: MenuLinksProps) => {
 						</Link>
 					</MenuItem>
 					{Object.keys(navigationMenuItems).map(
-						(key: string, index: number) => (
+						(name: string, index: number) => (
 							<MenuItem key={index} onClick={handleMobileNavMenuClose}>
 								<Link
 									color='text.primary'
-									href={navigationMenuItems[key]}
+									href={navigationMenuItems[name][`url`]}
 									key={index}
 									sx={{
 										my: 1,
 										mx: 1.5,
 									}}
 								>
-									{key}
+									{name}
 								</Link>
 							</MenuItem>
 						)
