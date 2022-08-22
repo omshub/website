@@ -56,8 +56,6 @@ const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
 								as={`${profileMenuItems[key]}`}
 								sx={{
 									mr: 1,
-									textDecoration: 'unset',
-									'&:hover': { textDecoration: 'unset' },
 								}}
 							>
 								{key}

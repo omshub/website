@@ -19,7 +19,6 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Container from '@mui/material/Container'
 import Dialog from '@mui/material/Dialog'
 import Grid from '@mui/material/Grid'
-import Link from '@mui/material/Link'
 import Snackbar from '@mui/material/Snackbar'
 import SpeedDial from '@mui/material/SpeedDial'
 import SpeedDialAction from '@mui/material/SpeedDialAction'
@@ -27,12 +26,13 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Typography from '@mui/material/Typography'
+import Link from '@src/Link'
 import {
 	mapPayloadToArray,
-	mapSemesterTermToEmoji,
-	mapSemesterTermToName,
 	mapRatingToColor,
 	mapRatingToColorInverted,
+	mapSemesterTermToEmoji,
+	mapSemesterTermToName,
 	roundNumber,
 } from '@src/utilities'
 import type { NextPage } from 'next'
