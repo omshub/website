@@ -49,8 +49,6 @@ const MobileMenu = (navigationMenuItems: MenuLinksProps) => {
 									sx={{
 										my: 1,
 										mx: 1.5,
-										textDecoration: 'unset',
-										'&:hover': { textDecoration: 'underline' },
 									}}
 								>
 									{key}

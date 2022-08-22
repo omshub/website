@@ -39,14 +39,7 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 			flex: isDesktop ? 1 : 0,
 			minWidth: isDesktop ? 50 : 300,
 			renderCell: (params: GridRenderCellParams) => (
-				<Link
-					href='/course/[courseid]'
-					as={`/course/${params.row.courseId}`}
-					sx={{
-						textDecoration: 'unset',
-						'&:hover': { textDecoration: 'underline' },
-					}}
-				>
+				<Link href='/course/[courseid]' as={`/course/${params.row.courseId}`}>
 					{params.row.name}
 				</Link>
 			),
