@@ -1,8 +1,8 @@
 import { auth } from '@backend/FirebaseConfig'
 import { useAlert } from '@context/AlertContext'
 import {
-	TContextProviderProps,
 	FirebaseAuthUser,
+	TContextProviderProps,
 	TSignInAction,
 } from '@context/types'
 import { isGTEmail, isOutlookEmail } from '@globals/utilities'
@@ -19,6 +19,7 @@ import {
 	signInWithPopup,
 	signOut,
 } from 'firebase/auth'
+import router from 'next/router'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 type TAuthContext = {
@@ -69,6 +70,7 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
 	const logout = async () => {
 		setUser(null)
 		await signOut(auth)
+		router.push('/')
 	}
 	const signWithMagic = (email: string) => {
 		// If the user is re-entering their email address but already has a code
