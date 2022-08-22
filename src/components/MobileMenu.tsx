@@ -75,6 +75,18 @@ const MobileMenu = (navigationMenuItems: MenuLinksProps) => {
 							</MenuItem>
 						)
 					)}
+					<MenuItem>
+						<Link
+							color='text.primary'
+							href={`https://github.com/omshub/website/`}
+							sx={{
+								my: 1,
+								mx: 1.5,
+							}}
+						>
+							{`Github`}
+						</Link>
+					</MenuItem>
 				</Menu>
 			</Container>
 		</>
