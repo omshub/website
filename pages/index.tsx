@@ -12,7 +12,7 @@ import {
 	DataGrid,
 	GridColDef,
 	GridRenderCellParams,
-	GridToolbar
+	GridToolbar,
 } from '@mui/x-data-grid'
 import Link from '@src/Link'
 import { mapPayloadToArray, roundNumber } from '@src/utilities'
