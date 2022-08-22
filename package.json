@@ -24,7 +24,7 @@
 		"db:seed": "node ./__seed__/script.js"
 	},
 	"dependencies": {
-		"@babel/core": "^7.0.0",
+		"@babel/core": "^7.18.13",
 		"@emotion/cache": "^11.10.2",
 		"@emotion/react": "^11.9.0",
 		"@emotion/server": "^11.4.0",
