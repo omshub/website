@@ -30,7 +30,7 @@ export const MenuContextProvider = ({ children }: TContextProviderProps) => {
 	}
 
 	const handleMobileNavMenuClose = () => {
-		setProfileMenuAnchorEl(null)
+		setMobileNavMenuAnchorEl(null)
 	}
 
 	return (

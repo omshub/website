@@ -39,7 +39,7 @@ const Recents: NextPage<RecentsProps> = ({ reviewsRecent }) => (
 			) : (
 				<>
 					{reviewsRecent && (
-						<Grid container spacing={3} sx={{ margin: '10px 0' }}>
+						<Grid container rowSpacing={5} sx={{ mt: 1 }}>
 							{reviewsRecent
 								.sort((a, b) => b.created - a.created)
 								.slice(0, REVIEWS_RECENT_LEN)
