@@ -1,7 +1,8 @@
+import { MenuLinksProps } from '@components/NavBar'
 import { useMenu } from '@context/MenuContext'
 import MenuIcon from '@mui/icons-material/Menu'
-import { Container, IconButton, Link, Menu, MenuItem } from '@mui/material'
-import { MenuLinksProps } from '@components/NavBar'
+import { Container, IconButton, Menu, MenuItem } from '@mui/material'
+import Link from '@src/Link'
 
 const MobileMenu = (navigationMenuItems: MenuLinksProps) => {
 	const {
@@ -14,7 +15,9 @@ const MobileMenu = (navigationMenuItems: MenuLinksProps) => {
 	const menuId = 'mobile-navigation-menu'
 	return (
 		<>
-			<Container sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+			<Container
+				sx={{ flexGrow: 0, display: { xs: 'flex', md: 'none' }, m: 0 }}
+			>
 				<IconButton
 					size='large'
 					aria-label='account of current user'
@@ -32,6 +35,10 @@ const MobileMenu = (navigationMenuItems: MenuLinksProps) => {
 						vertical: 'bottom',
 						horizontal: 'left',
 					}}
+					transformOrigin={{
+						vertical: 'top',
+						horizontal: 'right',
+					}}
 					keepMounted
 					open={Boolean(mobileNavMenuAnchorEl)}
 					onClose={handleMobileNavMenuClose}
@@ -39,6 +46,18 @@ const MobileMenu = (navigationMenuItems: MenuLinksProps) => {
 						display: { xs: 'block', md: 'none' },
 					}}
 				>
+					<MenuItem onClick={handleMobileNavMenuClose}>
+						<Link
+							color='text.primary'
+							href={`/`}
+							sx={{
+								my: 1,
+								mx: 1.5,
+							}}
+						>
+							{`Home`}
+						</Link>
+					</MenuItem>
 					{Object.keys(navigationMenuItems).map(
 						(key: string, index: number) => (
 							<MenuItem key={index} onClick={handleMobileNavMenuClose}>
