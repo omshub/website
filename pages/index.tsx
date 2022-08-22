@@ -2,7 +2,7 @@ import backend from '@backend/index'
 import { courseFields } from '@globals/constants'
 import { Course } from '@globals/types'
 import { mapDynamicCoursesDataToCourses } from '@globals/utilities'
-import { useMediaQuery } from '@mui/material'
+import { Tooltip, useMediaQuery } from '@mui/material'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
@@ -39,9 +39,11 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 			flex: isDesktop ? 1 : 0,
 			minWidth: isDesktop ? 50 : 300,
 			renderCell: (params: GridRenderCellParams) => (
-				<Link href='/course/[courseid]' as={`/course/${params.row.courseId}`}>
-					{params.row.name}
-				</Link>
+				<Tooltip title={`View review page for ${params.row.courseId}`}>
+					<Link href='/course/[courseid]' as={`/course/${params.row.courseId}`}>
+						{params.row.name}
+					</Link>
+				</Tooltip>
 			),
 		},
 		{

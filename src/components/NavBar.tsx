@@ -1,6 +1,11 @@
+import Login from '@components/LoginContent'
+import MobileMenu from '@components/MobileMenu'
+import ProfileMenu from '@components/ProfileMenu'
 import { useAuth } from '@context/AuthContext'
 import { useMenu } from '@context/MenuContext'
 import { FirebaseAuthUser } from '@context/types'
+import GitHubIcon from '@mui/icons-material/GitHub'
+import { Tooltip } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -9,10 +14,6 @@ import Dialog from '@mui/material/Dialog'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import Link from '@src/Link'
-import Login from '@components/LoginContent'
-import MobileMenu from '@components/MobileMenu'
-import ProfileMenu from '@components/ProfileMenu'
-
 interface NavBarProps {}
 
 export interface MenuLinksProps {
@@ -32,8 +33,11 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 		useMenu()
 
 	const navigationMenuItems: MenuLinksProps = {
-		Recents: '/recents',
-		About: '/about',
+		Recents: {
+			url: '/recents',
+			tooltip: 'Recent 50 reviews',
+		},
+		About: { url: '/about', tooltip: 'Our background' },
 	}
 
 	const profileMenuItems: MenuLinksProps = {
@@ -79,20 +83,38 @@ export const NavBar = ({ ...props }: NavBarProps) => {
 					<Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
 						{Object.keys(navigationMenuItems).map(
 							(name: string, index: number) => (
-								<Link
-									variant='button'
-									color='text.primary'
-									href={`${navigationMenuItems[name]}`}
+								<Tooltip
 									key={index}
-									sx={{
-										my: 1,
-										mx: 1.5,
-									}}
+									title={`${navigationMenuItems[name][`tooltip`]}`}
 								>
-									{name}
-								</Link>
+									<Link
+										variant='button'
+										color='text.primary'
+										href={`${navigationMenuItems[name][`url`]}`}
+										key={index}
+										sx={{
+											my: 1,
+											mx: 1.5,
+										}}
+									>
+										{name}
+									</Link>
+								</Tooltip>
 							)
 						)}
+						<Link
+							variant='button'
+							color='text.primary'
+							href={`https://github.com/omshub/website/`}
+							sx={{
+								my: 1,
+								mx: 1.5,
+							}}
+						>
+							<Tooltip title={`Website's Github`}>
+								<GitHubIcon />
+							</Tooltip>
+						</Link>
 					</Box>
 					<MobileMenu {...navigationMenuItems} />
 					{/* User Profile Side */}
