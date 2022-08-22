@@ -12,7 +12,7 @@ import {
 	DataGrid,
 	GridColDef,
 	GridRenderCellParams,
-	GridToolbar,
+	GridToolbar
 } from '@mui/x-data-grid'
 import Link from '@src/Link'
 import { mapPayloadToArray, roundNumber } from '@src/utilities'
@@ -41,7 +41,6 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 			renderCell: (params: GridRenderCellParams) => (
 				<Tooltip title={`View review page for ${params.row.courseId}`}>
 					<Link href='/course/[courseid]' as={`/course/${params.row.courseId}`}>
-						{console.log(params)}
 						{params.row.name}
 					</Link>
 				</Tooltip>
