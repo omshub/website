@@ -3771,10 +3771,10 @@
     "@types/node" "*"
     form-data "^3.0.0"
 
-"@types/node@*", "@types/node@>=12", "@types/node@>=12.12.47", "@types/node@>=13.7.0", "@types/node@^18.6.2":
-  version "18.7.9"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.7.9.tgz#180bfc495c91dc62573967edf047e15dbdce1491"
-  integrity sha512-0N5Y1XAdcl865nDdjbO0m3T6FdmQ4ijE89/urOHLREyTXbpMWbSafx9y7XIsgWGtwUP2iYTinLyyW3FatAxBLQ==
+"@types/node@*", "@types/node@>=12", "@types/node@>=12.12.47", "@types/node@>=13.7.0", "@types/node@^18.11.6":
+  version "18.11.6"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.6.tgz#4f91b0b30d405fdf76e0029b11ef5df6a0da4261"
+  integrity sha512-j3CEDa2vd96K0AXF8Wur7UucACvnjkk8hYyQAHhUNciabZLDl9nfAEVUSwmh245OOZV15bRA3Y590Gi5jUcDJg==
 
 "@types/node@^14.0.10 || ^16.0.0", "@types/node@^14.14.20 || ^16.0.0":
   version "16.11.52"
