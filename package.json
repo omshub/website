@@ -50,7 +50,7 @@
 	"devDependencies": {
 		"@commitlint/cli": "^17.0.3",
 		"@commitlint/config-conventional": "^17.0.3",
-		"@storybook/addon-actions": "^6.4.22",
+		"@storybook/addon-actions": "^6.5.14",
 		"@storybook/addon-essentials": "^6.4.22",
 		"@storybook/addon-interactions": "^6.4.22",
 		"@storybook/addon-links": "^6.4.22",
