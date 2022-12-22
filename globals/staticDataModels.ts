@@ -216,7 +216,7 @@ export const coursesDataStatic: TPayloadCoursesDataStatic = {
 		courseId: 'CS-6211',
 		name: 'System Design for Cloud Computing',
 		departmentId: 'CS',
-		courseNumber: '6210',
+		courseNumber: '6211',
 		url: 'https://omscs.gatech.edu/cs-8803-o12-systems-issues-cloud-computing',
 		aliases: ['SICC', 'SDCC'],
 		isDeprecated: false,

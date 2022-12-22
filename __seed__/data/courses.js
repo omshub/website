@@ -67,6 +67,15 @@ module.exports = [
 		},
 	},
 	{
+		courseId: 'CS-6211',
+		numReviews: 0,
+		avgWorkload: null,
+		avgDifficulty: null,
+		avgOverall: null,
+		avgStaffSupport: null,
+		reviewsCountsByYearSem: {},
+	},
+	{
 		courseId: 'CS-6238',
 		numReviews: 29,
 		avgWorkload: 14.655172413793103,
