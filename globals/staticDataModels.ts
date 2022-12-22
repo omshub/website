@@ -212,6 +212,16 @@ export const coursesDataStatic: TPayloadCoursesDataStatic = {
 		isDeprecated: false,
 		isFoundational: true,
 	},
+	'CS-6211': {
+		courseId: 'CS-6211',
+		name: 'System Design for Cloud Computing',
+		departmentId: 'CS',
+		courseNumber: '6210',
+		url: 'https://omscs.gatech.edu/cs-8803-o12-systems-issues-cloud-computing',
+		aliases: ['SICC', 'SDCC'],
+		isDeprecated: false,
+		isFoundational: true,
+	},
 	'CS-6238': {
 		courseId: 'CS-6238',
 		name: 'Secure Computer Systems',
@@ -668,8 +678,8 @@ export const coursesDataStatic: TPayloadCoursesDataStatic = {
 		departmentId: 'CS',
 		courseNumber: '8803-O12',
 		url: 'https://omscs.gatech.edu/cs-8803-o12-systems-issues-cloud-computing',
-		aliases: ['SICC'],
-		isDeprecated: false,
+		aliases: ['SICC', 'SDCC'],
+		isDeprecated: true,
 		isFoundational: true,
 	},
 	'CS-8803-O13': {

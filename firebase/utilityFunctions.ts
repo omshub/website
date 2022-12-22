@@ -153,6 +153,7 @@ export const mapCourseToLegacyNumReviews: TMapCourseToLegacyNumReviews = {
 	'CS-6150': 2,
 	'CS-6200': 256,
 	'CS-6210': 85,
+	'CS-6211': 0,
 	'CS-6238': 29,
 	'CS-6250': 326,
 	'CS-6260': 39,
