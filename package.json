@@ -60,7 +60,7 @@
 		"@testing-library/react": "^13.4.0",
 		"@types/node": "^18.11.9",
 		"@types/react": "^18.0.26",
-		"babel-loader": "^8.2.5",
+		"babel-loader": "^9.1.0",
 		"commitizen": "^4.2.4",
 		"cz-conventional-changelog": "3.3.0",
 		"eslint": "^8.20.0",
