@@ -8707,10 +8707,10 @@ html-tags@^3.1.0:
   resolved "https://registry.yarnpkg.com/html-tags/-/html-tags-3.2.0.tgz#dbb3518d20b726524e4dd43de397eb0a95726961"
   integrity sha512-vy7ClnArOZwCnqZgvv+ddgHgJiAFXe3Ge9ML5/mBctVJoUoYPCdxVucOywjDARn6CVoh3dRSFdPHy2sX80L0Wg==
 
-html-to-image@^1.10.0:
-  version "1.10.4"
-  resolved "https://registry.yarnpkg.com/html-to-image/-/html-to-image-1.10.4.tgz#c44f393db10d139a01eadcf94a5242e7b2e1ec9c"
-  integrity sha512-nJ9uiWCkD/egDN0F6wzbCfpjc/1ZChutABD3SgnRRwNlZpUhhCFK/dRuVAmyEFgrQFacYW5hyURRLlSdZw8cgQ==
+html-to-image@^1.11.3:
+  version "1.11.3"
+  resolved "https://registry.yarnpkg.com/html-to-image/-/html-to-image-1.11.3.tgz#ef34e367dc1b52b864acab7baabfc253bc481023"
+  integrity sha512-9E/uinAx0LrfGndny36FDh3j3shpp0vn/J1UFvpYZm/y6n8CjWJ+h6jyU1VzmOKAx/Fy/NPGath7nmRMpaocmg==
 
 html-tokenize@^2.0.0:
   version "2.0.1"
