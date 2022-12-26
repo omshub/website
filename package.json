@@ -34,7 +34,7 @@
 		"@mui/x-data-grid": "^5.17.16",
 		"@toast-ui/react-editor": "^3.2.0",
 		"firebase": "^9.9.0",
-		"html-to-image": "^1.10.0",
+		"html-to-image": "^1.11.3",
 		"isomorphic-dompurify": "^0.24.0",
 		"next": "12.2.5",
 		"react": "^18.2.0",
