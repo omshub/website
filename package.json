@@ -30,7 +30,7 @@
 		"@emotion/server": "^11.4.0",
 		"@emotion/styled": "^11.10.5",
 		"@mui/icons-material": "^5.11.0",
-		"@mui/material": "^5.10.14",
+		"@mui/material": "^5.11.2",
 		"@mui/x-data-grid": "^5.17.17",
 		"@toast-ui/react-editor": "^3.2.0",
 		"firebase": "^9.9.0",
