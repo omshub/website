@@ -32,7 +32,7 @@
 		"@mui/icons-material": "^5.11.0",
 		"@mui/material": "^5.11.2",
 		"@mui/x-data-grid": "^5.17.17",
-		"@toast-ui/react-editor": "^3.2.0",
+		"@toast-ui/react-editor": "^3.2.2",
 		"firebase": "^9.9.0",
 		"html-to-image": "^1.11.3",
 		"isomorphic-dompurify": "^0.24.0",
