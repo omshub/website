@@ -64,7 +64,7 @@
 		"commitizen": "^4.2.6",
 		"cz-conventional-changelog": "3.3.0",
 		"eslint": "^8.30.0",
-		"eslint-config-next": "^13.1.1",
+		"eslint-config-next": "^13.1.2",
 		"eslint-config-prettier": "^8.6.0",
 		"eslint-plugin-storybook": "^0.6.8",
 		"husky": "^8.0.3",
