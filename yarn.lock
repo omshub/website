@@ -8480,10 +8480,10 @@ html-tags@^3.1.0:
   resolved "https://registry.yarnpkg.com/html-tags/-/html-tags-3.2.0.tgz#dbb3518d20b726524e4dd43de397eb0a95726961"
   integrity sha512-vy7ClnArOZwCnqZgvv+ddgHgJiAFXe3Ge9ML5/mBctVJoUoYPCdxVucOywjDARn6CVoh3dRSFdPHy2sX80L0Wg==
 
-html-to-image@^1.11.3:
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/html-to-image/-/html-to-image-1.11.3.tgz#ef34e367dc1b52b864acab7baabfc253bc481023"
-  integrity sha512-9E/uinAx0LrfGndny36FDh3j3shpp0vn/J1UFvpYZm/y6n8CjWJ+h6jyU1VzmOKAx/Fy/NPGath7nmRMpaocmg==
+html-to-image@^1.11.4:
+  version "1.11.4"
+  resolved "https://registry.yarnpkg.com/html-to-image/-/html-to-image-1.11.4.tgz#a5c7d4b13ed13bf9922661ae20629a971cbc1e86"
+  integrity sha512-I6jeGpjSI/pea+p/8q6HAWPxptZkEYaZ40ZLnpCHuhCJJnUHQ/YzMEQMNY/KMdPZJ4+GJIwo9dnJy76eW9p9cg==
 
 html-tokenize@^2.0.0:
   version "2.0.1"
