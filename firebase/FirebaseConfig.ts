@@ -22,10 +22,14 @@ const firebaseApp = initializeApp(config)
 export const auth = getAuth()
 export const db = getFirestore(firebaseApp)
 
-if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
-	console.log('env', process.env.NODE_ENV);
+/* --- FIREBASE EMULATORS CONFIGS --- */
 
-	// prevent multiple emulator attempts on re-render -- reference: https://stackoverflow.com/a/74727587
+// N.B. Set environment var `IS_EMULATOR_MODE=true` in `.env` to use local Firebase emulator (emulator must
+// be running via `yarn fb:emustart` first before starting the app via `yarn dev`)
+const isEmulatorMode = process.env.NEXT_PUBLIC_IS_EMULATOR_MODE?.toLowerCase() === 'true';
+const isEmulatorEnvironment = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
+if (isEmulatorMode && isEmulatorEnvironment) {
+	// prevent multiple Firestore emulator connections on re-render -- reference: https://stackoverflow.com/a/74727587
 	const host = (db.toJSON() as { settings?: { host?: string } }).settings?.host ?? '';
 	if (!host.startsWith('localhost')) {
 		connectFirestoreEmulator(db, 'localhost', 8080)
