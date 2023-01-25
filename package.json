@@ -21,7 +21,10 @@
 		"post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest",
 		"storybook": "start-storybook -s ./public -p 6006",
 		"build-storybook": "build-storybook -s ./public",
-		"db:seed": "node ./__seed__/script.js"
+		"db:seed": "node ./__seed__/script.js",
+		"db:seed-fbcloud": "node ./__seed__/script.js SEED_FIREBASE_FIRESTORE_IN_CLOUD",
+		"fb:login": "firebase login",
+		"fb:emustart": "firebase emulators:start --import=./__seed__/firebase-seed"
 	},
 	"dependencies": {
 		"@babel/core": "^7.20.12",

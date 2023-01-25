@@ -2,8 +2,8 @@
 import { FirebaseOptions, initializeApp } from 'firebase/app'
 // Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-import { getFirestore } from 'firebase/firestore'
-import { getAuth } from 'firebase/auth'
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore'
+import { connectAuthEmulator, getAuth } from 'firebase/auth'
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -21,3 +21,15 @@ const config: FirebaseOptions = {
 const firebaseApp = initializeApp(config)
 export const auth = getAuth()
 export const db = getFirestore(firebaseApp)
+
+if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+	console.log('env', process.env.NODE_ENV);
+
+	// prevent multiple emulator attempts on re-render -- reference: https://stackoverflow.com/a/74727587
+	const host = (db.toJSON() as { settings?: { host?: string } }).settings?.host ?? '';
+	if (!host.startsWith('localhost')) {
+		connectFirestoreEmulator(db, 'localhost', 8080)
+	}
+
+	connectAuthEmulator(auth, 'http://localhost:9099');
+}
