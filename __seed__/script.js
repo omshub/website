@@ -1,5 +1,10 @@
 const { initializeApp } = require('firebase/app')
-const { getFirestore, setDoc, doc, connectFirestoreEmulator } = require('firebase/firestore')
+const {
+	getFirestore,
+	setDoc,
+	doc,
+	connectFirestoreEmulator,
+} = require('firebase/firestore')
 const _ = require('lodash')
 
 // N.B. See `./example.env.js` for how to populate `.env.js`
@@ -18,9 +23,9 @@ const db = getFirestore(firebaseApp)
 // N.B. To run seed (i.e., via `yarn db:seed`), must configure firestore emulator
 // accordingly (i.e., set "rules" in `firebase.json` to point to `firebase.local.rules`
 // before running the emulator from the command-line)
-const isSeedingInCloud = process.argv[2] === 'SEED_FIREBASE_FIRESTORE_IN_CLOUD';
+const isSeedingInCloud = process.argv[2] === 'SEED_FIREBASE_FIRESTORE_IN_CLOUD'
 if (!isSeedingInCloud) {
-	connectFirestoreEmulator(db, "localhost", 8080)
+	connectFirestoreEmulator(db, 'localhost', 8080)
 }
 
 // convert seed data from array form to map form
