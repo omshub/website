@@ -42,5 +42,9 @@ if (isEmulatorMode && isEmulatorEnvironment) {
 	}
 
 	connectAuthEmulator(auth, `http://${LOCALHOST}:${firebaseEmulatorPorts.AUTH}`)
-	connectFunctionsEmulator(functions, LOCALHOST, firebaseEmulatorPorts.FUNCTIONS)
+	connectFunctionsEmulator(
+		functions,
+		LOCALHOST,
+		firebaseEmulatorPorts.FUNCTIONS
+	)
 }
