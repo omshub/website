@@ -24,7 +24,9 @@
 		"fb:seed-db": "node ./__seed__/script.js",
 		"fb:seed-db-cloud": "node ./__seed__/script.js SEED_FIREBASE_FIRESTORE_IN_CLOUD",
 		"fb:login": "firebase login",
-		"fb:emustart": "firebase emulators:start --import=./__seed__/firebase-seed"
+		"fb:fns-predeploy": "cd functions && npm run build",
+		"fb:emustart-ui": "firebase emulators:start --import=./__seed__/firebase-seed",
+		"fb:emustart": "yarn fb:fns-predeploy && yarn fb:emustart-ui"
 	},
 	"dependencies": {
 		"@babel/core": "^7.20.12",
@@ -86,7 +88,7 @@
 		}
 	},
 	"lint-staged": {
-		"{ts,tsx}": [
+		"!(functions/**/*)*.{ts,tsx}": [
 			"next lint"
 		],
 		"*": [
