@@ -20,8 +20,13 @@ module.exports = {
   ignorePatterns: [
     '/lib/**/*', // Ignore built files.
   ],
-  plugins: ['@typescript-eslint', 'import'],
+  plugins: [
+    '@typescript-eslint',
+    'import',
+  ],
   rules: {
     'import/no-unresolved': 0,
+    '@typescript-eslint/ban-ts-comment': 0,
+    'object-curly-spacing': 0,
   },
 };
