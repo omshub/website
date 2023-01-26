@@ -5,6 +5,7 @@ import { FirebaseOptions, initializeApp } from 'firebase/app'
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore'
 import { connectAuthEmulator, getAuth } from 'firebase/auth'
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions'
+import { connectStorageEmulator, getStorage } from 'firebase/storage'
 import { firebaseEmulatorPorts, LOCALHOST } from '@backend/constants'
 
 // Your web app's Firebase configuration
@@ -24,6 +25,7 @@ const firebaseApp = initializeApp(config)
 export const auth = getAuth()
 export const db = getFirestore(firebaseApp)
 export const functions = getFunctions(firebaseApp)
+export const storage = getStorage(firebaseApp)
 
 /* --- FIREBASE EMULATORS CONFIGS --- */
 
@@ -47,4 +49,5 @@ if (isEmulatorMode && isEmulatorEnvironment) {
 		LOCALHOST,
 		firebaseEmulatorPorts.FUNCTIONS
 	)
+	connectStorageEmulator(storage, LOCALHOST, firebaseEmulatorPorts.STORAGE)
 }
