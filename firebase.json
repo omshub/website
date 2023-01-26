@@ -29,5 +29,8 @@
 		"ui": {
 			"enabled": true
 		}
+	},
+	"functions": {
+		"predeploy": "yarn fb:fns-predeploy"
 	}
 }

@@ -6,5 +6,6 @@ const buildEslintCommand = (filenames) =>
 		.join(' --file ')}`
 
 module.exports = {
-	'*.{ts,tsx}': [buildEslintCommand],
+	// N.B. Ignore folder `functions` -- has its own tsc & lint configs
+	'!(functions/**/*)*.{ts,tsx}': [buildEslintCommand],
 }
