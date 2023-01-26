@@ -88,7 +88,7 @@
 		}
 	},
 	"lint-staged": {
-		"*.{ts,tsx}": [
+		"{ts,tsx}": [
 			"next lint"
 		],
 		"*": [
