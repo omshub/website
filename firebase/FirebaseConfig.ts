@@ -4,6 +4,8 @@ import { FirebaseOptions, initializeApp } from 'firebase/app'
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore'
 import { connectAuthEmulator, getAuth } from 'firebase/auth'
+import { connectFunctionsEmulator, getFunctions } from 'firebase/functions'
+import { firebaseEmulatorPorts, LOCALHOST } from '@backend/constants'
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -21,6 +23,7 @@ const config: FirebaseOptions = {
 const firebaseApp = initializeApp(config)
 export const auth = getAuth()
 export const db = getFirestore(firebaseApp)
+export const functions = getFunctions(firebaseApp)
 
 /* --- FIREBASE EMULATORS CONFIGS --- */
 
@@ -34,9 +37,10 @@ if (isEmulatorMode && isEmulatorEnvironment) {
 	// prevent multiple Firestore emulator connections on re-render -- reference: https://stackoverflow.com/a/74727587
 	const host =
 		(db.toJSON() as { settings?: { host?: string } }).settings?.host ?? ''
-	if (!host.startsWith('localhost')) {
-		connectFirestoreEmulator(db, 'localhost', 8080)
+	if (!host.startsWith(LOCALHOST)) {
+		connectFirestoreEmulator(db, LOCALHOST, firebaseEmulatorPorts.FIRESTORE)
 	}
 
-	connectAuthEmulator(auth, 'http://localhost:9099')
+	connectAuthEmulator(auth, `http://${LOCALHOST}:${firebaseEmulatorPorts.AUTH}`)
+	connectFunctionsEmulator(functions, LOCALHOST, firebaseEmulatorPorts.FUNCTIONS)
 }
