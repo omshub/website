@@ -39,7 +39,7 @@
 		"next": "12.2.5",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"react-hook-form": "^7.41.5",
+		"react-hook-form": "^7.43.6",
 		"react-markdown": "^8.0.5",
 		"rehype-raw": "^6.1.1",
 		"remark-gfm": "^3.0.1",
