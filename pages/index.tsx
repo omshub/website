@@ -129,17 +129,6 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 								pagination: {
 									pageSize: 150,
 								},
-								filter: {
-									filterModel: {
-										items: [
-											{
-												columnField: courseFields.NUM_REVIEWS,
-												operatorValue: '>',
-												value: 0,
-											},
-										],
-									},
-								},
 							}}
 						/>
 					</Grid>
