@@ -654,6 +654,15 @@ module.exports = [
 		},
 	},
 	{
+		courseId: 'CS-7650',
+		numReviews: 0,
+		avgWorkload: null,
+		avgDifficulty: null,
+		avgOverall: null,
+		avgStaffSupport: null,
+		reviewsCountsByYearSem: {},
+	},
+	{
 		courseId: 'CS-8803-O04',
 		numReviews: 10,
 		avgWorkload: 16.5,
@@ -714,6 +723,15 @@ module.exports = [
 	},
 	{
 		courseId: 'CS-8803-O15',
+		numReviews: 0,
+		avgWorkload: null,
+		avgDifficulty: null,
+		avgOverall: null,
+		avgStaffSupport: null,
+		reviewsCountsByYearSem: {},
+	},
+	{
+		courseId: 'CS-8803-O16',
 		numReviews: 0,
 		avgWorkload: null,
 		avgDifficulty: null,
