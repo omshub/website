@@ -16,7 +16,7 @@ jobs:
           max_timeout: 60
       - name: Run Lighthouse on url and validate with budgets.json
         id: lighthouse_audit
-        uses: treosh/lighthouse-ci-action@v9
+        uses: treosh/lighthouse-ci-action@v10
         with:
           urls: ${{ steps.VercelPreview.outputs.url }}
           budgetPath: '.github/lighthouse/budget.json'
