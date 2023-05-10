@@ -1,7 +1,7 @@
 {
-  "buckets": [
-    {
-      "id": "omshub-test-dev.appspot.com"
-    }
-  ]
+	"buckets": [
+		{
+			"id": "omshub-test-dev.appspot.com"
+		}
+	]
 }

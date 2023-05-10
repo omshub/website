@@ -4,7 +4,6 @@ import { FirebaseOptions, initializeApp } from 'firebase/app'
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore'
 import { connectAuthEmulator, getAuth } from 'firebase/auth'
-import { connectFunctionsEmulator, getFunctions } from 'firebase/functions'
 import { connectStorageEmulator, getStorage } from 'firebase/storage'
 import { firebaseEmulatorPorts, LOCALHOST } from '@backend/constants'
 
@@ -24,12 +23,11 @@ const config: FirebaseOptions = {
 const firebaseApp = initializeApp(config)
 export const auth = getAuth()
 export const db = getFirestore(firebaseApp)
-export const functions = getFunctions(firebaseApp)
 export const storage = getStorage(firebaseApp)
 
 /* --- FIREBASE EMULATORS CONFIGS --- */
 
-// N.B. Set environment var `IS_EMULATOR_MODE=true` in `.env` to use local Firebase emulator (emulator must
+// N.B. Set environment var `NEXT_PUBLIC_IS_EMULATOR_MODE=true` in `.env` to use local Firebase emulator (emulator must
 // be running via `yarn fb:emustart` first before starting the app via `yarn dev`)
 const isEmulatorMode =
 	process.env.NEXT_PUBLIC_IS_EMULATOR_MODE?.toLowerCase() === 'true'
@@ -44,10 +42,5 @@ if (isEmulatorMode && isEmulatorEnvironment) {
 	}
 
 	connectAuthEmulator(auth, `http://${LOCALHOST}:${firebaseEmulatorPorts.AUTH}`)
-	connectFunctionsEmulator(
-		functions,
-		LOCALHOST,
-		firebaseEmulatorPorts.FUNCTIONS
-	)
 	connectStorageEmulator(storage, LOCALHOST, firebaseEmulatorPorts.STORAGE)
 }

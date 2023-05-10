@@ -1,19 +1,17 @@
 {
-  "name": "reviews.json",
-  "bucket": "omshub-test-dev.appspot.com",
-  "metageneration": 1,
-  "generation": 1674763438556,
-  "contentType": "application/json",
-  "storageClass": "STANDARD",
-  "contentDisposition": "inline",
-  "downloadTokens": [
-    "28b0b71f-47ad-499f-9b99-5e687aa9898a"
-  ],
-  "etag": "3txdgnp0U8OtUUSL0VwL3BZAn9A",
-  "customMetadata": {},
-  "timeCreated": "2023-01-26T20:03:58.556Z",
-  "updated": "2023-01-26T20:03:58.556Z",
-  "size": 0,
-  "md5Hash": "1B2M2Y8AsgTpgAmY7PhCfg==",
-  "crc32c": "0"
+	"name": "reviews.json",
+	"bucket": "omshub-test-dev.appspot.com",
+	"metageneration": 1,
+	"generation": 1674763438556,
+	"contentType": "application/json",
+	"storageClass": "STANDARD",
+	"contentDisposition": "inline",
+	"downloadTokens": ["28b0b71f-47ad-499f-9b99-5e687aa9898a"],
+	"etag": "3txdgnp0U8OtUUSL0VwL3BZAn9A",
+	"customMetadata": {},
+	"timeCreated": "2023-01-26T20:03:58.556Z",
+	"updated": "2023-01-26T20:03:58.556Z",
+	"size": 0,
+	"md5Hash": "1B2M2Y8AsgTpgAmY7PhCfg==",
+	"crc32c": "0"
 }
