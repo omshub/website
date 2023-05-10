@@ -22,10 +22,9 @@
 			"@src/*": ["src/*"],
 			"@pages/*": ["pages/*"],
 			"@components/*": ["src/components/*"],
-			"@context/*": ["context/*"],
-			"@functions/*": ["functions/*"]
+			"@context/*": ["context/*"]
 		}
 	},
 	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-	"exclude": ["node_modules", "__seed__", "functions"]
+	"exclude": ["node_modules", "__seed__"]
 }
