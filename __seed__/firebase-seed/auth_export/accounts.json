@@ -3,7 +3,7 @@
 	"users": [
 		{
 			"localId": "0FiDVPmzlZtxd50lZ25FKRVSsTt5",
-      "displayName": "George P. Burdell",
+			"displayName": "George P. Burdell",
 			"screenName": "test_user_gatech.edu",
 			"email": "test@gatech.edu",
 			"emailVerified": true,
@@ -14,7 +14,7 @@
 					"providerId": "password",
 					"rawId": "test@gatech.edu",
 					"federatedId": "test@gatech.edu",
-          "displayName": "George P. Burdell",
+					"displayName": "George P. Burdell",
 					"email": "test@gatech.edu",
 					"screenName": "test_user_gatech.edu"
 				}
