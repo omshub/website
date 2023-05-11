@@ -97,7 +97,7 @@ export type TCourseId =
 
 export type TCourseName =
   // ...
-  | '<...>' // indicate appropraite `courseName`
+  | '<...>' // indicate appropriate course `name`
   // ...
 ```
 
