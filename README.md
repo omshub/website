@@ -104,11 +104,11 @@ Open `http://localhost:3000` with your browser to see the result. The local data
 
 ### Commit messages
 
-### Committing using Git CLI:
+#### Committing using Git CLI:
 
 Using `git commit` will bring up a prompt that will fill out commit messages to the repo's commit connvention.
 
-### Committing using Git GUI:
+#### Committing using Git GUI:
 
 Commit messages must conform to the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/).
 
