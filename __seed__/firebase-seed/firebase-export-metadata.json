@@ -8,9 +8,5 @@
 	"auth": {
 		"version": "11.21.0",
 		"path": "auth_export"
-	},
-	"storage": {
-		"version": "11.21.0",
-		"path": "storage_export"
 	}
 }
