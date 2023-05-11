@@ -78,6 +78,7 @@ This will create a local emulator instance of Firebase, accessible via `http://l
 Next, to start the project locally, in a **_separate_** terminal instance run:
 
 ```bash
+yarn build
 yarn dev
 ```
 
