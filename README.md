@@ -16,9 +16,7 @@ A website for Online Master's of Science (OMS) course reviews at Georgia Tech.
 ### OMS program home pages
 
 - OMS Computer Science (OMSCS) - https://omscs.gatech.edu
-
 - OMS Cybersecurity (OMSCY) - https://pe.gatech.edu/degrees/cybersecurity
-
 - OMS Analytics (OMSA) - https://pe.gatech.edu/degrees/analytics
 
 ### Other
