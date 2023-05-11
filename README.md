@@ -142,16 +142,6 @@ The commit message should be structured as follows:
 
 See the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/#examples) for examples of valid commit messages.
 
-## Firebase
-
-Ensure that `.env` is populated with appropriate variables (see `sample.env` for reference). To manually deploy from the terminal, use the following commands (requires [Firebase CLI](https://firebase.google.com/docs/cli)):
-
-```bash
-yarn build
-firebase login
-firebase deploy --only hosting
-```
-
 ## Attributions
 
 [Brain](public/favicon.ico) by Sergey Patutin from [NounProject.com](https://thenounproject.com/icon/brain-291205)
