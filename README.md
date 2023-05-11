@@ -70,12 +70,13 @@ NEXT_PUBLIC_IS_EMULATOR_MODE=true
 To launch the local emulator, run:
 
 ```bash
+yarn install
 yarn fb:emu
 ```
 
 This will create a local emulator instance of Firebase, accessible via `http://localhost:4000` which provides the Firebase Emulator Suite for local services (e.g., Firestore).
 
-Next, to start the project locally, run:
+Next, to start the project locally, in a ***separate*** terminal instance run:
 
 ```bash
 yarn dev
