@@ -89,9 +89,9 @@ Open `http://localhost:3000` with your browser to see the result. The local data
 - `yarn dev` — Starts the application in development mode at `http://localhost:3000`.
 - `yarn build` — Creates an optimized production build of your application.
 - `yarn start` — Starts the application in production mode.
-- `yarn type-check` — Validate code using TypeScript compiler.
 - `yarn lint` — Runs ESLint for all files in the `src` directory.
 - `yarn prettier` — Runs Prettier for all files in the `src` directory.
+- `yarn fmt` - Run `yarn prettier` and `yarn lint` successively.
 - `yarn commit` — Run commitizen. Alternative to `git commit`.
 - `yarn storybook` - Run storybook locally at `http://localhost:6006`.
 - `yarn dev` - Run the application in developer mode.
