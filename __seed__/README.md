@@ -35,11 +35,11 @@ module.exports = [
   {
     courseId: `<...>` // indicate appropriate `courseId`
     numReviews: 0,
-		avgWorkload: null,
-		avgDifficulty: null,
-		avgOverall: null,
-		avgStaffSupport: null,
-		reviewsCountsByYearSem: {},
+    avgWorkload: null,
+    avgDifficulty: null,
+    avgOverall: null,
+    avgStaffSupport: null,
+    reviewsCountsByYearSem: {},
   },
   // ...
 ]
@@ -51,9 +51,9 @@ module.exports = [
 // ...
 
 export const mapCourseToLegacyNumReviews: TMapCourseToLegacyNumReview = {
-	// ...
-	'<...>': 0, // indicate appropriate `courseId`
-	// ...
+  // ...
+  '<...>': 0, // indicate appropriate `courseId`
+  // ...
 }
 
 // ...
@@ -65,19 +65,19 @@ export const mapCourseToLegacyNumReviews: TMapCourseToLegacyNumReview = {
 // ...
 
 export const coursesDataStatic: TPayloadCoursesDataStatic = {
-	// ...
-	'<...>': {
-		// indicate appropriate `courseId`
-		courseId: '<...>',
-		name: '<...>',
-		departmentId: '<...>',
-		courseNumber: '<...>',
-		url: '<...>',
-		aliases: ['<...>', '<...>' /* , .... */],
-		isDeprecated: false,
-		isFoundational: '<true|false>',
-	},
-	// ...
+  // ...
+  '<...>': {
+    // indicate appropriate `courseId`
+    courseId: '<...>',
+    name: '<...>',
+    departmentId: '<...>',
+    courseNumber: '<...>',
+    url: '<...>',
+    aliases: ['<...>', '<...>' /* , .... */],
+    isDeprecated: false,
+    isFoundational: '<true|false>',
+  },
+  // ...
 }
 
 // ...
@@ -89,16 +89,16 @@ export const coursesDataStatic: TPayloadCoursesDataStatic = {
 // ...
 
 export type TCourseId =
-	// ...
-	| '<...>' // indicate appropriate `courseId`
-	// ...
+  // ...
+  | '<...>' // indicate appropriate `courseId`
+  // ...
 
 // ...
 
 export type TCourseName =
-	// ...
-	| '<...>' // indicate appropraite `courseName`
-	// ...
+  // ...
+  | '<...>' // indicate appropraite `courseName`
+  // ...
 ```
 
 See next section for updating the seed data in the local Firebase emulator suite.
@@ -119,11 +119,11 @@ To update the local Firebase emulator suite seed data (e.g., on new course addit
 // in file `/firestore.json`
 
 {
-	"firestore": {
-		"rules": "firestore.local.rules" // NOTE: revert this value back to `"firestore.rules"` after seeding
-		// ...other fields
-	}
-	// ...other fields
+  "firestore": {
+    "rules": "firestore.local.rules" // NOTE: revert this value back to `"firestore.rules"` after seeding
+    // ...other fields
+  }
+  // ...other fields
 }
 ```
 
