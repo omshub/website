@@ -85,7 +85,7 @@ reviews.forEach((review) => {
 	reviewsDataMapFlat[review.reviewId] = review
 })
 
-// Seed Firebase Firestore collections in the cloud
+// Seed Firebase Firestore collections
 const add = async (collectionName, newDocId, data) =>
 	setDoc(doc(db, collectionName, newDocId), data)
 
