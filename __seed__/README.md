@@ -29,7 +29,7 @@ usersData
 
 ### Seeding or updating a cloud Firebase project
 
-To seed the data in a development cloud-based Firebase Firestore database, define `/__seed__/.env.js` accordingly with the database environment variables provided in the Firebase project's [console](console.firebase.google.com/) (cf. `/__seed__/.example.env.js` for reference), and then run the following command:
+To seed the data in a development cloud-based Firebase Firestore database, define `/__seed__/.env.js` accordingly with the database environment variables provided in the Firebase project's [console](https://console.firebase.google.com/) (cf. `/__seed__/.example.env.js` for reference), and then run the following command:
 
 ```bash
 yarn fb:seed-db-cloud
