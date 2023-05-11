@@ -29,13 +29,13 @@ usersData
 
 ### Seeding or updating a cloud Firebase project
 
-To seed the data in the development cloud Firestore database, define `/__seed__/.env.js` accordingly with the database env variables (cf. `/__seed__/.example.env.js` for reference), and then run the following command:
+To seed the data in a development cloud-based Firebase Firestore database, define `/__seed__/.env.js` accordingly with the database environment variables provided in the Firebase project's [console](console.firebase.google.com/) (cf. `/__seed__/.example.env.js` for reference), and then run the following command:
 
 ```bash
-fb:seed-db-cloud
+yarn fb:seed-db-cloud
 ```
 
-***NOTE***: Do **NOT** do use this method in production!!! Production Firebase database must be updated manually via the Firebase UI/console; otherwise, this seeding approach will wipe all of the live data **without** ability to recover it!
+***NOTE***: Do **NOT** use this method in **production**!!! Production Firebase database must be updated manually via the Firebase UI/console; otherwise, this seeding approach will wipe all of the live data **without** ability to recover it!
 
 ### Seeding or updating local *Firebase Emulator Suite*
 
@@ -80,7 +80,7 @@ This will update the corresponding files in directory `/__seed__/firebase-seed`.
 
 ***Note***: All paths indicated here are relative to the top-level directory (i.e., `website`).
 
-To add a new course, update the following files.
+To add a new course, update the following files:
 
 1. `/__seed__/data/courses.js`
 
