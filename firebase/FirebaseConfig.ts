@@ -28,7 +28,7 @@ export const storage = getStorage(firebaseApp)
 /* --- FIREBASE EMULATORS CONFIGS --- */
 
 // N.B. Set environment var `NEXT_PUBLIC_IS_EMULATOR_MODE=true` in `.env` to use local Firebase emulator (emulator must
-// be running via `yarn fb:emustart` first before starting the app via `yarn dev`)
+// be running via `yarn fb:emu` first before starting the app via `yarn dev`)
 const isEmulatorMode =
 	process.env.NEXT_PUBLIC_IS_EMULATOR_MODE?.toLowerCase() === 'true'
 const isEmulatorEnvironment =
