@@ -59,6 +59,30 @@ yarn start
 
 Open `http://localhost:3000` with your browser to see the result.
 
+#### Running the local Firebase emulator for local dev environment
+
+Ensure that the following is defined locally in `.env`:
+
+```
+NEXT_PUBLIC_IS_EMULATOR_MODE=true
+```
+
+To launch the local emulator, run:
+
+```bash
+yarn fb:emu
+```
+
+This will create a local emulator instance of Firebase, accessible via `http://localhost:4000` which provides the Firebase Emulator Suite for local services (e.g., Firestore).
+
+Next, to start the project locally, run:
+
+```bash
+yarn dev
+```
+
+Open `http://localhost:3000` with your browser to see the result. The local data will be seeded from scratch. Furthermore, you can use the local auth service by simply logging in via any of the provided services (e.g., Google) with auto-generated credentials, which wwill simulate a logged in user account.
+
 #### Yarn development scripts
 
 - `yarn dev` — Starts the application in development mode at `http://localhost:3000`.
@@ -69,6 +93,8 @@ Open `http://localhost:3000` with your browser to see the result.
 - `yarn prettier` — Runs Prettier for all files in the `src` directory.
 - `yarn commit` — Run commitizen. Alternative to `git commit`.
 - `yarn storybook` - Run storybook locally at `http://localhost:6006`.
+- `yarn dev` - Run the application in developer mode.
+- `yarn fb:emu` - Run the local Firebase emulators.
 
 #### Directory structure
 
