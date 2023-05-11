@@ -91,7 +91,7 @@ Open `http://localhost:3000` with your browser to see the result. The local data
 - `yarn lint` — Runs ESLint for all files in the `src` directory.
 - `yarn prettier` — Runs Prettier for all files in the `src` directory.
 - `yarn fmt` - Run `yarn prettier` and `yarn lint` successively.
-- `yarn commit` — Run commitizen. Alternative to `git commit`.
+- `yarn precommit` — Run commitizen on `git`-staged files.
 - `yarn storybook` - Run storybook locally at `http://localhost:6006`.
 - `yarn fb:emu` - Run the local [Firebase Emulator Suite](https://firebase.google.com/docs/emulator-suite/) at `http://localhost:4000`.
 
