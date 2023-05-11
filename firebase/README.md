@@ -2,9 +2,9 @@
 
 ## Preliminaries
 
-**_N.B._** All file-path references assume a starting point of the root directory of the project unless noted otherwise.
+***N.B.*** All file-path references assume a starting point of the root directory of the project unless noted otherwise.
 
-**_N.B._** Requires Node v. 16+.
+***N.B.*** Requires Node v. 16+.
 
 ## Overview
 
@@ -30,7 +30,7 @@ The full CRUD (create, read, update, delete) operations are defined around the s
 
 The data documents defined in this app, and their corresponding CRUD operations' function calls, are as follows:
 
-(**_data models_**)
+(***data models***)
 
 | Data Model |         Firestore Document Reference String         |               Document Primary Key                |
 | :--------: | :-------------------------------------------------: | :-----------------------------------------------: |
@@ -38,7 +38,7 @@ The data documents defined in this app, and their corresponding CRUD operations'
 |  `Review`  | `reviewsData/{courseId}/{year}-{semesterTerm}/data` | `reviewId [=] courseId-year-semesterTerm-created` |
 |   `User`   |                `usersData/{userId}`                 |                     `userId`                      |
 
-(**_operations_**)
+(***operations***)
 
 | Data Model |    Get All (courseId-year-semesterTerm)    |        Get One        |               Add One               |               Update One               |            Delete One            |
 | :--------: | :----------------------------------------: | :-------------------: | :---------------------------------: | :------------------------------------: | :------------------------------: |
@@ -46,7 +46,7 @@ The data documents defined in this app, and their corresponding CRUD operations'
 |  `Review`  | `getReviews(courseId, year, semesterTerm)` | `getReview(reviewId)` | `addReview(userId, reviewId, data)` | `updateReview(userId, reviewId, data)` | `deleteReview(userId, reviewId)` |
 |   `User`   |                   (N/A)                    |     `getUser(id)`     |            `addUser(id)`            |            `updateUser(id)`            |         `deleteUser(id)`         |
 
-**_N.B._** See `/globals/types.ts` for definition of document data fields (i.e., argument `data` per above).
+***N.B.*** See `/globals/types.ts` for definition of document data fields (i.e., argument `data` per above).
 
 Example usage via `courses` document (and similarly for the others):
 
@@ -95,4 +95,4 @@ await updateCourse(courseId, updatedCourseData)
 await deleteCourse(courseId)
 ```
 
-**_N.B._** All non-"`GET`" operations require authorization/authentication via Firebase Authentication and corresponding permissions.
+***N.B.*** All non-"`GET`" operations require authorization/authentication via Firebase Authentication and corresponding permissions.

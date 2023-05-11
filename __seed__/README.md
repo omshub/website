@@ -21,7 +21,7 @@ usersData
   /{userId}: <User>
 ```
 
-**_N.B._** The canonical path format for Firebase Firestore is `{collectionName}/{documentId}/{subCollectionName}/{subDocumentId}/...` and so on, with the path terminating at a (sub)document.
+***N.B.*** The canonical path format for Firebase Firestore is `{collectionName}/{documentId}/{subCollectionName}/{subDocumentId}/...` and so on, with the path terminating at a (sub)document.
 
 ## Seeding a Firebase project
 
@@ -156,4 +156,4 @@ export type TCourseName =
   // ...
 ```
 
-**_Reference PRs_**: [#151](https://github.com/omshub/website/pull/151/files), [#352](https://github.com/omshub/website/pull/352)
+***Reference PRs***: [#151](https://github.com/omshub/website/pull/151/files), [#352](https://github.com/omshub/website/pull/352)
