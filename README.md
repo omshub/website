@@ -8,13 +8,12 @@ A website for Online Master's of Science (OMS) course reviews at Georgia Tech.
 
 ## Resources
 
-#### OMSHub
+### OMSHub
 
 - Production - https://omshub.org
-- Development - https://dev.omshub.org
 - Storybook - https://storybook.omshub.org
 
-#### OMS program home pages
+### OMS program home pages
 
 - OMS Computer Science (OMSCS) - https://omscs.gatech.edu
 
@@ -22,13 +21,13 @@ A website for Online Master's of Science (OMS) course reviews at Georgia Tech.
 
 - OMS Analytics (OMSA) - https://pe.gatech.edu/degrees/analytics
 
-#### Other
+### Other
 
 - How to Write a Git Commit Message - https://cbea.ms/git-commit
 
 ## Development
 
-#### Getting started (VSCode fast-path)
+### Getting started (VSCode fast-path)
 
 This project includes a [.devcontainers](https://code.visualstudio.com/docs/remote/containers) configuration
 that can be used by VSCode to create a one-click development environment with Docker. The Docker container
@@ -42,7 +41,7 @@ To get started:
 2. Open the repository with VSCode. You should see a prompt on the bottom left of the screen to open the
    project inside the container.
 
-#### Getting started
+### Getting started
 
 Clone the repository and then run the following commands to build the NextJS application:
 
@@ -59,7 +58,7 @@ yarn start
 
 Open `http://localhost:3000` with your browser to see the result.
 
-#### Running the local Firebase emulator for local dev environment
+### Running the local Firebase emulator for local dev environment
 
 Ensure that the following is defined locally in `.env`:
 
@@ -84,7 +83,7 @@ yarn dev
 
 Open `http://localhost:3000` with your browser to see the result. The local data will be seeded from scratch. Furthermore, you can use the local auth service by simply logging in via any of the provided services (e.g., Google) with auto-generated credentials, which wwill simulate a logged in user account.
 
-#### Yarn development scripts
+### Yarn development scripts
 
 - `yarn dev` — Starts the application in development mode at `http://localhost:3000`.
 - `yarn build` — Creates an optimized production build of your application.
@@ -96,20 +95,20 @@ Open `http://localhost:3000` with your browser to see the result. The local data
 - `yarn storybook` - Run storybook locally at `http://localhost:6006`.
 - `yarn fb:emu` - Run the local [Firebase Emulator Suite](https://firebase.google.com/docs/emulator-suite/).
 
-#### Directory structure
+### Directory structure
 
 - [`.github`](.github) — GitHub configuration including the CI workflow.<br>
 - [`.husky`](.husky) — Husky configuration and hooks.<br>
 - [`public`](./public) — Static assets such as robots.txt, images, and favicon.<br>
 - [`src`](./src) — Application source code, including pages, components, styles.
 
-#### Commit messages
+### Commit messages
 
-#### Committing using Git CLI:
+### Committing using Git CLI:
 
 Using `git commit` will bring up a prompt that will fill out commit messages to the repo's commit connvention.
 
-#### Committing using Git GUI:
+### Committing using Git GUI:
 
 Commit messages must conform to the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/).
 

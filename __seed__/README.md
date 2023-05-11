@@ -90,15 +90,15 @@ export const coursesDataStatic: TPayloadCoursesDataStatic = {
 
 export type TCourseId =
 	// ...
-	'<...>' // indicate appropriate `courseId`
-// ...
+	| '<...>' // indicate appropriate `courseId`
+	// ...
 
 // ...
 
 export type TCourseName =
 	// ...
-	'<...>' // indicate appropraite `courseName`
-// ...
+	| '<...>' // indicate appropraite `courseName`
+	// ...
 ```
 
 See next section for updating the seed data in the local Firebase emulator suite.
@@ -127,13 +127,14 @@ To update the local Firebase emulator suite seed data (e.g., on new course addit
 }
 ```
 
-Next, launch the emulator suite with the following command:
+Next, launch the emulator suite with the following commands:
 
 ```bash
+yarn install
 yarn fb:emu
 ```
 
-With the emulator launched, seed the data in the running emulator with the following command in a separate terminal from the running emulator:
+With the emulator launched, seed the data in the running emulator with the following command in a *separate* terminal from that of the running emulator:
 
 ```bash
 yarn fb:seed-db
@@ -142,7 +143,7 @@ yarn fb:seed-db
 With the emulator Firestore data now updated, export the seed data with the following command:
 
 ```bash
-fb:exp-seed
+yarn fb:exp-seed
 ```
 
 This will update the corresponding files in directory `/__seed__/firebase-seed`.
