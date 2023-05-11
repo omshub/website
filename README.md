@@ -56,7 +56,7 @@ To start the project locally, run:
 yarn start
 ```
 
-Open `http://localhost:3000` with your browser to see the result.
+Open `http://localhost:3000` with your browser to see the result. See `README.md` in `/__seed__` for more details regarding seeding backend data (e.g., in a cloud Firebase project).
 
 ### Running the local Firebase emulator for local dev environment
 
@@ -73,7 +73,7 @@ yarn install
 yarn fb:emu
 ```
 
-This will create a local emulator instance of Firebase, accessible via `http://localhost:4000` which provides the Firebase Emulator Suite for local services (e.g., Firestore).
+This will create a local emulator instance of Firebase, with local UI Firebase dashboard accessible via `http://localhost:4000` which provides the Firebase Emulator Suite for local services (e.g., Firestore).
 
 Next, to start the project locally, in a **_separate_** terminal instance run:
 

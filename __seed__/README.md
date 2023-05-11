@@ -1,4 +1,6 @@
-# Seed Data Overview
+# Seed Data
+
+## Overview
 
 The current Firebase Firestore database has the following structure (where `{...}` denotes an identifier, and `: <DataModel>` denotes the type of the terminal document's return value via GET):
 
@@ -19,11 +21,64 @@ usersData
   /{userId}: <User>
 ```
 
-**_N.B._** The canonical path format for Firebase Firestore is `{collectionName}/{documentId}/{subCollectionName}/{subDocumentId}/...` and so on.
+**_N.B._** The canonical path format for Firebase Firestore is `{collectionName}/{documentId}/{subCollectionName}/{subDocumentId}/...` and so on, with the path terminating at a (sub)document.
+
+## Seeding a Firebase project
+
+***Note***: All paths indicated in this section are relative to the top-level directory (i.e., `website`). Furthermore, all commands (i.e., `yarn ...`) should also be issued from the top-level directory accordingly.
+
+### Seeding or updating a cloud Firebase project
+
+To seed the data in the development cloud Firestore database, define `/__seed__/.env.js` accordingly with the database env variables (cf. `/__seed__/.example.env.js` for reference), and then run the following command:
+
+```bash
+fb:seed-db-cloud
+```
+
+***NOTE***: Do **NOT** do use this method in production!!! Production Firebase database must be updated manually via the Firebase UI/console; otherwise, this seeding approach will wipe all of the live data **without** ability to recover it!
+
+### Seeding or updating local *Firebase Emulator Suite*
+
+To update the local Firebase emulator suite seed data (e.g., on new course addition, see next section), first set `/firebase.json` field `"firestore"."rules"` to value `"firestore.local.rules"` (by default, value is `"firestore.rules"`), i.e.,:
+
+```js
+// in file `/firestore.json`
+
+{
+  "firestore": {
+    "rules": "firestore.local.rules" // NOTE: revert this value back to `"firestore.rules"` after seeding
+    // ...other fields
+  }
+  // ...other fields
+}
+```
+
+Next, launch the emulator suite with the following commands:
+
+```bash
+yarn install
+yarn fb:emu
+```
+
+With the emulator launched, seed the data in the running emulator with the following command in a *separate* terminal from that of the running emulator:
+
+```bash
+yarn fb:seed-db
+```
+
+With the emulator Firestore data now updated, export the seed data with the following command:
+
+```bash
+yarn fb:exp-seed
+```
+
+This will update the corresponding files in directory `/__seed__/firebase-seed`.
+
+***Reference***: https://firebase.google.com/docs/emulator-suite/install_and_configure#export_and_import_emulator_data
 
 ## Adding a new course
 
-**_Note_**: All paths indicated here are relative to the top-level directory (i.e., `website`).
+***Note***: All paths indicated here are relative to the top-level directory (i.e., `website`).
 
 To add a new course, update the following files.
 
@@ -101,51 +156,4 @@ export type TCourseName =
   // ...
 ```
 
-See next section for updating the seed data in the local Firebase emulator suite.
-
-To seed the data in the development cloud Firestore database, define `/__seed__/.env.js` accordingly with the database env variables (cf. `/__seed__/.example.env.js` for reference), and then run command `fb:seed-db-cloud`.
-
-- **_NOTE_**: Do **NOT** do use this method in prod!!! Production Firebase database must be updated manually via the Firebase UI/console; otherwise, this seeding approach will wipe all of the live data **without** ability to recover it!
-
 **_Reference PRs_**: [#151](https://github.com/omshub/website/pull/151/files), [#352](https://github.com/omshub/website/pull/352)
-
-## Updating the seed data for local _Firebase Emulator Suite_
-
-**_Note_**: All paths indicated here are relative to the top-level directory (i.e., `website`). Furthermore, all commands (i.e., `yarn ...`) should be issued from the top-level directory accordingly.
-
-To update the local Firebase emulator suite seed data (e.g., on new course addition), first set `/firebase.json` field `"firestore"."rules"` to value `"firestore.local.rules"` (by default, value is `"firestore.rules"`), i.e.,:
-
-```json
-// in file `/firestore.json`
-
-{
-  "firestore": {
-    "rules": "firestore.local.rules" // NOTE: revert this value back to `"firestore.rules"` after seeding
-    // ...other fields
-  }
-  // ...other fields
-}
-```
-
-Next, launch the emulator suite with the following commands:
-
-```bash
-yarn install
-yarn fb:emu
-```
-
-With the emulator launched, seed the data in the running emulator with the following command in a *separate* terminal from that of the running emulator:
-
-```bash
-yarn fb:seed-db
-```
-
-With the emulator Firestore data now updated, export the seed data with the following command:
-
-```bash
-yarn fb:exp-seed
-```
-
-This will update the corresponding files in directory `/__seed__/firebase-seed`.
-
-**_Reference_**: https://firebase.google.com/docs/emulator-suite/install_and_configure
