@@ -133,7 +133,7 @@ Next, launch the emulator suite with the following command:
 yarn fb:emu
 ```
 
-With the emulator launched, seed the data in the running emulator with the following command in a separate terminal from ther runnning emulator:
+With the emulator launched, seed the data in the running emulator with the following command in a separate terminal from the running emulator:
 
 ```bash
 yarn fb:seed-db
