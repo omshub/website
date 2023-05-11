@@ -81,7 +81,7 @@ Next, to start the project locally, in a **_separate_** terminal instance run:
 yarn dev
 ```
 
-Open `http://localhost:3000` with your browser to see the result. The local data will be seeded from scratch. Furthermore, you can use the local auth service by simply logging in via any of the provided services (e.g., Google) with auto-generated credentials, which wwill simulate a logged in user account.
+Open `http://localhost:3000` with your browser to see the result. The local data will be seeded from scratch. Furthermore, you can use the local auth service by simply logging in via any of the provided services (e.g., Google) with auto-generated credentials, which will simulate a logged in user account.
 
 ### Yarn development scripts
 
