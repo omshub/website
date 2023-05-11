@@ -96,13 +96,3 @@ await deleteCourse(courseId)
 ```
 
 **_N.B._** All non-"`GET`" operations require authorization/authentication via Firebase Authentication and corresponding permissions.
-
-## Seeding the Data
-
-To seed the static data and legacy reviews, ensure that `/__seed__/.env.js` exists locally and is populated with appropriate credentials (cf. `/__seed__/example.env.js` for details), and then run the following from the terminal (e.g., bash):
-
-```bash
-yarn fb:seed-db
-```
-
-**_N.B._** This has already been performed in the production environment, and therefore is not necessary to re-run. This can be used to seed a test/dev environment, for example.
