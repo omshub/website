@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "omshub-website"
-  }
+    "default": "omshub-test-dev",
+    "dev": "omshub-test-dev"
+  },
+  "targets": {},
+  "etags": {}
 }

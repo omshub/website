@@ -16,8 +16,12 @@
 		"mhutchie.git-graph"
 	],
 
-	// Application and Storybook.
-	"forwardPorts": [3000, 6006],
+	"forwardPorts": [
+		// Application and Storybook
+		3000, 6006,
+		// Local Firebase Emulator Suite
+		4000, 4400, 4500, 5000, 5001, 8080, 9099, 9150, 9199
+	],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "./.devcontainer/scripts/start.sh",

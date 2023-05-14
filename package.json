@@ -18,10 +18,15 @@
 		"prepare": "husky install",
 		"precommit": "lint-staged",
 		"prettier": "prettier --write .",
+		"fmt": "yarn prettier && yarn lint",
 		"post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest",
 		"storybook": "start-storybook -s ./public -p 6006",
 		"build-storybook": "build-storybook -s ./public",
-		"db:seed": "node ./__seed__/script.js"
+		"fb:seed-db": "node ./__seed__/script.js",
+		"fb:seed-db-cloud": "node ./__seed__/script.js SEED_FIREBASE_FIRESTORE_IN_CLOUD",
+		"fb:login": "firebase login",
+		"fb:emu": "firebase emulators:start --import=./__seed__/firebase-seed",
+		"fb:exp-seed": "firebase emulators:export ./__seed__/firebase-seed"
 	},
 	"dependencies": {
 		"@babel/core": "^7.21.0",

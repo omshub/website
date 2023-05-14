@@ -1,5 +1,10 @@
 const { initializeApp } = require('firebase/app')
-const { getFirestore, setDoc, doc } = require('firebase/firestore')
+const {
+	getFirestore,
+	setDoc,
+	doc,
+	connectFirestoreEmulator,
+} = require('firebase/firestore')
 const _ = require('lodash')
 
 // N.B. See `./example.env.js` for how to populate `.env.js`
@@ -13,6 +18,15 @@ const specializations = require('./data/specializations')
 // Initialize Firebase app & services
 const firebaseApp = initializeApp(config)
 const db = getFirestore(firebaseApp)
+
+// By default, seed runs for local Firestore emulator, rather than for cloud/Firebase
+// N.B. To run seed (i.e., via `yarn db:seed`), must configure firestore emulator
+// accordingly (i.e., set "rules" in `firebase.json` to point to `firebase.local.rules`
+// before running the emulator from the command-line)
+const isSeedingInCloud = process.argv[2] === 'SEED_FIREBASE_FIRESTORE_IN_CLOUD'
+if (!isSeedingInCloud) {
+	connectFirestoreEmulator(db, 'localhost', 8080)
+}
 
 // convert seed data from array form to map form
 
@@ -71,7 +85,7 @@ reviews.forEach((review) => {
 	reviewsDataMapFlat[review.reviewId] = review
 })
 
-// Seed Firebase Firestore collections in the cloud
+// Seed Firebase Firestore collections
 const add = async (collectionName, newDocId, data) =>
 	setDoc(doc(db, collectionName, newDocId), data)
 

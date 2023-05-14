@@ -8,27 +8,24 @@ A website for Online Master's of Science (OMS) course reviews at Georgia Tech.
 
 ## Resources
 
-#### OMSHub
+### OMSHub
 
 - Production - https://omshub.org
-- Development - https://dev.omshub.org
 - Storybook - https://storybook.omshub.org
 
-#### OMS program home pages
+### OMS program home pages
 
 - OMS Computer Science (OMSCS) - https://omscs.gatech.edu
-
 - OMS Cybersecurity (OMSCY) - https://pe.gatech.edu/degrees/cybersecurity
-
 - OMS Analytics (OMSA) - https://pe.gatech.edu/degrees/analytics
 
-#### Other
+### Other
 
 - How to Write a Git Commit Message - https://cbea.ms/git-commit
 
 ## Development
 
-#### Getting started (VSCode fast-path)
+### Getting started (VSCode fast-path)
 
 This project includes a [.devcontainers](https://code.visualstudio.com/docs/remote/containers) configuration
 that can be used by VSCode to create a one-click development environment with Docker. The Docker container
@@ -42,7 +39,7 @@ To get started:
 2. Open the repository with VSCode. You should see a prompt on the bottom left of the screen to open the
    project inside the container.
 
-#### Getting started
+### Getting started
 
 Clone the repository and then run the following commands to build the NextJS application:
 
@@ -57,27 +54,54 @@ To start the project locally, run:
 yarn start
 ```
 
-Open `http://localhost:3000` with your browser to see the result.
+Open `http://localhost:3000` with your browser to see the result. See `README.md` in `/__seed__` for more details regarding seeding backend data (e.g., in a cloud Firebase project).
 
-#### Yarn development scripts
+### Running the local Firebase emulator for local dev environment
+
+Ensure that the following is defined locally in `.env`:
+
+```
+NEXT_PUBLIC_IS_EMULATOR_MODE=true
+```
+
+To launch the local emulator, run:
+
+```bash
+yarn install
+yarn fb:emu
+```
+
+This will create a local emulator instance of Firebase, with local UI Firebase dashboard accessible via `http://localhost:4000` which provides the Firebase Emulator Suite for local services (e.g., Firestore).
+
+Next, to start the project locally, in a ***separate*** terminal instance run:
+
+```bash
+yarn build
+yarn dev
+```
+
+Open `http://localhost:3000` with your browser to see the result. The local data will be seeded from scratch. Furthermore, you can use the local auth service by simply logging in via any of the provided services (e.g., Google) with auto-generated credentials, which will simulate a logged in user account.
+
+### Yarn development scripts
 
 - `yarn dev` — Starts the application in development mode at `http://localhost:3000`.
 - `yarn build` — Creates an optimized production build of your application.
 - `yarn start` — Starts the application in production mode.
-- `yarn type-check` — Validate code using TypeScript compiler.
 - `yarn lint` — Runs ESLint for all files in the `src` directory.
 - `yarn prettier` — Runs Prettier for all files in the `src` directory.
-- `yarn commit` — Run commitizen. Alternative to `git commit`.
+- `yarn fmt` - Run `yarn prettier` and `yarn lint` successively.
+- `yarn precommit` — Run commitizen on `git`-staged files.
 - `yarn storybook` - Run storybook locally at `http://localhost:6006`.
+- `yarn fb:emu` - Run the local [Firebase Emulator Suite](https://firebase.google.com/docs/emulator-suite/) at `http://localhost:4000`.
 
-#### Directory structure
+### Directory structure
 
 - [`.github`](.github) — GitHub configuration including the CI workflow.<br>
 - [`.husky`](.husky) — Husky configuration and hooks.<br>
 - [`public`](./public) — Static assets such as robots.txt, images, and favicon.<br>
 - [`src`](./src) — Application source code, including pages, components, styles.
 
-#### Commit messages
+### Commit messages
 
 #### Committing using Git CLI:
 
@@ -114,16 +138,6 @@ The commit message should be structured as follows:
 | test     | Adding missing tests or correcting existing tests                                                           |
 
 See the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/#examples) for examples of valid commit messages.
-
-## Firebase
-
-Ensure that `.env` is populated with appropriate variables (see `sample.env` for reference). To manually deploy from the terminal, use the following commands (requires [Firebase CLI](https://firebase.google.com/docs/cli)):
-
-```bash
-yarn build
-firebase login
-firebase deploy --only hosting
-```
 
 ## Attributions
 
