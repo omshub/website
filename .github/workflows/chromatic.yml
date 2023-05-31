@@ -9,12 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest]
         node-version: [14.x]
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies
         run: yarn
+        with: ${{ matrix.node-version }}
       - name: Publish to Chromatic
         uses: chromaui/action@v1
         with:
