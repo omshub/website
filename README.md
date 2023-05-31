@@ -138,7 +138,3 @@ The commit message should be structured as follows:
 | test     | Adding missing tests or correcting existing tests                                                           |
 
 See the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/#examples) for examples of valid commit messages.
-
-## Attributions
-
-[Brain](public/favicon.ico) by Sergey Patutin from [NounProject.com](https://thenounproject.com/icon/brain-291205)
