@@ -64,7 +64,7 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(function Link(
 		linkAs: linkAsProp,
 		locale,
 		noLinkStyle,
-		prefetch,
+		prefetch=false,
 		replace,
 		scroll,
 		shallow,
