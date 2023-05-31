@@ -1,3 +1,4 @@
+Name: 'Jest'
 on:
   push:
     branches:
@@ -8,20 +9,9 @@ on:
       - dev
 
 jobs:
-  lint-and-format:
+  jest-tests:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: 'yarn'
-      - run: yarn install
-      - run: yarn lint
-      - run: ./.github/workflows/ensure-prettier.sh
-
-  test:
-    runs-on: ubuntu-latest
+    name: Unit Tests
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3

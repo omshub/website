@@ -82,10 +82,10 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 			field: courseFields.IS_DEPRECATED,
 			headerName: 'is Deprecated?',
 			flex: 0,
-			hide: true,
+			hideable: true,
 			type: 'boolean',
 		},
-		{ field: courseFields.ALIASES, headerName: 'Aliases', flex: 0, hide: true },
+		{ field: courseFields.ALIASES, headerName: 'Aliases', flex: 0, hideable: true },
 	]
 	return (
 		<Container maxWidth='xl'>
@@ -127,7 +127,9 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 							}}
 							initialState={{
 								pagination: {
-									pageSize: 150,
+									paginationModel:{
+										pageSize: 100,
+									},
 								},
 							}}
 						/>
