@@ -42,11 +42,11 @@ yarn fb:seed-db-cloud
 To update the local Firebase emulator suite seed data (e.g., on new course addition, see next section), first set `/firebase.json` field `"firestore"."rules"` to value `"firestore.local.rules"` (by default, value is `"firestore.rules"`), i.e.,:
 
 ```js
-// in file `/firestore.json`
+// in file `/firebase.json`
 
 {
   "firestore": {
-    "rules": "firestore.local.rules" // NOTE: revert this value back to `"firestore.rules"` after seeding
+    "rules": "firestore.local.rules", // NOTE: revert this value back to `"firestore.rules"` after seeding
     // ...other fields
   }
   // ...other fields
@@ -88,7 +88,7 @@ To add a new course, update the following files:
 module.exports = [
   // ...
   {
-    courseId: `<...>` // indicate appropriate `courseId`
+    courseId: `<...>`, // indicate appropriate `courseId`
     numReviews: 0,
     avgWorkload: null,
     avgDifficulty: null,
@@ -121,8 +121,7 @@ export const mapCourseToLegacyNumReviews: TMapCourseToLegacyNumReview = {
 
 export const coursesDataStatic: TPayloadCoursesDataStatic = {
   // ...
-  '<...>': {
-    // indicate appropriate `courseId`
+  '<...>': { // indicate appropriate `courseId`
     courseId: '<...>',
     name: '<...>',
     departmentId: '<...>',
