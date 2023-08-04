@@ -35,8 +35,7 @@ export const NextLinkComposed = React.forwardRef<
 			locale={locale}
 			ref={ref}
 			{...other}
-		>
-		</NextLink>
+		></NextLink>
 	)
 })
 
@@ -63,7 +62,7 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(function Link(
 		linkAs: linkAsProp,
 		locale,
 		noLinkStyle,
-		prefetch=false,
+		prefetch = false,
 		replace,
 		scroll,
 		shallow,

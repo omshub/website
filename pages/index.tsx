@@ -85,7 +85,12 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 			hideable: true,
 			type: 'boolean',
 		},
-		{ field: courseFields.ALIASES, headerName: 'Aliases', flex: 0, hideable: true },
+		{
+			field: courseFields.ALIASES,
+			headerName: 'Aliases',
+			flex: 0,
+			hideable: true,
+		},
 	]
 	return (
 		<Container maxWidth='xl'>
@@ -121,13 +126,14 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
 							}}
 							componentsProps={{
 								toolbar: {
+									printOptions: { disableToolbarButton: true },
 									showQuickFilter: true,
 									quickFilterProps: { debounceMs: 500 },
 								},
 							}}
 							initialState={{
 								pagination: {
-									paginationModel:{
+									paginationModel: {
 										pageSize: 100,
 									},
 								},
