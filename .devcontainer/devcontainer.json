@@ -1,31 +1,31 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.234.0/containers/typescript-node
 {
-	"name": "omshub",
-	"build": {
-		"dockerfile": "Dockerfile"
-	},
+  "name": "omshub",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
 
-	"settings": {},
+  "settings": {},
 
-	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": [
-		"dbaeumer.vscode-eslint",
-		"esbenp.prettier-vscode",
-		"ms-azuretools.vscode-docker",
-		"mhutchie.git-graph"
-	],
+  // Add the IDs of extensions you want installed when the container is created.
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-azuretools.vscode-docker",
+    "mhutchie.git-graph"
+  ],
 
-	"forwardPorts": [
-		// Application and Storybook
-		3000, 6006,
-		// Local Firebase Emulator Suite
-		4000, 4400, 4500, 5000, 5001, 8080, 9099, 9150, 9199
-	],
+  "forwardPorts": [
+    // Application and Storybook
+    3000, 6006,
+    // Local Firebase Emulator Suite
+    4000, 4400, 4500, 5000, 5001, 8080, 9099, 9150, 9199
+  ],
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "./.devcontainer/scripts/start.sh",
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "./.devcontainer/scripts/start.sh",
 
-	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-	"remoteUser": "node"
+  // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "node"
 }

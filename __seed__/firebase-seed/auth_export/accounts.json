@@ -1,86 +1,86 @@
 {
-	"kind": "identitytoolkit#DownloadAccountResponse",
-	"users": [
-		{
-			"localId": "0FiDVPmzlZtxd50lZ25FKRVSsTt5",
-			"displayName": "George P. Burdell",
-			"screenName": "test_user_gatech.edu",
-			"email": "test@gatech.edu",
-			"emailVerified": true,
-			"emailLinkSignin": true,
-			"createdAt": "1683830986738",
-			"providerUserInfo": [
-				{
-					"providerId": "password",
-					"rawId": "test@gatech.edu",
-					"federatedId": "test@gatech.edu",
-					"displayName": "George P. Burdell",
-					"email": "test@gatech.edu",
-					"screenName": "test_user_gatech.edu"
-				}
-			],
-			"lastLoginAt": "1683831223979",
-			"lastRefreshAt": "2023-05-11T18:53:43.979Z"
-		},
-		{
-			"localId": "YQ6kLcOYSY6wyDwQZWQevlIhQdtP",
-			"displayName": "Test User Facebook",
-			"screenName": "test_user_facebook",
-			"email": "test@facebook.com",
-			"emailVerified": true,
-			"createdAt": "1683831153411",
-			"lastLoginAt": "1683831153411",
-			"providerUserInfo": [
-				{
-					"providerId": "facebook.com",
-					"rawId": "8691656067670031302798397407911182192659",
-					"federatedId": "8691656067670031302798397407911182192659",
-					"displayName": "Test User Facebook",
-					"email": "test@facebook.com",
-					"screenName": "test_user_facebook"
-				}
-			],
-			"lastRefreshAt": "2023-05-11T18:52:33.411Z"
-		},
-		{
-			"localId": "qEV0artwJVIilBljrED2QAYvQodW",
-			"displayName": "Test User GitHub",
-			"screenName": "test_user_github",
-			"email": "test@github.com",
-			"emailVerified": true,
-			"createdAt": "1683831251597",
-			"lastLoginAt": "1683831251598",
-			"providerUserInfo": [
-				{
-					"providerId": "github.com",
-					"rawId": "8184967452691273802283411197279335615768",
-					"federatedId": "8184967452691273802283411197279335615768",
-					"displayName": "Test User GitHub",
-					"email": "test@github.com",
-					"screenName": "test_user_github"
-				}
-			],
-			"lastRefreshAt": "2023-05-11T18:54:11.598Z"
-		},
-		{
-			"localId": "tJBB49IHfW8WNFgS9pSQPMkPwgQp",
-			"displayName": "Test User Gmail",
-			"screenName": "test_user_gmail",
-			"email": "test@gmail.com",
-			"emailVerified": true,
-			"createdAt": "1683831115312",
-			"lastLoginAt": "1683831115312",
-			"providerUserInfo": [
-				{
-					"providerId": "google.com",
-					"rawId": "3737447275045399738627121534040722162105",
-					"federatedId": "3737447275045399738627121534040722162105",
-					"displayName": "Test User Gmail",
-					"email": "test@gmail.com",
-					"screenName": "test_user_gmail"
-				}
-			],
-			"lastRefreshAt": "2023-05-11T18:51:55.313Z"
-		}
-	]
+  "kind": "identitytoolkit#DownloadAccountResponse",
+  "users": [
+    {
+      "localId": "0FiDVPmzlZtxd50lZ25FKRVSsTt5",
+      "displayName": "George P. Burdell",
+      "screenName": "test_user_gatech.edu",
+      "email": "test@gatech.edu",
+      "emailVerified": true,
+      "emailLinkSignin": true,
+      "createdAt": "1683830986738",
+      "providerUserInfo": [
+        {
+          "providerId": "password",
+          "rawId": "test@gatech.edu",
+          "federatedId": "test@gatech.edu",
+          "displayName": "George P. Burdell",
+          "email": "test@gatech.edu",
+          "screenName": "test_user_gatech.edu"
+        }
+      ],
+      "lastLoginAt": "1683831223979",
+      "lastRefreshAt": "2023-05-11T18:53:43.979Z"
+    },
+    {
+      "localId": "YQ6kLcOYSY6wyDwQZWQevlIhQdtP",
+      "displayName": "Test User Facebook",
+      "screenName": "test_user_facebook",
+      "email": "test@facebook.com",
+      "emailVerified": true,
+      "createdAt": "1683831153411",
+      "lastLoginAt": "1683831153411",
+      "providerUserInfo": [
+        {
+          "providerId": "facebook.com",
+          "rawId": "8691656067670031302798397407911182192659",
+          "federatedId": "8691656067670031302798397407911182192659",
+          "displayName": "Test User Facebook",
+          "email": "test@facebook.com",
+          "screenName": "test_user_facebook"
+        }
+      ],
+      "lastRefreshAt": "2023-05-11T18:52:33.411Z"
+    },
+    {
+      "localId": "qEV0artwJVIilBljrED2QAYvQodW",
+      "displayName": "Test User GitHub",
+      "screenName": "test_user_github",
+      "email": "test@github.com",
+      "emailVerified": true,
+      "createdAt": "1683831251597",
+      "lastLoginAt": "1683831251598",
+      "providerUserInfo": [
+        {
+          "providerId": "github.com",
+          "rawId": "8184967452691273802283411197279335615768",
+          "federatedId": "8184967452691273802283411197279335615768",
+          "displayName": "Test User GitHub",
+          "email": "test@github.com",
+          "screenName": "test_user_github"
+        }
+      ],
+      "lastRefreshAt": "2023-05-11T18:54:11.598Z"
+    },
+    {
+      "localId": "tJBB49IHfW8WNFgS9pSQPMkPwgQp",
+      "displayName": "Test User Gmail",
+      "screenName": "test_user_gmail",
+      "email": "test@gmail.com",
+      "emailVerified": true,
+      "createdAt": "1683831115312",
+      "lastLoginAt": "1683831115312",
+      "providerUserInfo": [
+        {
+          "providerId": "google.com",
+          "rawId": "3737447275045399738627121534040722162105",
+          "federatedId": "3737447275045399738627121534040722162105",
+          "displayName": "Test User Gmail",
+          "email": "test@gmail.com",
+          "screenName": "test_user_gmail"
+        }
+      ],
+      "lastRefreshAt": "2023-05-11T18:51:55.313Z"
+    }
+  ]
 }
