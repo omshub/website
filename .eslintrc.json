@@ -6,12 +6,14 @@
     "next",
     "prettier"
   ],
+  "rules": {
+    "no-unused-vars": "warn"
+  },
   "overrides": [
     {
       "files": ["*.stories.@(ts|tsx|js|jsx|mjs|cjs)"],
       "rules": {
         "storybook/hierarchy-separator": "error",
-        "no-unused-vars": "warn"
       }
     }
   ],
