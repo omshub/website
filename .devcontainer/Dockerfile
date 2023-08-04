@@ -5,4 +5,6 @@ ARG VARIANT="16-bullseye"
 FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:0-${VARIANT}
 
 RUN apt-get -y update
-RUN apt-get -y install openjdk-11-jdk
+RUN apt-get -y install openjdk-11-jdk \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
