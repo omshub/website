@@ -100,6 +100,13 @@ type TSortKey =
   | 'userId';
 type TSortDirection = 'ASC' | 'DESC';
 
+/**
+ * Convert payload object to array form. By default, sorting falls through to existing ordering.
+ * @param map The payload object (an object of objects)
+ * @param sortKey The ID field used for sort-ordering in array output
+ * @param sortDirection Ascending (default) or descending
+ * @returns array form of payload object
+ */
 export const mapPayloadToArray = (
   map: TKeyMap | undefined,
   sortKey?: TSortKey | string,
