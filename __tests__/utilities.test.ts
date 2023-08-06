@@ -8,6 +8,7 @@ import {
 
 // types
 type TInputPayload = {
+  // eslint-disable-next-line no-unused-vars
   [T in TCourseId]: any;
 };
 

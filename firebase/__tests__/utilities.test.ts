@@ -10,7 +10,6 @@ import {
   updateReviewsRecent,
   ON_ADD_REVIEW,
   ON_EDIT_REVIEW,
-  ON_DELETE_REVIEW,
 } from '@backend/utilities';
 import {
   Review,
@@ -30,10 +29,12 @@ const _aggregateData = '_aggregateData';
 
 // type definitions for mock responses data
 type TMockReviewsRecentData = {
+  // eslint-disable-next-line no-unused-vars
   [courseId in TCourseId | '_aggregateData']: Review[];
 };
 
 type TMockReviewsData = {
+  // eslint-disable-next-line no-unused-vars
   [courseId in TCourseId]: {
     [yearSemesterTerm: string]: TPayloadReviews;
   };
