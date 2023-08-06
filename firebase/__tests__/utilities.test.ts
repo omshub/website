@@ -413,7 +413,7 @@ describe('backend utilities tests', () => {
 
   describe('reviews data CRUD sub-operations', () => {
     describe('base updates', () => {
-      describe('updateReviewsRecent', () => {
+      describe('updateReviewsRecent()', () => {
         it('adds a review to recents data array for course', async () => {
           // arrange
           const reviewId = 'CS-6035-2023-2-1691132155000';
@@ -580,55 +580,55 @@ describe('backend utilities tests', () => {
           // TODO
         });
       });
-    });
 
-    describe('updateUser', () => {
-      // TODO
-    });
+      describe('updateUser()', () => {
+        // TODO
+      });
 
-    describe('addOrUpdateReview', () => {
-      // TODO
+      describe('addOrUpdateReview()', () => {
+        // TODO
+      });
     });
   });
 
   describe('updates on add review', () => {
-    describe('updateCourseDataOnAddReview', () => {
+    describe('updateCourseDataOnAddReview()', () => {
       // TODO
     });
 
-    describe('updateReviewsRecentOnAddReview', () => {
+    describe('updateReviewsRecentOnAddReview()', () => {
       // TODO
     });
 
-    describe('updateUserDataOnAddReview', () => {
+    describe('updateUserDataOnAddReview()', () => {
       // TODO
     });
   });
 
   describe('updates on update review', () => {
-    describe('updateCourseDataOnUpdateReview', () => {
+    describe('updateCourseDataOnUpdateReview()', () => {
       // TODO
     });
 
-    describe('updateReviewsRecentOnUpdateReview', () => {
+    describe('updateReviewsRecentOnUpdateReview()', () => {
       // TODO
     });
 
-    describe('updateUserDataOnUpdateReview', () => {
+    describe('updateUserDataOnUpdateReview()', () => {
       // TODO
     });
   });
 
   describe('updates on delete review', () => {
-    describe('updateCourseDataOnDeleteReview', () => {
+    describe('updateCourseDataOnDeleteReview()', () => {
       // TODO
     });
 
-    describe('updateReviewsRecentOnDeleteReview', () => {
+    describe('updateReviewsRecentOnDeleteReview()', () => {
       // TODO
     });
 
-    describe('updateUserDataOnDeleteReview', () => {
+    describe('updateUserDataOnDeleteReview()', () => {
       // TODO
     });
   });

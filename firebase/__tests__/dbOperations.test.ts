@@ -12,63 +12,63 @@ describe('backend dbOperations tests', () => {
       });
     });
 
-    describe('getCourse', () => {
+    describe('getCourse()', () => {
       // TODO
     });
 
-    describe('addCourse', () => {
+    describe('addCourse()', () => {
       // TODO
     });
 
-    describe('updateCourse', () => {
+    describe('updateCourse()', () => {
       // TODO
     });
 
-    describe('deleteCourse', () => {
+    describe('deleteCourse()', () => {
       // TODO
     });
   });
 
   describe('reviews CRUD operations', () => {
-    describe('getReviews', () => {
+    describe('getReviews()', () => {
       // TODO
     });
 
-    describe('getReviewsRecent', () => {
+    describe('getReviewsRecent()', () => {
       // TODO
     });
 
-    describe('getReview', () => {
+    describe('getReview()', () => {
       // TODO
     });
 
-    describe('addReview', () => {
+    describe('addReview()', () => {
       // TODO
     });
 
-    describe('updateReview', () => {
+    describe('updateReview()', () => {
       // TODO
     });
 
-    describe('deleteReview', () => {
+    describe('deleteReview()', () => {
       // TODO
     });
   });
 
   describe('users CRUD operations', () => {
-    describe('getUser', () => {
+    describe('getUser()', () => {
       // TODO
     });
 
-    describe('addUser', () => {
+    describe('addUser()', () => {
       // TODO
     });
 
-    describe('editUser', () => {
+    describe('editUser()', () => {
       // TODO
     });
 
-    describe('deleteUser', () => {
+    describe('deleteUser()', () => {
       // TODO
     });
   });

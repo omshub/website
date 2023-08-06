@@ -105,7 +105,7 @@ export const addOrUpdateCourse = async (
 
 /* --- REVIEWS DATA CRUD SUB-OPERATIONS --- */
 
-// utilities
+// base updates
 
 export const ON_ADD_REVIEW = 'ON_ADD_REVIEW';
 export const ON_EDIT_REVIEW = 'ON_EDIT_REVIEW';
