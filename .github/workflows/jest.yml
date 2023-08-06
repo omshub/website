@@ -1,6 +1,12 @@
-Name: 'Jest'
-
-on: [pull_request]
+name: 'Jest'
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - dev
 
 jobs:
   jest-tests:
