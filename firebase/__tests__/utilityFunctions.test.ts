@@ -10,7 +10,7 @@ import {
   TAveragesData,
   updateAverage,
   updateAverages,
-} from '../utilityFunctions';
+} from '@backend/utilityFunctions';
 
 const computeAverage = (dataArray: TNullableNumber[]) =>
   dataArray
@@ -30,7 +30,7 @@ const mapReviewsDataToAverages = (reviewsData: Review[]) => ({
   // ),
 });
 
-describe('firebase utility functions tests', () => {
+describe('backend utility functions tests', () => {
   describe('parseReviewId() tests', () => {
     it('parses simple courseId', () => {
       const reviewId = 'CS-1234-2100-3-1234567890';

@@ -14,6 +14,7 @@ const customJestConfig = {
     // Handle module aliases (this will be automatically configured for you soon)
     '^@/pages/(.*)$': '<rootDir>/pages/$1',
     '@backend/(.*)$': '<rootDir>/firebase/$1',
+    '@src/(.*)$': '<rootDir>/src/$1',
     'firebase/app': '<rootDir>/firebase/__mocks__/fbApp.ts',
     'firebase/auth': '<rootDir>/firebase/__mocks__/fbAuth.ts',
     'firebase/firestore': '<rootDir>/firebase/__mocks__/fbFirestore.ts',
