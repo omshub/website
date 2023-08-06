@@ -51,7 +51,7 @@ describe('global utilities tests', () => {
         expect(hasOutlookEmail).toBeTruthy();
       });
 
-      it('rejects non-@gatech.edu email domain', () => {
+      it('rejects non-@outlook.edu email domain', () => {
         const userEmail = 'gpb@gatech.edu';
         const hasOutlookEmail = isOutlookEmail(userEmail);
         expect(hasOutlookEmail).toBeFalsy();
