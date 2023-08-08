@@ -3,6 +3,11 @@ const LEN_SIMPLE_COURSE_NUMBER = 5; //   DD-CCCC-...     (e.g., CS-6200-...)    
 const LEN_COMPOUND_COURSE_NUMBER = 6; // DD-CCCC-CCC-... (e.g., CS-8803-O08-...) [total 6 * `-`]
 const SEPARATOR_TOKEN = '-';
 
+/**
+ * Parses `reviewId` into its constituent ID fields
+ * @param reviewId OMSHub review ID
+ * @returns OMSHub course ID, and year and semester of course taken
+ */
 export const parseReviewId = (reviewId: string) => {
   let courseId: TCourseId;
   let departmentId = '';
@@ -46,6 +51,15 @@ export type TAveragesData = {
   newValue?: number;
 };
 
+/**
+ * Update aggregate average value on add, update, or delete of single data value
+ * @param oldAverage Old average value
+ * @param oldCount Old count of group data
+ * @param newCount New count of group data
+ * @param oldValue Old data value
+ * @param newValue New data value
+ * @returns Updated average value per new count and new value
+ */
 export const updateAverage = ({
   oldAverage,
   oldCount = 0, // 0 for `oldAverage === null`
@@ -91,8 +105,10 @@ type TAveragesInputData = {
   newValue?: number;
 };
 
-// This function converts input averages to output averages based on
-// review add, edit, or delete
+/**
+ * Recalculate averages for workload, difficult, and overall
+ * on review add, edit, or delete.
+ */
 export const updateAverages = ({
   courseId,
   oldCount,

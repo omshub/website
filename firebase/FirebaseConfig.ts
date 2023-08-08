@@ -31,8 +31,7 @@ export const storage = getStorage(firebaseApp);
 // be running via `yarn fb:emu` first before starting the app via `yarn dev`)
 const isEmulatorMode =
   process.env.NEXT_PUBLIC_IS_EMULATOR_MODE?.toLowerCase() === 'true';
-const isEmulatorEnvironment =
-  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+const isEmulatorEnvironment = process.env.NODE_ENV === 'development';
 if (isEmulatorMode && isEmulatorEnvironment) {
   // prevent multiple Firestore emulator connections on re-render -- reference: https://stackoverflow.com/a/74727587
   const host =
