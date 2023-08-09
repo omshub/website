@@ -25,7 +25,7 @@
     "fb:seed-db": "node ./__seed__/script.js",
     "fb:seed-db-cloud": "node ./__seed__/script.js SEED_FIREBASE_FIRESTORE_IN_CLOUD",
     "fb:login": "firebase login",
-    "fb:emu": "firebase emulators:start --import=./__seed__/firebase-seed",
+    "fb:emu": "firebase emulators:start --import=./__seed__/firebase-seed --project website",
     "fb:exp-seed": "firebase emulators:export ./__seed__/firebase-seed"
   },
   "dependencies": {
