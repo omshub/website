@@ -1,18 +1,16 @@
 import backend from '@backend/index';
+import ReviewForm from '@components/ReviewForm';
 import { useAuth } from '@context/AuthContext';
 import { FirebaseAuthUser } from '@context/types';
 import { Review } from '@globals/types';
 import { getCourseDataStatic } from '@globals/utilities';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import { Delete, Edit, ErrorOutline, PhotoCamera } from '@mui/icons-material';
 import { Button, IconButton, Snackbar, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
-import { grey } from '@mui/material/colors';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -20,7 +18,9 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import { grey } from '@mui/material/colors';
 import { techGold } from '@src/colorPalette';
+
 import {
   mapDifficulty,
   mapOverall,
@@ -48,35 +48,37 @@ const ReviewCard = ({
   created,
   year,
   courseId,
+  reviewerId,
   isLegacy,
+  modified,
+  upvotes,
+  downvotes,
   isGTVerifiedReviewer = false,
 }: Review) => {
-  const authContext = useAuth();
   const router = useRouter();
-  const path = router.asPath;
-  const isUserReviewsView = path.includes('user');
-  let user: FirebaseAuthUser | null = null;
+  const authContext: any | null = useAuth();
+  const user: FirebaseAuthUser | null = authContext.user;
   const timestamp = new Date(created).toLocaleDateString();
+  const clipboardRef = useRef<HTMLDivElement>(null);
   const { name: courseName } = getCourseDataStatic(courseId);
   const [snackBarOpen, setSnackBarOpen] = useState<boolean>(false);
-  const clipboardRef = useRef<HTMLDivElement>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
   const [isFirefox, setIsFirefox] = useState<boolean>(false);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const handleReviewModalOpen = () => setReviewModalOpen(true);
+  const handleReviewModalClose = () => setReviewModalOpen(false);
+
   useEffect(() => {
     navigator.userAgent.match(`Firefox`)
       ? setIsFirefox(true)
       : setIsFirefox(false);
   }, []);
 
-  if (authContext) {
-    ({ user } = authContext);
-  }
   const handleClose = (event: SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
-
     setSnackBarOpen(false);
   };
 
@@ -88,8 +90,6 @@ const ReviewCard = ({
     await navigator.clipboard.write([clipboardItem]);
     setSnackBarOpen(true);
   };
-
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleDeleteDialogOpen = () => {
     setDeleteDialogOpen(true);
@@ -108,6 +108,7 @@ const ReviewCard = ({
     }
     setIsSubmitting(false);
   };
+
   return (
     <div ref={clipboardRef!}>
       <Card
@@ -175,7 +176,7 @@ const ReviewCard = ({
                 <Grid item>
                   <Chip
                     title='This review was originally collected on https://omscentral.com'
-                    icon={<ErrorOutlineIcon />}
+                    icon={<ErrorOutline />}
                     color='warning'
                     label='Legacy'
                     variant='outlined'
@@ -226,11 +227,11 @@ const ReviewCard = ({
             </ReactMarkdown>
           </article>
           <Grid textAlign='right'>
-            {/* Not User View */}
+            {/* Screenshot button*/}
             {!isFirefox && (
               <Tooltip title='Screenshot Review'>
                 <IconButton onClick={handleCopyToClipboard}>
-                  <PhotoCameraIcon />
+                  <PhotoCamera />
                 </IconButton>
               </Tooltip>
             )}
@@ -245,12 +246,51 @@ const ReviewCard = ({
               }
               message={'Screenshotted Review to Clipboard!'}
             />
-            {/* User Review View */}
-            {isUserReviewsView ? (
+            {!isLegacy && reviewerId == user?.uid ? (
               <>
+                {/* Update Button */}
+                <Tooltip title='Update review'>
+                  <IconButton onClick={handleReviewModalOpen}>
+                    <Edit />
+                  </IconButton>
+                </Tooltip>
+                <Dialog
+                  open={reviewModalOpen}
+                  onClose={handleReviewModalClose}
+                  maxWidth='md'
+                  keepMounted
+                  closeAfterTransition
+                >
+                  {/* <>{console.log(courseId,courseName)}</> */}
+                  <ReviewForm
+                    {...{
+                      courseId,
+                      courseName,
+                      ['reviewInput']: {
+                        reviewId,
+                        body,
+                        overall,
+                        difficulty,
+                        workload,
+                        semesterId,
+                        created,
+                        year,
+                        courseId,
+                        reviewerId,
+                        isLegacy,
+                        isGTVerifiedReviewer,
+                        modified,
+                        upvotes,
+                        downvotes,
+                      },
+                      handleReviewModalClose,
+                    }}
+                  />
+                </Dialog>
+                {/* Delete Button */}
                 <Tooltip title='Delete Review'>
                   <IconButton onClick={handleDeleteDialogOpen}>
-                    <DeleteIcon />
+                    <Delete />
                   </IconButton>
                 </Tooltip>
                 <Dialog

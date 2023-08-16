@@ -1,26 +1,36 @@
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
 import DOMPurify from 'isomorphic-dompurify';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 //SSR is currently not supported for toastui
 
 export default function FormEditor({
   initialValue,
   onChange,
+  value,
+  ref,
 }: {
-  initialValue: string;
+  initialValue:any;
   onChange: any;
+  value: any,
+  ref: any,
 }) {
-  const editorRef = useRef<Editor>(null);
+  const editorRef = useRef<Editor>(ref);
+  
 
   function handleChange() {
-    const dirty = editorRef?.current
+    const dirty = editorRef?.current?.getInstance().isMarkdownMode()
       ? editorRef?.current.getInstance().getMarkdown()
-      : '';
+      : editorRef?.current.getInstance().getHTML();
     const clean = DOMPurify.sanitize(dirty, { FORBID_TAGS: ['img'] });
-    onChange(clean);
+    onChange(clean)
   }
+  
+  
+  useEffect(()=>{
+    editorRef?.current?.getInstance().isMarkdownMode() ? editorRef?.current?.getInstance().setMarkdown(value) : editorRef?.current?.getInstance().setHTML(value);
+  },[value]);
 
   return (
     <Editor

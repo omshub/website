@@ -36,7 +36,6 @@ import {
   roundNumber,
 } from '@src/utilities';
 import type { NextPage } from 'next';
-import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 
@@ -66,7 +65,15 @@ const CourseId: NextPage<CoursePageProps> = ({
   defaultSemesterToggles,
   defaultReviews,
 }) => {
-  const router = useRouter();
+  const {
+    courseId: courseId,
+    name: courseName,
+    numReviews: courseNumReviews,
+    url: courseUrl,
+    avgWorkload: courseAvgWorkload,
+    avgDifficulty: courseAvgDifficulty,
+    avgOverall: courseAvgOverall,
+  } = courseData;
   const [loading, setLoading] = useState<boolean>(false);
   const [snackBarOpen, setSnackBarOpen] = useState<boolean>(false);
   const [snackBarMessage, setSnackBarMessage] = useState<string>('');
@@ -74,11 +81,8 @@ const CourseId: NextPage<CoursePageProps> = ({
   const handleReviewModalOpen = () => setReviewModalOpen(true);
   const handleReviewModalClose = () => setReviewModalOpen(false);
 
-  const authContext = useAuth();
-  let user: FirebaseAuthUser | null = null;
-  if (authContext) {
-    ({ user } = authContext);
-  }
+  const authContext: any | null = useAuth();
+  const user: FirebaseAuthUser | null = authContext.user;
 
   const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>(
     defaultSemesterToggles,
@@ -90,8 +94,6 @@ const CourseId: NextPage<CoursePageProps> = ({
     useState<TPayloadReviews>(defaultReviews);
   const orientation = useMediaQuery('(min-width:600px)');
 
-  const path = router.asPath.split('/');
-  const courseId = path[path.length - 1] as TCourseId;
   const { mutate } = useSWRConfig();
   const { data: course_reviews } = useSWR(
     `/course/${courseId}/${selectedYear}/${selectedSemester}`,
@@ -113,9 +115,7 @@ const CourseId: NextPage<CoursePageProps> = ({
       enabled: true,
       name: 'Copy Course Name',
       clickAction: () => {
-        navigator.clipboard.writeText(
-          `${courseData?.courseId}: ${courseData?.name}`,
-        );
+        navigator.clipboard.writeText(`${courseId}: ${courseName}`);
         setSnackBarMessage('Copied Course Name to Clipboard');
         setSnackBarOpen(true);
       },
@@ -155,11 +155,6 @@ const CourseId: NextPage<CoursePageProps> = ({
 
     setSnackBarOpen(false);
   };
-  useEffect(() => {
-    if (courseData?.numReviews) {
-      setLoading(false);
-    }
-  }, [courseData]);
   useEffect(() => {
     if (course_reviews) {
       setCourseReviews(course_reviews);
@@ -212,10 +207,10 @@ const CourseId: NextPage<CoursePageProps> = ({
         }}
       >
         <Typography variant='h4' color='text.secondary' gutterBottom>
-          {courseData?.name}
+          {courseName}
         </Typography>
-        {courseData && courseData?.url && (
-          <Link href={courseData.url} target='_blank'>
+        {courseUrl && (
+          <Link href={courseUrl} target='_blank'>
             <Box
               sx={{
                 display: 'flex',
@@ -230,98 +225,91 @@ const CourseId: NextPage<CoursePageProps> = ({
             </Box>
           </Link>
         )}
-        {courseData &&
-          courseData?.avgWorkload &&
-          courseData?.avgDifficulty &&
-          courseData.avgOverall && (
-            <Grid
-              sx={{ my: 1 }}
-              container
-              direction='row'
-              spacing={4}
-              justifyContent='center'
-            >
-              <Grid item xs={12} lg={4}>
-                <Card variant='outlined' sx={{ padding: '5 30' }}>
-                  <CardContent>
-                    <Typography
-                      sx={{ fontSize: 14 }}
-                      color='text.secondary'
-                      gutterBottom
-                    >
-                      {`Average Workload`}
-                    </Typography>
-                    <Typography variant='h5'>
-                      {roundNumber(Number(courseData?.avgWorkload), 1) +
-                        ' hrs/wk'}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={12} lg={4}>
-                <Card
-                  variant='outlined'
-                  sx={{
-                    padding: '5 30',
-                    borderColor: mapRatingToColorInverted(
-                      Number(courseData?.avgDifficulty),
-                    ),
-                  }}
-                >
-                  <CardContent>
-                    <Typography
-                      sx={{ fontSize: 14 }}
-                      color='text.secondary'
-                      gutterBottom
-                    >
-                      {`Average Difficulty`}
-                    </Typography>
-                    <Typography
-                      variant='h5'
-                      sx={{
-                        color: mapRatingToColorInverted(
-                          Number(courseData?.avgDifficulty),
-                        ),
-                      }}
-                    >
-                      {roundNumber(Number(courseData?.avgDifficulty), 1) +
-                        ' /5'}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={12} lg={4}>
-                <Card
-                  variant='outlined'
-                  sx={{
-                    margin: '10',
-                    padding: '5 30',
-                    borderColor: mapRatingToColor(
-                      Number(courseData.avgOverall),
-                    ),
-                  }}
-                >
-                  <CardContent>
-                    <Typography
-                      sx={{ fontSize: 14 }}
-                      color='text.secondary'
-                      gutterBottom
-                    >
-                      {`Average Overall`}
-                    </Typography>
-                    <Typography
-                      variant='h5'
-                      sx={{
-                        color: mapRatingToColor(Number(courseData.avgOverall)),
-                      }}
-                    >
-                      {roundNumber(Number(courseData.avgOverall), 1) + ' /5'}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
+        {courseAvgWorkload && courseAvgDifficulty && courseAvgOverall && (
+          <Grid
+            sx={{ my: 1 }}
+            container
+            direction='row'
+            spacing={4}
+            justifyContent='center'
+          >
+            <Grid item xs={12} lg={4}>
+              <Card variant='outlined' sx={{ padding: '5 30' }}>
+                <CardContent>
+                  <Typography
+                    sx={{ fontSize: 14 }}
+                    color='text.secondary'
+                    gutterBottom
+                  >
+                    {`Average Workload`}
+                  </Typography>
+                  <Typography variant='h5'>
+                    {roundNumber(Number(courseAvgWorkload), 1) + ' hrs/wk'}
+                  </Typography>
+                </CardContent>
+              </Card>
             </Grid>
-          )}
+            <Grid item xs={12} lg={4}>
+              <Card
+                variant='outlined'
+                sx={{
+                  padding: '5 30',
+                  borderColor: mapRatingToColorInverted(
+                    Number(courseAvgDifficulty),
+                  ),
+                }}
+              >
+                <CardContent>
+                  <Typography
+                    sx={{ fontSize: 14 }}
+                    color='text.secondary'
+                    gutterBottom
+                  >
+                    {`Average Difficulty`}
+                  </Typography>
+                  <Typography
+                    variant='h5'
+                    sx={{
+                      color: mapRatingToColorInverted(
+                        Number(courseAvgDifficulty),
+                      ),
+                    }}
+                  >
+                    {roundNumber(Number(courseAvgDifficulty), 1) + ' /5'}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} lg={4}>
+              <Card
+                variant='outlined'
+                sx={{
+                  margin: '10',
+                  padding: '5 30',
+                  borderColor: mapRatingToColor(Number(courseAvgOverall)),
+                }}
+              >
+                <CardContent>
+                  <Typography
+                    sx={{ fontSize: 14 }}
+                    color='text.secondary'
+                    gutterBottom
+                  >
+                    {`Average Overall`}
+                  </Typography>
+                  <Typography
+                    variant='h5'
+                    sx={{
+                      color: mapRatingToColor(Number(courseAvgOverall)),
+                    }}
+                  >
+                    {roundNumber(Number(courseAvgOverall), 1) + ' /5'}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        )}
         <Grid>
           <ToggleButtonGroup
             value={selectedSemester}
@@ -377,7 +365,7 @@ const CourseId: NextPage<CoursePageProps> = ({
           </Box>
         ) : (
           <>
-            {courseData?.numReviews ? (
+            {courseNumReviews ? (
               <>
                 {courseReviews && (
                   <Grid container rowSpacing={5} sx={{ mt: 1 }}>
@@ -412,7 +400,14 @@ const CourseId: NextPage<CoursePageProps> = ({
         maxWidth='md'
         closeAfterTransition
       >
-        <ReviewForm {...{ courseData, handleReviewModalClose }} />
+        <ReviewForm
+          {...{
+            courseId,
+            courseName,
+            ['reviewInput']: null,
+            handleReviewModalClose,
+          }}
+        />
       </Dialog>
       <SpeedDial
         ariaLabel='Review Dial'

@@ -8,7 +8,7 @@
     "npm": "please-use-yarn"
   },
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next dev",
+    "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "build-sitemap": "next-sitemap",
     "start": "next start",
@@ -69,6 +69,7 @@
     "@types/react": "^18.0.26",
     "babel-loader": "^9.1.2",
     "commitizen": "^4.3.0",
+    "cross-env": "^7.0.3",
     "cz-conventional-changelog": "3.3.0",
     "eslint": "8.42.0",
     "eslint-config-next": "^13.1.3",
