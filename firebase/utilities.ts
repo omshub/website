@@ -37,17 +37,36 @@ const { COURSES } = coreDataDocuments;
 
 /* --- GENERIC CRUD SUB-OPERATIONS (FOR FLAT COLLECTIONS) --- */
 
+/**
+ * Get one document from Firestore DB
+ * @param collectionPathString Firebase Firestore collection path to document
+ * @param documentId Firebase Firestore document ID
+ * @returns Firebase Firestore document reference as a `Promise`
+ */
 export const getOneDoc = async (
   collectionPathString: string,
   documentId: TDocumentDataId,
 ) => getDoc(doc(db, collectionPathString, documentId));
 
+/**
+ * Add or update one document in Firestore DB
+ * @param collectionPathString Firebase Firestore collection path to document
+ * @param documentId Firebase Firestore document ID
+ * @param documentData Firebase Firestore document data
+ * @returns A `Promise` which is resolved on successful writing of the document to the Firebase Firestore DB
+ */
 export const addOrEditDoc = async (
   collectionPathString: string,
   documentId: TDocumentDataId,
   documentData: TDocumentData,
 ) => setDoc(doc(db, collectionPathString, documentId), documentData);
 
+/**
+ * Delete one document from Firestore DB
+ * @param collectionPathString Firebase Firestore collection path to document
+ * @param documentId Firebase Firestore document ID
+ * @returns A `Promise` which is resolved on successful deletion of document from the Firebase Firestore DB
+ */
 export const delDoc = async (
   collectionPathString: string,
   documentId: TDocumentDataId,
@@ -55,14 +74,19 @@ export const delDoc = async (
 
 /* --- COURSE DATA CRUD SUB-OPERATIONS --- */
 
+/**
+ * Add or update a single course `CourseDataDynamic` in Firestore Firestore DB data field `/coreData/courses/{courseId}`
+ * @param courseId OMS course ID
+ * @param courseData OMS course data
+ * @returns A `Promise` which is resolved on successful writing of the `CourseDataDynamic` data field to the Firebase Firestore DB
+ */
 export const addOrUpdateCourse = async (
   courseId: TCourseId,
   courseData: CourseDataDynamic,
 ) => {
   try {
     const coursesDataDoc = await getCourses();
-    // @ts-ignore -- newCoursesDataDoc is populated in subsequent logic
-    let newCoursesDataDoc: TPayloadCoursesDataDynamic = {};
+    let newCoursesDataDoc = {} as TPayloadCoursesDataDynamic;
     if (coursesDataDoc) {
       if (Object.keys(coursesDataDoc).length) {
         newCoursesDataDoc = { ...coursesDataDoc };
@@ -81,11 +105,11 @@ export const addOrUpdateCourse = async (
 
 /* --- REVIEWS DATA CRUD SUB-OPERATIONS --- */
 
-// utilities
+// base updates
 
-const ON_ADD_REVIEW = 'ON_ADD_REVIEW';
-const ON_EDIT_REVIEW = 'ON_EDIT_REVIEW';
-const ON_DELETE_REVIEW = 'ON_DELETE_REVIEW';
+export const ON_ADD_REVIEW = 'ON_ADD_REVIEW';
+export const ON_EDIT_REVIEW = 'ON_EDIT_REVIEW';
+export const ON_DELETE_REVIEW = 'ON_DELETE_REVIEW';
 type TOperationUpdateOnReviewEvent =
   | 'ON_ADD_REVIEW'
   | 'ON_EDIT_REVIEW'
@@ -98,7 +122,15 @@ interface ArgsUpdateReviewsRecent {
   courseId?: TCourseId;
 }
 
-const updateReviewsRecent = async ({
+/**
+ * Update recent reviews array `Review[]` in Firestore Firestore DB document `/recentsData/{courseId}/data` or `/recentsData/_aggregateData/data`
+ * @param operation add (`ON_ADD_REVIEW`), edit (`ON_EDIT_REVIEW`), or delete (`ON_DELETE_REVIEW`)
+ * @param reviewData OMSHub review data (omitted if operation is delete)
+ * @param reviewId OMSHub review ID
+ * @param courseId OMS course ID (omitted if recent reviews array in question is `_aggregateData`)
+ * @returns A `Promise` which is resolved on successful add, edit, or delete of the `Review[]` document in the Firebase Firestore DB
+ */
+export const updateReviewsRecent = async ({
   operation,
   reviewData = undefined, // delete only
   reviewId,
@@ -169,7 +201,15 @@ interface ArgsUpdateUser {
   userId: string;
 }
 
-const updateUser = async ({
+/**
+ * Update user `User` in Firestore Firestore DB document `/usersData/{userId}` on review add, edit, or delete
+ * @param operation add (`ON_ADD_REVIEW`), edit (`ON_EDIT_REVIEW`), or delete (`ON_DELETE_REVIEW`)
+ * @param reviewData OMSHub review data (omitted if operation is delete)
+ * @param reviewId OMSHub review ID
+ * @param userId Firebase Auth user ID
+ * @returns A `Promise` which is resolved on successful update of `User` document in the Firebase Firestore DB
+ */
+export const updateUser = async ({
   operation,
   reviewData = undefined, // delete only
   reviewId,
@@ -220,6 +260,12 @@ const updateUser = async ({
   }
 };
 
+/**
+ * Add or update review `Review` in Firestore Firestore DB document `/reviewsData/{courseId}/{year}-{semesterTerm}/data` on review add or edit
+ * @param reviewId OMSHub review ID
+ * @param reviewData OMSHub review data
+ * @returns A `Promise` which is resolved on successful add or update of `Review` document in the Firebase Firestore DB
+ */
 export const addOrUpdateReview = async (
   reviewId: string,
   reviewData: TDocumentData,
@@ -249,6 +295,12 @@ export const addOrUpdateReview = async (
 
 // updates on add review
 
+/**
+ * On add review `Review`, update Firebase Firestore DB document `/coreData/courses/{courseId}`
+ * @param reviewId OMSHub review ID
+ * @param reviewData OMSHub review data
+ * @returns A `Promise` which is resolved on successful update of `CourseDataDynamic` data field in the Firebase Firestore DB
+ */
 export const updateCourseDataOnAddReview = async (
   reviewId: string,
   reviewData: Review,
@@ -330,6 +382,11 @@ export const updateCourseDataOnAddReview = async (
   }
 };
 
+/**
+ * On add review `Review`, update Firebase Firestore DB documents `/recentsData/{courseId}` and `/recentsData/_aggregateData`
+ * @param newReviewData OMSHub review data
+ * @returns A `Promise` which is resolved on successful update of `data` data field in the Firebase Firestore DB
+ */
 export const updateReviewsRecentOnAddReview = async (newReviewData: Review) => {
   try {
     const { reviewId } = newReviewData;
@@ -355,6 +412,12 @@ export const updateReviewsRecentOnAddReview = async (newReviewData: Review) => {
   }
 };
 
+/**
+ * On add review `Review`, update Firebase Firestore DB document `/usersData/{userId}`
+ * @param userId OMSHub user ID
+ * @param newReviewData OMSHub review data
+ * @returns A `Promise` which is resolved on successful update of `userId` document in the Firebase Firestore DB
+ */
 export const updateUserDataOnAddReview = async (
   userId: string,
   newReviewData: Review,
@@ -376,6 +439,12 @@ export const updateUserDataOnAddReview = async (
 
 // updates on update review
 
+/**
+ * On update review `Review`, update Firebase Firestore DB document `/coreData/courses/{courseId}`
+ * @param reviewId OMSHub review ID
+ * @param reviewData OMSHub review data
+ * @returns A `Promise` which is resolved on successful update of `CourseDataDynamic` data field in the Firebase Firestore DB
+ */
 export const updateCourseDataOnUpdateReview = async (
   reviewId: string,
   reviewData: Review,
@@ -450,6 +519,11 @@ export const updateCourseDataOnUpdateReview = async (
   }
 };
 
+/**
+ * On update review `Review`, update Firebase Firestore DB documents `/recentsData/{courseId}` and `/recentsData/_aggregateData`
+ * @param newReviewData OMSHub review data
+ * @returns A `Promise` which is resolved on successful update of `data` data field in the Firebase Firestore DB
+ */
 export const updateReviewsRecentOnUpdateReview = async (
   newReviewData: Review,
 ) => {
@@ -477,6 +551,12 @@ export const updateReviewsRecentOnUpdateReview = async (
   }
 };
 
+/**
+ * On update review `Review`, update Firebase Firestore DB document `/usersData/{userId}`
+ * @param userId OMSHub user ID
+ * @param newReviewData OMSHub review data
+ * @returns A `Promise` which is resolved on successful update of `userId` document in the Firebase Firestore DB
+ */
 export const updateUserDataOnUpdateReview = async (
   userId: string,
   newReviewData: Review,
@@ -498,6 +578,12 @@ export const updateUserDataOnUpdateReview = async (
 
 // updates on delete review
 
+/**
+ * On delete review `Review`, update Firebase Firestore DB document `/coreData/courses/{courseId}`
+ * @param reviewId OMSHub review ID
+ * @param reviewData OMSHub review data
+ * @returns A `Promise` which is resolved on successful update of `CourseDataDynamic` data field in the Firebase Firestore DB
+ */
 export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
   try {
     // @ts-ignore -- intended semantics in this context is `Number`
@@ -579,6 +665,11 @@ export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
   }
 };
 
+/**
+ * On delete review `Review`, update Firebase Firestore DB documents `/recentsData/{courseId}` and `/recentsData/_aggregateData`
+ * @param newReviewData OMSHub review data
+ * @returns A `Promise` which is resolved on successful update of `data` data field in the Firebase Firestore DB
+ */
 export const updateReviewsRecentOnDeleteReview = async (reviewId: string) => {
   try {
     const { courseId } = parseReviewId(reviewId);
@@ -601,6 +692,12 @@ export const updateReviewsRecentOnDeleteReview = async (reviewId: string) => {
   }
 };
 
+/**
+ * On delete review `Review`, update Firebase Firestore DB document `/usersData/{userId}`
+ * @param userId OMSHub user ID
+ * @param newReviewData OMSHub review data
+ * @returns A `Promise` which is resolved on successful update of `userId` document in the Firebase Firestore DB
+ */
 export const updateUserDataOnDeleteReview = async (
   userId: string,
   reviewId: string,
