@@ -29,12 +29,14 @@ import {
   mapSemesterIdToName,
 } from '@src/utilities';
 import { toBlob } from 'html-to-image';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { SyntheticEvent, useEffect, useRef, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import remarkGfm from 'remark-gfm';
-import stringWidth from 'string-width';
+
+
+const DynamicViewer  = dynamic(() => import('@toast-ui/react-editor').then(module=>module.Viewer), {
+  ssr: false,
+});
 
 const { deleteReview } = backend;
 
@@ -213,18 +215,7 @@ const ReviewCard = ({
             </Grid>
           </Box>
           <article>
-            <ReactMarkdown
-              remarkPlugins={[
-                [
-                  remarkGfm,
-                  { singleTilde: false },
-                  { stringLength: stringWidth },
-                ],
-              ]}
-              rehypePlugins={[rehypeRaw]}
-            >
-              {body}
-            </ReactMarkdown>
+            <DynamicViewer initialValue={body}/>
           </article>
           <Grid textAlign='right'>
             {/* Screenshot button*/}
@@ -261,7 +252,6 @@ const ReviewCard = ({
                   keepMounted
                   closeAfterTransition
                 >
-                  {/* <>{console.log(courseId,courseName)}</> */}
                   <ReviewForm
                     {...{
                       courseId,

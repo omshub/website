@@ -8,34 +8,33 @@ import { useEffect, useRef } from 'react';
 export default function FormEditor({
   initialValue,
   onChange,
-  value,
-  ref,
 }: {
   initialValue:any;
   onChange: any;
-  value: any,
-  ref: any,
 }) {
-  const editorRef = useRef<Editor>(ref);
   
-
-  function handleChange() {
-    const dirty = editorRef?.current?.getInstance().isMarkdownMode()
-      ? editorRef?.current.getInstance().getMarkdown()
-      : editorRef?.current.getInstance().getHTML();
-    const clean = DOMPurify.sanitize(dirty, { FORBID_TAGS: ['img'] });
+const editorRef = useRef<Editor>(null);
+    
+    
+function handleChange() {
+    // Ensure to store as markdown
+    const dirty = editorRef?.current?.getInstance().getMarkdown()
+    const clean = DOMPurify.sanitize(dirty!, { FORBID_TAGS: ['img'] });
     onChange(clean)
   }
   
-  
+
   useEffect(()=>{
-    editorRef?.current?.getInstance().isMarkdownMode() ? editorRef?.current?.getInstance().setMarkdown(value) : editorRef?.current?.getInstance().setHTML(value);
-  },[value]);
+    //Set initial value this way because theres a character limit the other way when doing it via prop
+    if(!editorRef?.current?.getInstance().getMarkdown()){
+      editorRef?.current?.getInstance().setMarkdown(initialValue)
+    }
+  },[editorRef?.current?.getInstance().getMarkdown(),initialValue]);
 
   return (
     <Editor
       height='auto'
-      initialValue={initialValue}
+      initialValue={' '}
       onChange={handleChange}
       initialEditType='wysiwyg'
       previewStyle='vertical'

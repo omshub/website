@@ -102,6 +102,7 @@ const ReviewForm = ({
     getValues,
     trigger,
     reset,
+    setValue,
     formState: { errors, isDirty, isValid, isSubmitting },
   } = useForm<ReviewFormInputs>({
     mode: 'onChange',
@@ -161,11 +162,6 @@ const ReviewForm = ({
         overall,
       };
 
-      console.log(reviewInput)
-
-      console.log(data)
-      
-      console.log(reviewValues)
 
       reviewInput?.reviewId ? await updateReview(user?.uid!, reviewInput?.reviewId, reviewValues): await addReview(user?.uid!, reviewId, reviewValues)
 
@@ -395,7 +391,11 @@ const ReviewForm = ({
           control={control}
           name='body'
           render={({ field }) => (
-            <DynamicEditor {...field} initialValue={field.value} />
+            <DynamicEditor 
+              onChange={(body:any)=>{
+                setValue('body',body, {shouldDirty:true})
+              }}
+              initialValue={field.value} />
           )}
         ></Controller>
       </Grid>
