@@ -1,10 +1,10 @@
-import Button from '@mui/material/Button';
 import GoogleIcon from '@src/assets/GoogleIcon';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import AppleIcon from '@mui/icons-material/Apple';
 import { TKeyMap, TProviderName } from '@globals/types';
 import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
+import { Button } from '@mui/material';
 
 interface SocialButtonProps {
   key?: number;

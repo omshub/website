@@ -1,15 +1,18 @@
-import * as React from 'react';
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Chip,
+  Rating,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { useRouter } from 'next/router';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Tooltip from '@mui/material/Tooltip';
-import Rating from '@mui/material/Rating';
-import { CardActionArea, CardActions } from '@mui/material';
+
 import { grey } from '@mui/material/colors';
-import Typography from '@mui/material/Typography';
 
 interface ClassCardProps {
   title: string;

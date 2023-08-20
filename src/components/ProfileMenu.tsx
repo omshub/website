@@ -3,10 +3,7 @@ import { useMenu } from '@context/MenuContext';
 import { FirebaseAuthUser } from '@context/types';
 import Link from '@src/Link';
 
-import { Avatar, Container } from '@mui/material';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Tooltip from '@mui/material/Tooltip';
+import { Avatar, Container, Menu, MenuItem, Tooltip } from '@mui/material';
 
 export interface MenuLinksProps {
   [key: string]: any;

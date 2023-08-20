@@ -3,17 +3,14 @@ import { useAuth } from '@context/AuthContext';
 import { FirebaseAuthUser } from '@context/types';
 import { DESC, EMOJI_NO_REVIEWS, reviewFields } from '@globals/constants';
 import { Review, TUserReviews } from '@globals/types';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
 import { mapPayloadToArray } from '@src/utilities';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 
 import { addUser, getUser } from '@backend/dbOperations';
 import { isGTEmail } from '@globals/utilities';
+
+import { Box, CircularProgress, Container, Grid, Typography } from '@mui/material';
 
 const UserReviews: NextPage = () => {
   const [loading, setLoading] = useState<boolean>(true);

@@ -1,6 +1,5 @@
 import { useAlert } from '@context/AlertContext';
-import Alert from '@mui/material/Alert';
-import Box from '@mui/material/Box';
+import { Alert, Box } from '@mui/material';
 
 export const AlertBar = () => {
   const { alert, setAlert } = useAlert();

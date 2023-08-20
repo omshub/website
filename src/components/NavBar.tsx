@@ -5,14 +5,10 @@ import { useAuth } from '@context/AuthContext';
 import { useMenu } from '@context/MenuContext';
 import { FirebaseAuthUser } from '@context/types';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { Tooltip } from '@mui/material';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import { AppBar, Box, Button, Dialog, Toolbar, Tooltip, Typography } from '@mui/material';
+
 import { grey } from '@mui/material/colors';
-import Dialog from '@mui/material/Dialog';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+
 import Link from '@src/Link';
 interface NavBarProps {}
 
