@@ -1,20 +1,42 @@
-import { createTheme } from '@mui/material/styles';
+import { PaletteMode } from '@mui/material';
 import { red } from '@mui/material/colors';
 import { navyBlue, techGold } from '@src/colorPalette';
 
-// Create a theme instance.
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: navyBlue,
-    },
-    secondary: {
-      main: techGold,
-    },
-    error: {
-      main: red.A400,
-    },
-  },
-});
 
-export default theme;
+// Design tokens
+export const getDesignTokens = (mode: PaletteMode ) => ({
+  palette :{
+    mode,
+    ...(mode == 'light')?
+    {
+      primary: {
+        main: navyBlue,
+      },
+      secondary: {
+        main: techGold,
+      },
+      error: {
+        main: red.A400,
+      }
+    }:
+    {
+      primary: {
+        main: navyBlue,
+      },
+      secondary: {
+        main: techGold,
+      },
+      error: {
+        main: red.A400,
+      }
+    }
+  }
+})
+// Create a theme instance.
+
+export const getThemeComponents = (mode : PaletteMode ) =>({
+  mode,
+    ...(mode == 'light')?
+    {}:
+    {}
+})

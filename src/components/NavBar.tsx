@@ -2,17 +2,21 @@ import Login from '@components/LoginContent';
 import MobileMenu from '@components/MobileMenu';
 import ProfileMenu from '@components/ProfileMenu';
 import { useAuth } from '@context/AuthContext';
+import { useColorMode } from '@context/ColorContext';
 import { useMenu } from '@context/MenuContext';
 import { FirebaseAuthUser } from '@context/types';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { Tooltip } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { grey } from '@mui/material/colors';
 import Dialog from '@mui/material/Dialog';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { grey } from '@mui/material/colors';
+import { useTheme } from '@mui/material/styles';
 import Link from '@src/Link';
 interface NavBarProps {}
 
@@ -45,6 +49,9 @@ export const NavBar = ({ ...props }: NavBarProps) => {
     'My Reviews': '/user/reviews',
   };
 
+  const theme = useTheme();
+  const { colorMode } = useColorMode();
+  
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -102,6 +109,17 @@ export const NavBar = ({ ...props }: NavBarProps) => {
                 </Tooltip>
               ),
             )}
+            <IconButton
+              sx={{ ml: 1 }}
+              onClick={colorMode.toggleColorMode}
+              color="inherit"
+            >
+              {theme.palette.mode === 'dark' ? (
+                <Brightness7Icon />
+              ) : (
+                <Brightness4Icon />
+              )}
+            </IconButton>
             <Link
               variant='button'
               color='text.primary'
