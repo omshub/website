@@ -1,6 +1,7 @@
 import { PaletteMode } from '@mui/material';
-import { red } from '@mui/material/colors';
-import { navyBlue, techGold } from '@src/colorPalette';
+import { grey, red } from '@mui/material/colors';
+import { techGold, white } from '@src/colorPalette';
+
 
 
 // Design tokens
@@ -10,7 +11,8 @@ export const getDesignTokens = (mode: PaletteMode ) => ({
     ...(mode == 'light')?
     {
       primary: {
-        main: navyBlue,
+        main: '#000',
+        contrastText: grey[200],
       },
       secondary: {
         main: techGold,
@@ -21,7 +23,8 @@ export const getDesignTokens = (mode: PaletteMode ) => ({
     }:
     {
       primary: {
-        main: navyBlue,
+        main: white,
+        contrastText: '#000',
       },
       secondary: {
         main: techGold,
@@ -36,7 +39,11 @@ export const getDesignTokens = (mode: PaletteMode ) => ({
 
 export const getThemeComponents = (mode : PaletteMode ) =>({
   mode,
-    ...(mode == 'light')?
-    {}:
+  components: {
+     ...(mode == 'light')?
+    {
+
+    }:
     {}
+  }
 })

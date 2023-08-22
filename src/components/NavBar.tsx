@@ -15,7 +15,6 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { grey } from '@mui/material/colors';
 import { useTheme } from '@mui/material/styles';
 import Link from '@src/Link';
 interface NavBarProps {}
@@ -56,11 +55,11 @@ export const NavBar = ({ ...props }: NavBarProps) => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
         position='static'
-        color='default'
         elevation={0}
         sx={{
-          background: (theme) => `${theme.palette.common.white}`,
-          boxShadow: `0 5px 15px 0 ${grey[200]}`,
+          background: (theme) => `${theme.palette.primary.contrastText}`,
+          color: (theme) => `${theme.palette.primary.main}`,
+          boxShadow: `0 5px 15px 0 ${theme.palette.primary.contrastText}`,
         }}
         {...props}
       >
@@ -68,7 +67,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <Link
               variant='button'
-              color='text.primary'
+              color='inherit'
               href='/'
               sx={{
                 display: { xs: 'none', md: 'flex' },
@@ -96,7 +95,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
                 >
                   <Link
                     variant='button'
-                    color='text.primary'
+                    color='inherit'
                     href={`${navigationMenuItems[name][`url`]}`}
                     key={index}
                     sx={{
@@ -110,19 +109,25 @@ export const NavBar = ({ ...props }: NavBarProps) => {
               ),
             )}
             <IconButton
-              sx={{ ml: 1 }}
+              sx={{ 
+                p: 0,
+                height: "100%",
+                my: 1,
+                mx: 1.5, }}
               onClick={colorMode.toggleColorMode}
               color="inherit"
             >
+            <Tooltip title={`${theme.palette.mode} mode`}>
               {theme.palette.mode === 'dark' ? (
                 <Brightness7Icon />
               ) : (
                 <Brightness4Icon />
               )}
+              </Tooltip>
             </IconButton>
             <Link
               variant='button'
-              color='text.primary'
+              color='inherit'
               href={`https://github.com/omshub/website/`}
               sx={{
                 my: 1,
