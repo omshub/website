@@ -2,13 +2,12 @@ import Login from '@components/LoginContent';
 import MobileMenu from '@components/MobileMenu';
 import ProfileMenu from '@components/ProfileMenu';
 import { useAuth } from '@context/AuthContext';
-import { useColorMode } from '@context/ColorContext';
 import { useMenu } from '@context/MenuContext';
 import { FirebaseAuthUser } from '@context/types';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { IconButton, Tooltip } from '@mui/material';
+import { IconButton, Tooltip, useColorScheme } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -49,18 +48,14 @@ export const NavBar = ({ ...props }: NavBarProps) => {
   };
 
   const theme = useTheme();
-  const { colorMode } = useColorMode();
+  const { mode, setMode } = useColorScheme();
   
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
+        color='secondary'
         position='static'
         elevation={0}
-        sx={{
-          background: (theme) => `${theme.palette.primary.contrastText}`,
-          color: (theme) => `${theme.palette.primary.main}`,
-          boxShadow: `0 5px 15px 0 ${theme.palette.primary.contrastText}`,
-        }}
         {...props}
       >
         <Toolbar>
@@ -114,7 +109,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
                 height: "100%",
                 my: 1,
                 mx: 1.5, }}
-              onClick={colorMode.toggleColorMode}
+              onClick={()=>setMode(mode == 'light' ? 'dark' : 'light')}
               color="inherit"
             >
             <Tooltip title={`${theme.palette.mode} mode`}>

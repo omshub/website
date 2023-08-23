@@ -1,7 +1,9 @@
 import createEmotionServer from '@emotion/server/create-instance';
-import { useTheme } from '@mui/material/styles';
+import { getInitColorSchemeScript, useTheme } from '@mui/material/styles';
 import createEmotionCache from '@src/createEmotionCache';
 import Document, { Head, Html, Main, NextScript } from 'next/document';
+import React from 'react';
+
 
 export default function MyDocument(props:any){
 
@@ -20,6 +22,7 @@ export default function MyDocument(props:any){
           {(props as any).emotionStyleTags}
         </Head>
         <body>
+          {getInitColorSchemeScript()}
           <Main />
           <NextScript />
         </body>
@@ -82,6 +85,9 @@ MyDocument.getInitialProps = async (ctx:any) => {
 
   return {
     ...initialProps,
-    emotionStyleTags,
+    styles: [
+      ...React.Children.toArray(initialProps.styles),
+      ...emotionStyleTags,
+    ],
   };
 };

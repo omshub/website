@@ -29,7 +29,7 @@ const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
   const menuId = 'primary-search-account-menu';
   return (
     <>
-      <Container>
+      <Container sx={{color:'inherit'}}>
         <Tooltip title='Profile Menu'>
           <Avatar
             aria-controls={menuId}

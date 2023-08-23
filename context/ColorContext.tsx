@@ -1,35 +1,27 @@
 import { TContextProviderProps } from '@context/types';
-import { PaletteMode, useMediaQuery } from '@mui/material';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { deepmerge } from '@mui/utils';
-import { getDesignTokens, getThemeComponents } from '@src/theme';
-import { createContext, useContext, useMemo, useState } from 'react';
+import { Experimental_CssVarsProvider as CssVarsProvider, experimental_extendTheme as extendTheme } from '@mui/material/styles';
+import { getDesignTokens } from '@src/theme';
 
-const ColorContext = createContext<any>('light');
-
-export const useColorMode = () => useContext(ColorContext);
+const { palette: lightPalette } = getDesignTokens('light');
+const { palette: darkPalette } = getDesignTokens('dark');
+export const theme = extendTheme({
+  cssVarPrefix:'omshub',
+  colorSchemes:{
+    light:{
+      palette: lightPalette
+    },
+    dark:{
+      palette: darkPalette
+    }
+  }
+})
 
 export const ColorProvider = ({ children }: TContextProviderProps) => {
   
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const [mode, setMode] = useState<PaletteMode>('light');
-  const theme = useMemo(()=>createTheme(deepmerge(getDesignTokens(mode),getThemeComponents(mode))),[mode])
-  const colorMode = useMemo(
-    () => ({
-      // The dark mode switch would invoke this method
-      toggleColorMode: () => {
-        setMode((prevMode: PaletteMode) =>
-          prevMode === 'light' ? 'dark' : 'light',
-        );
-      },
-    }),
-    [],
-  );
+
   return (
-    <ColorContext.Provider value={{ mode, colorMode }}>
-      <ThemeProvider theme={theme}>
+      <CssVarsProvider theme={theme} defaultMode="system" disableTransitionOnChange> 
         {children}
-      </ThemeProvider>
-    </ColorContext.Provider>
+      </CssVarsProvider>
   );
 };

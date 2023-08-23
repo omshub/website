@@ -1,6 +1,6 @@
 import { PaletteMode } from '@mui/material';
-import { grey, red } from '@mui/material/colors';
-import { techGold, white } from '@src/colorPalette';
+import { red } from '@mui/material/colors';
+import { navyBlue, techGold } from '@src/colorPalette';
 
 
 
@@ -9,31 +9,47 @@ export const getDesignTokens = (mode: PaletteMode ) => ({
   palette :{
     mode,
     ...(mode == 'light')?
+    //Light
     {
       primary: {
         main: '#000',
-        contrastText: grey[200],
+        contrastText:'#FFF'
       },
       secondary: {
-        main: techGold,
+        main: navyBlue,
       },
       error: {
         main: red.A400,
       }
     }:
+    //Dark
     {
-      primary: {
-        main: white,
-        contrastText: '#000',
-      },
-      secondary: {
-        main: techGold,
-      },
-      error: {
-        main: red.A400,
+        primary: {
+          main: '#FFF',
+          contrastText: '#000',
+        },
+        secondary: {
+          main: techGold,
+        },
+        error: {
+          main: red.A400,
+        }
+      }
+    },
+    dark:{
+      palette:{
+        primary: {
+            main: '#000',
+            contrastText: '#FFF',
+          },
+          secondary: {
+            main: techGold,
+          },
+          error: {
+            main: red.A400,
+        }
       }
     }
-  }
 })
 // Create a theme instance.
 
@@ -44,6 +60,12 @@ export const getThemeComponents = (mode : PaletteMode ) =>({
     {
 
     }:
-    {}
+    {
+      MuiAppBar:{
+        styleOverrides:{
+          
+        }
+      }
+    }
   }
 })

@@ -40,7 +40,7 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       minWidth: isDesktop ? 50 : 300,
       renderCell: (params: GridRenderCellParams) => (
         <Tooltip title={`View review page for ${params.row.courseId}`}>
-          <Link href='/course/[courseid]' as={`/course/${params.row.courseId}`}>
+          <Link color='secondary' href='/course/[courseid]' as={`/course/${params.row.courseId}`}>
             {params.row.name}
           </Link>
         </Tooltip>
@@ -118,17 +118,20 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
               rows={courses}
               columns={columns}
               loading={!allCourseData}
-              components={{ Toolbar: GridToolbar }}
+              slots={{ toolbar : GridToolbar }}
               sx={{ borderRadius: '25px', padding: '20px 10px' }}
               columnVisibilityModel={{
                 isDeprecated: false,
                 aliases: false,
               }}
-              componentsProps={{
+              slotProps={{
                 toolbar: {
                   printOptions: { disableToolbarButton: true },
+                  disableDensitySelector: true,
                   showQuickFilter: true,
-                  quickFilterProps: { debounceMs: 500 },
+                  sx:{
+                    
+                  }
                 },
               }}
               initialState={{

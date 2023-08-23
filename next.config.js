@@ -12,10 +12,11 @@ module.exports = {
     appId: process.env.APP_ID,
     measurementId: process.env.MEASUREMENT_ID,
   },
-  transpilePackages: ['@mui/system', '@mui/material', '@mui/icons-material'],
+transpilePackages: ['@mui/system', '@mui/material', '@mui/icons-material'],
   modularizeImports: {
-    '@mui/material/?(((\\w*)?/?)*)': {
-      transform: '@mui/material/{{ matches.[1] }}/{{member}}',
+    '@mui/material/!(styles)/?*': {
+      transform: '@mui/material/{{path}}/{{member}}',
+      skipDefaultConversion: true,
     },
     '@mui/icons-material/?(((\\w*)?/?)*)': {
       transform: '@mui/icons-material/{{ matches.[1] }}/{{member}}',

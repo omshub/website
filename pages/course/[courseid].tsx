@@ -211,7 +211,7 @@ const CourseId: NextPage<CoursePageProps> = ({
           alignItems: 'center',
         }}
       >
-        <Typography variant='h4' color='text.secondary' gutterBottom>
+        <Typography variant='h4' color='inherit' gutterBottom>
           {courseData?.name}
         </Typography>
         {courseData && courseData?.url && (
@@ -224,7 +224,7 @@ const CourseId: NextPage<CoursePageProps> = ({
               }}
             >
               <LinkIcon />
-              <Typography variant='subtitle1' color='text.secondary'>
+              <Typography variant='subtitle1' color='inherit'>
                 {'Course Website'}
               </Typography>
             </Box>
@@ -242,16 +242,15 @@ const CourseId: NextPage<CoursePageProps> = ({
               justifyContent='center'
             >
               <Grid item xs={12} lg={4}>
-                <Card variant='outlined' sx={{ padding: '5 30' }}>
+                <Card variant='outlined' sx={{ padding: '5 30', color: 'inherit' }}>
                   <CardContent>
                     <Typography
                       sx={{ fontSize: 14 }}
-                      color='text.secondary'
                       gutterBottom
                     >
                       {`Average Workload`}
                     </Typography>
-                    <Typography variant='h5'>
+                    <Typography variant='h5' sx={{color: 'inherit'}}>
                       {roundNumber(Number(courseData?.avgWorkload), 1) +
                         ' hrs/wk'}
                     </Typography>
@@ -270,8 +269,11 @@ const CourseId: NextPage<CoursePageProps> = ({
                 >
                   <CardContent>
                     <Typography
-                      sx={{ fontSize: 14 }}
-                      color='text.secondary'
+                      sx={{ fontSize: 14,
+                        color: mapRatingToColorInverted(
+                          Number(courseData?.avgDifficulty),
+                        ),
+                       }}
                       gutterBottom
                     >
                       {`Average Difficulty`}
@@ -303,8 +305,7 @@ const CourseId: NextPage<CoursePageProps> = ({
                 >
                   <CardContent>
                     <Typography
-                      sx={{ fontSize: 14 }}
-                      color='text.secondary'
+                      sx={{ fontSize: 14, color: mapRatingToColor(Number(courseData.avgOverall)) }}
                       gutterBottom
                     >
                       {`Average Overall`}
@@ -395,7 +396,7 @@ const CourseId: NextPage<CoursePageProps> = ({
               <>
                 <Typography
                   variant='h3'
-                  color='text.secondary'
+                  color='inherit'
                   style={{ textAlign: 'center' }}
                   gutterBottom
                 >
@@ -440,7 +441,7 @@ const CourseId: NextPage<CoursePageProps> = ({
         autoHideDuration={6000}
         onClose={handleClose}
         action={
-          <Button color='secondary' size='small' onClick={handleClose}>
+          <Button color='inherit' size='small' onClick={handleClose}>
             Close
           </Button>
         }
