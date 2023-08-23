@@ -30,7 +30,6 @@ const MyApp = ({
   pageProps,
 }: MyAppProps) => { 
   
-  const getLayout = Component.getLayout ?? ((page) => page)
 
   return (
   <CacheProvider value={emotionCache}>
@@ -46,7 +45,7 @@ const MyApp = ({
             <NavBar />
             <AlertBar />
           </MenuContextProvider>
-          {getLayout(<Component {...pageProps} />)}
+          {<Component {...pageProps} />}
         {/* <Copyright /> */}
       </AuthContextProvider>
     </AlertContextProvider>
