@@ -7,19 +7,14 @@ import { CacheProvider, EmotionCache } from '@emotion/react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { NavBar } from '@src/components/NavBar';
 import createEmotionCache from '@src/createEmotionCache';
-import type { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import type { ReactElement, ReactNode } from 'react';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
 
-export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: ReactElement) => ReactNode
-}
+
 interface MyAppProps extends AppProps {
-  Component: NextPageWithLayout
   emotionCache?: EmotionCache;
   fallback: object;
 }
