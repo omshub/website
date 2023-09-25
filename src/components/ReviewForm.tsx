@@ -5,8 +5,6 @@ import { useAuth } from '@context/AuthContext';
 import { FirebaseAuthUser } from '@context/types';
 import { SEMESTER_ID } from '@globals/constants';
 
-import CircularProgress from '@mui/material/CircularProgress';
-
 import {
   Course,
   TCourseId,
@@ -17,15 +15,19 @@ import {
   TUserReviews,
 } from '@globals/types';
 import { isGTEmail } from '@globals/utilities';
-import { Button, TextField } from '@mui/material';
-import Alert from '@mui/material/Alert';
-import Grid from '@mui/material/Grid';
-import InputAdornment from '@mui/material/InputAdornment';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Rating from '@mui/material/Rating';
-import Select from '@mui/material/Select';
-import Typography from '@mui/material/Typography';
+import {
+  Button,
+  TextField,
+  CircularProgress,
+  Alert,
+  Grid,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Rating,
+  Select,
+  Typography,
+} from '@mui/material';
 import { mapSemesterIdToName, mapSemsterIdToTerm } from '@src/utilities';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';

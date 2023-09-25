@@ -2,11 +2,7 @@ import backend from '@backend/index';
 import { courseFields } from '@globals/constants';
 import { Course } from '@globals/types';
 import { mapDynamicCoursesDataToCourses } from '@globals/utilities';
-import { Tooltip, useMediaQuery } from '@mui/material';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
+import { Tooltip, useMediaQuery, Box, Container, Grid, Typography } from '@mui/material';
 
 import {
   DataGrid,

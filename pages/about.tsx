@@ -1,8 +1,7 @@
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
 import Link from '@src/Link';
 import type { NextPage } from 'next';
+
+import { Box, Container, Typography } from '@mui/material';
 
 const About: NextPage = () => (
   <Container maxWidth='lg'>
