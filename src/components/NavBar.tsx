@@ -7,7 +7,7 @@ import { FirebaseAuthUser } from '@context/types';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { IconButton, Skeleton, Tooltip, useColorScheme } from '@mui/material';
+import { IconButton, Tooltip, useColorScheme } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -22,7 +22,10 @@ export interface MenuLinksProps {
 }
 
 export const NavBar = ({ ...props }: NavBarProps) => {
-  const {user, loading} = useAuth();
+  
+  const authContext: any | null = useAuth();
+  const user: FirebaseAuthUser | null = authContext.user;
+  const loading: Boolean | null = authContext.loading;
 
   const {  handleLoginOpen } =
     useMenu();

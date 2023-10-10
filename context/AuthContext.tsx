@@ -22,7 +22,7 @@ import {
 import router from 'next/router';
 import { createContext, useContext, useEffect, useState } from 'react';
 
-type TAuthContext = {
+export type TAuthContext = {
   user: FirebaseAuthUser | null;
   loading: Boolean;
   signInWithProvider: TSignInAction;
