@@ -31,7 +31,7 @@ const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
   return (
     <>
       <Container sx={{color:'inherit'}}>
-        <Tooltip title='Profile Menu'>
+        <Tooltip arrow title='Profile Menu'>
           <Avatar
             aria-controls={menuId}
             onClick={handleProfileMenuOpen}

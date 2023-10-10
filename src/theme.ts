@@ -1,6 +1,6 @@
 import { PaletteMode } from '@mui/material';
 import { red } from '@mui/material/colors';
-import { navyBlue, techGold } from '@src/colorPalette';
+import { navyBlue } from '@src/colorPalette';
 
 
 
@@ -17,6 +17,7 @@ export const getDesignTokens = (mode: PaletteMode ) => ({
       },
       secondary: {
         main: navyBlue,
+        contrastText: '#FFF'
       },
       error: {
         main: red.A400,
@@ -29,11 +30,13 @@ export const getDesignTokens = (mode: PaletteMode ) => ({
     //Dark
     {
         primary: {
-          main: '#FFF',
-          contrastText: '#000',
+          main: '#000',
+          contrastText: '#FFF',
         },
         secondary: {
-          main: techGold,
+          main: '#121212',
+          light: '#232428',
+          contrastText: "#FFF"
         },
         error: {
           main: red.A400,

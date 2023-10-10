@@ -27,6 +27,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Typography,
+  useTheme,
 } from '@mui/material';
 import Link from '@src/Link';
 import {
@@ -81,6 +82,8 @@ const CourseId: NextPage<CoursePageProps> = ({
   if (authContext) {
     ({ user } = authContext);
   }
+
+  const theme = useTheme();
 
   const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>(
     defaultSemesterToggles,
@@ -386,7 +389,7 @@ const CourseId: NextPage<CoursePageProps> = ({
                   <Grid container rowSpacing={5} sx={{ mt: 1 }}>
                     {mapPayloadToArray(courseReviews, REVIEW_ID, DESC).map(
                       (value: Review) => (
-                        <Grid sx={{ width: `100%` }} key={value.reviewId} item>
+                        <Grid sx={{  width: `100%` }} key={value.reviewId} item>
                           <ReviewCard {...value}></ReviewCard>
                         </Grid>
                       ),
@@ -414,6 +417,7 @@ const CourseId: NextPage<CoursePageProps> = ({
         onClose={handleReviewModalClose}
         maxWidth='md'
         closeAfterTransition
+        PaperProps={{sx:{backgroundImage: 'none'}}}
       >
         <ReviewForm {...{ courseData, handleReviewModalClose }} />
       </Dialog>
@@ -421,6 +425,17 @@ const CourseId: NextPage<CoursePageProps> = ({
         ariaLabel='Review Dial'
         sx={{ position: 'fixed', bottom: 40, right: 40 }}
         icon={<SpeedDialIcon />}
+        FabProps={{
+          sx :{
+            border: `1px solid ${theme.palette.secondary.contrastText}`,
+            backgroundColor: `${theme.palette.secondary.main}`,
+            color: `${theme.palette.secondary.contrastText}`,
+            "&:hover":{
+              backgroundColor:`${theme.palette.secondary.contrastText}`,
+              color:`${theme.palette.secondary.main}`
+            }
+          }
+        }}
       >
         {actions
           .flatMap((action) => {
@@ -431,9 +446,19 @@ const CourseId: NextPage<CoursePageProps> = ({
           })
           .map((action) => (
             <SpeedDialAction
+              sx={{
+                border: `1px solid ${theme.palette.secondary.contrastText}`,
+                backgroundColor: `${theme.palette.secondary.main}`,
+                color: `${theme.palette.secondary.contrastText}`,
+                "&:hover":{
+                  backgroundColor:`${theme.palette.secondary.contrastText}`,
+                  color:`${theme.palette.secondary.contrastText}`
+                }
+              }}
               key={action.name}
               icon={action.icon}
               tooltipTitle={action.name}
+              arrow
               onClick={action.clickAction}
             />
           ))}

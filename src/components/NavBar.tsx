@@ -46,16 +46,18 @@ export const NavBar = ({ ...props }: NavBarProps) => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
-        color='secondary'
+        color={theme.palette.mode == 'dark' ? 'primary' : 'secondary'}
         position='static'
         elevation={0}
         {...props}
       >
         <Toolbar color='inherit'>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Tooltip arrow title={"Home"}>
+
             <Link
               variant='button'
-              color='inherit'
+              color='secondary.contrastText'
               href='/'
               sx={{
                 display: { xs: 'none', md: 'flex' },
@@ -73,11 +75,15 @@ export const NavBar = ({ ...props }: NavBarProps) => {
                 OMSHub
               </Typography>
             </Link>
+            </Tooltip>
+
           </Box>
+
           <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
             {Object.keys(navigationMenuItems).map(
               (name: string, index: number) => (
                 <Tooltip
+                  arrow
                   key={index}
                   title={`${navigationMenuItems[name][`tooltip`]}`}
                 >
@@ -96,6 +102,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
                 </Tooltip>
               ),
             )}
+            <Tooltip arrow title={`${theme.palette.mode} mode`}>
             <IconButton
               sx={{ 
                 p: 0,
@@ -105,14 +112,15 @@ export const NavBar = ({ ...props }: NavBarProps) => {
               onClick={()=>setMode(mode == 'light' ? 'dark' : 'light')}
               color="inherit"
             >
-            <Tooltip disableInteractive disableFocusListener disableTouchListener title={`${theme.palette.mode} mode`}>
               {theme.palette.mode === 'dark' ? (
                 <Brightness7Icon />
               ) : (
                 <Brightness4Icon />
-              )}
-              </Tooltip>
+              )} 
             </IconButton>
+            </Tooltip>
+            <Tooltip arrow title={`Website's Github`}>
+
             <Link
               variant='button'
               color='inherit'
@@ -122,10 +130,10 @@ export const NavBar = ({ ...props }: NavBarProps) => {
                 mx: 1.5,
               }}
             >
-              <Tooltip title={`Website's Github`}>
                 <GitHubIcon />
-              </Tooltip>
             </Link>
+            </Tooltip>
+
           </Box>
           <MobileMenu {...navigationMenuItems} />
           {/* User Profile Side */}

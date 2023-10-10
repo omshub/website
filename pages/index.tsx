@@ -2,7 +2,7 @@ import backend from '@backend/index';
 import { courseFields } from '@globals/constants';
 import { Course } from '@globals/types';
 import { mapDynamicCoursesDataToCourses } from '@globals/utilities';
-import { Tooltip, useMediaQuery, Box, Container, Grid, Typography } from '@mui/material';
+import { Tooltip, useMediaQuery, Box, Container, Grid, Typography, useTheme } from '@mui/material';
 
 import {
   DataGrid,
@@ -26,6 +26,9 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
     allCourseData,
     courseFields.NAME,
   );
+
+  const theme = useTheme();
+
   const courses = coursesArray.map((data, i) => ({ ...data, id: i }));
 
   const columns: GridColDef[] = [
@@ -35,8 +38,8 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       flex: isDesktop ? 1 : 0,
       minWidth: isDesktop ? 50 : 200,
       renderCell: (params: GridRenderCellParams) => (
-        <Tooltip title={`View review page for ${params.row.courseId}`}>
-          <Link color='secondary' href='/course/[courseid]' as={`/course/${params.row.courseId}`}>
+        <Tooltip arrow title={`View review page for ${params.row.courseId}`}>
+          <Link color={`${theme.palette.mode == 'dark' ? 'secondary.contrastText' : 'secondary.main'}`} href='/course/[courseid]' as={`/course/${params.row.courseId}`}>
             {params.row.name}
           </Link>
         </Tooltip>
@@ -134,7 +137,9 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
                   disableDensitySelector: true,
                   showQuickFilter: true,
                   sx:{
-                    
+                    '& .MuiButton-root':{
+                      color: `${theme.palette.mode == 'dark' ? 'secondary.contrastText' : 'secondary.main'}`,
+                    }
                   }
                 },
               }}

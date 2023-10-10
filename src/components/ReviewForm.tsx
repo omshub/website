@@ -197,9 +197,10 @@ const ReviewForm = ({
 
   return (
     <Grid
+      color='inherit'
       container
       rowSpacing={4}
-      sx={{ px: 5, py: 10 }}
+      sx={{ px: 5, py: 10, backgroundImage: 'none' }}
       justifyContent='center'
     >
       <Typography variant='h6'>{`Add Review for ${courseData.courseId}: ${courseData.name}`}</Typography>

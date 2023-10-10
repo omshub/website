@@ -118,10 +118,18 @@ const ReviewCard = ({
   return (
     <div ref={clipboardRef!}>
       <Card
+        color='inherit'
         sx={{
+          backgroundImage: "none",
           p: 1,
-          borderRadius: '10px',
-          boxShadow: `0 5px 15px 0 ${grey[400]}`,
+          borderRadius: '15px',
+          boxShadow: `0 5px 10px 0 ${grey[500]}`,
+          "& a":{
+            color:"#6495ED",
+            "&:visited":{
+              color:"#8a2be2"
+            }
+          }
         }}
       >
         <CardContent>
@@ -235,7 +243,7 @@ const ReviewCard = ({
           <Grid textAlign='right'>
             {/* Not User View */}
             {!isFirefox && (
-              <Tooltip title='Screenshot Review'>
+              <Tooltip arrow title='Screenshot Review'>
                 <IconButton onClick={handleCopyToClipboard}>
                   <PhotoCameraIcon />
                 </IconButton>
@@ -255,7 +263,7 @@ const ReviewCard = ({
             {/* User Review View */}
             {isUserReviewsView ? (
               <>
-                <Tooltip title='Delete Review'>
+                <Tooltip arrow title='Delete Review'>
                   <IconButton onClick={handleDeleteDialogOpen}>
                     <DeleteIcon />
                   </IconButton>
