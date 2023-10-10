@@ -7,13 +7,10 @@ import { FirebaseAuthUser } from '@context/types';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { IconButton, Tooltip, useColorScheme } from '@mui/material';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import { IconButton, useColorScheme, AppBar, Box, Button, Toolbar, Tooltip, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+
+
 import Link from '@src/Link';
 interface NavBarProps {}
 

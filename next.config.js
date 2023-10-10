@@ -12,7 +12,10 @@ module.exports = {
     appId: process.env.APP_ID,
     measurementId: process.env.MEASUREMENT_ID,
   },
-transpilePackages: ['@mui/system', '@mui/material', '@mui/icons-material'],
+  compiler:{
+    removeConsole: true,
+  },
+  transpilePackages: ['@mui/system', '@mui/material', '@mui/icons-material','@mui/styles'],
   modularizeImports: {
     '@mui/material/!(styles)/?*': {
       transform: '@mui/material/{{path}}/{{member}}',
@@ -20,6 +23,9 @@ transpilePackages: ['@mui/system', '@mui/material', '@mui/icons-material'],
     },
     '@mui/icons-material/?(((\\w*)?/?)*)': {
       transform: '@mui/icons-material/{{ matches.[1] }}/{{member}}',
+    },
+    '@mui/styles/?(((\\w*)?/?)*)':{
+      transform: '@mui/styles/{{ matches.[1] }}/{{member}}'
     },
     async headers() {
       return [

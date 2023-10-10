@@ -10,22 +10,24 @@ import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
 import LinkIcon from '@mui/icons-material/Link';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import ShareIcon from '@mui/icons-material/Share';
-import { useMediaQuery } from '@mui/material';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
-import Grid from '@mui/material/Grid';
-import Snackbar from '@mui/material/Snackbar';
-import SpeedDial from '@mui/material/SpeedDial';
-import SpeedDialAction from '@mui/material/SpeedDialAction';
-import SpeedDialIcon from '@mui/material/SpeedDialIcon';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import Typography from '@mui/material/Typography';
+import {
+  useMediaQuery,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  Container,
+  Dialog,
+  Grid,
+  Snackbar,
+  SpeedDial,
+  SpeedDialAction,
+  SpeedDialIcon,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from '@mui/material';
 import Link from '@src/Link';
 import {
   mapPayloadToArray,

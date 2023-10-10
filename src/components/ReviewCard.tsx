@@ -6,20 +6,27 @@ import { getCourseDataStatic } from '@globals/utilities';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-import { Button, IconButton, Snackbar, Tooltip } from '@mui/material';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Chip from '@mui/material/Chip';
-import CircularProgress from '@mui/material/CircularProgress';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  IconButton,
+  Snackbar,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+
 import { grey } from '@mui/material/colors';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
+
 import { techGold } from '@src/colorPalette';
 import {
   mapDifficulty,
