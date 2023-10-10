@@ -7,7 +7,7 @@ import { FirebaseAuthUser } from '@context/types';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { IconButton, Tooltip, useColorScheme } from '@mui/material';
+import { IconButton, Skeleton, Tooltip, useColorScheme } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -22,13 +22,7 @@ export interface MenuLinksProps {
 }
 
 export const NavBar = ({ ...props }: NavBarProps) => {
-  const authContext = useAuth();
-
-  let user: FirebaseAuthUser | null = null;
-
-  if (authContext) {
-    ({ user } = authContext);
-  }
+  const {user, loading} = useAuth();
 
   const {  handleLoginOpen } =
     useMenu();
@@ -42,7 +36,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
   };
 
   const profileMenuItems: MenuLinksProps = {
-    // 'My Account': '/user/...',
+    // 'My Account': '/user/',
     'My Reviews': '/user/reviews',
   };
 
@@ -111,7 +105,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
               onClick={()=>setMode(mode == 'light' ? 'dark' : 'light')}
               color="inherit"
             >
-            <Tooltip disableFocusListener disableTouchListener title={`${theme.palette.mode} mode`}>
+            <Tooltip disableInteractive disableFocusListener disableTouchListener title={`${theme.palette.mode} mode`}>
               {theme.palette.mode === 'dark' ? (
                 <Brightness7Icon />
               ) : (
@@ -135,7 +129,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
           </Box>
           <MobileMenu {...navigationMenuItems} />
           {/* User Profile Side */}
-          {!user ? (
+          {!loading ? <> {!user ? (
             <>
               <Button
                 disableRipple
@@ -152,7 +146,10 @@ export const NavBar = ({ ...props }: NavBarProps) => {
             <Box sx={{ flexGrow: 0 }}>
               <ProfileMenu {...profileMenuItems} />
             </Box>
-          )}
+          )}</> : 
+          <Box width={88} height={44}></Box>
+          }
+         
         </Toolbar>
       </AppBar>
     </Box>
