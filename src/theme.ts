@@ -20,6 +20,10 @@ export const getDesignTokens = (mode: PaletteMode ) => ({
       },
       error: {
         main: red.A400,
+      },
+      background:{
+        default: '#FFF',
+        paper: '#FFF',
       }
     }:
     //Dark
@@ -33,39 +37,50 @@ export const getDesignTokens = (mode: PaletteMode ) => ({
         },
         error: {
           main: red.A400,
+        },
+        background:{
+          default: '#000',
+          paper: '#000',
         }
       }
     },
-    dark:{
-      palette:{
-        primary: {
-            main: '#000',
-            contrastText: '#FFF',
-          },
-          secondary: {
-            main: techGold,
-          },
-          error: {
-            main: red.A400,
-        }
-      }
-    }
 })
 // Create a theme instance.
 
-export const getThemeComponents = (mode : PaletteMode ) =>({
-  mode,
-  components: {
-     ...(mode == 'light')?
-    {
+// export const getThemeComponents = (mode : PaletteMode ) =>({
+//   typography: {
+//     fontFamily:[
+//       '-apple-system',
+//       'BlinkMacSystemFont',
+//       '"Segoe UI"',
+//       'Roboto',
+//       '"Helvetica Neue"',
+//       'Arial',
+//       'sans-serif',
+//       '"Apple Color Emoji"',
+//       '"Segoe UI Emoji"',
+//       '"Segoe UI Symbol"',
+//     ].join(','),
+//   },
+//   mode,
+//   components: {
+//      ...(mode == 'light')?
+//     {
 
-    }:
-    {
-      MuiAppBar:{
-        styleOverrides:{
+//     }:
+//     {
+//       MuiAppBar:{
+//         styleOverrides:{
           
-        }
-      }
-    }
-  }
-})
+//         },
+//       },
+//       MuiDrawer: {
+//         styleOverrides: {
+//           paper: {
+//             backgroundColor: "000",
+//           }
+//         }
+//       }
+//     }
+//   }
+// })

@@ -37,7 +37,7 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       field: courseFields.NAME,
       headerName: 'Course Name',
       flex: isDesktop ? 1 : 0,
-      minWidth: isDesktop ? 50 : 300,
+      minWidth: isDesktop ? 50 : 200,
       renderCell: (params: GridRenderCellParams) => (
         <Tooltip title={`View review page for ${params.row.courseId}`}>
           <Link color='secondary' href='/course/[courseid]' as={`/course/${params.row.courseId}`}>
@@ -50,25 +50,31 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       field: courseFields.COURSE_ID,
       headerName: 'Course ID',
       flex: isDesktop ? 0.5 : 0,
+      minWidth: isDesktop ? 50 : 150,
     },
     {
       field: courseFields.AVG_DIFFICULTY,
-      headerName: 'Difficulty (out of 5)',
+      headerName: `Difficulty ${isDesktop ? "(out of 5)" : ""}`,
       flex: isDesktop ? 0.5 : 0,
+      minWidth: isDesktop ? 50 : 150,
       valueGetter: (params: any) => roundNumber(params.row.avgDifficulty, 1),
       type: 'number',
     },
     {
       field: courseFields.AVG_WORKLOAD,
-      headerName: 'Workload (hrs/wk)',
+      headerName: `Workload ${isDesktop ? "(hrs/wk)": " "}`,
       flex: isDesktop ? 0.5 : 0,
+      minWidth: isDesktop ? 50 : 150,
+
       valueGetter: (params: any) => roundNumber(params.row.avgWorkload, 1),
       type: 'number',
     },
     {
       field: courseFields.AVG_OVERALL,
-      headerName: 'Overall (out of 5)',
+      headerName: `Overall ${isDesktop ? "(out of 5)" : ""}`,
       flex: isDesktop ? 0.5 : 0,
+      minWidth: isDesktop ? 50 : 150,
+
       valueGetter: (params: any) => roundNumber(params.row.avgOverall, 1),
       type: 'number',
     },
@@ -76,6 +82,8 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       field: courseFields.NUM_REVIEWS,
       headerName: 'Number of Reviews',
       flex: isDesktop ? 0.5 : 0,
+      minWidth: isDesktop ? 50 : 200,
+
       type: 'number',
     },
     {
@@ -111,14 +119,14 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
           {`Georgia Tech's Online Master's Course Catalog`}
         </Typography>
         <>
-          <Grid container sx={{ margin: 0, width: `100%` }} spacing={3}>
+          <Grid container sx={{ margin: 0, width: `${isDesktop ? "90%": "100%" }` }} spacing={3}>
             <DataGrid
               autoHeight
               disableColumnSelector
               rows={courses}
               columns={columns}
               loading={!allCourseData}
-              slots={{ toolbar : GridToolbar }}
+              slots={{ toolbar : isDesktop ? GridToolbar : null }}
               sx={{ borderRadius: '25px', padding: '20px 10px' }}
               columnVisibilityModel={{
                 isDeprecated: false,

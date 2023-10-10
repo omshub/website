@@ -11,7 +11,6 @@ import { IconButton, Tooltip, useColorScheme } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
@@ -31,7 +30,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
     ({ user } = authContext);
   }
 
-  const { loginModalOpen, handleLoginModalOpen, handleLoginModalClose } =
+  const {  handleLoginOpen } =
     useMenu();
 
   const navigationMenuItems: MenuLinksProps = {
@@ -58,7 +57,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
         elevation={0}
         {...props}
       >
-        <Toolbar>
+        <Toolbar color='inherit'>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <Link
               variant='button'
@@ -112,7 +111,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
               onClick={()=>setMode(mode == 'light' ? 'dark' : 'light')}
               color="inherit"
             >
-            <Tooltip title={`${theme.palette.mode} mode`}>
+            <Tooltip disableFocusListener disableTouchListener title={`${theme.palette.mode} mode`}>
               {theme.palette.mode === 'dark' ? (
                 <Brightness7Icon />
               ) : (
@@ -140,21 +139,14 @@ export const NavBar = ({ ...props }: NavBarProps) => {
             <>
               <Button
                 disableRipple
-                onClick={handleLoginModalOpen}
+                onClick={handleLoginOpen}
+                color="inherit"
                 variant='outlined'
                 sx={{ my: 1, mx: 1.5 }}
               >
                 Login
               </Button>
-              <Dialog
-                aria-labelledby='spring-modal-title'
-                aria-describedby='spring-modal-description'
-                open={loginModalOpen}
-                onClose={handleLoginModalClose}
-                closeAfterTransition
-              >
                 <Login />
-              </Dialog>
             </>
           ) : (
             <Box sx={{ flexGrow: 0 }}>
