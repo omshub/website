@@ -7,7 +7,7 @@ import { Avatar, Container } from '@mui/material';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
-
+import { isGTEmail } from '@globals/utilities';
 export interface MenuLinksProps {
   [key: string]: any;
 }
@@ -25,6 +25,9 @@ const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
   const { profileMenuAnchorEl, handleProfileMenuOpen, handleProfileMenuClose } =
     useMenu();
 
+  const isGatech = isGTEmail(user?.email!);
+  const BuzzProfile = 'buzz-profile.jpg';
+  const LamaProfile = 'lama-profile.png';
   const isProfileMenuOpen = Boolean(profileMenuAnchorEl);
   const menuId = 'primary-search-account-menu';
   return (
@@ -34,7 +37,7 @@ const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
           <Avatar
             aria-controls={menuId}
             onClick={handleProfileMenuOpen}
-            src={user?.photoURL ?? undefined}
+            src={user?.photoURL ?? (isGatech ? BuzzProfile : LamaProfile) }
           />
         </Tooltip>
         <Menu
