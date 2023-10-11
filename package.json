@@ -49,7 +49,7 @@
     "rehype-raw": "^6.1.1",
     "remark-gfm": "^3.0.1",
     "string-width": "^6.1.0",
-    "swr": "^2.0.1",
+    "swr": "^2.2.4",
     "tsconfig-paths-webpack-plugin": "^4.0.0"
   },
   "devDependencies": {
