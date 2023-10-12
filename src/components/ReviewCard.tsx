@@ -4,21 +4,29 @@ import { useAuth } from '@context/AuthContext';
 import { FirebaseAuthUser } from '@context/types';
 import { Review } from '@globals/types';
 import { getCourseDataStatic } from '@globals/utilities';
-import { Delete, Edit, ErrorOutline, PhotoCamera } from '@mui/icons-material';
-import { Button, IconButton, Snackbar, Tooltip } from '@mui/material';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Chip from '@mui/material/Chip';
-import CircularProgress from '@mui/material/CircularProgress';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
+import {PhotoCamera, ErrorOutline, Edit, Delete } from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  IconButton,
+  Snackbar,
+  Tooltip,
+  Typography,
+  useTheme,
+} from '@mui/material';
+
 import { grey } from '@mui/material/colors';
+
 import { techGold } from '@src/colorPalette';
 
 import {
@@ -70,7 +78,8 @@ const ReviewCard = ({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const handleReviewModalOpen = () => setReviewModalOpen(true);
   const handleReviewModalClose = () => setReviewModalOpen(false);
-
+  const theme = useTheme();
+  
   useEffect(() => {
     navigator.userAgent.match(`Firefox`)
       ? setIsFirefox(true)
@@ -114,10 +123,18 @@ const ReviewCard = ({
   return (
     <div ref={clipboardRef!}>
       <Card
+        color='inherit'
         sx={{
+          backgroundImage: "none",
           p: 1,
-          borderRadius: '10px',
-          boxShadow: `0 5px 15px 0 ${grey[400]}`,
+          borderRadius: '15px',
+          boxShadow: `0 5px 10px 0 ${grey[500]}`,
+          "& a":{
+            color:"#6495ED",
+            "&:visited":{
+              color:"#8a2be2"
+            }
+          }
         }}
       >
         <CardContent>
@@ -138,18 +155,18 @@ const ReviewCard = ({
               alignItems='flex-start'
             >
               <Grid item xs={12}>
-                <Typography color='text.primary'>{courseId}</Typography>
+                <Typography>{courseId}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography color='text.secondary'>{courseName}</Typography>
+                <Typography>{courseName}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography color='text.secondary'>
+                <Typography>
                   Taken {mapSemesterIdToName[semesterId]} {year}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography color='text.secondary'>
+                <Typography>
                   Reviewed on {timestamp}
                 </Typography>
               </Grid>
@@ -214,13 +231,24 @@ const ReviewCard = ({
               </Grid>
             </Grid>
           </Box>
-          <article>
+          <Box
+            sx={{
+              "& .toastui-editor-contents":{
+                "& p":{
+                  color: `${theme.palette.primary.contrastText}`
+                },
+                "& h1,h2,h3,h4,h5,h6":{
+                  color: `${theme.palette.primary.contrastText}`
+                }
+              }
+            }}
+            >
             <DynamicViewer initialValue={body}/>
-          </article>
+          </Box>
           <Grid textAlign='right'>
             {/* Screenshot button*/}
             {!isFirefox && (
-              <Tooltip title='Screenshot Review'>
+              <Tooltip arrow title='Screenshot Review'>
                 <IconButton onClick={handleCopyToClipboard}>
                   <PhotoCamera />
                 </IconButton>
@@ -251,6 +279,7 @@ const ReviewCard = ({
                   maxWidth='md'
                   keepMounted
                   closeAfterTransition
+                  PaperProps={{sx:{backgroundImage: 'none'}}}
                 >
                   <ReviewForm
                     {...{
@@ -279,6 +308,7 @@ const ReviewCard = ({
                 </Dialog>
                 {/* Delete Button */}
                 <Tooltip title='Delete Review'>
+
                   <IconButton onClick={handleDeleteDialogOpen}>
                     <Delete />
                   </IconButton>

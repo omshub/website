@@ -10,22 +10,25 @@ import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
 import LinkIcon from '@mui/icons-material/Link';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import ShareIcon from '@mui/icons-material/Share';
-import { useMediaQuery } from '@mui/material';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
-import Grid from '@mui/material/Grid';
-import Snackbar from '@mui/material/Snackbar';
-import SpeedDial from '@mui/material/SpeedDial';
-import SpeedDialAction from '@mui/material/SpeedDialAction';
-import SpeedDialIcon from '@mui/material/SpeedDialIcon';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import Typography from '@mui/material/Typography';
+import {
+  useMediaQuery,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  Container,
+  Dialog,
+  Grid,
+  Snackbar,
+  SpeedDial,
+  SpeedDialAction,
+  SpeedDialIcon,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import Link from '@src/Link';
 import {
   mapPayloadToArray,
@@ -81,8 +84,10 @@ const CourseId: NextPage<CoursePageProps> = ({
   const handleReviewModalOpen = () => setReviewModalOpen(true);
   const handleReviewModalClose = () => setReviewModalOpen(false);
 
-  const authContext: any | null = useAuth();
+  const authContext : any | null = useAuth();
   const user: FirebaseAuthUser | null = authContext.user;
+
+  const theme = useTheme();
 
   const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>(
     defaultSemesterToggles,
@@ -219,7 +224,7 @@ const CourseId: NextPage<CoursePageProps> = ({
               }}
             >
               <LinkIcon />
-              <Typography variant='subtitle1' color='text.secondary'>
+              <Typography variant='subtitle1' color='inherit'>
                 {'Course Website'}
               </Typography>
             </Box>
@@ -234,7 +239,7 @@ const CourseId: NextPage<CoursePageProps> = ({
             justifyContent='center'
           >
             <Grid item xs={12} lg={4}>
-              <Card variant='outlined' sx={{ padding: '5 30' }}>
+              <Card variant='outlined' sx={{ padding: '5 30', color:'inherit' }}>
                 <CardContent>
                   <Typography
                     sx={{ fontSize: 14 }}
@@ -371,7 +376,7 @@ const CourseId: NextPage<CoursePageProps> = ({
                   <Grid container rowSpacing={5} sx={{ mt: 1 }}>
                     {mapPayloadToArray(courseReviews, REVIEW_ID, DESC).map(
                       (value: Review) => (
-                        <Grid sx={{ width: `100%` }} key={value.reviewId} item>
+                        <Grid sx={{  width: `100%` }} key={value.reviewId} item>
                           <ReviewCard {...value}></ReviewCard>
                         </Grid>
                       ),
@@ -383,7 +388,7 @@ const CourseId: NextPage<CoursePageProps> = ({
               <>
                 <Typography
                   variant='h3'
-                  color='text.secondary'
+                  color='inherit'
                   style={{ textAlign: 'center' }}
                   gutterBottom
                 >
@@ -399,6 +404,7 @@ const CourseId: NextPage<CoursePageProps> = ({
         onClose={handleReviewModalClose}
         maxWidth='md'
         closeAfterTransition
+        PaperProps={{sx:{backgroundImage: 'none'}}}
       >
         <ReviewForm
           {...{
@@ -413,6 +419,17 @@ const CourseId: NextPage<CoursePageProps> = ({
         ariaLabel='Review Dial'
         sx={{ position: 'fixed', bottom: 40, right: 40 }}
         icon={<SpeedDialIcon />}
+        FabProps={{
+          sx :{
+            border: `1px solid ${theme.palette.secondary.contrastText}`,
+            backgroundColor: `${theme.palette.secondary.main}`,
+            color: `${theme.palette.secondary.contrastText}`,
+            "&:hover":{
+              backgroundColor:`${theme.palette.secondary.contrastText}`,
+              color:`${theme.palette.secondary.main}`
+            }
+          }
+        }}
       >
         {actions
           .flatMap((action) => {
@@ -423,9 +440,19 @@ const CourseId: NextPage<CoursePageProps> = ({
           })
           .map((action) => (
             <SpeedDialAction
+              sx={{
+                border: `1px solid ${theme.palette.secondary.contrastText}`,
+                backgroundColor: `${theme.palette.secondary.main}`,
+                color: `${theme.palette.secondary.contrastText}`,
+                "&:hover":{
+                  backgroundColor:`${theme.palette.secondary.contrastText}`,
+                  color:`${theme.palette.secondary.contrastText}`
+                }
+              }}
               key={action.name}
               icon={action.icon}
               tooltipTitle={action.name}
+              arrow
               onClick={action.clickAction}
             />
           ))}
@@ -435,7 +462,7 @@ const CourseId: NextPage<CoursePageProps> = ({
         autoHideDuration={6000}
         onClose={handleClose}
         action={
-          <Button color='secondary' size='small' onClick={handleClose}>
+          <Button color='inherit' size='small' onClick={handleClose}>
             Close
           </Button>
         }

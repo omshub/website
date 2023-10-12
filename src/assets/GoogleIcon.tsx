@@ -1,5 +1,5 @@
-import SvgIcon from '@mui/material/SvgIcon';
 import { TKeyMap } from '@globals/types';
+import { SvgIcon } from '@mui/material';
 
 type TGoogleIconProps = TKeyMap;
 

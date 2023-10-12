@@ -3,10 +3,8 @@ import { useMenu } from '@context/MenuContext';
 import { FirebaseAuthUser } from '@context/types';
 import Link from '@src/Link';
 
-import { Avatar, Container } from '@mui/material';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Tooltip from '@mui/material/Tooltip';
+import { isGTEmail } from '@globals/utilities';
+import { Avatar, Container, Menu, MenuItem, Tooltip } from '@mui/material';
 
 export interface MenuLinksProps {
   [key: string]: any;
@@ -25,16 +23,19 @@ const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
   const { profileMenuAnchorEl, handleProfileMenuOpen, handleProfileMenuClose } =
     useMenu();
 
+  const isGatech = isGTEmail(user?.email!);
+  const BuzzProfile = 'buzz-profile.jpg';
+  const LamaProfile = 'lama-profile.png';
   const isProfileMenuOpen = Boolean(profileMenuAnchorEl);
   const menuId = 'primary-search-account-menu';
   return (
     <>
-      <Container>
-        <Tooltip title='Profile Menu'>
+      <Container sx={{color:'inherit'}}>
+        <Tooltip arrow title='Profile Menu'>
           <Avatar
             aria-controls={menuId}
             onClick={handleProfileMenuOpen}
-            src={user?.photoURL ?? undefined}
+            src={user?.photoURL ?? (isGatech ? BuzzProfile : LamaProfile) }
           />
         </Tooltip>
         <Menu

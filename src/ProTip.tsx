@@ -1,7 +1,6 @@
 import * as React from 'react';
-import Link from '@mui/material/Link';
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
-import Typography from '@mui/material/Typography';
+import { SvgIconProps } from '@mui/material/SvgIcon';
+import { Link, SvgIcon, Typography } from '@mui/material';
 
 const LightBulbIcon = (props: SvgIconProps) => (
   <SvgIcon {...props}>
