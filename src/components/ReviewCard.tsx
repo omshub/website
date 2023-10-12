@@ -235,10 +235,10 @@ const ReviewCard = ({
             sx={{
               "& .toastui-editor-contents":{
                 "& p":{
-                  color: `${theme.palette.primary.contrastText}`
+                  color: `${theme.palette.mode == 'dark' ? theme.palette.secondary.contrastText : theme.palette.secondary.main}`
                 },
                 "& h1,h2,h3,h4,h5,h6":{
-                  color: `${theme.palette.primary.contrastText}`
+                  color: `${theme.palette.mode == 'dark' ? theme.palette.secondary.contrastText : theme.palette.secondary.main}`
                 }
               }
             }}
