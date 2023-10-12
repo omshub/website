@@ -22,8 +22,9 @@ import {
 import router from 'next/router';
 import { createContext, useContext, useEffect, useState } from 'react';
 
-type TAuthContext = {
+export type TAuthContext = {
   user: FirebaseAuthUser | null;
+  loading: Boolean;
   signInWithProvider: TSignInAction;
   signWithMagic: TSignInAction;
   logout: () => void;
@@ -36,16 +37,20 @@ export const useAuth = () => useContext(AuthContext);
 // eslint-disable-next-line no-undef
 export const AuthContextProvider = ({ children }: TContextProviderProps) => {
   const [user, setUser] = useState<FirebaseAuthUser | null>(null);
+  const [loading, setLoading] = useState<Boolean>(true);
   const { setAlert } = useAlert();
 
   useEffect(() => {
+    setLoading(true);
     const unsubscribe = onAuthStateChanged(
       auth,
       (user: FirebaseAuthUser | null) => {
         if (user) {
           setUser(user);
+          setLoading(false);
         } else {
           setUser(null);
+          setLoading(false);
         }
       },
     );
@@ -153,7 +158,7 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, signInWithProvider, signWithMagic, logout }}
+      value={{ user, loading, signInWithProvider, signWithMagic, logout }}
     >
       {children}
     </AuthContext.Provider>

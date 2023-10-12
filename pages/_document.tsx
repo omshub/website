@@ -1,11 +1,13 @@
-import * as React from 'react';
-import Document, { Html, Head, Main, NextScript } from 'next/document';
 import createEmotionServer from '@emotion/server/create-instance';
-import theme from '@src/theme';
+import { getInitColorSchemeScript, useTheme } from '@mui/material/styles';
 import createEmotionCache from '@src/createEmotionCache';
+import Document, { Head, Html, Main, NextScript } from 'next/document';
+import React from 'react';
 
-export default class MyDocument extends Document {
-  render() {
+
+export default function MyDocument(props:any){
+
+  const theme = useTheme()
     return (
       <Html lang='en'>
         <Head>
@@ -17,20 +19,20 @@ export default class MyDocument extends Document {
             href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'
           />
           {/* Inject MUI styles first to match with the prepend: true configuration. */}
-          {(this.props as any).emotionStyleTags}
+          {(props as any).emotionStyleTags}
         </Head>
         <body>
+          {getInitColorSchemeScript()}
           <Main />
           <NextScript />
         </body>
       </Html>
     );
-  }
 }
 
 // `getInitialProps` belongs to `_document` (instead of `_app`),
 // it's compatible with static-site generation (SSG).
-MyDocument.getInitialProps = async (ctx) => {
+MyDocument.getInitialProps = async (ctx:any) => {
   // Resolution order
   //
   // On the server:
@@ -63,7 +65,7 @@ MyDocument.getInitialProps = async (ctx) => {
   ctx.renderPage = () =>
     originalRenderPage({
       enhanceApp: (App: any) =>
-        (function EnhanceApp(props) {
+        (function EnhanceApp(props:any) {
           return <App emotionCache={cache} {...props} />;
         }),
     });
@@ -83,6 +85,9 @@ MyDocument.getInitialProps = async (ctx) => {
 
   return {
     ...initialProps,
-    emotionStyleTags,
+    styles: [
+      ...React.Children.toArray(initialProps.styles),
+      ...emotionStyleTags,
+    ],
   };
 };
