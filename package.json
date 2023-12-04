@@ -36,7 +36,7 @@
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.14.2",
-    "@mui/x-data-grid": "^6.6.0",
+    "@mui/x-data-grid": "^6.18.3",
     "@toast-ui/react-editor": "^3.2.2",
     "firebase": "^9.15.0",
     "html-to-image": "^1.11.11",
