@@ -6,10 +6,10 @@ const MenuContext = createContext<any>({});
 export const useMenu = () => useContext(MenuContext);
 
 export const MenuContextProvider = ({ children }: TContextProviderProps) => {
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
 
-  const handleLoginModalOpen = () => setLoginModalOpen(true);
-  const handleLoginModalClose = () => setLoginModalOpen(false);
+  const handleLoginOpen = () => setLoginOpen(true);
+  const handleLoginClose = () => setLoginOpen(false);
 
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] =
     React.useState<null | HTMLElement>(null);
@@ -37,9 +37,9 @@ export const MenuContextProvider = ({ children }: TContextProviderProps) => {
     <MenuContext.Provider
       value={{
         profileMenuAnchorEl,
-        loginModalOpen,
-        handleLoginModalOpen,
-        handleLoginModalClose,
+        loginOpen,
+        handleLoginOpen,
+        handleLoginClose,
         handleProfileMenuOpen,
         handleProfileMenuClose,
         mobileNavMenuAnchorEl,
