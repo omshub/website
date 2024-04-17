@@ -221,6 +221,8 @@ export const mapCourseToLegacyNumReviews: TMapCourseToLegacyNumReviews = {
   'CS-8803-O15': 0,
   'CS-8803-O16': 0,
   'CS-8803-O17': 0,
+  'CS-8803-O21': 0,
+  'CS-8803-O22': 0,
   'CS-8803-OC1': 7,
   'CS-8813': 0,
   'CSE-6040': 110,
