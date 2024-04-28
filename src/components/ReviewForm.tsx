@@ -197,9 +197,10 @@ const ReviewForm = ({
 
   return (
     <Grid
+      color='inherit'
       container
       rowSpacing={4}
-      sx={{ px: 5, py: 10 }}
+      sx={{ px: 5, py: 10, backgroundImage: 'none' }}
       justifyContent='center'
     >
       <Typography variant='h6'>{`Add Review for ${courseData.courseId}: ${courseData.name}`}</Typography>
@@ -213,7 +214,7 @@ const ReviewForm = ({
         />
       </Grid>
       <Grid item xs={12} lg={12}>
-        <InputLabel id='review-form-year'>Year</InputLabel>
+        <InputLabel id='review-form-year' sx={{color:'inherit'}}>Year</InputLabel>
         <Controller
           control={control}
           name='year'
@@ -265,7 +266,7 @@ const ReviewForm = ({
         )}
       </Grid>
       <Grid item xs={12} lg={12}>
-        <InputLabel id='review-form-semester'>Semester</InputLabel>
+        <InputLabel id='review-form-semester' sx={{color:'inherit'}}>Semester</InputLabel>
         <Controller
           control={control}
           name={SEMESTER_ID}
@@ -311,7 +312,7 @@ const ReviewForm = ({
           )}
       </Grid>
       <Grid item xs={12} lg={12}>
-        <InputLabel id='review-form-workload'>Workload</InputLabel>
+        <InputLabel id='review-form-workload' sx={{color:'inherit'}}>Workload</InputLabel>
         <Controller
           control={control}
           name='workload'
@@ -385,7 +386,7 @@ const ReviewForm = ({
         ></Controller>
       </Grid>
       <Grid item xs={12} lg={12}>
-        <Typography sx={{ mb: 1 }} component='legend'>
+        <Typography sx={{ mb: 1, color:'inherit' }} component='legend'>
           Review
         </Typography>
         <Controller
@@ -405,6 +406,7 @@ const ReviewForm = ({
         ) : (
           <Button
             disabled={!isDirty || !isValid || isSubmitting}
+            sx={{color:'inherit'}}
             variant='contained'
             onClick={handleSubmit(onSubmit)}
           >
