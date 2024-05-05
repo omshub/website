@@ -11,6 +11,7 @@
   "customizations": {
     "vscode": {
       "settings": {},
+      "workspaceFolder":"${containerWorkspaceFolder}",
       // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
         "dbaeumer.vscode-eslint",
