@@ -1,11 +1,10 @@
 import backend from '@backend/index';
+import ReviewForm from '@components/ReviewForm';
 import { useAuth } from '@context/AuthContext';
 import { FirebaseAuthUser } from '@context/types';
 import { Review } from '@globals/types';
 import { getCourseDataStatic } from '@globals/utilities';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import {PhotoCamera, ErrorOutline, Edit, Delete } from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -23,11 +22,13 @@ import {
   Snackbar,
   Tooltip,
   Typography,
+  useTheme,
 } from '@mui/material';
 
 import { grey } from '@mui/material/colors';
 
 import { techGold } from '@src/colorPalette';
+
 import {
   mapDifficulty,
   mapOverall,
@@ -36,12 +37,14 @@ import {
   mapSemesterIdToName,
 } from '@src/utilities';
 import { toBlob } from 'html-to-image';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { SyntheticEvent, useEffect, useRef, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import remarkGfm from 'remark-gfm';
-import stringWidth from 'string-width';
+
+
+const DynamicViewer  = dynamic(() => import('@toast-ui/react-editor').then(module=>module.Viewer), {
+  ssr: false,
+});
 
 const { deleteReview } = backend;
 
@@ -55,35 +58,38 @@ const ReviewCard = ({
   created,
   year,
   courseId,
+  reviewerId,
   isLegacy,
+  modified,
+  upvotes,
+  downvotes,
   isGTVerifiedReviewer = false,
 }: Review) => {
-  const authContext = useAuth();
   const router = useRouter();
-  const path = router.asPath;
-  const isUserReviewsView = path.includes('user');
-  let user: FirebaseAuthUser | null = null;
+  const authContext: any | null = useAuth();
+  const user: FirebaseAuthUser | null = authContext.user;
   const timestamp = new Date(created).toLocaleDateString();
+  const clipboardRef = useRef<HTMLDivElement>(null);
   const { name: courseName } = getCourseDataStatic(courseId);
   const [snackBarOpen, setSnackBarOpen] = useState<boolean>(false);
-  const clipboardRef = useRef<HTMLDivElement>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
   const [isFirefox, setIsFirefox] = useState<boolean>(false);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const handleReviewModalOpen = () => setReviewModalOpen(true);
+  const handleReviewModalClose = () => setReviewModalOpen(false);
+  const theme = useTheme();
+  
   useEffect(() => {
     navigator.userAgent.match(`Firefox`)
       ? setIsFirefox(true)
       : setIsFirefox(false);
   }, []);
 
-  if (authContext) {
-    ({ user } = authContext);
-  }
   const handleClose = (event: SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
-
     setSnackBarOpen(false);
   };
 
@@ -95,8 +101,6 @@ const ReviewCard = ({
     await navigator.clipboard.write([clipboardItem]);
     setSnackBarOpen(true);
   };
-
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleDeleteDialogOpen = () => {
     setDeleteDialogOpen(true);
@@ -115,13 +119,22 @@ const ReviewCard = ({
     }
     setIsSubmitting(false);
   };
+
   return (
     <div ref={clipboardRef!}>
       <Card
+        color='inherit'
         sx={{
+          backgroundImage: "none",
           p: 1,
-          borderRadius: '10px',
-          boxShadow: `0 5px 15px 0 ${grey[400]}`,
+          borderRadius: '15px',
+          boxShadow: `0 5px 10px 0 ${grey[500]}`,
+          "& a":{
+            color:"#6495ED",
+            "&:visited":{
+              color:"#8a2be2"
+            }
+          }
         }}
       >
         <CardContent>
@@ -142,18 +155,18 @@ const ReviewCard = ({
               alignItems='flex-start'
             >
               <Grid item xs={12}>
-                <Typography color='text.primary'>{courseId}</Typography>
+                <Typography>{courseId}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography color='text.secondary'>{courseName}</Typography>
+                <Typography>{courseName}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography color='text.secondary'>
+                <Typography>
                   Taken {mapSemesterIdToName[semesterId]} {year}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography color='text.secondary'>
+                <Typography>
                   Reviewed on {timestamp}
                 </Typography>
               </Grid>
@@ -182,7 +195,7 @@ const ReviewCard = ({
                 <Grid item>
                   <Chip
                     title='This review was originally collected on https://omscentral.com'
-                    icon={<ErrorOutlineIcon />}
+                    icon={<ErrorOutline />}
                     color='warning'
                     label='Legacy'
                     variant='outlined'
@@ -218,26 +231,26 @@ const ReviewCard = ({
               </Grid>
             </Grid>
           </Box>
-          <article>
-            <ReactMarkdown
-              remarkPlugins={[
-                [
-                  remarkGfm,
-                  { singleTilde: false },
-                  { stringLength: stringWidth },
-                ],
-              ]}
-              rehypePlugins={[rehypeRaw]}
+          <Box
+            sx={{
+              "& .toastui-editor-contents":{
+                "& p":{
+                  color: `${theme.palette.mode == 'dark' ? theme.palette.secondary.contrastText : theme.palette.secondary.main}`
+                },
+                "& h1,h2,h3,h4,h5,h6":{
+                  color: `${theme.palette.mode == 'dark' ? theme.palette.secondary.contrastText : theme.palette.secondary.main}`
+                }
+              }
+            }}
             >
-              {body}
-            </ReactMarkdown>
-          </article>
+            <DynamicViewer initialValue={body}/>
+          </Box>
           <Grid textAlign='right'>
-            {/* Not User View */}
+            {/* Screenshot button*/}
             {!isFirefox && (
-              <Tooltip title='Screenshot Review'>
+              <Tooltip arrow title='Screenshot Review'>
                 <IconButton onClick={handleCopyToClipboard}>
-                  <PhotoCameraIcon />
+                  <PhotoCamera />
                 </IconButton>
               </Tooltip>
             )}
@@ -252,12 +265,52 @@ const ReviewCard = ({
               }
               message={'Screenshotted Review to Clipboard!'}
             />
-            {/* User Review View */}
-            {isUserReviewsView ? (
+            {!isLegacy && reviewerId == user?.uid ? (
               <>
+                {/* Update Button */}
+                <Tooltip title='Update review'>
+                  <IconButton onClick={handleReviewModalOpen}>
+                    <Edit />
+                  </IconButton>
+                </Tooltip>
+                <Dialog
+                  open={reviewModalOpen}
+                  onClose={handleReviewModalClose}
+                  maxWidth='md'
+                  keepMounted
+                  closeAfterTransition
+                  PaperProps={{sx:{backgroundImage: 'none'}}}
+                >
+                  <ReviewForm
+                    {...{
+                      courseId,
+                      courseName,
+                      ['reviewInput']: {
+                        reviewId,
+                        body,
+                        overall,
+                        difficulty,
+                        workload,
+                        semesterId,
+                        created,
+                        year,
+                        courseId,
+                        reviewerId,
+                        isLegacy,
+                        isGTVerifiedReviewer,
+                        modified,
+                        upvotes,
+                        downvotes,
+                      },
+                      handleReviewModalClose,
+                    }}
+                  />
+                </Dialog>
+                {/* Delete Button */}
                 <Tooltip title='Delete Review'>
+
                   <IconButton onClick={handleDeleteDialogOpen}>
-                    <DeleteIcon />
+                    <Delete />
                   </IconButton>
                 </Tooltip>
                 <Dialog

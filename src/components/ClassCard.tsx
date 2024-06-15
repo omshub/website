@@ -33,7 +33,7 @@ const ClassCard = ({ ...props }: ClassCardProps) => {
   const router = useRouter();
 
   return (
-    <Card sx={{ width: 350, boxShadow: `0 5px 15px 0 ${grey[300]}` }}>
+    <Card sx={{ width: 350, boxShadow: `0 5px 0px 0 ${grey[200]}` }}>
       <CardActionArea
         onClick={() => {
           router.push({
