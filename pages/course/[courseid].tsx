@@ -27,6 +27,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Typography,
+  useTheme,
 } from '@mui/material';
 import Link from '@src/Link';
 import {
@@ -81,6 +82,8 @@ const CourseId: NextPage<CoursePageProps> = ({
   if (authContext) {
     ({ user } = authContext);
   }
+
+  const theme = useTheme();
 
   const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>(
     defaultSemesterToggles,
@@ -213,20 +216,20 @@ const CourseId: NextPage<CoursePageProps> = ({
           alignItems: 'center',
         }}
       >
-        <Typography variant='h4' color='text.secondary' gutterBottom>
+        <Typography variant='h4' color='inherit' gutterBottom>
           {courseData?.name}
         </Typography>
         {courseData && courseData?.url && (
-          <Link href={courseData.url} target='_blank'>
+          <Link href={courseData.url} target='_blank' color="primary.contrastText">
             <Box
               sx={{
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: 'center',
+                alignItems: 'center'
               }}
             >
-              <LinkIcon />
-              <Typography variant='subtitle1' color='text.secondary'>
+              <LinkIcon color='inherit' />
+              <Typography variant='subtitle1' color='inherit'>
                 {'Course Website'}
               </Typography>
             </Box>
@@ -244,16 +247,15 @@ const CourseId: NextPage<CoursePageProps> = ({
               justifyContent='center'
             >
               <Grid item xs={12} lg={4}>
-                <Card variant='outlined' sx={{ padding: '5 30' }}>
+                <Card variant='outlined' sx={{ padding: '5 30', color: 'inherit' }}>
                   <CardContent>
                     <Typography
                       sx={{ fontSize: 14 }}
-                      color='text.secondary'
                       gutterBottom
                     >
                       {`Average Workload`}
                     </Typography>
-                    <Typography variant='h5'>
+                    <Typography variant='h5' sx={{color: 'inherit'}}>
                       {roundNumber(Number(courseData?.avgWorkload), 1) +
                         ' hrs/wk'}
                     </Typography>
@@ -272,8 +274,11 @@ const CourseId: NextPage<CoursePageProps> = ({
                 >
                   <CardContent>
                     <Typography
-                      sx={{ fontSize: 14 }}
-                      color='text.secondary'
+                      sx={{ fontSize: 14,
+                        color: mapRatingToColorInverted(
+                          Number(courseData?.avgDifficulty),
+                        ),
+                       }}
                       gutterBottom
                     >
                       {`Average Difficulty`}
@@ -305,8 +310,7 @@ const CourseId: NextPage<CoursePageProps> = ({
                 >
                   <CardContent>
                     <Typography
-                      sx={{ fontSize: 14 }}
-                      color='text.secondary'
+                      sx={{ fontSize: 14, color: mapRatingToColor(Number(courseData.avgOverall)) }}
                       gutterBottom
                     >
                       {`Average Overall`}
@@ -385,7 +389,7 @@ const CourseId: NextPage<CoursePageProps> = ({
                   <Grid container rowSpacing={5} sx={{ mt: 1 }}>
                     {mapPayloadToArray(courseReviews, REVIEW_ID, DESC).map(
                       (value: Review) => (
-                        <Grid sx={{ width: `100%` }} key={value.reviewId} item>
+                        <Grid sx={{  width: `100%` }} key={value.reviewId} item>
                           <ReviewCard {...value}></ReviewCard>
                         </Grid>
                       ),
@@ -397,7 +401,7 @@ const CourseId: NextPage<CoursePageProps> = ({
               <>
                 <Typography
                   variant='h3'
-                  color='text.secondary'
+                  color='inherit'
                   style={{ textAlign: 'center' }}
                   gutterBottom
                 >
@@ -413,6 +417,7 @@ const CourseId: NextPage<CoursePageProps> = ({
         onClose={handleReviewModalClose}
         maxWidth='md'
         closeAfterTransition
+        PaperProps={{sx:{backgroundImage: 'none'}}}
       >
         <ReviewForm {...{ courseData, handleReviewModalClose }} />
       </Dialog>
@@ -420,6 +425,17 @@ const CourseId: NextPage<CoursePageProps> = ({
         ariaLabel='Review Dial'
         sx={{ position: 'fixed', bottom: 40, right: 40 }}
         icon={<SpeedDialIcon />}
+        FabProps={{
+          sx :{
+            border: `1px solid ${theme.palette.secondary.contrastText}`,
+            backgroundColor: `${theme.palette.secondary.main}`,
+            color: `${theme.palette.secondary.contrastText}`,
+            "&:hover":{
+              backgroundColor:`${theme.palette.secondary.contrastText}`,
+              color:`${theme.palette.secondary.main}`
+            }
+          }
+        }}
       >
         {actions
           .flatMap((action) => {
@@ -430,9 +446,19 @@ const CourseId: NextPage<CoursePageProps> = ({
           })
           .map((action) => (
             <SpeedDialAction
+              sx={{
+                border: `1px solid ${theme.palette.secondary.contrastText}`,
+                backgroundColor: `${theme.palette.secondary.main}`,
+                color: `${theme.palette.secondary.contrastText}`,
+                "&:hover":{
+                  backgroundColor:`${theme.palette.secondary.contrastText}`,
+                  color:`${theme.palette.secondary.main}`
+                }
+              }}
               key={action.name}
               icon={action.icon}
               tooltipTitle={action.name}
+              arrow
               onClick={action.clickAction}
             />
           ))}
@@ -442,7 +468,7 @@ const CourseId: NextPage<CoursePageProps> = ({
         autoHideDuration={6000}
         onClose={handleClose}
         action={
-          <Button color='secondary' size='small' onClick={handleClose}>
+          <Button color='inherit' size='small' onClick={handleClose}>
             Close
           </Button>
         }

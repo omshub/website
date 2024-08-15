@@ -2,10 +2,11 @@ import { useAuth } from '@context/AuthContext';
 import { useMenu } from '@context/MenuContext';
 import { TSignInAction } from '@context/types';
 import { TProviderName } from '@globals/types';
-import { Grid, Stack, TextField, Typography } from '@mui/material';
+import { Stack, TextField, Typography, Box, Drawer, useMediaQuery } from '@mui/material';
 import type { NextPage } from 'next';
 import { useState } from 'react';
 import SocialButton from '@components/SocialButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 const Login: NextPage = () => {
   const authContext = useAuth();
@@ -18,7 +19,7 @@ const Login: NextPage = () => {
   if (authContext) {
     ({ signInWithProvider, signWithMagic } = authContext);
   }
-  const { handleLoginModalClose } = useMenu();
+  const { loginOpen, handleLoginClose } = useMenu();
   const [email, setEmail] = useState<string>('');
   const handleEmailChange = (event: any) => {
     setEmail(event?.target?.value);
@@ -26,31 +27,34 @@ const Login: NextPage = () => {
   const handleKeyPress = (event: any) => {
     if (event?.charCode === 13) {
       signWithMagic(email);
-      handleLoginModalClose();
+      handleLoginClose();
     }
   };
+  const isDesktop = useMediaQuery('(min-width:1025px)');
 
   const providers: TProviderName[] = ['Google', 'Facebook', 'Github'];
 
   return (
-    <Grid
-      container
-      spacing={0}
-      direction='column'
-      alignItems='center'
-      justifyContent='center'
-      style={{ padding: '40px 20px' }}
+    <Drawer
+    PaperProps={{ sx:{ width:`${isDesktop ? 'auto': '100%'}`, boxShadow: '0 0px 5px 0 #bdbdbd', backgroundImage: 'none'}}}
+    ModalProps={{ onBackdropClick: handleLoginClose }}
+    open={loginOpen}
+    onClose={handleLoginClose}
+    anchor={'right'}
     >
-      <Typography
+      <Box
+          m={2}
+          p={4}
+        >
+        <Stack direction="column"  justifyContent={"space-evenly"} spacing={isDesktop ? 8: 6}>
+        <Typography
         style={{ marginBottom: '20px' }}
-        variant='overline'
+        variant='h4'
         component='div'
         gutterBottom
       >
-        Login via preferred method
+        LOGIN
       </Typography>
-      <Grid item xs={3}>
-        <Stack spacing={2}>
           <TextField
             onChange={handleEmailChange}
             onKeyPress={handleKeyPress}
@@ -63,15 +67,18 @@ const Login: NextPage = () => {
                 key={index}
                 onClick={() => {
                   signInWithProvider(provider);
-                  handleLoginModalClose();
+                  handleLoginClose();
                 }}
                 provider={provider}
               ></SocialButton>
             </>
           ))}
+          <Box
+          mt={2}
+        ><CloseIcon sx={{width:"100%"}} onClick={handleLoginClose}/></Box>
         </Stack>
-      </Grid>
-    </Grid>
+      </Box>
+    </Drawer>
   );
 };
 

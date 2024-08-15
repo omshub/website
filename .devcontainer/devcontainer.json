@@ -21,6 +21,10 @@
       ],
     }
   },
+  "containerEnv": {
+    "CHOKIDAR_USEPOLLING":"true",
+    "WATCHPACK_POLLING":"true"
+  },
   "forwardPorts": [
     // Application and Storybook
     3000,

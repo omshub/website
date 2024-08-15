@@ -118,10 +118,18 @@ const ReviewCard = ({
   return (
     <div ref={clipboardRef!}>
       <Card
+        color='inherit'
         sx={{
+          backgroundImage: "none",
           p: 1,
-          borderRadius: '10px',
-          boxShadow: `0 5px 15px 0 ${grey[400]}`,
+          borderRadius: '15px',
+          boxShadow: `0 5px 10px 0 ${grey[500]}`,
+          "& a":{
+            color:"#6495ED",
+            "&:visited":{
+              color:"#8a2be2"
+            }
+          }
         }}
       >
         <CardContent>
@@ -142,18 +150,18 @@ const ReviewCard = ({
               alignItems='flex-start'
             >
               <Grid item xs={12}>
-                <Typography color='text.primary'>{courseId}</Typography>
+                <Typography variant='subtitle1'>{courseId}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography color='text.secondary'>{courseName}</Typography>
+                <Typography variant='subtitle1'>{courseName}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography color='text.secondary'>
+                <Typography variant='subtitle1'>
                   Taken {mapSemesterIdToName[semesterId]} {year}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography color='text.secondary'>
+                <Typography variant='subtitle1'>
                   Reviewed on {timestamp}
                 </Typography>
               </Grid>
@@ -235,7 +243,7 @@ const ReviewCard = ({
           <Grid textAlign='right'>
             {/* Not User View */}
             {!isFirefox && (
-              <Tooltip title='Screenshot Review'>
+              <Tooltip arrow title='Screenshot Review'>
                 <IconButton onClick={handleCopyToClipboard}>
                   <PhotoCameraIcon />
                 </IconButton>
@@ -255,7 +263,7 @@ const ReviewCard = ({
             {/* User Review View */}
             {isUserReviewsView ? (
               <>
-                <Tooltip title='Delete Review'>
+                <Tooltip arrow title='Delete Review'>
                   <IconButton onClick={handleDeleteDialogOpen}>
                     <DeleteIcon />
                   </IconButton>
