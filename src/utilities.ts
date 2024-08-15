@@ -22,7 +22,7 @@ type TMapRatings = {
 export const mapDifficulty: TMapRatings = {
   1: 'Very Easy',
   2: 'Easy',
-  3: 'Neutral',
+  3: 'Medium',
   4: 'Hard',
   5: 'Very Hard',
 };
@@ -38,7 +38,7 @@ export const mapOverall: TMapRatings = {
 export const mapStaffSupport: TMapRatings = {
   1: 'Little/No Support',
   2: 'Some Support',
-  3: 'Neutral',
+  3: 'Moderate Support',
   4: 'Supportive',
   5: 'Strong Support',
 };
