@@ -134,9 +134,25 @@ export const NavBar = ({ ...props }: NavBarProps) => {
                 <GitHubIcon />
             </Link>
             </Tooltip>
-
           </Box>
           <MobileMenu {...navigationMenuItems} />
+          <Box sx={{ flexGrow: 0, display: { xs: 'flex', md: 'none' }, m: 0 }}>
+            <IconButton
+              sx={{ 
+                p: 0,
+                height: "100%",
+                my: 1,
+                mx: 1.5, }}
+              onClick={()=>setMode(mode == 'light' ? 'dark' : 'light')}
+              color="inherit"
+            >
+              {theme.palette.mode === 'dark' ? (
+                <Brightness7Icon />
+              ) : (
+                <Brightness4Icon />
+              )} 
+            </IconButton>
+          </Box>
           {/* User Profile Side */}
           {!loading ? <> {!user ? (
             <>
