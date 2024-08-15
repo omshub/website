@@ -7,7 +7,8 @@ import { FirebaseAuthUser } from '@context/types';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { IconButton, useColorScheme, AppBar, Box, Button, Toolbar, Tooltip, Typography } from '@mui/material';
+import { IconButton, AppBar, Box, Button, Toolbar, Tooltip, Typography } from '@mui/material';
+import { useColorScheme } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
 
 
