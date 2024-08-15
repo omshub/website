@@ -41,7 +41,7 @@ const About: NextPage = () => (
         We are currently in the process of esablishing a non-profit organization
         and charter to govern this project via decentralized ownership.
       </Typography>
-      <Typography variant='body' paragraph marginTop={1} align='center'>
+      <Typography variant='body1' paragraph marginTop={1} align='center'>
         We are still working out the appropriate &quot;legalese&quot;, however,
         the basic premise is simple: You own your own data on this platform, and
         this is a strictly non-profit venture (i.e., you data is a contribution
