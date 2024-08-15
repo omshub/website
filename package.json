@@ -54,7 +54,7 @@
     "tsconfig-paths-webpack-plugin": "^4.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.6.7",
+    "@commitlint/cli": "^19.4.0",
     "@commitlint/config-conventional": "^17.4.2",
     "@next/bundle-analyzer": "^13.4.19",
     "@storybook/addon-actions": "^7.0.18",
