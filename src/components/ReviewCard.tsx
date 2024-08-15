@@ -150,18 +150,18 @@ const ReviewCard = ({
               alignItems='flex-start'
             >
               <Grid item xs={12}>
-                <Typography>{courseId}</Typography>
+                <Typography variant='subtitle1'>{courseId}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography>{courseName}</Typography>
+                <Typography variant='subtitle1'>{courseName}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography>
+                <Typography variant='subtitle1'>
                   Taken {mapSemesterIdToName[semesterId]} {year}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography>
+                <Typography variant='subtitle1'>
                   Reviewed on {timestamp}
                 </Typography>
               </Grid>

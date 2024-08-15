@@ -220,15 +220,15 @@ const CourseId: NextPage<CoursePageProps> = ({
           {courseData?.name}
         </Typography>
         {courseData && courseData?.url && (
-          <Link href={courseData.url} target='_blank'>
+          <Link href={courseData.url} target='_blank' color="primary.contrastText">
             <Box
               sx={{
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: 'center',
+                alignItems: 'center'
               }}
             >
-              <LinkIcon />
+              <LinkIcon color='inherit' />
               <Typography variant='subtitle1' color='inherit'>
                 {'Course Website'}
               </Typography>
@@ -452,7 +452,7 @@ const CourseId: NextPage<CoursePageProps> = ({
                 color: `${theme.palette.secondary.contrastText}`,
                 "&:hover":{
                   backgroundColor:`${theme.palette.secondary.contrastText}`,
-                  color:`${theme.palette.secondary.contrastText}`
+                  color:`${theme.palette.secondary.main}`
                 }
               }}
               key={action.name}
