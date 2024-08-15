@@ -155,18 +155,18 @@ const ReviewCard = ({
               alignItems='flex-start'
             >
               <Grid item xs={12}>
-                <Typography>{courseId}</Typography>
+                <Typography variant='subtitle1'>{courseId}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography>{courseName}</Typography>
+                <Typography variant='subtitle1'>{courseName}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography>
+                <Typography variant='subtitle1'>
                   Taken {mapSemesterIdToName[semesterId]} {year}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography>
+                <Typography variant='subtitle1'>
                   Reviewed on {timestamp}
                 </Typography>
               </Grid>
@@ -233,14 +233,29 @@ const ReviewCard = ({
           </Box>
           <Box
             sx={{
-              "& .toastui-editor-contents":{
                 "& p":{
-                  color: `${theme.palette.mode == 'dark' ? theme.palette.secondary.contrastText : theme.palette.secondary.main}`
+                  color: `${theme.palette.primary.contrastText} !important`
                 },
                 "& h1,h2,h3,h4,h5,h6":{
-                  color: `${theme.palette.mode == 'dark' ? theme.palette.secondary.contrastText : theme.palette.secondary.main}`
+                  color: `${theme.palette.primary.contrastText}`
+                },
+                "& table":{
+                  
+                  "& thead":{
+                    "& th":{
+                      color: `${theme.palette.secondary.contrastText}`,
+                      backgroundColor: `${theme.palette.secondary.main}`,
+                      borderColor: `${theme.palette.primary.contrastText}`
+                    },
+                  },
+
+                  "& tbody":{
+                    "& th,td":{
+                      color: `${theme.palette.primary.contrastText}`,
+                      borderColor: `${theme.palette.primary.contrastText}`
+                    },
+                  }
                 }
-              }
             }}
             >
             <DynamicViewer initialValue={body}/>
@@ -326,7 +341,7 @@ const ReviewCard = ({
                   </DialogContent>
                   <DialogActions>
                     {isSubmitting ? (
-                      <CircularProgress />
+                      <CircularProgress color='secondary'/>
                     ) : (
                       <>
                         <Button

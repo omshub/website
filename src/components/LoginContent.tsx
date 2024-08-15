@@ -30,7 +30,7 @@ const Login: NextPage = () => {
       handleLoginClose();
     }
   };
-  const isDesktop = useMediaQuery('(min-width:600px)');
+  const isDesktop = useMediaQuery('(min-width:1025px)');
 
   const providers: TProviderName[] = ['Google', 'Facebook', 'Github'];
 

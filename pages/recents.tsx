@@ -23,10 +23,10 @@ const Recents: NextPage<RecentsProps> = ({ reviewsRecent }) => (
         alignItems: 'center',
       }}
     >
-      <Typography variant='h4' color='text.secondary' gutterBottom>
+      <Typography variant='h4' gutterBottom>
         {`Recent Reviews`}
       </Typography>
-      <Typography variant='subtitle1' color='text.secondary' gutterBottom>
+      <Typography variant='subtitle1' gutterBottom>
         {`A Dynamic List of the ${REVIEWS_RECENT_LEN} Most Recent Reviews`}
       </Typography>
       {!reviewsRecent ? (

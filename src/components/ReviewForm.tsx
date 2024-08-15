@@ -2,6 +2,7 @@ import { addUser, getUser } from '@backend/dbOperations';
 import backend from '@backend/index';
 import { useAlert } from '@context/AlertContext';
 import { useAuth } from '@context/AuthContext';
+import { theme } from '@context/ColorContext';
 import { FirebaseAuthUser } from '@context/types';
 import { SEMESTER_ID } from '@globals/constants';
 
@@ -404,12 +405,12 @@ const ReviewForm = ({
       </Grid>
       <Grid textAlign='center' item xs={12} lg={12}>
         {isSubmitting ? (
-          <CircularProgress />
+          <CircularProgress color='secondary'/>
         ) : (
           <Button
             disabled={!isDirty || !isValid || isSubmitting}
-            sx={{color:'inherit'}}
             variant='contained'
+            color='secondary'
             onClick={handleSubmit(onSubmit)}
           >
             {reviewInput?.reviewId ? `Update` : `Submit`}

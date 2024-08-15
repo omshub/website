@@ -12,8 +12,8 @@ export const getDesignTokens = (mode: PaletteMode ) => ({
     //Light
     {
       primary: {
-        main: '#000',
-        contrastText:'#FFF'
+        main: '#FFF',
+        contrastText:'#000'
       },
       secondary: {
         main: navyBlue,
@@ -30,7 +30,7 @@ export const getDesignTokens = (mode: PaletteMode ) => ({
     //Dark
     {
         primary: {
-          main: '#000',
+          main: '#121212',
           contrastText: '#FFF',
         },
         secondary: {
@@ -42,8 +42,8 @@ export const getDesignTokens = (mode: PaletteMode ) => ({
           main: red.A400,
         },
         background:{
-          default: '#000',
-          paper: '#000',
+          default: '#1A1A1C',
+          paper: '#1A1A1C',
         }
       }
     },

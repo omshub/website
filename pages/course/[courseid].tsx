@@ -211,19 +211,19 @@ const CourseId: NextPage<CoursePageProps> = ({
           alignItems: 'center',
         }}
       >
-        <Typography variant='h4' color='text.secondary' gutterBottom>
+        <Typography variant='h4' color='inherit' gutterBottom>
           {courseName}
         </Typography>
         {courseUrl && (
-          <Link href={courseUrl} target='_blank'>
+          <Link href={courseUrl} target='_blank' color="primary.contrastText">
             <Box
               sx={{
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: 'center',
+                alignItems: 'center'
               }}
             >
-              <LinkIcon />
+              <LinkIcon color='inherit' />
               <Typography variant='subtitle1' color='inherit'>
                 {'Course Website'}
               </Typography>
@@ -243,7 +243,6 @@ const CourseId: NextPage<CoursePageProps> = ({
                 <CardContent>
                   <Typography
                     sx={{ fontSize: 14 }}
-                    color='text.secondary'
                     gutterBottom
                   >
                     {`Average Workload`}
@@ -267,7 +266,6 @@ const CourseId: NextPage<CoursePageProps> = ({
                 <CardContent>
                   <Typography
                     sx={{ fontSize: 14 }}
-                    color='text.secondary'
                     gutterBottom
                   >
                     {`Average Difficulty`}
@@ -297,7 +295,6 @@ const CourseId: NextPage<CoursePageProps> = ({
                 <CardContent>
                   <Typography
                     sx={{ fontSize: 14 }}
-                    color='text.secondary'
                     gutterBottom
                   >
                     {`Average Overall`}
@@ -446,7 +443,7 @@ const CourseId: NextPage<CoursePageProps> = ({
                 color: `${theme.palette.secondary.contrastText}`,
                 "&:hover":{
                   backgroundColor:`${theme.palette.secondary.contrastText}`,
-                  color:`${theme.palette.secondary.contrastText}`
+                  color:`${theme.palette.secondary.main}`
                 }
               }}
               key={action.name}

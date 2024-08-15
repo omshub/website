@@ -11,6 +11,7 @@
   "customizations": {
     "vscode": {
       "settings": {},
+      "workspaceFolder":"${containerWorkspaceFolder}",
       // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
         "dbaeumer.vscode-eslint",
@@ -19,6 +20,10 @@
         "mhutchie.git-graph"
       ],
     }
+  },
+  "containerEnv": {
+    "CHOKIDAR_USEPOLLING":"true",
+    "WATCHPACK_POLLING":"true"
   },
   "forwardPorts": [
     // Application and Storybook
@@ -35,6 +40,49 @@
     9150,
     9199
   ],
+  "portsAttributes": {
+    // Application and Storybook
+    "3000": {
+      "label": "Website Application",
+      "onAutoForward": "openBrowser"
+    },
+    "6006": {
+      "label": "Storybook",
+      "onAutoForward": "openBrowser"
+    },
+    // Local Firebase Emulator Suite
+    "4000": {
+      "label": "Firebase Emulator Suite UI Application",
+      "onAutoForward": "openBrowser"
+    },
+    "4400": {
+      "label": "Firebase Emulator Suite UI Hub"
+    },
+    "4500": {
+      "label": "Firebase Emulator Suite UI Logging"
+    },
+    "5000": {
+      "label": "Firebase Hosting"
+    },
+    "5001": {
+      "label": "Firebase Functions"
+    },
+    "8080": {
+      "label": "Firebase Firestore"
+    },
+    "9005": {
+      "label": "Firebase Emulator Suite UI Reserved Port"
+    },
+    "9099": {
+      "label": "Firebase Authentication"
+    },
+    "9150": {
+      "label": "Firebase Emulator Suite UI Websocket"
+    },
+    "9199": {
+      "label": "Firebase Storage"
+    }
+  },
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": "./.devcontainer/scripts/start.sh",
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
