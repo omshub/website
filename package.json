@@ -37,7 +37,7 @@
     "@fontsource/roboto": "^5.0.8",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.14.5",
-    "@mui/x-data-grid": "^6.6.0",
+    "@mui/x-data-grid": "^7.12.1",
     "@toast-ui/react-editor": "^3.2.2",
     "firebase": "^9.15.0",
     "html-to-image": "^1.11.11",
