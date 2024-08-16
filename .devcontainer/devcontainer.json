@@ -16,7 +16,7 @@
       "extensions": [
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "ms-azuretools.vscode-docker",
+        "oderwat.indent-rainbow",
         "mhutchie.git-graph"
       ]
     }
