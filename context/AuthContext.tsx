@@ -30,6 +30,9 @@ export type TAuthContext = {
   logout: () => void;
 };
 
+// local storage key
+const EMAIL_FOR_SIGN_IN = 'emailForSignIn';
+
 const AuthContext = createContext<TAuthContext | null>(null);
 
 export const useAuth = () => useContext(AuthContext);
@@ -55,7 +58,7 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
       },
     );
     // OAuth Providers
-    const email = window.localStorage.getItem('emailForSignIn');
+    const email = window.localStorage.getItem(EMAIL_FOR_SIGN_IN);
 
     if (isSignInWithEmailLink(auth, window.location.href) && !!email) {
       // Sign the user in
@@ -74,6 +77,7 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
   };
   const logout = async () => {
     setUser(null);
+    window.localStorage.removeItem(EMAIL_FOR_SIGN_IN);
     await signOut(auth);
     router.push('/');
   };
@@ -84,7 +88,7 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
       handleCodeInApp: true,
     }).then(() => {
       // Save the users email to verify it after they access their email
-      window.localStorage.setItem('emailForSignIn', email);
+      window.localStorage.setItem(EMAIL_FOR_SIGN_IN, email);
       const additionalInstructions =
         isGTEmail(email) || isOutlookEmail(email)
           ? ' NOTE: gatech.edu or outlook.com domain may require release from Quarantine. See https://security.microsoft.com/quarantine'
