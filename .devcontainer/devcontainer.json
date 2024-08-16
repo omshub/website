@@ -25,6 +25,9 @@
     "CHOKIDAR_USEPOLLING": "true",
     "WATCHPACK_POLLING": "true"
   },
+  "runArgs": [
+    "--name", "omshub-website-dev"
+  ],
   "forwardPorts": [
     // Application and Storybook
     3000, 6006,
