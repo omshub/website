@@ -2,7 +2,7 @@
 
 module.exports = {
   reactStrictMode: true,
-  
+
   env: {
     baseUrl: process.env.BASE_URL,
     apiKey: process.env.API_KEY,
@@ -13,9 +13,14 @@ module.exports = {
     appId: process.env.APP_ID,
     measurementId: process.env.MEASUREMENT_ID,
   },
-  compiler:{
+  compiler: {
     removeConsole: true,
     styledComponents: true,
   },
-  transpilePackages: ['@mui/system', '@mui/material', '@mui/icons-material','@mui/styles'],
+  transpilePackages: [
+    '@mui/system',
+    '@mui/material',
+    '@mui/icons-material',
+    '@mui/styles',
+  ],
 };

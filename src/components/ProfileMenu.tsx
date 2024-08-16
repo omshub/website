@@ -30,12 +30,12 @@ const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
   const menuId = 'primary-search-account-menu';
   return (
     <>
-      <Container sx={{color:'inherit'}}>
+      <Container sx={{ color: 'inherit' }}>
         <Tooltip arrow title='Profile Menu'>
           <Avatar
             aria-controls={menuId}
             onClick={handleProfileMenuOpen}
-            src={user?.photoURL ?? (isGatech ? BuzzProfile : LamaProfile) }
+            src={user?.photoURL ?? (isGatech ? BuzzProfile : LamaProfile)}
           />
         </Tooltip>
         <Menu

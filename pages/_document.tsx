@@ -4,35 +4,33 @@ import createEmotionCache from '@src/createEmotionCache';
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 import React from 'react';
 
-
-export default function MyDocument(props:any){
-
-  const theme = useTheme()
-    return (
-      <Html lang='en'>
-        <Head>
-          {/* PWA primary color */}
-          <meta name='theme-color' content={theme.palette.primary.main} />
-          <link rel='shortcut icon' href='/favicon.ico' />
-          <link
-            rel='stylesheet'
-            href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'
-          />
-          {/* Inject MUI styles first to match with the prepend: true configuration. */}
-          {(props as any).emotionStyleTags}
-        </Head>
-        <body>
-          {getInitColorSchemeScript()}
-          <Main />
-          <NextScript />
-        </body>
-      </Html>
-    );
+export default function MyDocument(props: any) {
+  const theme = useTheme();
+  return (
+    <Html lang='en'>
+      <Head>
+        {/* PWA primary color */}
+        <meta name='theme-color' content={theme.palette.primary.main} />
+        <link rel='shortcut icon' href='/favicon.ico' />
+        <link
+          rel='stylesheet'
+          href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'
+        />
+        {/* Inject MUI styles first to match with the prepend: true configuration. */}
+        {(props as any).emotionStyleTags}
+      </Head>
+      <body>
+        {getInitColorSchemeScript()}
+        <Main />
+        <NextScript />
+      </body>
+    </Html>
+  );
 }
 
 // `getInitialProps` belongs to `_document` (instead of `_app`),
 // it's compatible with static-site generation (SSG).
-MyDocument.getInitialProps = async (ctx:any) => {
+MyDocument.getInitialProps = async (ctx: any) => {
   // Resolution order
   //
   // On the server:
@@ -65,9 +63,9 @@ MyDocument.getInitialProps = async (ctx:any) => {
   ctx.renderPage = () =>
     originalRenderPage({
       enhanceApp: (App: any) =>
-        (function EnhanceApp(props:any) {
+        function EnhanceApp(props: any) {
           return <App emotionCache={cache} {...props} />;
-        }),
+        },
     });
 
   const initialProps = await Document.getInitialProps(ctx);

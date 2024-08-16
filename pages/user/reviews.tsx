@@ -10,7 +10,13 @@ import { useEffect, useState } from 'react';
 import { addUser, getUser } from '@backend/dbOperations';
 import { isGTEmail } from '@globals/utilities';
 
-import { Box, CircularProgress, Container, Grid, Typography } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Grid,
+  Typography,
+} from '@mui/material';
 
 const UserReviews: NextPage = () => {
   const [loading, setLoading] = useState<boolean>(true);

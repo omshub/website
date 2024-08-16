@@ -13,7 +13,7 @@ import {
   TNullableString,
   TRatingScale,
   TSemesterId,
-  TUserReviews
+  TUserReviews,
 } from '@globals/types';
 import { isGTEmail } from '@globals/utilities';
 import {
@@ -40,7 +40,7 @@ import {
   useForm,
 } from 'react-hook-form';
 
-const { addReview,updateReview } = backend;
+const { addReview, updateReview } = backend;
 
 const DynamicEditor = dynamic(() => import('@components/FormEditor'), {
   ssr: false,
@@ -133,7 +133,6 @@ const ReviewForm = ({
     const isLoggedIn = Boolean(user && user.uid && user.email);
 
     if (isGoodSubmission && isLoggedIn && hasNonNullDataValues) {
-      
       const currentTime = Date.now();
       const semesterId = data.semesterId as TSemesterId;
       const year = Number(data.year);
@@ -144,28 +143,30 @@ const ReviewForm = ({
       const difficulty = Number(data.difficulty) as TRatingScale;
       const overall = Number(data.overall) as TRatingScale;
       const isGTVerifiedReviewer = isGTEmail(user?.email!);
-      
-      
+
       const reviewValues = {
-        ['courseId']: reviewInput? reviewInput.courseId : courseId,
-        ['reviewerId']: reviewInput? reviewInput.reviewerId : reviewerId,
+        ['courseId']: reviewInput ? reviewInput.courseId : courseId,
+        ['reviewerId']: reviewInput ? reviewInput.reviewerId : reviewerId,
         ['reviewId']: reviewInput ? reviewInput.reviewId : reviewId,
-        ['created']: reviewInput? reviewInput.created : currentTime,
+        ['created']: reviewInput ? reviewInput.created : currentTime,
         ['modified']: currentTime,
-        ['semesterId']: reviewInput? reviewInput.semesterId : semesterId,
-        ['upvotes']: reviewInput? reviewInput.upvotes : 0,
-        ['downvotes']: reviewInput? reviewInput.downvotes : 0,
-        ['isLegacy']: reviewInput? reviewInput.isLegacy : false,
-        ['year']: reviewInput? reviewInput.year : year,
-        ['isGTVerifiedReviewer']: reviewInput? reviewInput.isGTVerifiedReviewer: isGTVerifiedReviewer,
+        ['semesterId']: reviewInput ? reviewInput.semesterId : semesterId,
+        ['upvotes']: reviewInput ? reviewInput.upvotes : 0,
+        ['downvotes']: reviewInput ? reviewInput.downvotes : 0,
+        ['isLegacy']: reviewInput ? reviewInput.isLegacy : false,
+        ['year']: reviewInput ? reviewInput.year : year,
+        ['isGTVerifiedReviewer']: reviewInput
+          ? reviewInput.isGTVerifiedReviewer
+          : isGTVerifiedReviewer,
         body,
         workload,
         difficulty,
         overall,
       };
 
-
-      reviewInput?.reviewId ? await updateReview(user?.uid!, reviewInput?.reviewId, reviewValues): await addReview(user?.uid!, reviewId, reviewValues)
+      reviewInput?.reviewId
+        ? await updateReview(user?.uid!, reviewInput?.reviewId, reviewValues)
+        : await addReview(user?.uid!, reviewId, reviewValues);
 
       setAlert({
         severity: 'success',
@@ -195,7 +196,7 @@ const ReviewForm = ({
   useEffect(() => {
     reset({ ...reviewInput });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reviewInput,reset]);
+  }, [reviewInput, reset]);
 
   return (
     <Grid
@@ -216,7 +217,9 @@ const ReviewForm = ({
         />
       </Grid>
       <Grid item xs={12} lg={12}>
-        <InputLabel id='review-form-year' sx={{color:'inherit'}}>Year</InputLabel>
+        <InputLabel id='review-form-year' sx={{ color: 'inherit' }}>
+          Year
+        </InputLabel>
         <Controller
           control={control}
           name='year'
@@ -238,19 +241,21 @@ const ReviewForm = ({
           )}
           rules={{
             required: true,
-            validate: reviewInput?.reviewId ? {} : {
-              validateYearGivenSemester: (year) => {
-                return validateSemesterYear(getValues()?.semesterId, year);
-              },
-              validateNotTakenCourse: (year) => {
-                return  validateUserNotTakenCourse(
-                  userReviews,
-                  courseId,
-                  getValues()?.semesterId,
-                  year,
-                );
-              },
-            },
+            validate: reviewInput?.reviewId
+              ? {}
+              : {
+                  validateYearGivenSemester: (year) => {
+                    return validateSemesterYear(getValues()?.semesterId, year);
+                  },
+                  validateNotTakenCourse: (year) => {
+                    return validateUserNotTakenCourse(
+                      userReviews,
+                      courseId,
+                      getValues()?.semesterId,
+                      year,
+                    );
+                  },
+                },
           }}
         ></Controller>
         {errors.year && errors.year.type === 'validateYearGivenSemester' && (
@@ -267,7 +272,9 @@ const ReviewForm = ({
         )}
       </Grid>
       <Grid item xs={12} lg={12}>
-        <InputLabel id='review-form-semester' sx={{color:'inherit'}}>Semester</InputLabel>
+        <InputLabel id='review-form-semester' sx={{ color: 'inherit' }}>
+          Semester
+        </InputLabel>
         <Controller
           control={control}
           name={SEMESTER_ID}
@@ -285,19 +292,21 @@ const ReviewForm = ({
           )}
           rules={{
             required: true,
-            validate: reviewInput?.reviewId ? {} :{
-              validateSemesterGivenYear: (semester) => {
-                return validateSemesterYear(semester, getValues()['year']);
-              },
-              validateNotTakenCourse: (semester) => {
-                return validateUserNotTakenCourse(
-                  userReviews,
-                  courseId,
-                  semester,
-                  getValues()?.year,
-                );
-              },
-            },
+            validate: reviewInput?.reviewId
+              ? {}
+              : {
+                  validateSemesterGivenYear: (semester) => {
+                    return validateSemesterYear(semester, getValues()['year']);
+                  },
+                  validateNotTakenCourse: (semester) => {
+                    return validateUserNotTakenCourse(
+                      userReviews,
+                      courseId,
+                      semester,
+                      getValues()?.year,
+                    );
+                  },
+                },
           }}
         ></Controller>
         {errors.semesterId &&
@@ -314,7 +323,9 @@ const ReviewForm = ({
           )}
       </Grid>
       <Grid item xs={12} lg={12}>
-        <InputLabel id='review-form-workload' sx={{color:'inherit'}}>Workload</InputLabel>
+        <InputLabel id='review-form-workload' sx={{ color: 'inherit' }}>
+          Workload
+        </InputLabel>
         <Controller
           control={control}
           name='workload'
@@ -387,24 +398,25 @@ const ReviewForm = ({
         ></Controller>
       </Grid>
       <Grid item xs={12} lg={12}>
-        <Typography sx={{ mb: 1, color:'inherit' }} component='legend'>
+        <Typography sx={{ mb: 1, color: 'inherit' }} component='legend'>
           Review
         </Typography>
         <Controller
           control={control}
           name='body'
           render={({ field }) => (
-            <DynamicEditor 
-              onChange={(body:any)=>{
-                setValue('body',body, {shouldDirty:true})
+            <DynamicEditor
+              onChange={(body: any) => {
+                setValue('body', body, { shouldDirty: true });
               }}
-              initialValue={field.value} />
+              initialValue={field.value}
+            />
           )}
         ></Controller>
       </Grid>
       <Grid textAlign='center' item xs={12} lg={12}>
         {isSubmitting ? (
-          <CircularProgress color='secondary'/>
+          <CircularProgress color='secondary' />
         ) : (
           <Button
             disabled={!isDirty || !isValid || isSubmitting}

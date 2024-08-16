@@ -17,7 +17,7 @@ const About: NextPage = () => (
       <Typography variant='h4' component='h1' gutterBottom>
         Welcome to OMSHub!
       </Typography>
-      <Typography variant='h5' paragraph  marginTop={2}>
+      <Typography variant='h5' paragraph marginTop={2}>
         About this project
       </Typography>
       <Typography variant='body1' paragraph marginTop={1} align='center'>
@@ -28,11 +28,17 @@ const About: NextPage = () => (
       </Typography>
       <Typography variant='body1' paragraph marginTop={1} align='center'>
         To request a feature or to report an issue, visit our&nbsp;
-        <Link color='primary.contrastText' href='https://github.com/omshub'>GitHub organization</Link>.
+        <Link color='primary.contrastText' href='https://github.com/omshub'>
+          GitHub organization
+        </Link>
+        .
       </Typography>
       <Typography variant='body1' paragraph marginTop={1} align='center'>
         To engage with the community regarding this project, join our&nbsp;
-        <Link color='primary.contrastText' href='https://discord.gg/DtdV4Qg3WY'>Discord server</Link>.
+        <Link color='primary.contrastText' href='https://discord.gg/DtdV4Qg3WY'>
+          Discord server
+        </Link>
+        .
       </Typography>
       <Typography variant='h5' paragraph marginTop={2}>
         Terms of Use & Privacy

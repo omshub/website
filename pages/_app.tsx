@@ -13,7 +13,6 @@ import Head from 'next/head';
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
 
-
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
   fallback: object;
@@ -23,29 +22,31 @@ const MyApp = ({
   Component,
   emotionCache = clientSideEmotionCache,
   pageProps,
-}: MyAppProps) => { 
-  
-
+}: MyAppProps) => {
   return (
-  <CacheProvider value={emotionCache}>
-    <ColorProvider>
-    <AlertContextProvider>
-      <AuthContextProvider>
-        <Head>
-          <meta name='viewport' content='initial-scale=1, width=device-width' />
-          <title>OMSHub</title>
-        </Head>
-          <CssBaseline />
-          <MenuContextProvider>
-            <NavBar />
-            <AlertBar />
-          </MenuContextProvider>
-          {<Component {...pageProps} />}
-        {/* <Copyright /> */}
-      </AuthContextProvider>
-    </AlertContextProvider>
-    </ColorProvider>
-  </CacheProvider>
-)};
+    <CacheProvider value={emotionCache}>
+      <ColorProvider>
+        <AlertContextProvider>
+          <AuthContextProvider>
+            <Head>
+              <meta
+                name='viewport'
+                content='initial-scale=1, width=device-width'
+              />
+              <title>OMSHub</title>
+            </Head>
+            <CssBaseline />
+            <MenuContextProvider>
+              <NavBar />
+              <AlertBar />
+            </MenuContextProvider>
+            {<Component {...pageProps} />}
+            {/* <Copyright /> */}
+          </AuthContextProvider>
+        </AlertContextProvider>
+      </ColorProvider>
+    </CacheProvider>
+  );
+};
 
 export default MyApp;

@@ -4,10 +4,12 @@ import { useAuth } from '@context/AuthContext';
 import { FirebaseAuthUser } from '@context/types';
 import { Review } from '@globals/types';
 import { getCourseDataStatic } from '@globals/utilities';
-import {PhotoCamera, ErrorOutline, Edit, Delete } from '@mui/icons-material';
-import remarkGfm from 'remark-gfm'
-import rehypeKatex from 'rehype-katex'
-import remarkMath from 'remark-math'
+import { PhotoCamera, ErrorOutline, Edit, Delete } from '@mui/icons-material';
+import stringWidth from 'string-width';
+import remarkGfm from 'remark-gfm';
+import rehypeKatex from 'rehype-katex';
+import rehypeRaw from 'rehype-raw';
+import remarkMath from 'remark-math';
 import {
   Box,
   Button,
@@ -43,7 +45,6 @@ import { useRouter } from 'next/router';
 import { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import Markdown from 'react-markdown';
 
-
 const { deleteReview } = backend;
 
 const ReviewCard = ({
@@ -76,7 +77,7 @@ const ReviewCard = ({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const handleReviewModalOpen = () => setReviewModalOpen(true);
   const handleReviewModalClose = () => setReviewModalOpen(false);
-  
+
   useEffect(() => {
     navigator.userAgent.match(`Firefox`)
       ? setIsFirefox(true)
@@ -122,16 +123,16 @@ const ReviewCard = ({
       <Card
         color='inherit'
         sx={{
-          backgroundImage: "none",
+          backgroundImage: 'none',
           p: 1,
           borderRadius: '15px',
           boxShadow: `0 5px 10px 0 ${grey[500]}`,
-          "& a":{
-            color:"#6495ED",
-            "&:visited":{
-              color:"#8a2be2"
-            }
-          }
+          '& a': {
+            color: '#6495ED',
+            '&:visited': {
+              color: '#8a2be2',
+            },
+          },
         }}
       >
         <CardContent>
@@ -228,7 +229,19 @@ const ReviewCard = ({
               </Grid>
             </Grid>
           </Box>
-          <Markdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>{body}</Markdown>
+          <Markdown
+            remarkPlugins={[
+              [
+                remarkGfm,
+                { singleTilde: false },
+                { stringLength: stringWidth },
+              ],
+              remarkMath,
+            ]}
+            rehypePlugins={[rehypeKatex, rehypeRaw]}
+          >
+            {body}
+          </Markdown>
           {/* <Markdown>{body}</Markdown> */}
           <Grid textAlign='right'>
             {/* Screenshot button*/}
@@ -264,7 +277,7 @@ const ReviewCard = ({
                   maxWidth='md'
                   keepMounted
                   closeAfterTransition
-                  PaperProps={{sx:{backgroundImage: 'none'}}}
+                  PaperProps={{ sx: { backgroundImage: 'none' } }}
                 >
                   <ReviewForm
                     {...{
@@ -293,7 +306,6 @@ const ReviewCard = ({
                 </Dialog>
                 {/* Delete Button */}
                 <Tooltip title='Delete Review'>
-
                   <IconButton onClick={handleDeleteDialogOpen}>
                     <Delete />
                   </IconButton>
@@ -311,7 +323,7 @@ const ReviewCard = ({
                   </DialogContent>
                   <DialogActions>
                     {isSubmitting ? (
-                      <CircularProgress color='secondary'/>
+                      <CircularProgress color='secondary' />
                     ) : (
                       <>
                         <Button

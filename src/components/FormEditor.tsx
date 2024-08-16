@@ -11,7 +11,7 @@ export default function FormEditor({
   initialValue,
   onChange,
 }: {
-  initialValue:any;
+  initialValue: any;
   onChange: any;
 }) {
   const editorRef = useRef<Editor>(null);
@@ -24,59 +24,60 @@ export default function FormEditor({
     onChange(clean);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     //Set initial value this way because theres a character limit the other way when doing it via prop
-    if(!editorRef?.current?.getInstance().getMarkdown()){
-      editorRef?.current?.getInstance().setMarkdown(initialValue)
+    if (!editorRef?.current?.getInstance().getMarkdown()) {
+      editorRef?.current?.getInstance().setMarkdown(initialValue);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[editorRef?.current?.getInstance().getMarkdown(),initialValue]);
+  }, [editorRef?.current?.getInstance().getMarkdown(), initialValue]);
 
   return (
-    <Box sx={{
-    "& .toastui-editor-dark":{
-      borderColor: "#494c56",
-      "& .ProseMirror":{
-        color:`${theme.palette.secondary.contrastText}`
-      },
-      "& .toastui-editor-contents p":{
-        color: `${theme.palette.secondary.contrastText}`
-      },
-      "& .toastui-editor-md-splitter":{
-        backgroundColor: `${theme.palette.secondary.light}`
-      },
-      "& .toastui-editor-main":{
-        backgroundColor:`${theme.palette.secondary.main}`
-      },
-      "& .toastui-editor-defaultUI-toolbar":{
-        backgroundColor:`${theme.palette.secondary.light}`,
-        borderColor: '#494c56',
-        "& button":{
-          borderColor:"#232428",
-          "&:not(:disabled):hover":{
-            backgroundColor: "#36383f",
-            borderColor: "#36383f"
-          }
-        }
-      },
-      "& .toastui-editor-ww-container":{
-        backgroundColor:`${theme.palette.secondary.main}`
-      },
-      "& .toastui-editor-mode-switch":{
-        borderTop: '1px solid #393b42',
-        backgroundColor:`${theme.palette.secondary.light}`,
-        "& .tab-item":{
-          backgroundColor: `${theme.palette.secondary.light}`,
-          border: 'none',
-          borderTopColor: '#393b42',
-          "&.active":{
-            borderTopColor: `${theme.palette.secondary.main}`,
+    <Box
+      sx={{
+        '& .toastui-editor-dark': {
+          borderColor: '#494c56',
+          '& .ProseMirror': {
+            color: `${theme.palette.secondary.contrastText}`,
+          },
+          '& .toastui-editor-contents p': {
+            color: `${theme.palette.secondary.contrastText}`,
+          },
+          '& .toastui-editor-md-splitter': {
+            backgroundColor: `${theme.palette.secondary.light}`,
+          },
+          '& .toastui-editor-main': {
             backgroundColor: `${theme.palette.secondary.main}`,
-          }
-        }
-      }
-    }
-    }}
+          },
+          '& .toastui-editor-defaultUI-toolbar': {
+            backgroundColor: `${theme.palette.secondary.light}`,
+            borderColor: '#494c56',
+            '& button': {
+              borderColor: '#232428',
+              '&:not(:disabled):hover': {
+                backgroundColor: '#36383f',
+                borderColor: '#36383f',
+              },
+            },
+          },
+          '& .toastui-editor-ww-container': {
+            backgroundColor: `${theme.palette.secondary.main}`,
+          },
+          '& .toastui-editor-mode-switch': {
+            borderTop: '1px solid #393b42',
+            backgroundColor: `${theme.palette.secondary.light}`,
+            '& .tab-item': {
+              backgroundColor: `${theme.palette.secondary.light}`,
+              border: 'none',
+              borderTopColor: '#393b42',
+              '&.active': {
+                borderTopColor: `${theme.palette.secondary.main}`,
+                backgroundColor: `${theme.palette.secondary.main}`,
+              },
+            },
+          },
+        },
+      }}
     >
       <Editor
         height='auto'
@@ -96,6 +97,6 @@ export default function FormEditor({
         ]}
         customHTMLSanitizer={DOMPurify.sanitize}
       />
-      </Box>
+    </Box>
   );
 }

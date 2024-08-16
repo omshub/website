@@ -4,7 +4,13 @@ import { REVIEWS_RECENT_LEN } from '@globals/constants';
 import { Review } from '@globals/types';
 import type { NextPage } from 'next';
 
-import { Box, CircularProgress, Container, Grid, Typography } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Grid,
+  Typography,
+} from '@mui/material';
 
 const { getReviewsRecent } = backend;
 

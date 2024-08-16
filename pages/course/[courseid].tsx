@@ -84,7 +84,7 @@ const CourseId: NextPage<CoursePageProps> = ({
   const handleReviewModalOpen = () => setReviewModalOpen(true);
   const handleReviewModalClose = () => setReviewModalOpen(false);
 
-  const authContext : any | null = useAuth();
+  const authContext: any | null = useAuth();
   const user: FirebaseAuthUser | null = authContext.user;
 
   const theme = useTheme();
@@ -215,12 +215,12 @@ const CourseId: NextPage<CoursePageProps> = ({
           {courseName}
         </Typography>
         {courseUrl && (
-          <Link href={courseUrl} target='_blank' color="primary.contrastText">
+          <Link href={courseUrl} target='_blank' color='primary.contrastText'>
             <Box
               sx={{
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: 'center'
+                alignItems: 'center',
               }}
             >
               <LinkIcon color='inherit' />
@@ -239,12 +239,12 @@ const CourseId: NextPage<CoursePageProps> = ({
             justifyContent='center'
           >
             <Grid item xs={12} lg={4}>
-              <Card variant='outlined' sx={{ padding: '5 30', color:'inherit' }}>
+              <Card
+                variant='outlined'
+                sx={{ padding: '5 30', color: 'inherit' }}
+              >
                 <CardContent>
-                  <Typography
-                    sx={{ fontSize: 14 }}
-                    gutterBottom
-                  >
+                  <Typography sx={{ fontSize: 14 }} gutterBottom>
                     {`Average Workload`}
                   </Typography>
                   <Typography variant='h5'>
@@ -264,10 +264,7 @@ const CourseId: NextPage<CoursePageProps> = ({
                 }}
               >
                 <CardContent>
-                  <Typography
-                    sx={{ fontSize: 14 }}
-                    gutterBottom
-                  >
+                  <Typography sx={{ fontSize: 14 }} gutterBottom>
                     {`Average Difficulty`}
                   </Typography>
                   <Typography
@@ -293,10 +290,7 @@ const CourseId: NextPage<CoursePageProps> = ({
                 }}
               >
                 <CardContent>
-                  <Typography
-                    sx={{ fontSize: 14 }}
-                    gutterBottom
-                  >
+                  <Typography sx={{ fontSize: 14 }} gutterBottom>
                     {`Average Overall`}
                   </Typography>
                   <Typography
@@ -373,7 +367,7 @@ const CourseId: NextPage<CoursePageProps> = ({
                   <Grid container rowSpacing={5} sx={{ mt: 1 }}>
                     {mapPayloadToArray(courseReviews, REVIEW_ID, DESC).map(
                       (value: Review) => (
-                        <Grid sx={{  width: `100%` }} key={value.reviewId} item>
+                        <Grid sx={{ width: `100%` }} key={value.reviewId} item>
                           <ReviewCard {...value}></ReviewCard>
                         </Grid>
                       ),
@@ -401,7 +395,7 @@ const CourseId: NextPage<CoursePageProps> = ({
         onClose={handleReviewModalClose}
         maxWidth='md'
         closeAfterTransition
-        PaperProps={{sx:{backgroundImage: 'none'}}}
+        PaperProps={{ sx: { backgroundImage: 'none' } }}
       >
         <ReviewForm
           {...{
@@ -417,15 +411,15 @@ const CourseId: NextPage<CoursePageProps> = ({
         sx={{ position: 'fixed', bottom: 40, right: 40 }}
         icon={<SpeedDialIcon />}
         FabProps={{
-          sx :{
+          sx: {
             border: `1px solid ${theme.palette.secondary.contrastText}`,
             backgroundColor: `${theme.palette.secondary.main}`,
             color: `${theme.palette.secondary.contrastText}`,
-            "&:hover":{
-              backgroundColor:`${theme.palette.secondary.contrastText}`,
-              color:`${theme.palette.secondary.main}`
-            }
-          }
+            '&:hover': {
+              backgroundColor: `${theme.palette.secondary.contrastText}`,
+              color: `${theme.palette.secondary.main}`,
+            },
+          },
         }}
       >
         {actions
@@ -441,10 +435,10 @@ const CourseId: NextPage<CoursePageProps> = ({
                 border: `1px solid ${theme.palette.secondary.contrastText}`,
                 backgroundColor: `${theme.palette.secondary.main}`,
                 color: `${theme.palette.secondary.contrastText}`,
-                "&:hover":{
-                  backgroundColor:`${theme.palette.secondary.contrastText}`,
-                  color:`${theme.palette.secondary.main}`
-                }
+                '&:hover': {
+                  backgroundColor: `${theme.palette.secondary.contrastText}`,
+                  color: `${theme.palette.secondary.main}`,
+                },
               }}
               key={action.name}
               icon={action.icon}
