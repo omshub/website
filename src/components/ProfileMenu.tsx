@@ -24,8 +24,8 @@ const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
     useMenu();
 
   const isGatech = isGTEmail(user?.email!);
-  const BuzzProfile = 'buzz-profile.jpg';
-  const LamaProfile = 'lama-profile.png';
+  const BuzzProfile = '/buzz-profile.jpg';
+  const LamaProfile = '/lama-profile.png';
   const isProfileMenuOpen = Boolean(profileMenuAnchorEl);
   const menuId = 'primary-search-account-menu';
   return (
