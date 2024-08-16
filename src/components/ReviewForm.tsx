@@ -1,4 +1,3 @@
-import { addUser, getUser } from '@backend/dbOperations';
 import backend from '@backend/index';
 import { useAlert } from '@context/AlertContext';
 import { useAuth } from '@context/AuthContext';
@@ -39,7 +38,7 @@ import {
   useForm,
 } from 'react-hook-form';
 
-const { addReview, updateReview } = backend;
+const { addReview, updateReview, addUser, getUser } = backend;
 
 const DynamicEditor = dynamic(() => import('@components/FormEditor'), {
   ssr: false,

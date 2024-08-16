@@ -7,7 +7,7 @@ import { mapPayloadToArray } from '@src/utilities';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 
-import { addUser, getUser } from '@backend/dbOperations';
+import backend from '@backend/index';
 import { isGTEmail } from '@globals/utilities';
 
 import {
@@ -17,6 +17,8 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
+
+const { addUser, getUser } = backend;
 
 const UserReviews: NextPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
