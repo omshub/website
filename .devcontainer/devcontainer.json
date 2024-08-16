@@ -75,7 +75,7 @@
     }
   },
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "./.devcontainer/scripts/start.sh"
-  // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-  // "remoteUser": "node"
+  "postCreateCommand": "./.devcontainer/scripts/start.sh",
+  // Change to `"node"` to connect as non-root user instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "root"
 }
