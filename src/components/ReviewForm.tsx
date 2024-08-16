@@ -9,8 +9,7 @@ import {
   Review,
   TCourseId,
   TCourseName,
-  TNullableNumber,
-  TNullableString,
+  TNullable,
   TRatingScale,
   TSemesterId,
   TUserReviews,
@@ -47,12 +46,12 @@ const DynamicEditor = dynamic(() => import('@components/FormEditor'), {
 });
 
 interface ReviewFormInputs {
-  year: TNullableNumber;
-  semesterId: TSemesterId | null;
+  year: TNullable<number>;
+  semesterId: TNullable<TSemesterId>;
   body: string;
-  workload: TNullableNumber | null;
-  overall: TRatingScale | null;
-  difficulty: TRatingScale | null;
+  workload: TNullable<number>;
+  overall: TNullable<TRatingScale>;
+  difficulty: TNullable<TRatingScale>;
 }
 
 type TPropsReviewForm = {
@@ -354,7 +353,7 @@ const ReviewForm = ({
             max: '168',
             required: true,
             validate: {
-              validateIsNumber: (value: TNullableNumber) =>
+              validateIsNumber: (value: TNullable<number>) =>
                 value ? value > 0 : false,
             },
           }}
@@ -443,8 +442,8 @@ const getYearRange = () => {
 };
 
 const validateSemesterYear = (
-  semester: TNullableString,
-  year: TNullableNumber,
+  semester: TNullable<string>,
+  year: TNullable<number>,
 ) => {
   if (semester && year) {
     const currentYear = new Date().getFullYear();
@@ -468,8 +467,8 @@ const validateSemesterYear = (
 const validateUserNotTakenCourse = (
   userReviews: TUserReviews | {},
   courseId: TCourseId,
-  semester: TNullableString,
-  year: TNullableNumber,
+  semester: TNullable<string>,
+  year: TNullable<number>,
 ) => {
   if (semester && year) {
     const objKey = `${courseId}-${year}-${mapSemsterIdToTerm[semester]}`;
