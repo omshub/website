@@ -5,6 +5,7 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "runArgs": ["--name", "omshub-website-dev"],
   "mounts": [
     "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
   ],
@@ -25,7 +26,6 @@
     "CHOKIDAR_USEPOLLING": "true",
     "WATCHPACK_POLLING": "true"
   },
-  "runArgs": ["--name", "omshub-website-dev"],
   "forwardPorts": [
     // Application and Storybook
     3000, 6006,
