@@ -5,6 +5,9 @@ import { FirebaseAuthUser } from '@context/types';
 import { Review } from '@globals/types';
 import { getCourseDataStatic } from '@globals/utilities';
 import {PhotoCamera, ErrorOutline, Edit, Delete } from '@mui/icons-material';
+import remarkGfm from 'remark-gfm'
+import rehypeKatex from 'rehype-katex'
+import remarkMath from 'remark-math'
 import {
   Box,
   Button,
@@ -22,7 +25,6 @@ import {
   Snackbar,
   Tooltip,
   Typography,
-  useTheme,
 } from '@mui/material';
 
 import { grey } from '@mui/material/colors';
@@ -37,14 +39,10 @@ import {
   mapSemesterIdToName,
 } from '@src/utilities';
 import { toBlob } from 'html-to-image';
-import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { SyntheticEvent, useEffect, useRef, useState } from 'react';
+import Markdown from 'react-markdown';
 
-
-const DynamicViewer  = dynamic(() => import('@toast-ui/react-editor').then(module=>module.Viewer), {
-  ssr: false,
-});
 
 const { deleteReview } = backend;
 
@@ -78,7 +76,6 @@ const ReviewCard = ({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const handleReviewModalOpen = () => setReviewModalOpen(true);
   const handleReviewModalClose = () => setReviewModalOpen(false);
-  const theme = useTheme();
   
   useEffect(() => {
     navigator.userAgent.match(`Firefox`)
@@ -231,35 +228,8 @@ const ReviewCard = ({
               </Grid>
             </Grid>
           </Box>
-          <Box
-            sx={{
-                "& p":{
-                  color: `${theme.palette.primary.contrastText} !important`
-                },
-                "& h1,h2,h3,h4,h5,h6":{
-                  color: `${theme.palette.primary.contrastText}`
-                },
-                "& table":{
-                  
-                  "& thead":{
-                    "& th":{
-                      color: `${theme.palette.secondary.contrastText}`,
-                      backgroundColor: `${theme.palette.secondary.main}`,
-                      borderColor: `${theme.palette.primary.contrastText}`
-                    },
-                  },
-
-                  "& tbody":{
-                    "& th,td":{
-                      color: `${theme.palette.primary.contrastText}`,
-                      borderColor: `${theme.palette.primary.contrastText}`
-                    },
-                  }
-                }
-            }}
-            >
-            <DynamicViewer initialValue={body}/>
-          </Box>
+          <Markdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>{body}</Markdown>
+          {/* <Markdown>{body}</Markdown> */}
           <Grid textAlign='right'>
             {/* Screenshot button*/}
             {!isFirefox && (

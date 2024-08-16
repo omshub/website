@@ -2,7 +2,6 @@ import { addUser, getUser } from '@backend/dbOperations';
 import backend from '@backend/index';
 import { useAlert } from '@context/AlertContext';
 import { useAuth } from '@context/AuthContext';
-import { theme } from '@context/ColorContext';
 import { FirebaseAuthUser } from '@context/types';
 import { SEMESTER_ID } from '@globals/constants';
 
