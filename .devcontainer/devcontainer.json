@@ -7,7 +7,11 @@
   },
   "runArgs": ["--name", "omshub-website-dev"],
   "mounts": [
-    "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
+    // cache `node_modules`
+    "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
+    // cache firebase emulators suite JAR files -- ref: https://firebase.google.com/docs/emulator-suite/install_and_configure#integrate_with_your_ci_system
+    "source=${localWorkspaceFolderBasename}-fb_emulators_root,target=/root/.cache/firebase/emulators/,type=volume", // root user
+    "source=${localWorkspaceFolderBasename}-fb_emulators_nonroot,target=/home/${containerUser}/.cache/firebase/emulators/,type=volume" // non-root user (e.g., `node`)
   ],
   "customizations": {
     "vscode": {
