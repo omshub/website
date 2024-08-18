@@ -40,6 +40,7 @@
     "@mui/x-data-grid": "^6.6.0",
     "@toast-ui/editor-plugin-code-syntax-highlight": "^3.1.0",
     "@toast-ui/react-editor": "^3.2.2",
+    "@types/prismjs": "^1.26.4",
     "firebase": "^9.15.0",
     "html-to-image": "^1.11.11",
     "isomorphic-dompurify": "^1.8.0",

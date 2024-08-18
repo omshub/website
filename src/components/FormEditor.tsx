@@ -4,8 +4,8 @@ import { Editor } from '@toast-ui/react-editor';
 import DOMPurify from 'isomorphic-dompurify';
 import { useEffect, useReducer, useRef } from 'react';
 import { useState } from 'react';
-import '@toast-ui/editor/dist/toastui-editor.css'
-import '@toast-ui/editor/dist/theme/toastui-editor-dark.css'
+import '@toast-ui/editor/dist/toastui-editor.css';
+import '@toast-ui/editor/dist/theme/toastui-editor-dark.css';
 import codeSyntaxHighlight from '@toast-ui/editor-plugin-code-syntax-highlight';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
@@ -21,7 +21,6 @@ export default function FormEditor({
   const editorRef = useRef<Editor>(null);
   const theme = useTheme();
 
-
   function handleChange() {
     const dirty = editorRef?.current
       ? editorRef?.current.getInstance().getMarkdown()
@@ -29,7 +28,6 @@ export default function FormEditor({
     const clean = DOMPurify.sanitize(dirty, { FORBID_TAGS: ['img'] });
     onChange(clean);
   }
-
 
   useEffect(() => {
     //Set initial value this way because theres a character limit the other way when doing it via prop
@@ -40,7 +38,9 @@ export default function FormEditor({
   }, [editorRef?.current?.getInstance().getMarkdown(), initialValue]);
 
   return (
-    <Box className={`${theme.palette.mode == 'dark' ? 'toastui-editor-dark' : ''}`}>
+    <Box
+      className={`${theme.palette.mode == 'dark' ? 'toastui-editor-dark' : ''}`}
+    >
       <Editor
         height='auto'
         initialValue={initialValue}
