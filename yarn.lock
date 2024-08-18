@@ -3853,6 +3853,13 @@
   resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-14.5.2.tgz#db7257d727c891905947bd1c1a99da20e03c2ebd"
   integrity sha512-YAh82Wh4TIrxYLmfGcixwD18oIjyC1pFQC2Y01F2lzV2HTMiYrI0nze0FD0ocB//CKS/7jIUgae+adPqxK5yCQ==
 
+"@toast-ui/editor-plugin-code-syntax-highlight@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@toast-ui/editor-plugin-code-syntax-highlight/-/editor-plugin-code-syntax-highlight-3.1.0.tgz#3a8b537e03ec495bde8a25d2571a1c28caaa0a4b"
+  integrity sha512-OgX5pZiTnHREoTTXDAFu1k6RzEspGOxeJNRlt/Lnoi1GvLbIpUTTbBcls9becpXT/Qdls++8G3r5C60cVdellA==
+  dependencies:
+    prismjs "^1.23.0"
+
 "@toast-ui/editor@^3.2.2":
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/@toast-ui/editor/-/editor-3.2.2.tgz#1f2837271c5c9c3e29e090d7440bfc6ab23fb4c4"
@@ -11696,6 +11703,11 @@ pretty-hrtime@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/pretty-hrtime/-/pretty-hrtime-1.0.3.tgz#b7e3ea42435a4c9b2759d99e0f201eb195802ee1"
   integrity sha512-66hKPCr+72mlfiSjlEB1+45IjXSqvVAIy6mocupoww4tBFE9R9IhwwUGoI4G++Tc9Aq+2rxOt0RFU6gPcrte0A==
+
+prismjs@^1.23.0, prismjs@^1.29.0:
+  version "1.29.0"
+  resolved "https://registry.yarnpkg.com/prismjs/-/prismjs-1.29.0.tgz#f113555a8fa9b57c35e637bba27509dcf802dd12"
+  integrity sha512-Kx/1w86q/epKcmte75LNrEoT+lX8pBpavuAbvJWRXar7Hz8jrtF+e3vY751p0R8H9HdArwaCTNDDzHg/ScJK1Q==
 
 process-nextick-args@~2.0.0:
   version "2.0.1"

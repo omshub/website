@@ -1,3 +1,4 @@
+import { addUser, getUser } from '@backend/dbOperations';
 import backend from '@backend/index';
 import { useAlert } from '@context/AlertContext';
 import { useAuth } from '@context/AuthContext';
@@ -8,7 +9,8 @@ import {
   Review,
   TCourseId,
   TCourseName,
-  TNullable,
+  TNullableNumber,
+  TNullableString,
   TRatingScale,
   TSemesterId,
   TUserReviews,
@@ -38,19 +40,19 @@ import {
   useForm,
 } from 'react-hook-form';
 
-const { addReview, updateReview, addUser, getUser } = backend;
+const { addReview, updateReview } = backend;
 
 const DynamicEditor = dynamic(() => import('@components/FormEditor'), {
   ssr: false,
 });
 
 interface ReviewFormInputs {
-  year: TNullable<number>;
-  semesterId: TNullable<TSemesterId>;
+  year: TNullableNumber;
+  semesterId: TSemesterId | null;
   body: string;
-  workload: TNullable<number>;
-  overall: TNullable<TRatingScale>;
-  difficulty: TNullable<TRatingScale>;
+  workload: TNullableNumber | null;
+  overall: TRatingScale | null;
+  difficulty: TRatingScale | null;
 }
 
 type TPropsReviewForm = {
@@ -352,7 +354,7 @@ const ReviewForm = ({
             max: '168',
             required: true,
             validate: {
-              validateIsNumber: (value: TNullable<number>) =>
+              validateIsNumber: (value: TNullableNumber) =>
                 value ? value > 0 : false,
             },
           }}
@@ -441,8 +443,8 @@ const getYearRange = () => {
 };
 
 const validateSemesterYear = (
-  semester: TNullable<string>,
-  year: TNullable<number>,
+  semester: TNullableString,
+  year: TNullableNumber,
 ) => {
   if (semester && year) {
     const currentYear = new Date().getFullYear();
@@ -466,8 +468,8 @@ const validateSemesterYear = (
 const validateUserNotTakenCourse = (
   userReviews: TUserReviews | {},
   courseId: TCourseId,
-  semester: TNullable<string>,
-  year: TNullable<number>,
+  semester: TNullableString,
+  year: TNullableNumber,
 ) => {
   if (semester && year) {
     const objKey = `${courseId}-${year}-${mapSemsterIdToTerm[semester]}`;
