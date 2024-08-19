@@ -2,7 +2,7 @@ import backend from '@backend/index';
 import ReviewForm from '@components/ReviewForm';
 import { useAuth } from '@context/AuthContext';
 import { FirebaseAuthUser } from '@context/types';
-import { Review } from '@globals/types';
+import { Review, TNullable } from '@globals/types';
 import { getCourseDataStatic } from '@globals/utilities';
 import { PhotoCamera, ErrorOutline, Edit, Delete } from '@mui/icons-material';
 import stringWidth from 'string-width';
@@ -65,8 +65,8 @@ const ReviewCard = ({
   isGTVerifiedReviewer = false,
 }: Review) => {
   const router = useRouter();
-  const authContext: any | null = useAuth();
-  const user: FirebaseAuthUser | null = authContext.user;
+  const authContext: TNullable<any> = useAuth();
+  const user: TNullable<FirebaseAuthUser> = authContext.user;
   const timestamp = new Date(created).toLocaleDateString();
   const clipboardRef = useRef<HTMLDivElement>(null);
   const { name: courseName } = getCourseDataStatic(courseId);

@@ -5,6 +5,7 @@ import {
   TContextProviderProps,
   TSignInAction,
 } from '@context/types';
+import { TNullable } from '@globals/types';
 import { isGTEmail, isOutlookEmail } from '@globals/utilities';
 import {
   FacebookAuthProvider,
@@ -23,7 +24,7 @@ import router from 'next/router';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 export type TAuthContext = {
-  user: FirebaseAuthUser | null;
+  user: TNullable<FirebaseAuthUser>;
   loading: Boolean;
   signInWithProvider: TSignInAction;
   signWithMagic: TSignInAction;
@@ -33,13 +34,13 @@ export type TAuthContext = {
 // local storage key
 const EMAIL_FOR_SIGN_IN = 'emailForSignIn';
 
-const AuthContext = createContext<TAuthContext | null>(null);
+const AuthContext = createContext<TNullable<TAuthContext>>(null);
 
 export const useAuth = () => useContext(AuthContext);
 
 // eslint-disable-next-line no-undef
 export const AuthContextProvider = ({ children }: TContextProviderProps) => {
-  const [user, setUser] = useState<FirebaseAuthUser | null>(null);
+  const [user, setUser] = useState<TNullable<FirebaseAuthUser>>(null);
   const [loading, setLoading] = useState<Boolean>(true);
   const { setAlert } = useAlert();
 
@@ -47,7 +48,7 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
     setLoading(true);
     const unsubscribe = onAuthStateChanged(
       auth,
-      (user: FirebaseAuthUser | null) => {
+      (user: TNullable<FirebaseAuthUser>) => {
         if (user) {
           setUser(user);
           setLoading(false);

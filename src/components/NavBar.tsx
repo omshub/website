@@ -4,6 +4,7 @@ import ProfileMenu from '@components/ProfileMenu';
 import { useAuth } from '@context/AuthContext';
 import { useMenu } from '@context/MenuContext';
 import { FirebaseAuthUser } from '@context/types';
+import { TNullable } from '@globals/types';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -27,9 +28,9 @@ export interface MenuLinksProps {
 }
 
 export const NavBar = ({ ...props }: NavBarProps) => {
-  const authContext: any | null = useAuth();
-  const user: FirebaseAuthUser | null = authContext.user;
-  const loading: Boolean | null = authContext.loading;
+  const authContext: TNullable<any> = useAuth();
+  const user: TNullable<FirebaseAuthUser> = authContext.user;
+  const loading: TNullable<Boolean> = authContext.loading;
 
   const { handleLoginOpen } = useMenu();
 

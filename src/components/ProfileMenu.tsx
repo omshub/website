@@ -1,6 +1,7 @@
 import { useAuth } from '@context/AuthContext';
 import { useMenu } from '@context/MenuContext';
 import { FirebaseAuthUser } from '@context/types';
+import { TNullable } from '@globals/types';
 import Link from '@src/Link';
 
 import { isGTEmail } from '@globals/utilities';
@@ -13,7 +14,7 @@ export interface MenuLinksProps {
 const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
   const authContext = useAuth();
 
-  let user: FirebaseAuthUser | null = null;
+  let user: TNullable<FirebaseAuthUser> = null;
   let logout = () => {};
 
   if (authContext) {

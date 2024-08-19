@@ -47,17 +47,17 @@ const DynamicEditor = dynamic(() => import('@components/FormEditor'), {
 
 interface ReviewFormInputs {
   year: TNullable<number>;
-  semesterId: TSemesterId | null;
+  semesterId: TNullable<TSemesterId>;
   body: string;
-  workload: TNullable<number> | null;
-  overall: TRatingScale | null;
-  difficulty: TRatingScale | null;
+  workload: TNullable<number>;
+  overall: TNullable<TRatingScale>;
+  difficulty: TNullable<TRatingScale>;
 }
 
 type TPropsReviewForm = {
   courseId: TCourseId;
   courseName: TCourseName;
-  reviewInput: Review | null;
+  reviewInput: TNullable<Review>;
   handleReviewModalClose: () => void;
 };
 
@@ -87,9 +87,9 @@ const ReviewForm = ({
   reviewInput,
   handleReviewModalClose,
 }: TPropsReviewForm) => {
-  const authContext: any | null = useAuth();
+  const authContext: TNullable<any> = useAuth();
 
-  const user: FirebaseAuthUser | null = authContext.user;
+  const user: TNullable<FirebaseAuthUser> = authContext.user;
 
   const { setAlert } = useAlert();
   const [userReviews, setUserReviews] = useState<TUserReviews>({});

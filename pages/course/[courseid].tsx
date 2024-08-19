@@ -4,7 +4,13 @@ import ReviewForm from '@components/ReviewForm';
 import { useAuth } from '@context/AuthContext';
 import { FirebaseAuthUser } from '@context/types';
 import { DESC, EMOJI_NO_REVIEWS, REVIEW_ID } from '@globals/constants';
-import { Course, Review, TCourseId, TPayloadReviews } from '@globals/types';
+import {
+  Course,
+  Review,
+  TCourseId,
+  TPayloadReviews,
+  TNullable,
+} from '@globals/types';
 import { mapDynamicCoursesDataToCourses } from '@globals/utilities';
 import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
 import LinkIcon from '@mui/icons-material/Link';
@@ -84,8 +90,8 @@ const CourseId: NextPage<CoursePageProps> = ({
   const handleReviewModalOpen = () => setReviewModalOpen(true);
   const handleReviewModalClose = () => setReviewModalOpen(false);
 
-  const authContext: any | null = useAuth();
-  const user: FirebaseAuthUser | null = authContext.user;
+  const authContext: TNullable<any> = useAuth();
+  const user: TNullable<FirebaseAuthUser> = authContext.user;
 
   const theme = useTheme();
 
