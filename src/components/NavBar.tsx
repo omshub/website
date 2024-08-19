@@ -83,7 +83,6 @@ export const NavBar = ({ ...props }: NavBarProps) => {
               </Link>
             </Tooltip>
           </Box>
-
           <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
             {Object.keys(navigationMenuItems).map(
               (name: string, index: number) => (
@@ -126,15 +125,17 @@ export const NavBar = ({ ...props }: NavBarProps) => {
               </IconButton>
             </Tooltip>
             <Tooltip arrow title={`Website's Github`}>
-              <Link
-                variant='button'
-                color='inherit'
-                href={`https://github.com/omshub/website/`}
-                sx={{
-                  my: 1,
-                  mx: 1.5,
-                }}
-              >
+
+            <Link
+              variant='button'
+              color='inherit'
+              href={`https://github.com/omshub/website/`}
+              target='_blank'
+              sx={{
+                my: 1,
+                mx: 1.5,
+              }}
+            >
                 <GitHubIcon />
               </Link>
             </Tooltip>
