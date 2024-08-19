@@ -126,6 +126,7 @@ export const NavBar = ({ ...props }: NavBarProps) => {
               variant='button'
               color='inherit'
               href={`https://github.com/omshub/website/`}
+              target='_blank'
               sx={{
                 my: 1,
                 mx: 1.5,
