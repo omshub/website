@@ -71,7 +71,7 @@
     "@storybook/react": "^7.0.18",
     "@storybook/testing-library": "^0.2.2",
     "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^14.0.0",
+    "@testing-library/react": "^15.0.7",
     "@types/node": "^20.8.4",
     "@types/react": "^18.0.26",
     "babel-loader": "^9.1.2",
