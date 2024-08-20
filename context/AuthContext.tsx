@@ -5,6 +5,7 @@ import {
   TContextProviderProps,
   TSignInAction,
 } from '@context/types';
+import { TNullable } from '@globals/types';
 import { isGTEmail, isOutlookEmail } from '@globals/utilities';
 import {
   FacebookAuthProvider,
@@ -22,35 +23,43 @@ import {
 import router from 'next/router';
 import { createContext, useContext, useEffect, useState } from 'react';
 
-type TAuthContext = {
-  user: FirebaseAuthUser | null;
+export type TAuthContext = {
+  user: TNullable<FirebaseAuthUser>;
+  loading: Boolean;
   signInWithProvider: TSignInAction;
   signWithMagic: TSignInAction;
   logout: () => void;
 };
 
-const AuthContext = createContext<TAuthContext | null>(null);
+// local storage key
+const EMAIL_FOR_SIGN_IN = 'emailForSignIn';
+
+const AuthContext = createContext<TNullable<TAuthContext>>(null);
 
 export const useAuth = () => useContext(AuthContext);
 
 // eslint-disable-next-line no-undef
 export const AuthContextProvider = ({ children }: TContextProviderProps) => {
-  const [user, setUser] = useState<FirebaseAuthUser | null>(null);
+  const [user, setUser] = useState<TNullable<FirebaseAuthUser>>(null);
+  const [loading, setLoading] = useState<Boolean>(true);
   const { setAlert } = useAlert();
 
   useEffect(() => {
+    setLoading(true);
     const unsubscribe = onAuthStateChanged(
       auth,
-      (user: FirebaseAuthUser | null) => {
+      (user: TNullable<FirebaseAuthUser>) => {
         if (user) {
           setUser(user);
+          setLoading(false);
         } else {
           setUser(null);
+          setLoading(false);
         }
       },
     );
     // OAuth Providers
-    const email = window.localStorage.getItem('emailForSignIn');
+    const email = window.localStorage.getItem(EMAIL_FOR_SIGN_IN);
 
     if (isSignInWithEmailLink(auth, window.location.href) && !!email) {
       // Sign the user in
@@ -69,6 +78,7 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
   };
   const logout = async () => {
     setUser(null);
+    window.localStorage.removeItem(EMAIL_FOR_SIGN_IN);
     await signOut(auth);
     router.push('/');
   };
@@ -79,7 +89,7 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
       handleCodeInApp: true,
     }).then(() => {
       // Save the users email to verify it after they access their email
-      window.localStorage.setItem('emailForSignIn', email);
+      window.localStorage.setItem(EMAIL_FOR_SIGN_IN, email);
       const additionalInstructions =
         isGTEmail(email) || isOutlookEmail(email)
           ? ' NOTE: gatech.edu or outlook.com domain may require release from Quarantine. See https://security.microsoft.com/quarantine'
@@ -153,7 +163,7 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, signInWithProvider, signWithMagic, logout }}
+      value={{ user, loading, signInWithProvider, signWithMagic, logout }}
     >
       {children}
     </AuthContext.Provider>

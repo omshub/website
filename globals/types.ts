@@ -1,7 +1,6 @@
 /* --- TYPE DEFINITIONS --- */
 
-export type TNullableNumber = number | null;
-export type TNullableString = string | null;
+export type TNullable<T> = T | null;
 export type TObjectKey = string | number;
 
 export type TKeyMap = {
@@ -28,7 +27,7 @@ export interface CourseDataStatic {
   name: TCourseName;
   departmentId: TDepartmentId;
   courseNumber: string;
-  url: TNullableString; // url may be null (i.e., no existing page)
+  url: TNullable<string>; // url may be null (i.e., no existing page)
   aliases: string[];
   isDeprecated: boolean;
   isFoundational: boolean;
@@ -38,10 +37,10 @@ export interface CourseDataStatic {
 export interface CourseDataDynamic {
   courseId: TCourseId;
   numReviews: number;
-  avgWorkload: TNullableNumber;
-  avgDifficulty: TNullableNumber;
-  avgOverall: TNullableNumber;
-  avgStaffSupport: TNullableNumber;
+  avgWorkload: TNullable<number>;
+  avgDifficulty: TNullable<number>;
+  avgOverall: TNullable<number>;
+  avgStaffSupport: TNullable<number>;
   reviewsCountsByYearSem: TReviewsCountsByYearSemObject;
 }
 
@@ -56,7 +55,7 @@ export interface Review {
   reviewerId: string; // `userId` of review author
   isGTVerifiedReviewer: boolean;
   created: number; // Unix timestamp
-  modified: TNullableNumber; // Unix timestamp
+  modified: TNullable<number>; // Unix timestamp
   body: string;
   upvotes: number;
   downvotes: number;
@@ -78,14 +77,14 @@ export interface Review {
   programmingLanguagesIds?: TProgrammingLanguageId[];
   /* --- user background review data --- */
   preparation?: TRatingScale;
-  omsCoursesTaken?: TNullableNumber;
+  omsCoursesTaken?: TNullable<number>;
   hasRelevantWorkExperience?: boolean;
   experienceLevelId?: TExperienceLevelId;
   gradeId?: string;
 }
 
 export interface User {
-  userId: TNullableString; // invalid request returns null
+  userId: TNullable<string>; // invalid request returns null
   hasGTEmail: boolean;
   educationLevelId?: TEducationLevelId;
   subjectAreaId?: string;
@@ -403,6 +402,8 @@ export type TCourseId =
   | 'CS-8803-O15'
   | 'CS-8803-O16'
   | 'CS-8803-O17'
+  | 'CS-8803-O21'
+  | 'CS-8803-O22'
   | 'CS-8803-OC1'
   | 'CS-8813'
   | 'CSE-6040'
@@ -526,6 +527,8 @@ export type TCourseName =
   | 'Introduction to Computing Law'
   | 'Digital Health Equity'
   | 'Global Entrepreneurship'
+  | 'GPU Hardware and Software'
+  | 'Security Incident Response'
   | 'Security Operations and Incidence Response'
   | 'Malware Analysis and Defense'
   | 'Computing for Data Analysis: Methods and Tools'

@@ -1,11 +1,15 @@
 import backend from '@backend/index';
+import ReviewForm from '@components/ReviewForm';
 import { useAuth } from '@context/AuthContext';
 import { FirebaseAuthUser } from '@context/types';
-import { Review } from '@globals/types';
+import { Review, TNullable } from '@globals/types';
 import { getCourseDataStatic } from '@globals/utilities';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import { PhotoCamera, ErrorOutline, Edit, Delete } from '@mui/icons-material';
+import stringWidth from 'string-width';
+import remarkGfm from 'remark-gfm';
+import rehypeKatex from 'rehype-katex';
+import rehypeRaw from 'rehype-raw';
+import remarkMath from 'remark-math';
 import {
   Box,
   Button,
@@ -28,6 +32,7 @@ import {
 import { grey } from '@mui/material/colors';
 
 import { techGold } from '@src/colorPalette';
+
 import {
   mapDifficulty,
   mapOverall,
@@ -38,10 +43,7 @@ import {
 import { toBlob } from 'html-to-image';
 import { useRouter } from 'next/router';
 import { SyntheticEvent, useEffect, useRef, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import remarkGfm from 'remark-gfm';
-import stringWidth from 'string-width';
+import Markdown from 'react-markdown';
 
 const { deleteReview } = backend;
 
@@ -55,35 +57,37 @@ const ReviewCard = ({
   created,
   year,
   courseId,
+  reviewerId,
   isLegacy,
+  modified,
+  upvotes,
+  downvotes,
   isGTVerifiedReviewer = false,
 }: Review) => {
-  const authContext = useAuth();
   const router = useRouter();
-  const path = router.asPath;
-  const isUserReviewsView = path.includes('user');
-  let user: FirebaseAuthUser | null = null;
+  const authContext: TNullable<any> = useAuth();
+  const user: TNullable<FirebaseAuthUser> = authContext.user;
   const timestamp = new Date(created).toLocaleDateString();
+  const clipboardRef = useRef<HTMLDivElement>(null);
   const { name: courseName } = getCourseDataStatic(courseId);
   const [snackBarOpen, setSnackBarOpen] = useState<boolean>(false);
-  const clipboardRef = useRef<HTMLDivElement>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
   const [isFirefox, setIsFirefox] = useState<boolean>(false);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const handleReviewModalOpen = () => setReviewModalOpen(true);
+  const handleReviewModalClose = () => setReviewModalOpen(false);
+
   useEffect(() => {
     navigator.userAgent.match(`Firefox`)
       ? setIsFirefox(true)
       : setIsFirefox(false);
   }, []);
 
-  if (authContext) {
-    ({ user } = authContext);
-  }
   const handleClose = (event: SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
-
     setSnackBarOpen(false);
   };
 
@@ -95,8 +99,6 @@ const ReviewCard = ({
     await navigator.clipboard.write([clipboardItem]);
     setSnackBarOpen(true);
   };
-
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleDeleteDialogOpen = () => {
     setDeleteDialogOpen(true);
@@ -115,13 +117,22 @@ const ReviewCard = ({
     }
     setIsSubmitting(false);
   };
+
   return (
     <div ref={clipboardRef!}>
       <Card
+        color='inherit'
         sx={{
+          backgroundImage: 'none',
           p: 1,
-          borderRadius: '10px',
-          boxShadow: `0 5px 15px 0 ${grey[400]}`,
+          borderRadius: '15px',
+          boxShadow: `0 5px 10px 0 ${grey[500]}`,
+          '& a': {
+            color: '#6495ED',
+            '&:visited': {
+              color: '#8a2be2',
+            },
+          },
         }}
       >
         <CardContent>
@@ -142,18 +153,18 @@ const ReviewCard = ({
               alignItems='flex-start'
             >
               <Grid item xs={12}>
-                <Typography color='text.primary'>{courseId}</Typography>
+                <Typography variant='subtitle1'>{courseId}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography color='text.secondary'>{courseName}</Typography>
+                <Typography variant='subtitle1'>{courseName}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography color='text.secondary'>
+                <Typography variant='subtitle1'>
                   Taken {mapSemesterIdToName[semesterId]} {year}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography color='text.secondary'>
+                <Typography variant='subtitle1'>
                   Reviewed on {timestamp}
                 </Typography>
               </Grid>
@@ -182,7 +193,7 @@ const ReviewCard = ({
                 <Grid item>
                   <Chip
                     title='This review was originally collected on https://omscentral.com'
-                    icon={<ErrorOutlineIcon />}
+                    icon={<ErrorOutline />}
                     color='warning'
                     label='Legacy'
                     variant='outlined'
@@ -218,26 +229,26 @@ const ReviewCard = ({
               </Grid>
             </Grid>
           </Box>
-          <article>
-            <ReactMarkdown
-              remarkPlugins={[
-                [
-                  remarkGfm,
-                  { singleTilde: false },
-                  { stringLength: stringWidth },
-                ],
-              ]}
-              rehypePlugins={[rehypeRaw]}
-            >
-              {body}
-            </ReactMarkdown>
-          </article>
+          <Markdown
+            remarkPlugins={[
+              [
+                remarkGfm,
+                { singleTilde: false },
+                { stringLength: stringWidth },
+              ],
+              remarkMath,
+            ]}
+            rehypePlugins={[rehypeKatex, rehypeRaw]}
+          >
+            {body}
+          </Markdown>
+          {/* <Markdown>{body}</Markdown> */}
           <Grid textAlign='right'>
-            {/* Not User View */}
+            {/* Screenshot button*/}
             {!isFirefox && (
-              <Tooltip title='Screenshot Review'>
+              <Tooltip arrow title='Screenshot Review'>
                 <IconButton onClick={handleCopyToClipboard}>
-                  <PhotoCameraIcon />
+                  <PhotoCamera />
                 </IconButton>
               </Tooltip>
             )}
@@ -252,12 +263,51 @@ const ReviewCard = ({
               }
               message={'Screenshotted Review to Clipboard!'}
             />
-            {/* User Review View */}
-            {isUserReviewsView ? (
+            {!isLegacy && reviewerId == user?.uid ? (
               <>
+                {/* Update Button */}
+                <Tooltip title='Update review'>
+                  <IconButton onClick={handleReviewModalOpen}>
+                    <Edit />
+                  </IconButton>
+                </Tooltip>
+                <Dialog
+                  open={reviewModalOpen}
+                  onClose={handleReviewModalClose}
+                  maxWidth='md'
+                  keepMounted
+                  closeAfterTransition
+                  PaperProps={{ sx: { backgroundImage: 'none' } }}
+                >
+                  <ReviewForm
+                    {...{
+                      courseId,
+                      courseName,
+                      ['reviewInput']: {
+                        reviewId,
+                        body,
+                        overall,
+                        difficulty,
+                        workload,
+                        semesterId,
+                        created,
+                        year,
+                        courseId,
+                        reviewerId,
+                        isLegacy,
+                        isGTVerifiedReviewer,
+                        modified,
+                        upvotes,
+                        downvotes,
+                      },
+                      handleReviewModalClose,
+                    }}
+                  />
+                </Dialog>
+                {/* Delete Button */}
                 <Tooltip title='Delete Review'>
                   <IconButton onClick={handleDeleteDialogOpen}>
-                    <DeleteIcon />
+                    <Delete />
                   </IconButton>
                 </Tooltip>
                 <Dialog
@@ -273,7 +323,7 @@ const ReviewCard = ({
                   </DialogContent>
                   <DialogActions>
                     {isSubmitting ? (
-                      <CircularProgress />
+                      <CircularProgress color='secondary' />
                     ) : (
                       <>
                         <Button

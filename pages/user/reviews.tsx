@@ -2,15 +2,23 @@ import ReviewCard from '@components/ReviewCard';
 import { useAuth } from '@context/AuthContext';
 import { FirebaseAuthUser } from '@context/types';
 import { DESC, EMOJI_NO_REVIEWS, reviewFields } from '@globals/constants';
-import { Review, TUserReviews } from '@globals/types';
+import { Review, TUserReviews, TNullable } from '@globals/types';
 import { mapPayloadToArray } from '@src/utilities';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 
-import { addUser, getUser } from '@backend/dbOperations';
+import backend from '@backend/index';
 import { isGTEmail } from '@globals/utilities';
 
-import { Box, CircularProgress, Container, Grid, Typography } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Grid,
+  Typography,
+} from '@mui/material';
+
+const { addUser, getUser } = backend;
 
 const UserReviews: NextPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -19,7 +27,7 @@ const UserReviews: NextPage = () => {
 
   const [userReviews, setUserReviews] = useState<TUserReviews>({});
 
-  let user: FirebaseAuthUser | null = null;
+  let user: TNullable<FirebaseAuthUser> = null;
   if (authContext) {
     ({ user } = authContext);
   }

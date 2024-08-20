@@ -4,10 +4,21 @@ import ProfileMenu from '@components/ProfileMenu';
 import { useAuth } from '@context/AuthContext';
 import { useMenu } from '@context/MenuContext';
 import { FirebaseAuthUser } from '@context/types';
+import { TNullable } from '@globals/types';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { AppBar, Box, Button, Dialog, Toolbar, Tooltip, Typography } from '@mui/material';
-
-import { grey } from '@mui/material/colors';
+import {
+  IconButton,
+  AppBar,
+  Box,
+  Button,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import { useColorScheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 
 import Link from '@src/Link';
 interface NavBarProps {}
@@ -17,16 +28,11 @@ export interface MenuLinksProps {
 }
 
 export const NavBar = ({ ...props }: NavBarProps) => {
-  const authContext = useAuth();
+  const authContext: TNullable<any> = useAuth();
+  const user: TNullable<FirebaseAuthUser> = authContext.user;
+  const loading: TNullable<Boolean> = authContext.loading;
 
-  let user: FirebaseAuthUser | null = null;
-
-  if (authContext) {
-    ({ user } = authContext);
-  }
-
-  const { loginModalOpen, handleLoginModalOpen, handleLoginModalClose } =
-    useMenu();
+  const { handleLoginOpen } = useMenu();
 
   const navigationMenuItems: MenuLinksProps = {
     Recents: {
@@ -37,55 +43,57 @@ export const NavBar = ({ ...props }: NavBarProps) => {
   };
 
   const profileMenuItems: MenuLinksProps = {
-    // 'My Account': '/user/...',
+    // 'My Account': '/user/',
     'My Reviews': '/user/reviews',
   };
+
+  const theme = useTheme();
+  const { mode, setMode } = useColorScheme();
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
+        color={theme.palette.mode == 'dark' ? 'primary' : 'secondary'}
         position='static'
-        color='default'
         elevation={0}
-        sx={{
-          background: (theme) => `${theme.palette.common.white}`,
-          boxShadow: `0 5px 15px 0 ${grey[200]}`,
-        }}
         {...props}
       >
-        <Toolbar>
+        <Toolbar color='inherit'>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            <Link
-              variant='button'
-              color='text.primary'
-              href='/'
-              sx={{
-                display: { xs: 'none', md: 'flex' },
-                mr: 1,
-                textDecoration: 'unset',
-                '&:hover': { textDecoration: 'unset' },
-              }}
-            >
-              <Typography
-                variant='h6'
-                color='inherit'
-                noWrap
-                sx={{ flexGrow: 1 }}
+            <Tooltip arrow title={'Home'}>
+              <Link
+                variant='button'
+                color='secondary.contrastText'
+                href='/'
+                sx={{
+                  display: { xs: 'none', md: 'flex' },
+                  mr: 1,
+                  textDecoration: 'unset',
+                  '&:hover': { textDecoration: 'unset' },
+                }}
               >
-                OMSHub
-              </Typography>
-            </Link>
+                <Typography
+                  variant='h6'
+                  color='inherit'
+                  noWrap
+                  sx={{ flexGrow: 1 }}
+                >
+                  OMSHub
+                </Typography>
+              </Link>
+            </Tooltip>
           </Box>
           <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
             {Object.keys(navigationMenuItems).map(
               (name: string, index: number) => (
                 <Tooltip
+                  arrow
                   key={index}
                   title={`${navigationMenuItems[name][`tooltip`]}`}
                 >
                   <Link
                     variant='button'
-                    color='text.primary'
+                    color='inherit'
                     href={`${navigationMenuItems[name][`url`]}`}
                     key={index}
                     sx={{
@@ -98,46 +106,84 @@ export const NavBar = ({ ...props }: NavBarProps) => {
                 </Tooltip>
               ),
             )}
+            <Tooltip arrow title={`${theme.palette.mode} mode`}>
+              <IconButton
+                sx={{
+                  p: 0,
+                  height: '100%',
+                  my: 1,
+                  mx: 1.5,
+                }}
+                onClick={() => setMode(mode == 'light' ? 'dark' : 'light')}
+                color='inherit'
+              >
+                {theme.palette.mode === 'dark' ? (
+                  <Brightness7Icon />
+                ) : (
+                  <Brightness4Icon />
+                )}
+              </IconButton>
+            </Tooltip>
+            <Tooltip arrow title={`Website's Github`}>
+
             <Link
               variant='button'
-              color='text.primary'
+              color='inherit'
               href={`https://github.com/omshub/website/`}
+              target='_blank'
               sx={{
                 my: 1,
                 mx: 1.5,
               }}
             >
-              <Tooltip title={`Website's Github`}>
                 <GitHubIcon />
-              </Tooltip>
-            </Link>
+              </Link>
+            </Tooltip>
           </Box>
           <MobileMenu {...navigationMenuItems} />
+          <Box sx={{ flexGrow: 0, display: { xs: 'flex', md: 'none' }, m: 0 }}>
+            <IconButton
+              sx={{
+                p: 0,
+                height: '100%',
+                my: 1,
+                mx: 1.5,
+              }}
+              onClick={() => setMode(mode == 'light' ? 'dark' : 'light')}
+              color='inherit'
+            >
+              {theme.palette.mode === 'dark' ? (
+                <Brightness7Icon />
+              ) : (
+                <Brightness4Icon />
+              )}
+            </IconButton>
+          </Box>
           {/* User Profile Side */}
-          {!user ? (
+          {!loading ? (
             <>
-              <Button
-                disableRipple
-                onClick={handleLoginModalOpen}
-                variant='outlined'
-                sx={{ my: 1, mx: 1.5 }}
-              >
-                Login
-              </Button>
-              <Dialog
-                aria-labelledby='spring-modal-title'
-                aria-describedby='spring-modal-description'
-                open={loginModalOpen}
-                onClose={handleLoginModalClose}
-                closeAfterTransition
-              >
-                <Login />
-              </Dialog>
+              {' '}
+              {!user ? (
+                <>
+                  <Button
+                    disableRipple
+                    onClick={handleLoginOpen}
+                    color='inherit'
+                    variant='outlined'
+                    sx={{ my: 1, mx: 1.5 }}
+                  >
+                    Login
+                  </Button>
+                  <Login />
+                </>
+              ) : (
+                <Box sx={{ flexGrow: 0 }}>
+                  <ProfileMenu {...profileMenuItems} />
+                </Box>
+              )}
             </>
           ) : (
-            <Box sx={{ flexGrow: 0 }}>
-              <ProfileMenu {...profileMenuItems} />
-            </Box>
+            <Box width={88} height={44}></Box>
           )}
         </Toolbar>
       </AppBar>

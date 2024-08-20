@@ -1,8 +1,17 @@
 import { MenuLinksProps } from '@components/NavBar';
 import { useMenu } from '@context/MenuContext';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Container, IconButton, Menu, MenuItem } from '@mui/material';
+import {
+  Box,
+  Container,
+  Drawer,
+  IconButton,
+  ListItemButton,
+  Stack,
+  Typography,
+} from '@mui/material';
 import Link from '@src/Link';
+import CloseIcon from '@mui/icons-material/Close';
 
 const MobileMenu = (navigationMenuItems: MenuLinksProps) => {
   const {
@@ -12,10 +21,10 @@ const MobileMenu = (navigationMenuItems: MenuLinksProps) => {
   } = useMenu();
 
   // const isMobileNavMenuOpen = Boolean(mobileNavMenuAnchorEl)
-  const menuId = 'mobile-navigation-menu';
   return (
     <>
       <Container
+        color='secondary'
         sx={{ flexGrow: 0, display: { xs: 'flex', md: 'none' }, m: 0 }}
       >
         <IconButton
@@ -28,66 +37,64 @@ const MobileMenu = (navigationMenuItems: MenuLinksProps) => {
         >
           <MenuIcon />
         </IconButton>
-        <Menu
-          id={menuId}
-          anchorEl={mobileNavMenuAnchorEl}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
+        <Drawer
+          hideBackdrop
+          PaperProps={{
+            sx: { width: '100%', boxShadow: 'none', backgroundImage: 'none' },
           }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          keepMounted
           open={Boolean(mobileNavMenuAnchorEl)}
           onClose={handleMobileNavMenuClose}
-          sx={{
-            display: { xs: 'block', md: 'none' },
-          }}
         >
-          <MenuItem onClick={handleMobileNavMenuClose}>
-            <Link
-              color='text.primary'
-              href={`/`}
-              sx={{
-                my: 1,
-                mx: 1.5,
-              }}
+          <Box m={2} p={4}>
+            <Stack
+              direction='column'
+              justifyContent={'space-evenly'}
+              spacing={6}
             >
-              {`Home`}
-            </Link>
-          </MenuItem>
-          {Object.keys(navigationMenuItems).map(
-            (name: string, index: number) => (
-              <MenuItem key={index} onClick={handleMobileNavMenuClose}>
-                <Link
-                  color='text.primary'
-                  href={navigationMenuItems[name][`url`]}
-                  key={index}
-                  sx={{
-                    my: 1,
-                    mx: 1.5,
-                  }}
-                >
-                  {name}
+              <Typography
+                style={{ marginBottom: '20px' }}
+                variant='h4'
+                component='div'
+                gutterBottom
+              >
+                NAVIGATION
+              </Typography>
+              <ListItemButton onClick={handleMobileNavMenuClose}>
+                <Link color='inherit' href={`/`}>
+                  {`Home`}
                 </Link>
-              </MenuItem>
-            ),
-          )}
-          <MenuItem>
-            <Link
-              color='text.primary'
-              href={`https://github.com/omshub/website/`}
-              sx={{
-                my: 1,
-                mx: 1.5,
-              }}
-            >
-              {`Github`}
-            </Link>
-          </MenuItem>
-        </Menu>
+              </ListItemButton>
+              {Object.keys(navigationMenuItems).map(
+                (name: string, index: number) => (
+                  <ListItemButton
+                    key={index}
+                    onClick={handleMobileNavMenuClose}
+                  >
+                    <Link
+                      color='inherit'
+                      href={navigationMenuItems[name][`url`]}
+                      key={index}
+                    >
+                      {name}
+                    </Link>
+                  </ListItemButton>
+                ),
+              )}
+              <ListItemButton>
+                <Link
+                  color='inherit'
+                  href={`https://github.com/omshub/website/`}
+                >
+                  {`Github`}
+                </Link>
+              </ListItemButton>
+              <CloseIcon
+                sx={{ width: '100%' }}
+                onClick={handleMobileNavMenuClose}
+              />
+            </Stack>
+          </Box>
+        </Drawer>
       </Container>
     </>
   );

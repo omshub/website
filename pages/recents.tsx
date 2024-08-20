@@ -4,7 +4,13 @@ import { REVIEWS_RECENT_LEN } from '@globals/constants';
 import { Review } from '@globals/types';
 import type { NextPage } from 'next';
 
-import { Box, CircularProgress, Container, Grid, Typography } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Grid,
+  Typography,
+} from '@mui/material';
 
 const { getReviewsRecent } = backend;
 
@@ -23,10 +29,10 @@ const Recents: NextPage<RecentsProps> = ({ reviewsRecent }) => (
         alignItems: 'center',
       }}
     >
-      <Typography variant='h4' color='text.secondary' gutterBottom>
+      <Typography variant='h4' gutterBottom>
         {`Recent Reviews`}
       </Typography>
-      <Typography variant='subtitle1' color='text.secondary' gutterBottom>
+      <Typography variant='subtitle1' gutterBottom>
         {`A Dynamic List of the ${REVIEWS_RECENT_LEN} Most Recent Reviews`}
       </Typography>
       {!reviewsRecent ? (
