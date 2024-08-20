@@ -17,6 +17,9 @@ jobs:
       pull-requests: write
 
     steps:
-    - uses: actions/labeler@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Add label
+      uses: actions/labeler@v4
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"

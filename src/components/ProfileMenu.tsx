@@ -1,6 +1,7 @@
 import { useAuth } from '@context/AuthContext';
 import { useMenu } from '@context/MenuContext';
 import { FirebaseAuthUser } from '@context/types';
+import { TNullable } from '@globals/types';
 import Link from '@src/Link';
 
 import { isGTEmail } from '@globals/utilities';
@@ -13,7 +14,7 @@ export interface MenuLinksProps {
 const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
   const authContext = useAuth();
 
-  let user: FirebaseAuthUser | null = null;
+  let user: TNullable<FirebaseAuthUser> = null;
   let logout = () => {};
 
   if (authContext) {
@@ -24,18 +25,18 @@ const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
     useMenu();
 
   const isGatech = isGTEmail(user?.email!);
-  const BuzzProfile = 'buzz-profile.jpg';
-  const LamaProfile = 'lama-profile.png';
+  const BuzzProfile = '/buzz-profile.jpg';
+  const LamaProfile = '/lama-profile.png';
   const isProfileMenuOpen = Boolean(profileMenuAnchorEl);
   const menuId = 'primary-search-account-menu';
   return (
     <>
-      <Container sx={{color:'inherit'}}>
+      <Container sx={{ color: 'inherit' }}>
         <Tooltip arrow title='Profile Menu'>
           <Avatar
             aria-controls={menuId}
             onClick={handleProfileMenuOpen}
-            src={user?.photoURL ?? (isGatech ? BuzzProfile : LamaProfile) }
+            src={user?.photoURL ?? (isGatech ? BuzzProfile : LamaProfile)}
           />
         </Tooltip>
         <Menu

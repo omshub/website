@@ -1,4 +1,4 @@
-import { TCourseId, TNullableNumber } from '@globals/types';
+import { TCourseId, TNullable } from '@globals/types';
 const LEN_SIMPLE_COURSE_NUMBER = 5; //   DD-CCCC-...     (e.g., CS-6200-...)     [total 5 * `-`]
 const LEN_COMPOUND_COURSE_NUMBER = 6; // DD-CCCC-CCC-... (e.g., CS-8803-O08-...) [total 6 * `-`]
 const SEPARATOR_TOKEN = '-';
@@ -44,7 +44,7 @@ export const parseReviewId = (reviewId: string) => {
 };
 
 export type TAveragesData = {
-  oldAverage?: TNullableNumber;
+  oldAverage?: TNullable<number>;
   oldCount?: number;
   newCount: number;
   oldValue?: number;
@@ -87,10 +87,10 @@ export const updateAverage = ({
 type TAveragesInputData = {
   courseId: TCourseId;
   // N.B. `avg`s are null when `numReviews` === 0
-  avgWorkload?: TNullableNumber;
-  avgDifficulty?: TNullableNumber;
-  avgOverall?: TNullableNumber;
-  avgStaffSupport?: TNullableNumber;
+  avgWorkload?: TNullable<number>;
+  avgDifficulty?: TNullable<number>;
+  avgOverall?: TNullable<number>;
+  avgStaffSupport?: TNullable<number>;
   oldWorkload?: number;
   oldDifficulty?: number;
   oldOverall?: number;

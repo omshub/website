@@ -6,10 +6,10 @@ import { FirebaseAuthUser } from '@context/types';
 import { SEMESTER_ID } from '@globals/constants';
 
 import {
-  Course,
+  Review,
   TCourseId,
-  TNullableNumber,
-  TNullableString,
+  TCourseName,
+  TNullable,
   TRatingScale,
   TSemesterId,
   TUserReviews,
@@ -39,23 +39,25 @@ import {
   useForm,
 } from 'react-hook-form';
 
-const { addReview } = backend;
+const { addReview, updateReview } = backend;
 
 const DynamicEditor = dynamic(() => import('@components/FormEditor'), {
   ssr: false,
 });
 
 interface ReviewFormInputs {
-  year: TNullableNumber;
-  semesterId: TSemesterId | null;
+  year: TNullable<number>;
+  semesterId: TNullable<TSemesterId>;
   body: string;
-  workload: TNullableNumber;
-  overall: TRatingScale | null;
-  difficulty: TRatingScale | null;
+  workload: TNullable<number>;
+  overall: TNullable<TRatingScale>;
+  difficulty: TNullable<TRatingScale>;
 }
 
 type TPropsReviewForm = {
-  courseData: Course;
+  courseId: TCourseId;
+  courseName: TCourseName;
+  reviewInput: TNullable<Review>;
   handleReviewModalClose: () => void;
 };
 
@@ -64,51 +66,50 @@ type TSemesterMap = {
   [semesterId in TSemesterId]: Date;
 };
 
+const fallbackDates = {
+  sp: 'Feb 01',
+  sm: 'June 01',
+  fa: 'Sept 01',
+};
+
+const ReviewFormDefaults: DefaultValues<ReviewFormInputs> = {
+  year: null,
+  semesterId: null,
+  body: ' ',
+  workload: null,
+  overall: null,
+  difficulty: null,
+};
+
 const ReviewForm = ({
-  courseData,
+  courseId,
+  courseName,
+  reviewInput,
   handleReviewModalClose,
 }: TPropsReviewForm) => {
-  const authContext = useAuth();
+  const authContext: TNullable<any> = useAuth();
 
-  let user: FirebaseAuthUser | null = null;
-
-  if (authContext) {
-    ({ user } = authContext);
-  }
+  const user: TNullable<FirebaseAuthUser> = authContext.user;
 
   const { setAlert } = useAlert();
   const [userReviews, setUserReviews] = useState<TUserReviews>({});
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const router = useRouter();
 
   const yearRange = getYearRange();
 
-  const ReviewFormDefaults: DefaultValues<ReviewFormInputs> = {
-    year: null,
-    semesterId: null,
-    body: ' ',
-    workload: null,
-    overall: null,
-    difficulty: null,
-  };
-
-  const fallbackDates = {
-    sp: 'Feb 01',
-    sm: 'June 01',
-    fa: 'Sept 01',
-  };
   const {
     control,
     handleSubmit,
     getValues,
-    clearErrors,
     trigger,
-    formState: { errors, isDirty, isValid },
+    reset,
+    setValue,
+    formState: { errors, isDirty, isValid, isSubmitting },
   } = useForm<ReviewFormInputs>({
-    mode: 'all',
+    mode: 'onChange',
     reValidateMode: 'onChange',
-    defaultValues: ReviewFormDefaults,
     resolver: undefined,
+    defaultValues: ReviewFormDefaults,
     context: undefined,
     criteriaMode: 'firstError',
     shouldFocusError: true,
@@ -117,54 +118,54 @@ const ReviewForm = ({
   const onSubmit: SubmitHandler<ReviewFormInputs> = async (
     data: ReviewFormInputs,
   ) => {
-    setIsSubmitting(true);
     const isGoodSubmission = await trigger();
 
     const hasNonNullDataValues = Boolean(
-      data.year &&
+      courseId &&
+        data.year &&
         data.semesterId &&
         data.difficulty &&
         data.overall &&
         data.workload,
     );
 
-    if (
-      isGoodSubmission &&
-      courseData &&
-      user &&
-      user.uid &&
-      user.email &&
-      hasNonNullDataValues
-    ) {
+    const isLoggedIn = Boolean(user && user.uid && user.email);
+
+    if (isGoodSubmission && isLoggedIn && hasNonNullDataValues) {
       const currentTime = Date.now();
-      const courseId = courseData.courseId;
       const semesterId = data.semesterId as TSemesterId;
       const year = Number(data.year);
-      const reviewerId = user.uid;
+      const body = data.body;
+      const reviewerId = user?.uid!;
       const reviewId = `${courseId}-${data.year}-${mapSemsterIdToTerm[semesterId]}-${currentTime}`;
       const workload = Number(data.workload);
       const difficulty = Number(data.difficulty) as TRatingScale;
       const overall = Number(data.overall) as TRatingScale;
-      const isGTVerifiedReviewer = isGTEmail(user.email);
+      const isGTVerifiedReviewer = isGTEmail(user?.email!);
 
       const reviewValues = {
-        ...data,
-        courseId,
-        reviewerId,
-        reviewId,
-        ['created']: currentTime,
+        ['courseId']: reviewInput ? reviewInput.courseId : courseId,
+        ['reviewerId']: reviewInput ? reviewInput.reviewerId : reviewerId,
+        ['reviewId']: reviewInput ? reviewInput.reviewId : reviewId,
+        ['created']: reviewInput ? reviewInput.created : currentTime,
         ['modified']: currentTime,
-        semesterId,
-        upvotes: 0,
-        downvotes: 0,
-        isLegacy: false,
-        year,
+        ['semesterId']: reviewInput ? reviewInput.semesterId : semesterId,
+        ['upvotes']: reviewInput ? reviewInput.upvotes : 0,
+        ['downvotes']: reviewInput ? reviewInput.downvotes : 0,
+        ['isLegacy']: reviewInput ? reviewInput.isLegacy : false,
+        ['year']: reviewInput ? reviewInput.year : year,
+        ['isGTVerifiedReviewer']: reviewInput
+          ? reviewInput.isGTVerifiedReviewer
+          : isGTVerifiedReviewer,
+        body,
         workload,
         difficulty,
         overall,
-        isGTVerifiedReviewer,
       };
-      await addReview(user.uid, reviewId, reviewValues);
+
+      reviewInput?.reviewId
+        ? await updateReview(user?.uid!, reviewInput?.reviewId, reviewValues)
+        : await addReview(user?.uid!, reviewId, reviewValues);
 
       setAlert({
         severity: 'success',
@@ -175,25 +176,26 @@ const ReviewForm = ({
       handleReviewModalClose();
       router.reload();
     }
-    setIsSubmitting(false);
   };
 
   useEffect(() => {
-    if (user) {
-      getUser(user.uid).then((results) => {
-        if (results.userId) {
-          setUserReviews(results['reviews']);
-        } else if (user && user.uid && user.email) {
-          const hasGTEmail = isGTEmail(user.email);
-          addUser(user.uid, hasGTEmail);
-          setUserReviews({});
-        }
-      });
-    } else {
-      setUserReviews({});
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    getUser(user?.uid!).then((results) => {
+      if (results.userId) {
+        setUserReviews(results['reviews']);
+      } else if (user && user.uid && user.email) {
+        const hasGTEmail = isGTEmail(user.email);
+        addUser(user.uid, hasGTEmail);
+        setUserReviews({});
+      } else {
+        setUserReviews({});
+      }
+    });
   }, [user]);
+
+  useEffect(() => {
+    reset({ ...reviewInput });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reviewInput, reset]);
 
   return (
     <Grid
@@ -203,23 +205,30 @@ const ReviewForm = ({
       sx={{ px: 5, py: 10, backgroundImage: 'none' }}
       justifyContent='center'
     >
-      <Typography variant='h6'>{`Add Review for ${courseData.courseId}: ${courseData.name}`}</Typography>
+      <Typography variant='h6'>{`Add Review for ${courseId}: ${courseName}`}</Typography>
       <Grid item xs={12} lg={12}>
         <TextField
           disabled
           fullWidth
           id='review-form-course-name'
           label='Course Name'
-          defaultValue={courseData.courseId}
+          defaultValue={`${courseId}: ${courseName}`}
         />
       </Grid>
       <Grid item xs={12} lg={12}>
-        <InputLabel id='review-form-year' sx={{color:'inherit'}}>Year</InputLabel>
+        <InputLabel id='review-form-year' sx={{ color: 'inherit' }}>
+          Year
+        </InputLabel>
         <Controller
           control={control}
           name='year'
           render={({ field }) => (
-            <Select {...field} fullWidth error={Boolean(errors.year)}>
+            <Select
+              {...field}
+              disabled={reviewInput?.reviewId ? true : false}
+              fullWidth
+              error={Boolean(errors.year)}
+            >
               {yearRange.map((year) => {
                 return (
                   <MenuItem key={year} value={year}>
@@ -231,31 +240,27 @@ const ReviewForm = ({
           )}
           rules={{
             required: true,
-            validate: {
-              validateYearGivenSemester: (year) => {
-                if (year != getValues()?.year) {
-                  clearErrors(SEMESTER_ID);
-                }
-
-                return validateSemesterYear(getValues()?.semesterId, year);
-              },
-              validateNotTakenCourse: (year) => {
-                clearErrors(SEMESTER_ID);
-
-                return validateUserNotTakenCourse(
-                  userReviews,
-                  courseData.courseId,
-                  getValues()?.semesterId,
-                  year,
-                );
-              },
-            },
+            validate: reviewInput?.reviewId
+              ? {}
+              : {
+                  validateYearGivenSemester: (year) => {
+                    return validateSemesterYear(getValues()?.semesterId, year);
+                  },
+                  validateNotTakenCourse: (year) => {
+                    return validateUserNotTakenCourse(
+                      userReviews,
+                      courseId,
+                      getValues()?.semesterId,
+                      year,
+                    );
+                  },
+                },
           }}
         ></Controller>
         {errors.year && errors.year.type === 'validateYearGivenSemester' && (
           <Alert severity='error'>{`Please wait until ${
             fallbackDates[getValues()?.semesterId!]
-          } to review ${courseData?.courseId} for semester ${
+          } to review ${courseId} for semester ${
             mapSemesterIdToName[`${getValues()?.semesterId!}`]
           } ${getValues()['year']}`}</Alert>
         )}
@@ -266,12 +271,19 @@ const ReviewForm = ({
         )}
       </Grid>
       <Grid item xs={12} lg={12}>
-        <InputLabel id='review-form-semester' sx={{color:'inherit'}}>Semester</InputLabel>
+        <InputLabel id='review-form-semester' sx={{ color: 'inherit' }}>
+          Semester
+        </InputLabel>
         <Controller
           control={control}
           name={SEMESTER_ID}
           render={({ field }) => (
-            <Select fullWidth {...field} error={Boolean(errors.semesterId)}>
+            <Select
+              disabled={reviewInput?.reviewId ? true : false}
+              fullWidth
+              {...field}
+              error={Boolean(errors.semesterId)}
+            >
               <MenuItem value={'sp'}>Spring</MenuItem>
               <MenuItem value={'sm'}>Summer</MenuItem>
               <MenuItem value={'fa'}>Fall</MenuItem>
@@ -279,30 +291,28 @@ const ReviewForm = ({
           )}
           rules={{
             required: true,
-            validate: {
-              validateSemesterGivenYear: (semester) => {
-                if (semester != getValues()?.semesterId) {
-                  clearErrors('year');
-                }
-                return validateSemesterYear(semester, getValues()['year']);
-              },
-              validateNotTakenCourse: (semester) => {
-                clearErrors('year');
-                return validateUserNotTakenCourse(
-                  userReviews,
-                  courseData.courseId,
-                  semester,
-                  getValues()?.year,
-                );
-              },
-            },
+            validate: reviewInput?.reviewId
+              ? {}
+              : {
+                  validateSemesterGivenYear: (semester) => {
+                    return validateSemesterYear(semester, getValues()['year']);
+                  },
+                  validateNotTakenCourse: (semester) => {
+                    return validateUserNotTakenCourse(
+                      userReviews,
+                      courseId,
+                      semester,
+                      getValues()?.year,
+                    );
+                  },
+                },
           }}
         ></Controller>
         {errors.semesterId &&
           errors.semesterId.type === 'validateSemesterGivenYear' && (
             <Alert severity='error'>{`Please wait until ${
               fallbackDates[getValues()?.semesterId!]
-            } to review ${courseData?.courseId} for semester ${
+            } to review ${courseId} for semester ${
               mapSemesterIdToName[`${getValues()?.semesterId!}`]
             } ${getValues()?.year!}`}</Alert>
           )}
@@ -312,14 +322,15 @@ const ReviewForm = ({
           )}
       </Grid>
       <Grid item xs={12} lg={12}>
-        <InputLabel id='review-form-workload' sx={{color:'inherit'}}>Workload</InputLabel>
+        <InputLabel id='review-form-workload' sx={{ color: 'inherit' }}>
+          Workload
+        </InputLabel>
         <Controller
           control={control}
           name='workload'
           render={({ field }) => (
             <TextField
               {...field}
-              defaultValue={undefined}
               type='number'
               onChange={(event: any) => {
                 const double = parseFloat(event.target.value);
@@ -342,7 +353,7 @@ const ReviewForm = ({
             max: '168',
             required: true,
             validate: {
-              validateIsNumber: (value: TNullableNumber) =>
+              validateIsNumber: (value: TNullable<number>) =>
                 value ? value > 0 : false,
             },
           }}
@@ -386,7 +397,7 @@ const ReviewForm = ({
         ></Controller>
       </Grid>
       <Grid item xs={12} lg={12}>
-        <Typography sx={{ mb: 1, color:'inherit' }} component='legend'>
+        <Typography sx={{ mb: 1, color: 'inherit' }} component='legend'>
           Review
         </Typography>
         <Controller
@@ -394,23 +405,25 @@ const ReviewForm = ({
           name='body'
           render={({ field }) => (
             <DynamicEditor
-              {...field}
-              initialValue={ReviewFormDefaults.body || ' '}
+              onChange={(body: any) => {
+                setValue('body', body, { shouldDirty: true });
+              }}
+              initialValue={field.value}
             />
           )}
         ></Controller>
       </Grid>
       <Grid textAlign='center' item xs={12} lg={12}>
         {isSubmitting ? (
-          <CircularProgress />
+          <CircularProgress color='secondary' />
         ) : (
           <Button
             disabled={!isDirty || !isValid || isSubmitting}
-            sx={{color:'inherit'}}
             variant='contained'
+            color='secondary'
             onClick={handleSubmit(onSubmit)}
           >
-            Submit
+            {reviewInput?.reviewId ? `Update` : `Submit`}
           </Button>
         )}
       </Grid>
@@ -429,8 +442,8 @@ const getYearRange = () => {
 };
 
 const validateSemesterYear = (
-  semester: TNullableString,
-  year: TNullableNumber,
+  semester: TNullable<string>,
+  year: TNullable<number>,
 ) => {
   if (semester && year) {
     const currentYear = new Date().getFullYear();
@@ -454,8 +467,8 @@ const validateSemesterYear = (
 const validateUserNotTakenCourse = (
   userReviews: TUserReviews | {},
   courseId: TCourseId,
-  semester: TNullableString,
-  year: TNullableNumber,
+  semester: TNullable<string>,
+  year: TNullable<number>,
 ) => {
   if (semester && year) {
     const objKey = `${courseId}-${year}-${mapSemsterIdToTerm[semester]}`;

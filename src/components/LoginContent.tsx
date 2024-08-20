@@ -2,7 +2,14 @@ import { useAuth } from '@context/AuthContext';
 import { useMenu } from '@context/MenuContext';
 import { TSignInAction } from '@context/types';
 import { TProviderName } from '@globals/types';
-import { Stack, TextField, Typography, Box, Drawer, useMediaQuery } from '@mui/material';
+import {
+  Stack,
+  TextField,
+  Typography,
+  Box,
+  Drawer,
+  useMediaQuery,
+} from '@mui/material';
 import type { NextPage } from 'next';
 import { useState } from 'react';
 import SocialButton from '@components/SocialButton';
@@ -36,25 +43,32 @@ const Login: NextPage = () => {
 
   return (
     <Drawer
-    PaperProps={{ sx:{ width:`${isDesktop ? 'auto': '100%'}`, boxShadow: '0 0px 5px 0 #bdbdbd', backgroundImage: 'none'}}}
-    ModalProps={{ onBackdropClick: handleLoginClose }}
-    open={loginOpen}
-    onClose={handleLoginClose}
-    anchor={'right'}
+      PaperProps={{
+        sx: {
+          width: `${isDesktop ? 'auto' : '100%'}`,
+          boxShadow: '0 0px 5px 0 #bdbdbd',
+          backgroundImage: 'none',
+        },
+      }}
+      ModalProps={{ onBackdropClick: handleLoginClose }}
+      open={loginOpen}
+      onClose={handleLoginClose}
+      anchor={'right'}
     >
-      <Box
-          m={2}
-          p={4}
+      <Box m={2} p={4}>
+        <Stack
+          direction='column'
+          justifyContent={'space-evenly'}
+          spacing={isDesktop ? 8 : 6}
         >
-        <Stack direction="column"  justifyContent={"space-evenly"} spacing={isDesktop ? 8: 6}>
-        <Typography
-        style={{ marginBottom: '20px' }}
-        variant='h4'
-        component='div'
-        gutterBottom
-      >
-        LOGIN
-      </Typography>
+          <Typography
+            style={{ marginBottom: '20px' }}
+            variant='h4'
+            component='div'
+            gutterBottom
+          >
+            LOGIN
+          </Typography>
           <TextField
             onChange={handleEmailChange}
             onKeyPress={handleKeyPress}
@@ -73,9 +87,9 @@ const Login: NextPage = () => {
               ></SocialButton>
             </>
           ))}
-          <Box
-          mt={2}
-        ><CloseIcon sx={{width:"100%"}} onClick={handleLoginClose}/></Box>
+          <Box mt={2}>
+            <CloseIcon sx={{ width: '100%' }} onClick={handleLoginClose} />
+          </Box>
         </Stack>
       </Box>
     </Drawer>
