@@ -10,12 +10,15 @@ coreData
   /courses: <TPayloadCourses>
 
 recentsData
-  /_aggregateData/data: <Review[]>
-  /{courseId}/data: <Review[]>
+  /_aggregateData
+    /data: <Review[]>
+  /{courseId}
+    /data: <Review[]>
 
 reviewsData
   /{courseId}
-    /{year}-{SemesterTerm}/data: <TPayloadReviews>
+    /{year}-{SemesterTerm}
+      /data: <TPayloadReviews>
 
 usersData
   /{userId}: <User>
@@ -25,7 +28,8 @@ usersData
 
 ## Seeding a Firebase project
 
-***Note***: All paths indicated in this section are relative to the top-level directory (i.e., `website`). Furthermore, all commands (i.e., `yarn ...`) should also be issued from the top-level directory accordingly.
+> [!NOTE]
+> All paths indicated in this section are relative to the top-level directory (i.e., `website`). Furthermore, all commands (i.e., `yarn ...`) should also be issued from the top-level directory accordingly.
 
 ### Seeding or updating a cloud Firebase project
 
@@ -35,7 +39,8 @@ To seed the data in a development cloud-based Firebase Firestore database, defin
 yarn fb:seed-db-cloud
 ```
 
-***NOTE***: Do **NOT** use this method in **production**!!! Production Firebase database must be updated manually via the Firebase UI/console; otherwise, this seeding approach will wipe all of the live data **without** ability to recover it!
+> [!WARNING]
+> Do **NOT** use this method in **production**!!! Production Firebase database must be updated manually via the Firebase UI/console; otherwise, this seeding approach will wipe all of the live data **without** ability to recover it!
 
 ### Seeding or updating local *Firebase Emulator Suite*
 
@@ -53,7 +58,7 @@ To update the local Firebase emulator suite seed data (e.g., on new course addit
 }
 ```
 
-Next, launch the emulator suite with the following commands:
+Next, define `/__seed__/.env.js` accordingly (cf. `/__seed__/.example.env.js` for reference), and then launch the emulator suite with the following commands:
 
 ```bash
 yarn install
@@ -78,7 +83,8 @@ This will update the corresponding files in directory `/__seed__/firebase-seed`.
 
 ## Adding a new course
 
-***Note***: All paths indicated here are relative to the top-level directory (i.e., `website`).
+> [!NOTE]
+> All paths indicated here are relative to the top-level directory (i.e., `website`).
 
 To add a new course, update the following files:
 
