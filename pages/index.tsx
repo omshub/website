@@ -68,7 +68,7 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       headerName: `Difficulty ${isDesktop ? '(out of 5)' : ''}`,
       flex: isDesktop ? 0.5 : 0,
       minWidth: isDesktop ? 50 : 150,
-      valueGetter: (params: any) => roundNumber(params.row.avgDifficulty, 1),
+      valueGetter: (value: any, row: any) => roundNumber(row.avgDifficulty, 1),
       type: 'number',
     },
     {
@@ -77,7 +77,7 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       flex: isDesktop ? 0.5 : 0,
       minWidth: isDesktop ? 50 : 150,
 
-      valueGetter: (params: any) => roundNumber(params.row.avgWorkload, 1),
+      valueGetter: (value: any, row: any) => roundNumber(row.avgWorkload, 1),
       type: 'number',
     },
     {
@@ -86,7 +86,7 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       flex: isDesktop ? 0.5 : 0,
       minWidth: isDesktop ? 50 : 150,
 
-      valueGetter: (params: any) => roundNumber(params.row.avgOverall, 1),
+      valueGetter: (value: any, row: any) => roundNumber(row.avgOverall, 1),
       type: 'number',
     },
     {
