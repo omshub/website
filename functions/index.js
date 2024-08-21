@@ -36,6 +36,10 @@ const fields = {
   // users
   userId: 'userId',
 };
+const sortOrder = {
+  ASC: 'asc',
+  DESC: 'desc',
+};
 
 // methods/routes
 exports.getReviewsFlat = functions.https.onRequest(async (req, res) => {
@@ -59,7 +63,7 @@ exports.getReviewsFlat = functions.https.onRequest(async (req, res) => {
     const querySnapshot = await db
       .collection(collections.reviews)
       .where(fields.isLegacy, '==', isLegacy)
-      .orderBy(fields.created, 'desc')
+      .orderBy(fields.created, sortOrder.ASC)
       .get();
 
     const reviews = [];
@@ -122,17 +126,16 @@ exports.getUsers = functions.https.onRequest(async (req, res) => {
     const db = admin.firestore();
     const querySnapshot = await db
       .collection(collections.users)
-      .orderBy(fields.userId, 'asc')
+      .orderBy(fields.userId, sortOrder.ASC)
       .get();
 
     const users = [];
     querySnapshot.forEach((doc) => {
-      const { userId, hasGTEmail, reviews } = doc.data();
+      const { userId, hasGTEmail } = doc.data();
 
       users.push({
         userId,
         hasGTEmail,
-        reviews,
       });
     });
 
