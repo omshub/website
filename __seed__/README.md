@@ -21,12 +21,12 @@ reviewsData
 usersData
   /{userId}: <User>
 ```
-> ![NOTE]
+> [!NOTE]
 > The canonical path format for Firebase Firestore is `{collectionName}/{documentId}/{subCollectionName}/{subDocumentId}/...` and so on, with the path terminating at a (sub)document.
 
 ## Seeding a Firebase project
 
-> ![NOTE]
+> [!NOTE]
 > All paths indicated in this section are relative to the top-level directory (i.e., `website`). Furthermore, all commands (i.e., `yarn ...`) should also be issued from the top-level directory accordingly.
 
 ### Seeding or updating a cloud Firebase project
@@ -37,7 +37,7 @@ To seed the data in a development cloud-based Firebase Firestore database, defin
 yarn fb:seed-db-cloud
 ```
 
-> ![WARNING]
+> [!WARNING]
 > Do **NOT** use this method in **production**!!! Production Firebase database must be updated manually via the Firebase UI/console; otherwise, this seeding approach will wipe all of the live data **without** ability to recover it!
 
 ### Seeding or updating local *Firebase Emulator Suite*
@@ -81,7 +81,7 @@ This will update the corresponding files in directory `/__seed__/firebase-seed`.
 
 ## Adding a new course
 
-> ![NOTE]
+> [!NOTE]
 > All paths indicated here are relative to the top-level directory (i.e., `website`).
 
 To add a new course, update the following files:

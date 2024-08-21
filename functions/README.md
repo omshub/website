@@ -6,7 +6,7 @@ This sub-repo contains the definitions for the Firebase Cloud Functions, intende
 
 ### Cloud Firebase Project
 
-> ![WARNING]
+> [!WARNING]
 > Deploying Cloud Functions requires a ***paid plan*** Firebase project, which must be preconfigured as such accordingly prior to deployment.
 
 To deploy the cloud functions as defined in `/website/functions/index.js` to a cloud-based Firebase project, ensure that the terminal is in location `.../website/functions/` and then perform the following steps via terminal:

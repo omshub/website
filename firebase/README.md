@@ -2,10 +2,10 @@
 
 ## Preliminaries
 
-> ![NOTE]
+> [!NOTE]
 > All file-path references assume a starting point of the root directory of the project unless noted otherwise.
 
-> ![NOTE]
+> [!NOTE]
 > Requires Node v. 20+.
 
 ## Overview
@@ -48,7 +48,7 @@ The data documents defined in this app, and their corresponding CRUD operations'
 |  `Review`  | `getReviews(courseId, year, semesterTerm)` | `getReview(reviewId)` | `addReview(userId, reviewId, data)` | `updateReview(userId, reviewId, data)` | `deleteReview(userId, reviewId)` |
 |   `User`   |                   (N/A)                    |     `getUser(id)`     |            `addUser(id)`            |            `updateUser(id)`            |         `deleteUser(id)`         |
 
-> ![NOTE]
+> [!NOTE]
 > See `/globals/types.ts` for definition of document data fields (i.e., argument `data` per above).
 
 Example usage via `courses` document (and similarly for the others):
@@ -98,5 +98,5 @@ await updateCourse(courseId, updatedCourseData)
 await deleteCourse(courseId)
 ```
 
-> ![NOTE]
+> [!NOTE]
 > All non-"`GET`" operations require authorization/authentication via Firebase Authentication and corresponding permissions.
