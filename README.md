@@ -81,7 +81,8 @@ yarn build
 yarn dev
 ```
 
-***Note***: A cloud-based Firebase project must still exist in order to run the emulator locally in this manner. Simply create a blank/empty [Firebase](https://firebase.google.com/) project using a Google account for this purpose, and then populate file `website/.env` accordingly with corresponding API key and project information from Firebase (see `website/example.env` for additional reference, as well as `website/__seed__/README.md` for more information regarding seeding a cloud-based Firebase Firestore database).
+> ![NOTE]
+> A cloud-based Firebase project must still exist in order to run the emulator locally in this manner. Simply create a blank/empty [Firebase](https://firebase.google.com/) project using a Google account for this purpose, and then populate file `website/.env` accordingly with corresponding API key and project information from Firebase (see `website/example.env` for additional reference, as well as `website/__seed__/README.md` for more information regarding seeding a cloud-based Firebase Firestore database).
 
 Open `http://localhost:3000` with your browser to see the result. The local data will be seeded from scratch. Furthermore, you can use the local auth service by simply logging in via any of the provided services (e.g., Google) with auto-generated credentials, which will simulate a logged in user account.
 
