@@ -65,7 +65,7 @@
     "@storybook/addon-actions": "^8.1.11",
     "@storybook/addon-essentials": "^7.0.18",
     "@storybook/addon-interactions": "^7.0.18",
-    "@storybook/addon-links": "^7.0.18",
+    "@storybook/addon-links": "^8.1.11",
     "@storybook/blocks": "^7.0.18",
     "@storybook/nextjs": "^7.0.18",
     "@storybook/react": "^7.0.18",
