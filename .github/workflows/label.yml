@@ -10,16 +10,15 @@ on: [pull_request_target]
 
 jobs:
   label:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Add label
-      uses: actions/labeler@v5
-      with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Add label
+        uses: actions/labeler@v5
+        with:
+          repo-token: '${{ secrets.GITHUB_TOKEN }}'
