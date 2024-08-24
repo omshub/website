@@ -3,10 +3,11 @@ import { TCourseId, Review, TSemesterId, TNullable, Course, CourseDataStatic } f
 import { coursesDataStatic } from '@globals/staticDataModels';
 import { TDatabase } from '../supabase/types';
 import { mapPayloadToArray } from '@src/utilities';
+import { courseFields } from '@globals/constants';
 
 const supabase = createClient<TDatabase>(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
 /* --- UTILITY FUNCTIONS ---*/
@@ -64,9 +65,9 @@ interface TCourseStats {
   numReviews: number;
   year?: number;
   semesterId?: TSemesterId;
-  avgWorkload: number;
-  avgDifficulty: number;
-  avgOverall: number;
+  avgWorkload: TNullable<number>;
+  avgDifficulty: TNullable<number>;
+  avgOverall: TNullable<number>;
 }
 
 const semesters: TSemesterId[] = ['sp', 'sm', 'fa'];
@@ -93,13 +94,13 @@ const years: number[] = (function() {
 const zipToCoursesData = (stats: TCourseStats[]): Course[] => {
   const courses: Course[] = [];
 
-  const dataStatic: CourseDataStatic[] = mapPayloadToArray(coursesDataStatic);
+  const dataStatic: CourseDataStatic[] = mapPayloadToArray(coursesDataStatic, courseFields.courseId);
 
   const unreviewedCourse: Partial<TCourseStats> = {
     numReviews: 0,
-    avgWorkload: 0,
-    avgDifficulty: 0,
-    avgOverall: 0,
+    avgWorkload: null,
+    avgDifficulty: null,
+    avgOverall: null,
   };
 
   years.forEach(y => {
@@ -126,10 +127,10 @@ const zipToCoursesData = (stats: TCourseStats[]): Course[] => {
             aliases,
             isDeprecated,
             isFoundational,
-            numReviews: matchingStatsAggregate?.numReviews ?? unreviewedCourse.numReviews,
-            avgWorkload: matchingStatsAggregate?.avgWorkload ?? unreviewedCourse.avgWorkload,
-            avgDifficulty: matchingStatsAggregate?.avgDifficulty ?? unreviewedCourse.avgDifficulty,
-            avgOverall: matchingStatsAggregate?.avgOverall ?? unreviewedCourse.avgOverall,
+            numReviews: (matchingStatsAggregate?.numReviews ?? unreviewedCourse.numReviews)!,
+            avgWorkload: (matchingStatsAggregate?.avgWorkload ?? unreviewedCourse.avgWorkload)!,
+            avgDifficulty: (matchingStatsAggregate?.avgDifficulty ?? unreviewedCourse.avgDifficulty)!,
+            avgOverall: (matchingStatsAggregate?.avgOverall ?? unreviewedCourse.avgOverall)!,
             avgStaffSupport: null,
             reviewsCountsByYearSem: {}, // NOTE: placeholder only; remove once migrated from Firebase to Supabase
           });
@@ -149,12 +150,12 @@ const zipToCoursesData = (stats: TCourseStats[]): Course[] => {
           aliases,
           isDeprecated,
           isFoundational,
-          year: matchingStatsYearSemester?.year ?? y!,
-          semesterId: matchingStatsYearSemester?.semesterId ?? s!,
-          numReviews: matchingStatsYearSemester?.numReviews ?? unreviewedCourse.numReviews!,
-          avgWorkload: matchingStatsYearSemester?.avgWorkload ?? unreviewedCourse.avgWorkload!,
-          avgDifficulty: matchingStatsYearSemester?.avgDifficulty ?? unreviewedCourse.avgDifficulty!,
-          avgOverall: matchingStatsYearSemester?.avgOverall ?? unreviewedCourse.avgOverall!,
+          year: (matchingStatsYearSemester?.year ?? y)!,
+          semesterId: (matchingStatsYearSemester?.semesterId ?? s)!,
+          numReviews: (matchingStatsYearSemester?.numReviews ?? unreviewedCourse.numReviews)!,
+          avgWorkload: (matchingStatsYearSemester?.avgWorkload ?? unreviewedCourse.avgWorkload)!,
+          avgDifficulty: (matchingStatsYearSemester?.avgDifficulty ?? unreviewedCourse.avgDifficulty)!,
+          avgOverall: (matchingStatsYearSemester?.avgOverall ?? unreviewedCourse.avgOverall)!,
           avgStaffSupport: null,
           reviewsCountsByYearSem: {}, // NOTE: placeholder only; remove once migrated from Firebase to Supabase
         });
