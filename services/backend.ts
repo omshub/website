@@ -277,7 +277,7 @@ const getReviewsByUserId = async (userId: string): Promise<Review[]> => {
 }
 
 /**
- * Get aggregate data from Supabase table of type `Course` for a course. Output includes zero-row data.
+ * Get aggregate data from Supabase table of type `Course` for a course. Output includes zero-row data (i.e., `numReviews === 0`).
  * @param courseId The OMSCS course ID. If omitted, returns all courses' stats (aggregated).
  * @returns {Course[]}
  */
@@ -310,7 +310,7 @@ interface TArgsCourseStats {
 }
 
 /**
- * Get aggregate data from Supabase table of type `Course` for a course. Output includes zero-row data (i.e., `numReviews == 0`). Can be queried independently for course and/or year and/or semester.
+ * Get aggregate data from Supabase table of type `Course` for a course. Output includes zero-row data (i.e., `numReviews === 0`). Can be queried independently for course and/or year and/or semester.
  * @param courseId The OMSCS course ID. If omitted, returns all courses' stats (year-semesterId row-wise data).
  * @param year The year of the course. If omitted, returns courseId and/or semesterId row-wise data.
  * @param semesterId The semester of the course. If omitted, returns courseId and/or year row-wise data.
