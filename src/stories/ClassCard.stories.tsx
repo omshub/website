@@ -1,14 +1,14 @@
 import React from 'react';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryFn   } from '@storybook/react';
 import ClassCard from '@components/ClassCard';
 import { Grid } from '@mui/material';
 
 export default {
   title: 'General/ClassCard',
   component: ClassCard,
-} as ComponentMeta<typeof ClassCard>;
+} as Meta<typeof ClassCard>;
 
-const Template: ComponentStory<typeof ClassCard> = (args) => (
+const Template: StoryFn<typeof ClassCard> = (args) => (
   <>
     <Grid container spacing={2}>
       <Grid item xs={4}>
