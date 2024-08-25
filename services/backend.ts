@@ -1,5 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
-import { TCourseId, Review, TSemesterId, TNullable, Course } from '@globals/types';
+import {
+  TCourseId,
+  Review,
+  TSemesterId,
+  TNullable,
+  Course,
+} from '@globals/types';
 import { TDatabase } from '../supabase/types';
 import { unpackReviewData, zipToCoursesData } from './utilities/supabaseData';
 import { TCourseStats } from './utilities/supabaseTypes';
@@ -20,10 +26,9 @@ const getAllReviews = async (limitCount?: number): Promise<Review[]> => {
   limitCount = limitCount ?? DEFAULT_LIMIT;
 
   try {
-    const { data, error } = await supabase
-      .rpc('getAllReviews', {
-        limit_count: limitCount,
-      });
+    const { data, error } = await supabase.rpc('getAllReviews', {
+      limit_count: limitCount,
+    });
 
     if (error) throw error;
 
@@ -38,44 +43,44 @@ const getAllReviews = async (limitCount?: number): Promise<Review[]> => {
     console.error(error);
     return [];
   }
-}
+};
 
 /**
  * Get a single review from Supabase table of type `Review`.
  * @param reviewId The review ID, of general form `courseId-year-semesterId-created`.
- * @returns {Review} 
+ * @returns {Review}
  */
-const getReviewByReviewId = async (reviewId: string): Promise<TNullable<Review>> => {
+const getReviewByReviewId = async (
+  reviewId: string,
+): Promise<TNullable<Review>> => {
   try {
-    const { data, error } = await supabase
-      .rpc('getReviewByReviewId', {
-        review_id: reviewId,
-      });
+    const { data, error } = await supabase.rpc('getReviewByReviewId', {
+      review_id: reviewId,
+    });
 
     if (error) throw error;
 
-    const review: TNullable<Review> = data
-      ? data[0] as Review
-      : null;
+    const review: TNullable<Review> = data ? (data[0] as Review) : null;
 
     return review;
   } catch (error: any) {
     console.error(error);
     return null;
   }
-}
+};
 
 /**
  * Get rows from Supabase table of type `Review` for a course, returned with most recent reviews first.
  * @param courseId The OMSCS course ID. If omitted, returns all courses' reviews.
- * @returns {Review[]} 
+ * @returns {Review[]}
  */
-const getReviewsByCourseId = async (courseId?: TCourseId): Promise<Review[]> => {
+const getReviewsByCourseId = async (
+  courseId?: TCourseId,
+): Promise<Review[]> => {
   try {
-    const { data, error } = await supabase
-      .rpc('getReviewsByCourseId', {
-        course_id: courseId,
-      });
+    const { data, error } = await supabase.rpc('getReviewsByCourseId', {
+      course_id: courseId,
+    });
 
     if (error) throw error;
 
@@ -90,7 +95,7 @@ const getReviewsByCourseId = async (courseId?: TCourseId): Promise<Review[]> => 
     console.error(error);
     return [];
   }
-}
+};
 
 /**
  * Get rows from Supabase table of type `Review` for a user, returned with most recent reviews first.
@@ -99,10 +104,9 @@ const getReviewsByCourseId = async (courseId?: TCourseId): Promise<Review[]> => 
  */
 const getReviewsByUserId = async (userId: string): Promise<Review[]> => {
   try {
-    const { data, error } = await supabase
-      .rpc('getReviewsByUserId', {
-        user_id: userId,
-      });
+    const { data, error } = await supabase.rpc('getReviewsByUserId', {
+      user_id: userId,
+    });
 
     if (error) throw error;
 
@@ -117,7 +121,7 @@ const getReviewsByUserId = async (userId: string): Promise<Review[]> => {
     console.error(error);
     return [];
   }
-}
+};
 
 /**
  * Get aggregate data from Supabase table of type `Course` for a course. Output includes zero-row data (i.e., `numReviews === 0`).
@@ -126,10 +130,9 @@ const getReviewsByUserId = async (userId: string): Promise<Review[]> => {
  */
 const getStatsByCourseId = async (courseId?: TCourseId): Promise<Course[]> => {
   try {
-    const { data, error } = await supabase
-      .rpc('getStatsByCourseId', {
-        course_id: courseId,
-      });
+    const { data, error } = await supabase.rpc('getStatsByCourseId', {
+      course_id: courseId,
+    });
 
     if (error) throw error;
 
@@ -144,7 +147,7 @@ const getStatsByCourseId = async (courseId?: TCourseId): Promise<Course[]> => {
     console.error(error);
     return [];
   }
-}
+};
 
 interface TArgsCourseStats {
   courseId?: TCourseId;
@@ -165,12 +168,11 @@ const getStatsByCourseYearSemester = async ({
   semesterId,
 }: TArgsCourseStats): Promise<Course[]> => {
   try {
-    const { data, error } = await supabase
-      .rpc('getStatsByCourseYearSemester', {
-        course_id: courseId,
-        year_: year,
-        semester_id: semesterId,
-      });
+    const { data, error } = await supabase.rpc('getStatsByCourseYearSemester', {
+      course_id: courseId,
+      year_: year,
+      semester_id: semesterId,
+    });
 
     if (error) throw error;
 
@@ -185,7 +187,7 @@ const getStatsByCourseYearSemester = async ({
     console.error(error);
     return [];
   }
-}
+};
 
 /* --- EXPORTS --- */
 

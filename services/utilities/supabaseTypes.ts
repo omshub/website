@@ -1,4 +1,4 @@
-import { TCourseId, TNullable, TSemesterId } from "@globals/types";
+import { TCourseId, TNullable, TSemesterId } from '@globals/types';
 
 export interface TCourseStats {
   courseId: TCourseId;
