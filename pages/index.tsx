@@ -38,7 +38,7 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
   const theme = useTheme();
 
   const courses = coursesArray.map((data, i) => ({ ...data, id: i }));
-
+  
   const columns: GridColDef[] = [
     {
       field: courseFields.NAME,
@@ -100,15 +100,12 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
     {
       field: courseFields.IS_DEPRECATED,
       headerName: 'is Deprecated?',
-      flex: 0,
-      hideable: true,
       type: 'boolean',
     },
     {
       field: courseFields.ALIASES,
       headerName: 'Aliases',
-      flex: 0,
-      hideable: true,
+      flex: isDesktop ? 1 : 0,
     },
   ];
   return (
@@ -137,7 +134,6 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
           >
             <DataGrid
               autoHeight
-              disableColumnSelector
               rows={courses}
               columns={columns}
               loading={!allCourseData}
@@ -163,6 +159,12 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
                 pagination: {
                   paginationModel: {
                     pageSize: 100,
+                  },
+                },
+                filter: {
+                  filterModel: {
+                    items: [],
+                    quickFilterExcludeHiddenColumns: false,
                   },
                 },
               }}
