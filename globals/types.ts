@@ -37,11 +37,13 @@ export interface CourseDataStatic {
 export interface CourseDataDynamic {
   courseId: TCourseId;
   numReviews: number;
+  year?: number;
+  semesterId?: TSemesterId;
   avgWorkload: TNullable<number>;
   avgDifficulty: TNullable<number>;
   avgOverall: TNullable<number>;
   avgStaffSupport: TNullable<number>;
-  reviewsCountsByYearSem: TReviewsCountsByYearSemObject;
+  reviewsCountsByYearSem: TReviewsCountsByYearSemObject; // NOTE: placeholder only; remove once migrated from Firebase to Supabase
 }
 
 export interface Course extends CourseDataStatic, CourseDataDynamic {}
