@@ -38,7 +38,7 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
   const theme = useTheme();
 
   const courses = coursesArray.map((data, i) => ({ ...data, id: i }));
-  
+
   const columns: GridColDef[] = [
     {
       field: courseFields.NAME,
@@ -105,7 +105,6 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
     {
       field: courseFields.ALIASES,
       headerName: 'Aliases',
-      flex: isDesktop ? 1 : 0,
     },
   ];
   return (
