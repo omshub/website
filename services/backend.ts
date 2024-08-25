@@ -135,7 +135,7 @@ const getStatsByCourseId = async (courseId?: TCourseId): Promise<Course[]> => {
 
     let courses: Course[] = [];
 
-    if (data && data.length) {
+    if (data) {
       courses = zipToCoursesData(data as TCourseStats[]);
     }
 
@@ -176,7 +176,7 @@ const getStatsByCourseYearSemester = async ({
 
     let courses: Course[] = [];
 
-    if (data && data.length) {
+    if (data) {
       courses = zipToCoursesData(data as TCourseStats[]);
     }
 
