@@ -4,21 +4,51 @@ root:
   - changed-files:
       - any-glob-to-any-file: '*'
 
-# Add 'AnyChange' label to any changes within the entire repository
-AnyChange:
-  - changed-files:
-      - any-glob-to-any-file: '**'
-
-# Add 'Documentation' label to any change to .md files within the entire repository
+# Add 'Documentation' label to any change to .md files within the entire repository 
 Documentation:
   - changed-files:
       - any-glob-to-any-file: '**/*.md'
 
-# Add 'source' label to any change to src files within the source dir EXCEPT for the docs sub-folder
+# Add 'source' label to any change to src files within the source dir
 source:
   - all:
       - changed-files:
           - any-glob-to-any-file: 'src/**/*'
+
+# Add 'pages' label to any changes within the entire repository
+pages:
+- changed-files:
+  - any-glob-to-any-file: 'pages/**/*'
+
+# Add 'public' label to any changes within the entire repository
+public:
+- changed-files:
+  - any-glob-to-any-file: 'public/**/*'
+
+# Add 'globals' label to any changes within the entire repository
+globals:
+- changed-files:
+  - any-glob-to-any-file: 'globals/**/*'
+
+# Add 'firebase' label to any changes within the entire repository
+firebase:
+- changed-files:
+  - any-glob-to-any-file: 'firebase/**/*'
+
+# Add 'context' label to any changes within the entire repository
+context:
+- changed-files:
+  - any-glob-to-any-file: 'context/**/*'
+
+# Add 'workflows' label to any changes within the entire repository
+workflows:
+- changed-files:
+  - any-glob-to-any-file: '.github/**/*'
+
+# Add 'devcontainer' label to any changes within the entire repository
+devcontainer:
+- changed-files:
+  - any-glob-to-any-file: '.devcontainer/**/*'
 
 # Add 'feature' label to any PR where the head branch name starts with `feature` or has a `feature` section in the name
 feature:
