@@ -125,17 +125,16 @@ export const NavBar = ({ ...props }: NavBarProps) => {
               </IconButton>
             </Tooltip>
             <Tooltip arrow title={`Website's Github`}>
-
-            <Link
-              variant='button'
-              color='inherit'
-              href={`https://github.com/omshub/website/`}
-              target='_blank'
-              sx={{
-                my: 1,
-                mx: 1.5,
-              }}
-            >
+              <Link
+                variant='button'
+                color='inherit'
+                href={`https://github.com/omshub/website/`}
+                target='_blank'
+                sx={{
+                  my: 1,
+                  mx: 1.5,
+                }}
+              >
                 <GitHubIcon />
               </Link>
             </Tooltip>

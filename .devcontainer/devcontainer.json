@@ -22,7 +22,8 @@
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "oderwat.indent-rainbow",
-        "mhutchie.git-graph"
+        "mhutchie.git-graph",
+        "kenomaru.thunder"
       ]
     }
   },
