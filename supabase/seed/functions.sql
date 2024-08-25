@@ -258,7 +258,7 @@ WHERE (
     AND r."year" = COALESCE(year_, r."year")
     AND r."semesterId" = COALESCE(semester_id, r."semesterId")
 )
-GROUP BY r."courseId", r.year, r."semesterId"
+GROUP BY r."courseId", r."year", r."semesterId"
 ORDER BY 
     r."courseId",
     r."year",
