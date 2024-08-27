@@ -63,7 +63,7 @@
     "@chromatic-com/storybook": "^1",
     "@commitlint/cli": "^19.4.0",
     "@commitlint/config-conventional": "^17.4.2",
-    "@next/bundle-analyzer": "^14.2.5",
+    "@next/bundle-analyzer": "^14.2.6",
     "@storybook/addon-actions": "^8.2.9",
     "@storybook/addon-essentials": "^8.2.9",
     "@storybook/addon-interactions": "^8.2.9",
