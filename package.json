@@ -31,7 +31,7 @@
   "dependencies": {
     "@babel/core": "^7.21.0",
     "@emotion/cache": "^11.10.5",
-    "@emotion/react": "^11.11.1",
+    "@emotion/react": "^11.13.3",
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.14",
