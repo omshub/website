@@ -75,7 +75,7 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^15.0.7",
     "@types/node": "^22.5.0",
-    "@types/react": "^18.0.26",
+    "@types/react": "^18.3.4",
     "babel-loader": "^9.1.2",
     "babel-plugin-import": "^1.13.8",
     "commitizen": "^4.3.0",
