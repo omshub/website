@@ -82,7 +82,7 @@
     "cross-env": "^7.0.3",
     "cz-conventional-changelog": "3.3.0",
     "eslint": "8.57.0",
-    "eslint-config-next": "^14.2.6",
+    "eslint-config-next": "^14.2.7",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-storybook": "^0.8.0",
     "husky": "^9.1.5",
