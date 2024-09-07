@@ -111,12 +111,6 @@ const ReviewForm = ({
 
   const yearRange = getYearRange();
 
-  const calculateChipWidth = (text: any) => {
-    const baseWidth = 100; // Minimum width in pixels
-    const charWidth = 8; // Approximate width per character in pixels
-    return Math.max(baseWidth, text.length * charWidth);
-  };
-
   const {
     control,
     handleSubmit,

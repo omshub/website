@@ -8,6 +8,7 @@ import { TNullable } from '@globals/types';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import MailIcon from '@mui/icons-material/Mail';
 import {
   IconButton,
   AppBar,
@@ -125,18 +126,31 @@ export const NavBar = ({ ...props }: NavBarProps) => {
               </IconButton>
             </Tooltip>
             <Tooltip arrow title={`Website's Github`}>
-
-            <Link
-              variant='button'
-              color='inherit'
-              href={`https://github.com/omshub/website/`}
-              target='_blank'
-              sx={{
-                my: 1,
-                mx: 1.5,
-              }}
-            >
+              <Link
+                variant='button'
+                color='inherit'
+                href={`https://github.com/omshub/website/`}
+                target='_blank'
+                sx={{
+                  my: 1,
+                  mx: 1.5,
+                }}
+              >
                 <GitHubIcon />
+              </Link>
+            </Tooltip>
+            <Tooltip arrow title={`Contact OMSHub`}>
+              <Link
+                variant='button'
+                color='inherit'
+                href={`mailto:gt.omshub@gmail.com`}
+                target='_blank'
+                sx={{
+                  my: 1,
+                  mx: 1.5,
+                }}
+              >
+                <MailIcon />
               </Link>
             </Tooltip>
           </Box>

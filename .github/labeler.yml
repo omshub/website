@@ -1,22 +1,59 @@
-# This workflow will triage pull requests and apply a label based on the
-# paths that are modified in the pull request.
-#
-# To use this workflow, you will need to set up a .github/labeler.yml
-# file with configuration.  For more information, see:
-# https://github.com/actions/labeler
+# Add 'root' label to any root file changes
+# Quotation marks are required for the leading asterisk
+root:
+  - changed-files:
+      - any-glob-to-any-file: '*'
 
-name: Labeler
-on: [pull_request_target]
+# Add 'Documentation' label to any change to .md files within the entire repository
+Documentation:
+  - changed-files:
+      - any-glob-to-any-file: '**/*.md'
 
-jobs:
-  label:
+# Add 'source' label to any change to src files within the source dir
+source:
+  - all:
+      - changed-files:
+          - any-glob-to-any-file: 'src/**/*'
 
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
+# Add 'pages' label to any changes within the entire repository
+pages:
+  - changed-files:
+      - any-glob-to-any-file: 'pages/**/*'
 
-    steps:
-    - uses: actions/labeler@v4
-      with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+# Add 'public' label to any changes within the entire repository
+public:
+  - changed-files:
+      - any-glob-to-any-file: 'public/**/*'
+
+# Add 'globals' label to any changes within the entire repository
+globals:
+  - changed-files:
+      - any-glob-to-any-file: 'globals/**/*'
+
+# Add 'firebase' label to any changes within the entire repository
+firebase:
+  - changed-files:
+      - any-glob-to-any-file: 'firebase/**/*'
+
+# Add 'context' label to any changes within the entire repository
+context:
+  - changed-files:
+      - any-glob-to-any-file: 'context/**/*'
+
+# Add 'workflows' label to any changes within the entire repository
+workflows:
+  - changed-files:
+      - any-glob-to-any-file: '.github/**/*'
+
+# Add 'devcontainer' label to any changes within the entire repository
+devcontainer:
+  - changed-files:
+      - any-glob-to-any-file: '.devcontainer/**/*'
+
+# Add 'feature' label to any PR where the head branch name starts with `feature` or has a `feature` section in the name
+feature:
+  - head-branch: ['^feature', 'feature']
+
+# Add 'release' label to any PR that is opened against the `main` branch
+release:
+  - base-branch: 'main'
