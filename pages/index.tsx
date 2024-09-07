@@ -17,7 +17,6 @@ import {
   GridColDef,
   GridRenderCellParams,
   GridToolbar,
-  GridValueGetterParams,
 } from '@mui/x-data-grid';
 import Link from '@src/Link';
 import { mapPayloadToArray, roundNumber } from '@src/utilities';
@@ -69,8 +68,7 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       headerName: `Difficulty ${isDesktop ? '(out of 5)' : ''}`,
       flex: isDesktop ? 0.5 : 0,
       minWidth: isDesktop ? 50 : 150,
-      valueGetter: (params: GridValueGetterParams) =>
-        roundNumber(params.row.avgDifficulty, 1),
+      valueGetter: (params: any) => roundNumber(params.row.avgDifficulty, 1),
       type: 'number',
     },
     {
@@ -79,8 +77,7 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       flex: isDesktop ? 0.5 : 0,
       minWidth: isDesktop ? 50 : 150,
 
-      valueGetter: (params: GridValueGetterParams) =>
-        roundNumber(params.row.avgWorkload, 1),
+      valueGetter: (params: any) => roundNumber(params.row.avgWorkload, 1),
       type: 'number',
     },
     {
@@ -89,8 +86,7 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       flex: isDesktop ? 0.5 : 0,
       minWidth: isDesktop ? 50 : 150,
 
-      valueGetter: (params: GridValueGetterParams) =>
-        roundNumber(params.row.avgOverall, 1),
+      valueGetter: (params: any) => roundNumber(params.row.avgOverall, 1),
       type: 'number',
     },
     {
