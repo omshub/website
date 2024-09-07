@@ -28,6 +28,7 @@ import {
   Rating,
   Select,
   Typography,
+  Box,
 } from '@mui/material';
 import {
   mapDifficulty,
@@ -109,6 +110,12 @@ const ReviewForm = ({
   const router = useRouter();
 
   const yearRange = getYearRange();
+
+  const calculateChipWidth = (text: any) => {
+    const baseWidth = 100; // Minimum width in pixels
+    const charWidth = 8; // Approximate width per character in pixels
+    return Math.max(baseWidth, text.length * charWidth);
+  };
 
   const {
     control,
@@ -385,69 +392,89 @@ const ReviewForm = ({
 
       <Grid item xs={12} md={4} lg={4} textAlign='center'>
         <Typography component='legend'>Difficulty</Typography>
-        <Controller
-          control={control}
-          name='difficulty'
-          render={({ field }) => (
-            <Rating
-              {...field}
-              defaultValue={0}
-              size='large'
-              onChange={(event, newValue) => {
-                field.onChange(newValue);
-                setDifficultyValue(newValue as TRatingScale | null);
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 1,
+          }}
+        >
+          <Controller
+            control={control}
+            name='difficulty'
+            render={({ field }) => (
+              <Rating
+                {...field}
+                defaultValue={0}
+                size='large'
+                onChange={(event, newValue) => {
+                  field.onChange(newValue);
+                  setDifficultyValue(newValue as TRatingScale | null);
+                }}
+              />
+            )}
+            rules={{
+              required: true,
+              min: '1',
+            }}
+          />
+          {difficultyValue !== null && (
+            <Chip
+              label={`Difficulty: ${mapDifficulty[difficultyValue]}`}
+              sx={{
+                color: mapRatingToColorInverted(difficultyValue),
+                borderColor: mapRatingToColorInverted(difficultyValue),
+                minWidth: '100px',
+                maxWidth: '100%',
               }}
+              variant='outlined'
             />
           )}
-          rules={{
-            required: true,
-            min: '1',
-          }}
-        ></Controller>
-        {difficultyValue !== null && (
-          <Chip
-            label={`Difficulty: ${mapDifficulty[difficultyValue]}`}
-            sx={{
-              color: mapRatingToColorInverted(difficultyValue),
-              borderColor: mapRatingToColorInverted(difficultyValue),
-              width: '75%',
-            }}
-            variant='outlined'
-          />
-        )}
+        </Box>
       </Grid>
       <Grid item xs={12} md={4} lg={4} textAlign='center'>
         <Typography component='legend'>Overall</Typography>
-        <Controller
-          control={control}
-          name='overall'
-          render={({ field }) => (
-            <Rating
-              {...field}
-              defaultValue={0}
-              size='large'
-              onChange={(event, newValue) => {
-                field.onChange(newValue);
-                setOverallValue(newValue as TRatingScale | null);
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 1,
+          }}
+        >
+          <Controller
+            control={control}
+            name='overall'
+            render={({ field }) => (
+              <Rating
+                {...field}
+                defaultValue={0}
+                size='large'
+                onChange={(event, newValue) => {
+                  field.onChange(newValue);
+                  setOverallValue(newValue as TRatingScale | null);
+                }}
+              />
+            )}
+            rules={{
+              required: true,
+              min: '1',
+            }}
+          />
+          {overallValue !== null && (
+            <Chip
+              label={`Overall: ${mapOverall[overallValue]}`}
+              sx={{
+                color: mapRatingToColor(overallValue),
+                borderColor: mapRatingToColor(overallValue),
+                minWidth: '100px', // Set a minimum width
+                maxWidth: '100%', // Ensure it doesn't exceed container width
               }}
+              variant='outlined'
             />
           )}
-          rules={{
-            required: true,
-            min: '1',
-          }}
-        ></Controller>
-        {overallValue !== null && (
-          <Chip
-            label={`Overall: ${mapOverall[overallValue]}`}
-            sx={{
-              color: mapRatingToColor(overallValue),
-              borderColor: mapRatingToColor(overallValue),
-              width: '75%',
-            }}
-            variant='outlined'
-          />
-        )}
+        </Box>
       </Grid>
       <Grid item xs={12} lg={12}>
         <Typography sx={{ mb: 1, color: 'inherit' }} component='legend'>
