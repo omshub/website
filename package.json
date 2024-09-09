@@ -60,7 +60,7 @@
     "tsconfig-paths-webpack-plugin": "^4.0.0"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^1",
+    "@chromatic-com/storybook": "^2",
     "@commitlint/cli": "^19.4.1",
     "@commitlint/config-conventional": "^17.4.2",
     "@next/bundle-analyzer": "^14.2.6",
