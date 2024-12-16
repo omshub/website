@@ -1,5 +1,5 @@
 import React from 'react';
-import { Meta, StoryFn   } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import ClassCard from '@components/ClassCard';
 import { Grid } from '@mui/material';
 
