@@ -41,7 +41,7 @@
     "@supabase/supabase-js": "^2.47.10",
     "@toast-ui/editor-plugin-code-syntax-highlight": "^3.1.0",
     "@toast-ui/react-editor": "^3.2.2",
-    "@types/prismjs": "^1.26.4",
+    "@types/prismjs": "^1.26.5",
     "firebase": "^10.13.0",
     "html-to-image": "^1.11.11",
     "isomorphic-dompurify": "^2.15.0",
