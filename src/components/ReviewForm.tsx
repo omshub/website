@@ -17,6 +17,7 @@ import {
 import { isGTEmail } from '@globals/utilities';
 import {
   Button,
+  Chip,
   TextField,
   CircularProgress,
   Alert,
@@ -27,8 +28,16 @@ import {
   Rating,
   Select,
   Typography,
+  Box,
 } from '@mui/material';
-import { mapSemesterIdToName, mapSemsterIdToTerm } from '@src/utilities';
+import {
+  mapDifficulty,
+  mapOverall,
+  mapRatingToColor,
+  mapRatingToColorInverted,
+  mapSemesterIdToName,
+  mapSemsterIdToTerm,
+} from '@src/utilities';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -93,6 +102,11 @@ const ReviewForm = ({
 
   const { setAlert } = useAlert();
   const [userReviews, setUserReviews] = useState<TUserReviews>({});
+  const [difficultyValue, setDifficultyValue] = useState<TRatingScale | null>(
+    null,
+  );
+  const [overallValue, setOverallValue] = useState<TRatingScale | null>(null);
+
   const router = useRouter();
 
   const yearRange = getYearRange();
@@ -372,29 +386,89 @@ const ReviewForm = ({
 
       <Grid item xs={12} md={4} lg={4} textAlign='center'>
         <Typography component='legend'>Difficulty</Typography>
-        <Controller
-          control={control}
-          name='difficulty'
-          render={({ field }) => <Rating {...field} size='large' />}
-          rules={{
-            required: true,
-            min: '1',
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 1,
           }}
-        ></Controller>
+        >
+          <Controller
+            control={control}
+            name='difficulty'
+            render={({ field }) => (
+              <Rating
+                {...field}
+                defaultValue={0}
+                size='large'
+                onChange={(event, newValue) => {
+                  field.onChange(newValue);
+                  setDifficultyValue(newValue as TRatingScale | null);
+                }}
+              />
+            )}
+            rules={{
+              required: true,
+              min: '1',
+            }}
+          />
+          {difficultyValue !== null && (
+            <Chip
+              label={`Difficulty: ${mapDifficulty[difficultyValue]}`}
+              sx={{
+                color: mapRatingToColorInverted(difficultyValue),
+                borderColor: mapRatingToColorInverted(difficultyValue),
+                minWidth: '100px',
+                maxWidth: '100%',
+              }}
+              variant='outlined'
+            />
+          )}
+        </Box>
       </Grid>
       <Grid item xs={12} md={4} lg={4} textAlign='center'>
         <Typography component='legend'>Overall</Typography>
-        <Controller
-          control={control}
-          name='overall'
-          render={({ field }) => (
-            <Rating {...field} defaultValue={0} size='large' />
-          )}
-          rules={{
-            required: true,
-            min: '1',
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 1,
           }}
-        ></Controller>
+        >
+          <Controller
+            control={control}
+            name='overall'
+            render={({ field }) => (
+              <Rating
+                {...field}
+                defaultValue={0}
+                size='large'
+                onChange={(event, newValue) => {
+                  field.onChange(newValue);
+                  setOverallValue(newValue as TRatingScale | null);
+                }}
+              />
+            )}
+            rules={{
+              required: true,
+              min: '1',
+            }}
+          />
+          {overallValue !== null && (
+            <Chip
+              label={`Overall: ${mapOverall[overallValue]}`}
+              sx={{
+                color: mapRatingToColor(overallValue),
+                borderColor: mapRatingToColor(overallValue),
+                minWidth: '100px', // Set a minimum width
+                maxWidth: '100%', // Ensure it doesn't exceed container width
+              }}
+              variant='outlined'
+            />
+          )}
+        </Box>
       </Grid>
       <Grid item xs={12} lg={12}>
         <Typography sx={{ mb: 1, color: 'inherit' }} component='legend'>

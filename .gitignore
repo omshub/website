@@ -5,6 +5,10 @@
 /.pnp
 .pnp.js
 
+# yarn
+.yarn/*
+.yarnrc.yml
+
 # testing
 /coverage
 
@@ -25,6 +29,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+firestore-debug.log*
+firebase-debug.log*
 
 # local env files
 .env.local
