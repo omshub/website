@@ -135,6 +135,7 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
               autoHeight
               rows={courses}
               columns={columns}
+              disableDensitySelector
               loading={!allCourseData}
               slots={{ toolbar: isDesktop ? GridToolbar : null }}
               sx={{ borderRadius: '25px', padding: '20px 10px' }}
@@ -145,7 +146,6 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
               slotProps={{
                 toolbar: {
                   printOptions: { disableToolbarButton: true },
-                  disableDensitySelector: true,
                   showQuickFilter: true,
                   sx: {
                     '& .MuiButton-root': {
