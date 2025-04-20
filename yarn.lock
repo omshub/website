@@ -1598,7 +1598,7 @@
     "@firebase/component" "0.6.9"
     "@firebase/util" "1.10.0"
     tslib "^2.1.0"
-    undici "6.19.7"
+    undici "6.21.1"
 
 "@firebase/auth-interop-types@0.2.3":
   version "0.2.3"
@@ -1619,7 +1619,7 @@
     "@firebase/logger" "0.4.2"
     "@firebase/util" "1.10.0"
     tslib "^2.1.0"
-    undici "6.19.7"
+    undici "6.21.1"
 
 "@firebase/component@0.6.9":
   version "0.6.9"
@@ -1701,7 +1701,7 @@
     "@grpc/grpc-js" "~1.9.0"
     "@grpc/proto-loader" "^0.7.8"
     tslib "^2.1.0"
-    undici "6.19.7"
+    undici "6.21.1"
 
 "@firebase/functions-compat@0.3.14":
   version "0.3.14"
@@ -1730,7 +1730,7 @@
     "@firebase/messaging-interop-types" "0.2.2"
     "@firebase/util" "1.10.0"
     tslib "^2.1.0"
-    undici "6.19.7"
+    undici "6.21.1"
 
 "@firebase/installations-compat@0.2.9":
   version "0.2.9"
@@ -1872,7 +1872,7 @@
     "@firebase/component" "0.6.9"
     "@firebase/util" "1.10.0"
     tslib "^2.1.0"
-    undici "6.19.7"
+    undici "6.21.1"
 
 "@firebase/util@1.10.0":
   version "1.10.0"
