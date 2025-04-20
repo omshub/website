@@ -42,6 +42,7 @@
     "@toast-ui/editor-plugin-code-syntax-highlight": "^3.1.0",
     "@toast-ui/react-editor": "^3.2.2",
     "@types/prismjs": "^1.26.5",
+    "dompurify": "^3.2.5",
     "firebase": "^10.13.0",
     "html-to-image": "^1.11.11",
     "isomorphic-dompurify": "^2.23.0",
@@ -57,7 +58,8 @@
     "remark-math": "^6.0.0",
     "string-width": "^7.2.0",
     "swr": "^2.2.4",
-    "tsconfig-paths-webpack-plugin": "^4.0.0"
+    "tsconfig-paths-webpack-plugin": "^4.0.0",
+    "undici": "6.21.1"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^2",
