@@ -4,6 +4,8 @@ import { AuthContextProvider } from '@context/AuthContext';
 import { ColorProvider } from '@context/ColorContext';
 import { MenuContextProvider } from '@context/MenuContext';
 import { CacheProvider, EmotionCache } from '@emotion/react';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import CssBaseline from '@mui/material/CssBaseline';
 import { NavBar } from '@src/components/NavBar';
 import createEmotionCache from '@src/createEmotionCache';
@@ -41,6 +43,8 @@ const MyApp = ({
               <AlertBar />
             </MenuContextProvider>
             {<Component {...pageProps} />}
+            <Analytics />
+            <SpeedInsights />
             {/* <Copyright /> */}
           </AuthContextProvider>
         </AlertContextProvider>

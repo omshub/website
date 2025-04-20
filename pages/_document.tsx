@@ -1,7 +1,5 @@
 import createEmotionServer from '@emotion/server/create-instance';
 import { getInitColorSchemeScript, useTheme } from '@mui/material/styles';
-import { Analytics } from '@vercel/analytics/next';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import createEmotionCache from '@src/createEmotionCache';
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 import React from 'react';
@@ -25,8 +23,6 @@ export default function MyDocument(props: any) {
         {getInitColorSchemeScript()}
         <Main />
         <NextScript />
-        <Analytics />
-        <SpeedInsights />
       </body>
     </Html>
   );
@@ -67,9 +63,9 @@ MyDocument.getInitialProps = async (ctx: any) => {
   ctx.renderPage = () =>
     originalRenderPage({
       enhanceApp: (App: any) =>
-        function EnhanceApp(props: any) {
+        (function EnhanceApp(props: any) {
           return <App emotionCache={cache} {...props} />;
-        },
+        }),
     });
 
   const initialProps = await Document.getInitialProps(ctx);
