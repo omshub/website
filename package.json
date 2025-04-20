@@ -31,7 +31,7 @@
   "dependencies": {
     "@babel/core": "^7.21.0",
     "@emotion/cache": "^11.10.5",
-    "@emotion/react": "^11.13.3",
+    "@emotion/react": "^11.14.0",
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.14.0",
     "@fontsource/roboto": "^5.0.14",
@@ -45,9 +45,9 @@
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "add": "^2.0.6",
-    "firebase": "^10.13.0",
+    "firebase": "^11.6.0",
     "html-to-image": "^1.11.11",
-    "isomorphic-dompurify": "^2.15.0",
+    "isomorphic-dompurify": "^2.23.0",
     "next": "^15.1.5",
     "prismjs": "^1.29.0",
     "react": "^18.3.1",
@@ -61,7 +61,8 @@
     "string-width": "^7.2.0",
     "swr": "^2.2.4",
     "tsconfig-paths-webpack-plugin": "^4.0.0",
-    "yarn": "^1.22.22"
+    "yarn": "^1.22.22",
+    "undici": "6.21.1"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^2",

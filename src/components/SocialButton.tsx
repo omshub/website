@@ -3,7 +3,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import AppleIcon from '@mui/icons-material/Apple';
 import { TKeyMap, TProviderName } from '@globals/types';
-import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
+// import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 import { Button } from '@mui/material';
 
 interface SocialButtonProps {
@@ -16,7 +16,7 @@ interface SocialButtonProps {
 
 interface Provider {
   style: TKeyMap;
-  SocialIcon: EmotionJSX.Element;
+  SocialIcon: any;
 }
 
 type TProviders = {
