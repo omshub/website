@@ -62,7 +62,7 @@
     "swr": "^2.2.4",
     "tsconfig-paths-webpack-plugin": "^4.0.0",
     "yarn": "^1.22.22",
-    "undici": "6.21.1"
+    "undici": "7.8.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3",
