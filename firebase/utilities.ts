@@ -306,23 +306,17 @@ export const updateCourseDataOnAddReview = async (
   reviewData: Review,
 ) => {
   try {
-    // @ts-ignore -- intended semantics in this context is `Number`
-    let { courseId, year, semesterTerm } = parseReviewId(reviewId);
-    // @ts-ignore -- intended semantics in this context is `Number`
-    year = Number(year);
-    // @ts-ignore -- intended semantics in this context is `Number`
-    semesterTerm = Number(semesterTerm);
+    const parsed = parseReviewId(reviewId);
+    const courseId = parsed.courseId;
+    // @ts-expect-error -- intended semantics in this context is `Number`
+    const year = Number(parsed.year);
+    // @ts-expect-error -- intended semantics in this context is `Number`
+    const semesterTerm = Number(parsed.semesterTerm);
 
     const courseDataDoc = await getCourse(courseId);
     if (courseDataDoc) {
-      let {
-        numReviews,
-        avgWorkload,
-        avgDifficulty,
-        avgOverall,
-        avgStaffSupport,
-        reviewsCountsByYearSem,
-      } = courseDataDoc;
+      const { avgStaffSupport, reviewsCountsByYearSem } = courseDataDoc;
+      let { numReviews, avgWorkload, avgDifficulty, avgOverall } = courseDataDoc;
 
       const {
         workload: newWorkload,
@@ -450,16 +444,11 @@ export const updateCourseDataOnUpdateReview = async (
   reviewData: Review,
 ) => {
   try {
-    let { courseId } = parseReviewId(reviewId);
+    const { courseId } = parseReviewId(reviewId);
     const courseDataDoc = await getCourse(courseId);
     if (courseDataDoc) {
-      let {
-        numReviews,
-        avgWorkload,
-        avgDifficulty,
-        avgOverall,
-        avgStaffSupport,
-      } = courseDataDoc;
+      const { numReviews, avgStaffSupport } = courseDataDoc;
+      let { avgWorkload, avgDifficulty, avgOverall } = courseDataDoc;
 
       const oldCount = numReviews;
       const newCount = numReviews;
@@ -586,23 +575,17 @@ export const updateUserDataOnUpdateReview = async (
  */
 export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
   try {
-    // @ts-ignore -- intended semantics in this context is `Number`
-    let { courseId, year, semesterTerm } = parseReviewId(reviewId);
-    // @ts-ignore -- intended semantics in this context is `Number`
-    year = Number(year);
-    // @ts-ignore -- intended semantics in this context is `Number`
-    semesterTerm = Number(semesterTerm);
+    const parsed = parseReviewId(reviewId);
+    const courseId = parsed.courseId;
+    // @ts-expect-error -- intended semantics in this context is `Number`
+    const year = Number(parsed.year);
+    // @ts-expect-error -- intended semantics in this context is `Number`
+    const semesterTerm = Number(parsed.semesterTerm);
 
     const courseDataDoc = await getCourse(courseId);
     if (courseDataDoc) {
-      let {
-        numReviews,
-        avgWorkload,
-        avgDifficulty,
-        avgOverall,
-        avgStaffSupport,
-        reviewsCountsByYearSem,
-      } = courseDataDoc;
+      const { avgStaffSupport, reviewsCountsByYearSem } = courseDataDoc;
+      let { numReviews, avgWorkload, avgDifficulty, avgOverall } = courseDataDoc;
 
       const oldCount = numReviews;
       const newCount = numReviews - 1;

@@ -24,7 +24,7 @@ const ProfileMenu = (profileMenuItems: MenuLinksProps) => {
   const { profileMenuAnchorEl, handleProfileMenuOpen, handleProfileMenuClose } =
     useMenu();
 
-  const isGatech = isGTEmail(user?.email!);
+  const isGatech = user?.email ? isGTEmail(user.email) : false;
   const BuzzProfile = '/buzz-profile.jpg';
   const LamaProfile = '/lama-profile.png';
   const isProfileMenuOpen = Boolean(profileMenuAnchorEl);

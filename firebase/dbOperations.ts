@@ -45,7 +45,7 @@ const { COURSES } = coreDataDocuments;
 export const getCourses = async () => {
   try {
     const snapshot = await getOneDoc(baseCollectionCoreData, COURSES);
-    // @ts-ignore -- `TPayloadCoursesDataDynamic` is known/expected form
+    // @ts-expect-error -- `TPayloadCoursesDataDynamic` is known/expected form
     const coursesDataDoc: TPayloadCoursesDataDynamic = snapshot.data() ?? {};
     return coursesDataDoc;
   } catch (e: any) {

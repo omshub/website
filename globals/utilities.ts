@@ -65,7 +65,7 @@ export const mapDynamicCoursesDataToCourses = (
 ) => {
   const coursesDataStatic = getCoursesDataStatic();
   const courses = {} as TPayloadCourses;
-  // @ts-ignore -- `TCourseId` is guaranteed by `coursesDataStatic`
+  // @ts-expect-error -- `TCourseId` is guaranteed by `coursesDataStatic`
   Object.keys(coursesDataStatic).forEach((courseId: TCourseId) => {
     courses[courseId] = {
       ...coursesDataStatic[courseId],

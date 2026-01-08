@@ -9,6 +9,7 @@ overrides:
   react-dom: ^19.1.0
   '@types/react': ^19.1.0
   '@types/react-dom': ^19.1.0
+  dompurify: ^3.2.4
 
 importers:
 
@@ -3034,9 +3035,6 @@ packages:
     resolution: {integrity: sha512-A2is4PLG+eeSfoTMA95/s4pvAoSo2mKtiM5jlHkAVewmiO8ISFTFKZjH7UAM1Atli/OT/7JHOrJRJiMKUZKYBw==}
     engines: {node: '>=12'}
     deprecated: Use your platform's native DOMException instead
-
-  dompurify@2.5.8:
-    resolution: {integrity: sha512-o1vSNgrmYMQObbSSvF/1brBYEQPHhV1+gsmrusO7/GXtp1T9rCS8cXFqVxK/9crT1jA6Ccv+5MTSjBNqr7Sovw==}
 
   dompurify@3.3.1:
     resolution: {integrity: sha512-qkdCKzLNtrgPFP1Vo+98FRzJnBRGe4ffyCea9IwHB1fyxPOeNTHpLKYGd4Uk9xvNoH0ZoOjwZxNptyMwqrId1Q==}
@@ -7800,7 +7798,7 @@ snapshots:
 
   '@toast-ui/editor@3.2.2':
     dependencies:
-      dompurify: 2.5.8
+      dompurify: 3.3.1
       prosemirror-commands: 1.7.1
       prosemirror-history: 1.5.0
       prosemirror-inputrules: 1.5.1
@@ -8933,8 +8931,6 @@ snapshots:
   domexception@4.0.0:
     dependencies:
       webidl-conversions: 7.0.0
-
-  dompurify@2.5.8: {}
 
   dompurify@3.3.1:
     optionalDependencies:

@@ -15,7 +15,7 @@ import {
 } from '@src/colorPalette';
 
 type TMapRatings = {
-  // eslint-disable-next-line no-unused-vars
+   
   [rating in TRatingScale]: string;
 };
 
@@ -70,7 +70,7 @@ export const mapSemesterIdToName: TKeyMap = {
 /**
  * Returns a hex color string from a 1-5 rating, with 1 being "bad" and 5 being "good"
  */
-export const mapRatingToColor = (rating: Number) => {
+export const mapRatingToColor = (rating: number) => {
   const mapColorPalette: TMapRatings = {
     1: newHorizon,
     2: RATCap,
@@ -88,7 +88,7 @@ export const mapRatingToColor = (rating: Number) => {
  * Same as mapRatingToColor, except low values are "good" and higher values "bad"
  * @see mapRatingToColor
  */
-export const mapRatingToColorInverted = (rating: Number) =>
+export const mapRatingToColorInverted = (rating: number) =>
   mapRatingToColor(-rating + 6);
 
 type TSortKey =

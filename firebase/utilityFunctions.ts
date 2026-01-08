@@ -36,7 +36,7 @@ export const parseReviewId = (reviewId: string) => {
   }
 
   return {
-    // @ts-ignore
+    // @ts-expect-error -- courseId is TCourseId in this context
     courseId,
     year,
     semesterTerm: semesterTermParsedAsString,
@@ -160,7 +160,7 @@ export const updateAverages = ({
 });
 
 type TMapCourseToLegacyNumReviews = {
-  // eslint-disable-next-line no-unused-vars
+   
   [courseId in TCourseId]: number;
 };
 
