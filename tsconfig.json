@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -13,19 +17,46 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "jsxImportSource": "@emotion/react",
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@globals/*": ["globals/*"],
-      "@backend/*": ["firebase/*"],
-      "@src/*": ["src/*"],
-      "@pages/*": ["pages/*"],
-      "@components/*": ["src/components/*"],
-      "@context/*": ["context/*"],
-      "@services/*": ["services/*"]
-    }
+      "@globals/*": [
+        "globals/*"
+      ],
+      "@backend/*": [
+        "firebase/*"
+      ],
+      "@src/*": [
+        "src/*"
+      ],
+      "@pages/*": [
+        "pages/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@context/*": [
+        "context/*"
+      ],
+      "@services/*": [
+        "services/*"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "__seed__"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "__seed__"
+  ]
 }

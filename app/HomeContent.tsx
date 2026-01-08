@@ -1,7 +1,7 @@
-import backend from '@backend/index';
+'use client';
+
 import { courseFields } from '@globals/constants';
 import { Course } from '@globals/types';
-import { mapDynamicCoursesDataToCourses } from '@globals/utilities';
 import {
   Tooltip,
   useMediaQuery,
@@ -11,7 +11,6 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-
 import {
   DataGrid,
   GridColDef,
@@ -20,19 +19,16 @@ import {
 } from '@mui/x-data-grid';
 import Link from '@src/Link';
 import { mapPayloadToArray, roundNumber } from '@src/utilities';
-import type { NextPage } from 'next';
 
-const { getCourses } = backend;
-
-interface HomePageProps {
-  allCourseData: Course[];
+interface HomeContentProps {
+  allCourseData: Record<string, Course>;
 }
 
-const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
+export default function HomeContent({ allCourseData }: HomeContentProps) {
   const isDesktop = useMediaQuery('(min-width:600px)');
   const coursesArray: Course[] = mapPayloadToArray(
     allCourseData,
-    courseFields.NAME,
+    courseFields.NAME
   );
 
   const theme = useTheme();
@@ -49,8 +45,7 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
         <Tooltip arrow title={`View review page for ${params.row.courseId}`}>
           <Link
             color={`${theme.palette.mode == 'dark' ? 'secondary.contrastText' : 'secondary.main'}`}
-            href='/course/[courseid]'
-            as={`/course/${params.row.courseId}`}
+            href={`/course/${params.row.courseId}`}
           >
             {params.row.name}
           </Link>
@@ -76,7 +71,6 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       headerName: `Workload ${isDesktop ? '(hrs/wk)' : ' '}`,
       flex: isDesktop ? 0.5 : 0,
       minWidth: isDesktop ? 50 : 150,
-
       valueGetter: (value: any, row: any) => roundNumber(row.avgWorkload, 1),
       type: 'number',
     },
@@ -85,7 +79,6 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       headerName: `Overall ${isDesktop ? '(out of 5)' : ''}`,
       flex: isDesktop ? 0.5 : 0,
       minWidth: isDesktop ? 50 : 150,
-
       valueGetter: (value: any, row: any) => roundNumber(row.avgOverall, 1),
       type: 'number',
     },
@@ -94,7 +87,6 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       headerName: 'Number of Reviews',
       flex: isDesktop ? 0.5 : 0,
       minWidth: isDesktop ? 50 : 200,
-
       type: 'number',
     },
     {
@@ -107,8 +99,9 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       headerName: 'Aliases',
     },
   ];
+
   return (
-    <Container maxWidth='xl'>
+    <Container maxWidth="xl">
       <Box
         sx={{
           my: 4,
@@ -119,10 +112,10 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
           textAlign: 'center',
         }}
       >
-        <Typography variant='h2' sx={{ mt: 5 }} gutterBottom>
+        <Typography variant="h2" sx={{ mt: 5 }} gutterBottom>
           OMS Courses
         </Typography>
-        <Typography variant='subtitle1' sx={{ mb: 10 }} gutterBottom>
+        <Typography variant="subtitle1" sx={{ mb: 10 }} gutterBottom>
           {`Georgia Tech's Online Master's Course Catalog`}
         </Typography>
         <>
@@ -173,16 +166,4 @@ const Home: NextPage<HomePageProps> = ({ allCourseData }) => {
       </Box>
     </Container>
   );
-};
-
-export default Home;
-
-export async function getServerSideProps() {
-  const coursesDataDynamic = await getCourses();
-  const coursesData = mapDynamicCoursesDataToCourses(coursesDataDynamic);
-  return {
-    props: {
-      allCourseData: coursesData,
-    },
-  };
 }

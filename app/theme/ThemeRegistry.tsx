@@ -1,11 +1,15 @@
-import { TContextProviderProps } from '@context/types';
+'use client';
+
+import * as React from 'react';
+import CssBaseline from '@mui/material/CssBaseline';
 import { CssVarsProvider, extendTheme } from '@mui/material/styles';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { getDesignTokens } from '@src/theme';
 
 const { palette: lightPalette } = getDesignTokens('light');
 const { palette: darkPalette } = getDesignTokens('dark');
 
-export const theme = extendTheme({
+const theme = extendTheme({
   typography: {
     fontFamily: [
       '-apple-system',
@@ -42,14 +46,13 @@ export const theme = extendTheme({
   },
 });
 
-export const ColorProvider = ({ children }: TContextProviderProps) => {
+export default function ThemeRegistry({ children }: { children: React.ReactNode }) {
   return (
-    <CssVarsProvider
-      theme={theme}
-      defaultMode='system'
-      disableTransitionOnChange
-    >
-      {children}
-    </CssVarsProvider>
+    <AppRouterCacheProvider options={{ key: 'css', prepend: true }}>
+      <CssVarsProvider theme={theme} defaultMode="system" disableTransitionOnChange>
+        <CssBaseline />
+        {children}
+      </CssVarsProvider>
+    </AppRouterCacheProvider>
   );
-};
+}

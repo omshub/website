@@ -1,15 +1,14 @@
+'use client';
+
 import ReviewCard from '@components/ReviewCard';
 import { useAuth } from '@context/AuthContext';
 import { FirebaseAuthUser } from '@context/types';
 import { DESC, EMOJI_NO_REVIEWS, reviewFields } from '@globals/constants';
 import { Review, TUserReviews, TNullable } from '@globals/types';
 import { mapPayloadToArray } from '@src/utilities';
-import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
-
 import backend from '@backend/index';
 import { isGTEmail } from '@globals/utilities';
-
 import {
   Box,
   CircularProgress,
@@ -20,7 +19,7 @@ import {
 
 const { addUser, getUser } = backend;
 
-const UserReviews: NextPage = () => {
+export default function UserReviewsPage() {
   const [loading, setLoading] = useState<boolean>(true);
 
   const authContext = useAuth();
@@ -52,7 +51,7 @@ const UserReviews: NextPage = () => {
   }, [user]);
 
   return (
-    <Container maxWidth='lg'>
+    <Container maxWidth="lg">
       <Box
         sx={{
           my: 4,
@@ -63,7 +62,7 @@ const UserReviews: NextPage = () => {
         }}
       >
         <>
-          <Typography variant='h4' color='text.secondary' gutterBottom>
+          <Typography variant="h4" color="text.secondary" gutterBottom>
             {`My Reviews`}
           </Typography>
           {loading ? (
@@ -79,7 +78,7 @@ const UserReviews: NextPage = () => {
                       {mapPayloadToArray(
                         userReviews,
                         reviewFields.CREATED,
-                        DESC,
+                        DESC
                       ).map((value: Review) => (
                         <Grid sx={{ width: `100%` }} key={value.reviewId} item>
                           <ReviewCard {...value}></ReviewCard>
@@ -91,8 +90,8 @@ const UserReviews: NextPage = () => {
               ) : (
                 <>
                   <Typography
-                    variant='h3'
-                    color='text.secondary'
+                    variant="h3"
+                    color="text.secondary"
                     style={{ textAlign: 'center' }}
                     gutterBottom
                   >
@@ -106,6 +105,4 @@ const UserReviews: NextPage = () => {
       </Box>
     </Container>
   );
-};
-
-export default UserReviews;
+}

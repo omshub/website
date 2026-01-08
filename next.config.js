@@ -15,12 +15,12 @@ module.exports = {
   },
   compiler: {
     removeConsole: true,
-    styledComponents: true,
   },
   transpilePackages: [
     '@mui/system',
     '@mui/material',
+    '@mui/material-nextjs',
     '@mui/icons-material',
-    '@mui/styles',
+    '@mui/x-data-grid',
   ],
 };

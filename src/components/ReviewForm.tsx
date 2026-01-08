@@ -30,7 +30,6 @@ import {
 } from '@mui/material';
 import { mapSemesterIdToName, mapSemsterIdToTerm } from '@src/utilities';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import {
   Controller,
@@ -93,7 +92,6 @@ const ReviewForm = ({
 
   const { setAlert } = useAlert();
   const [userReviews, setUserReviews] = useState<TUserReviews>({});
-  const router = useRouter();
 
   const yearRange = getYearRange();
 
@@ -174,7 +172,7 @@ const ReviewForm = ({
       });
 
       handleReviewModalClose();
-      router.reload();
+      window.location.reload();
     }
   };
 

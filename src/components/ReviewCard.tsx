@@ -41,7 +41,6 @@ import {
   mapSemesterIdToName,
 } from '@src/utilities';
 import { toBlob } from 'html-to-image';
-import { useRouter } from 'next/router';
 import { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import Markdown from 'react-markdown';
 
@@ -64,7 +63,6 @@ const ReviewCard = ({
   downvotes,
   isGTVerifiedReviewer = false,
 }: Review) => {
-  const router = useRouter();
   const authContext: TNullable<any> = useAuth();
   const user: TNullable<FirebaseAuthUser> = authContext.user;
   const timestamp = new Date(created).toLocaleDateString();
@@ -113,7 +111,7 @@ const ReviewCard = ({
     if (user && user.uid && reviewId) {
       await deleteReview(user.uid, reviewId);
       handleDeleteDialogClose();
-      router.reload();
+      window.location.reload();
     }
     setIsSubmitting(false);
   };

@@ -1,4 +1,5 @@
-import backend from '@backend/index';
+'use client';
+
 import ReviewCard from '@components/ReviewCard';
 import ReviewForm from '@components/ReviewForm';
 import { useAuth } from '@context/AuthContext';
@@ -7,11 +8,9 @@ import { DESC, EMOJI_NO_REVIEWS, REVIEW_ID } from '@globals/constants';
 import {
   Course,
   Review,
-  TCourseId,
   TPayloadReviews,
   TNullable,
 } from '@globals/types';
-import { mapDynamicCoursesDataToCourses } from '@globals/utilities';
 import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
 import LinkIcon from '@mui/icons-material/Link';
 import RateReviewIcon from '@mui/icons-material/RateReview';
@@ -44,38 +43,37 @@ import {
   mapSemesterTermToName,
   roundNumber,
 } from '@src/utilities';
-import type { NextPage } from 'next';
 import React, { useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
+import backend from '@backend/index';
+
+const { getReviews } = backend;
 
 type TActiveSemesters = {
   [semesterTerm: number]: boolean;
 };
 
-interface CoursePageProps {
+interface CourseContentProps {
   courseData: Course;
-  courseTimeline: number[];
-  courseYears: number[];
-  defaultYear: number;
-  defaultSemester: string;
-  defaultSemesterToggles: boolean[];
-  defaultReviews: TPayloadReviews;
-  numberOfReviews: number;
+  courseTimeline: Record<number, Record<string, number>> | null;
+  courseYears: number[] | null;
+  defaultYear: number | null;
+  defaultSemester: string | null;
+  defaultSemesterToggles: Record<string, boolean> | null;
+  defaultReviews: TPayloadReviews | null;
 }
 
-const { getCourses, getReviews } = backend;
-
-const CourseId: NextPage<CoursePageProps> = ({
+export default function CourseContent({
   courseData,
   courseTimeline,
-  defaultYear,
   courseYears,
+  defaultYear,
   defaultSemester,
   defaultSemesterToggles,
   defaultReviews,
-}) => {
+}: CourseContentProps) {
   const {
-    courseId: courseId,
+    courseId,
     name: courseName,
     numReviews: courseNumReviews,
     url: courseUrl,
@@ -83,6 +81,7 @@ const CourseId: NextPage<CoursePageProps> = ({
     avgDifficulty: courseAvgDifficulty,
     avgOverall: courseAvgOverall,
   } = courseData;
+
   const [loading, setLoading] = useState<boolean>(false);
   const [snackBarOpen, setSnackBarOpen] = useState<boolean>(false);
   const [snackBarMessage, setSnackBarMessage] = useState<string>('');
@@ -91,23 +90,25 @@ const CourseId: NextPage<CoursePageProps> = ({
   const handleReviewModalClose = () => setReviewModalOpen(false);
 
   const authContext: TNullable<any> = useAuth();
-  const user: TNullable<FirebaseAuthUser> = authContext.user;
+  const user: TNullable<FirebaseAuthUser> = authContext?.user;
 
   const theme = useTheme();
 
   const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>(
-    defaultSemesterToggles,
+    defaultSemesterToggles || {}
   );
-  const [selectedSemester, setSelectedSemester] =
-    useState<string>(defaultSemester);
-  const [selectedYear, setSelectedYear] = useState<number>(defaultYear);
-  const [courseReviews, setCourseReviews] =
-    useState<TPayloadReviews>(defaultReviews);
+  const [selectedSemester, setSelectedSemester] = useState<string>(
+    defaultSemester || ''
+  );
+  const [selectedYear, setSelectedYear] = useState<number>(defaultYear || 0);
+  const [courseReviews, setCourseReviews] = useState<TPayloadReviews>(
+    defaultReviews || {}
+  );
   const orientation = useMediaQuery('(min-width:600px)');
 
   const { mutate } = useSWRConfig();
   const { data: course_reviews } = useSWR(
-    `/course/${courseId}/${selectedYear}/${selectedSemester}`,
+    `/course/${courseId}/${selectedYear}/${selectedSemester}`
   );
 
   const actions = [
@@ -144,49 +145,54 @@ const CourseId: NextPage<CoursePageProps> = ({
   ];
 
   const handleSemester = (
-    event: React.MouseEvent<HTMLElement>,
-    newSemester: string,
+    _event: React.MouseEvent<HTMLElement>,
+    newSemester: string
   ) => {
     setSelectedSemester(newSemester);
   };
 
   const handleYear = (
-    event: React.MouseEvent<HTMLElement>,
-    newYear: number,
+    _event: React.MouseEvent<HTMLElement>,
+    newYear: number
   ) => {
     setSelectedYear(newYear);
   };
+
   const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: string,
+    _event: React.SyntheticEvent | Event,
+    reason?: string
   ) => {
     if (reason === 'clickaway') {
       return;
     }
-
     setSnackBarOpen(false);
   };
+
   useEffect(() => {
     if (course_reviews) {
       setCourseReviews(course_reviews);
     }
   }, [course_reviews]);
+
   useEffect(() => {
-    if (selectedYear && selectedSemester) {
+    if (selectedYear && selectedSemester && courseTimeline) {
       setLoading(true);
-      const newAvailableSemesters: any = Object.keys(
-        courseTimeline[selectedYear],
-      );
-      const newActiveSemesters: any = Object.keys(mapSemesterTermToName).reduce(
+      const yearData = courseTimeline[selectedYear];
+      const newAvailableSemesters: string[] = yearData
+        ? Object.keys(yearData)
+        : [];
+      const newActiveSemesters: Record<string, boolean> = Object.keys(
+        mapSemesterTermToName
+      ).reduce(
         (attrs, key) => ({
           ...attrs,
           [key]: !(newAvailableSemesters.indexOf(key.toString()) > -1),
         }),
-        {},
+        {}
       );
       if (newActiveSemesters[selectedSemester]) {
         setSelectedSemester(
-          newAvailableSemesters[newAvailableSemesters.length - 1],
+          newAvailableSemesters[newAvailableSemesters.length - 1]
         );
       }
       setActiveSemesters(newActiveSemesters);
@@ -199,15 +205,16 @@ const CourseId: NextPage<CoursePageProps> = ({
         return getReviews(
           courseId,
           String(selectedYear),
-          String(selectedSemester),
+          String(selectedSemester)
         );
-      },
+      }
     );
     setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYear, selectedSemester]);
+
   return (
-    <Container maxWidth='lg'>
+    <Container maxWidth="lg">
       <Box
         sx={{
           my: 4,
@@ -217,11 +224,11 @@ const CourseId: NextPage<CoursePageProps> = ({
           alignItems: 'center',
         }}
       >
-        <Typography variant='h4' color='inherit' gutterBottom>
+        <Typography variant="h4" color="inherit" gutterBottom>
           {courseName}
         </Typography>
         {courseUrl && (
-          <Link href={courseUrl} target='_blank' color='primary.contrastText'>
+          <Link href={courseUrl} target="_blank" color="primary.contrastText">
             <Box
               sx={{
                 display: 'flex',
@@ -229,8 +236,8 @@ const CourseId: NextPage<CoursePageProps> = ({
                 alignItems: 'center',
               }}
             >
-              <LinkIcon color='inherit' />
-              <Typography variant='subtitle1' color='inherit'>
+              <LinkIcon color="inherit" />
+              <Typography variant="subtitle1" color="inherit">
                 {'Course Website'}
               </Typography>
             </Box>
@@ -240,20 +247,20 @@ const CourseId: NextPage<CoursePageProps> = ({
           <Grid
             sx={{ my: 1 }}
             container
-            direction='row'
+            direction="row"
             spacing={4}
-            justifyContent='center'
+            justifyContent="center"
           >
             <Grid item xs={12} lg={4}>
               <Card
-                variant='outlined'
+                variant="outlined"
                 sx={{ padding: '5 30', color: 'inherit' }}
               >
                 <CardContent>
                   <Typography sx={{ fontSize: 14 }} gutterBottom>
                     {`Average Workload`}
                   </Typography>
-                  <Typography variant='h5'>
+                  <Typography variant="h5">
                     {roundNumber(Number(courseAvgWorkload), 1) + ' hrs/wk'}
                   </Typography>
                 </CardContent>
@@ -261,11 +268,11 @@ const CourseId: NextPage<CoursePageProps> = ({
             </Grid>
             <Grid item xs={12} lg={4}>
               <Card
-                variant='outlined'
+                variant="outlined"
                 sx={{
                   padding: '5 30',
                   borderColor: mapRatingToColorInverted(
-                    Number(courseAvgDifficulty),
+                    Number(courseAvgDifficulty)
                   ),
                 }}
               >
@@ -274,10 +281,10 @@ const CourseId: NextPage<CoursePageProps> = ({
                     {`Average Difficulty`}
                   </Typography>
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
                       color: mapRatingToColorInverted(
-                        Number(courseAvgDifficulty),
+                        Number(courseAvgDifficulty)
                       ),
                     }}
                   >
@@ -288,7 +295,7 @@ const CourseId: NextPage<CoursePageProps> = ({
             </Grid>
             <Grid item xs={12} lg={4}>
               <Card
-                variant='outlined'
+                variant="outlined"
                 sx={{
                   margin: '10',
                   padding: '5 30',
@@ -300,7 +307,7 @@ const CourseId: NextPage<CoursePageProps> = ({
                     {`Average Overall`}
                   </Typography>
                   <Typography
-                    variant='h5'
+                    variant="h5"
                     sx={{
                       color: mapRatingToColor(Number(courseAvgOverall)),
                     }}
@@ -312,55 +319,57 @@ const CourseId: NextPage<CoursePageProps> = ({
             </Grid>
           </Grid>
         )}
-        <Grid>
-          <ToggleButtonGroup
-            value={selectedSemester}
-            onChange={handleSemester}
-            exclusive={true}
-            aria-label='year selection'
-            size='large'
-            orientation={`${orientation ? `horizontal` : `vertical`}`}
-            sx={{ my: 2, width: `100%`, justifyContent: 'center' }}
-          >
-            {activeSemesters &&
-              Object.entries(activeSemesters).map(
-                ([key, value]: [string, boolean], index: number) => (
-                  <ToggleButton
-                    value={key}
-                    key={index}
-                    disabled={Boolean(value) || selectedSemester === key}
-                  >
-                    <Typography variant='body1'>
-                      {mapSemesterTermToName[Number(key)]}{' '}
-                      {mapSemesterTermToEmoji[Number(key)]}
-                    </Typography>
-                  </ToggleButton>
-                ),
-              )}
-          </ToggleButtonGroup>
-          <ToggleButtonGroup
-            value={selectedYear}
-            onChange={handleYear}
-            exclusive={true}
-            aria-label='year selection'
-            size='large'
-            orientation={`${orientation ? `horizontal` : `vertical`}`}
-            sx={{ my: 2, width: `100%`, justifyContent: 'center' }}
-          >
-            {courseYears &&
-              courseYears.map((year: number, index: number) => {
-                return (
-                  <ToggleButton
-                    value={year}
-                    key={index}
-                    disabled={selectedYear === year}
-                  >
-                    <Typography variant='body2'>{year}</Typography>
-                  </ToggleButton>
-                );
-              })}
-          </ToggleButtonGroup>
-        </Grid>
+        {courseYears && courseYears.length > 0 && (
+          <Grid>
+            <ToggleButtonGroup
+              value={selectedSemester}
+              onChange={handleSemester}
+              exclusive={true}
+              aria-label="year selection"
+              size="large"
+              orientation={`${orientation ? `horizontal` : `vertical`}`}
+              sx={{ my: 2, width: `100%`, justifyContent: 'center' }}
+            >
+              {activeSemesters &&
+                Object.entries(activeSemesters).map(
+                  ([key, value]: [string, boolean], index: number) => (
+                    <ToggleButton
+                      value={key}
+                      key={index}
+                      disabled={Boolean(value) || selectedSemester === key}
+                    >
+                      <Typography variant="body1">
+                        {mapSemesterTermToName[Number(key)]}{' '}
+                        {mapSemesterTermToEmoji[Number(key)]}
+                      </Typography>
+                    </ToggleButton>
+                  )
+                )}
+            </ToggleButtonGroup>
+            <ToggleButtonGroup
+              value={selectedYear}
+              onChange={handleYear}
+              exclusive={true}
+              aria-label="year selection"
+              size="large"
+              orientation={`${orientation ? `horizontal` : `vertical`}`}
+              sx={{ my: 2, width: `100%`, justifyContent: 'center' }}
+            >
+              {courseYears &&
+                courseYears.map((year: number, index: number) => {
+                  return (
+                    <ToggleButton
+                      value={year}
+                      key={index}
+                      disabled={selectedYear === year}
+                    >
+                      <Typography variant="body2">{year}</Typography>
+                    </ToggleButton>
+                  );
+                })}
+            </ToggleButtonGroup>
+          </Grid>
+        )}
         {loading ? (
           <Box sx={{ display: 'flex', m: 10 }}>
             <CircularProgress />
@@ -376,7 +385,7 @@ const CourseId: NextPage<CoursePageProps> = ({
                         <Grid sx={{ width: `100%` }} key={value.reviewId} item>
                           <ReviewCard {...value}></ReviewCard>
                         </Grid>
-                      ),
+                      )
                     )}
                   </Grid>
                 )}
@@ -384,8 +393,8 @@ const CourseId: NextPage<CoursePageProps> = ({
             ) : (
               <>
                 <Typography
-                  variant='h3'
-                  color='inherit'
+                  variant="h3"
+                  color="inherit"
                   style={{ textAlign: 'center' }}
                   gutterBottom
                 >
@@ -399,7 +408,7 @@ const CourseId: NextPage<CoursePageProps> = ({
       <Dialog
         open={reviewModalOpen}
         onClose={handleReviewModalClose}
-        maxWidth='md'
+        maxWidth="md"
         closeAfterTransition
         PaperProps={{ sx: { backgroundImage: 'none' } }}
       >
@@ -413,7 +422,7 @@ const CourseId: NextPage<CoursePageProps> = ({
         />
       </Dialog>
       <SpeedDial
-        ariaLabel='Review Dial'
+        ariaLabel="Review Dial"
         sx={{ position: 'fixed', bottom: 40, right: 40 }}
         icon={<SpeedDialIcon />}
         FabProps={{
@@ -459,7 +468,7 @@ const CourseId: NextPage<CoursePageProps> = ({
         autoHideDuration={6000}
         onClose={handleClose}
         action={
-          <Button color='inherit' size='small' onClick={handleClose}>
+          <Button color="inherit" size="small" onClick={handleClose}>
             Close
           </Button>
         }
@@ -467,59 +476,4 @@ const CourseId: NextPage<CoursePageProps> = ({
       />
     </Container>
   );
-};
-
-export default CourseId;
-
-interface PageProps {
-  query: { courseid: string };
-}
-
-export async function getServerSideProps(context: PageProps) {
-  const { courseid } = context.query;
-  const courseId = courseid as TCourseId;
-  const allCourseDataDynamic = await getCourses();
-  const allCourseData = mapDynamicCoursesDataToCourses(allCourseDataDynamic);
-  const currentCourseData = allCourseData[courseId];
-  if (currentCourseData.numReviews) {
-    const courseTimeline = currentCourseData.reviewsCountsByYearSem;
-    const courseYears = Object.keys(courseTimeline)
-      .map((year) => Number(year))
-      .reverse();
-    const mostRecentYear = courseYears[0];
-    const mostRecentYearSemesters = Object.keys(courseTimeline[mostRecentYear]);
-    const mostRecentSemester =
-      mostRecentYearSemesters[mostRecentYearSemesters.length - 1];
-    const availableSemesters = Object.keys(courseTimeline[mostRecentYear]);
-    const activeSemesters = Object.keys(mapSemesterTermToName).reduce(
-      (attrs, key) => ({
-        ...attrs,
-        [key]: !(availableSemesters.indexOf(key.toString()) > -1),
-      }),
-      {},
-    );
-    const courseReviews = await getReviews(
-      courseId,
-      String(mostRecentYear),
-      String(mostRecentSemester),
-    );
-    return {
-      props: {
-        courseData: currentCourseData,
-        courseTimeline: courseTimeline,
-        courseYears: courseYears,
-        defaultYear: mostRecentYear,
-        defaultSemester: mostRecentSemester,
-        defaultSemesterToggles: activeSemesters,
-        defaultReviews: courseReviews,
-        numReviews: currentCourseData.numReviews,
-      },
-    };
-  } else {
-    return {
-      props: {
-        courseData: currentCourseData,
-      },
-    };
-  }
 }

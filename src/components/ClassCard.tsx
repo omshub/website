@@ -10,7 +10,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 import { grey } from '@mui/material/colors';
 
@@ -36,10 +36,7 @@ const ClassCard = ({ ...props }: ClassCardProps) => {
     <Card sx={{ width: 350, boxShadow: `0 5px 0px 0 ${grey[200]}` }}>
       <CardActionArea
         onClick={() => {
-          router.push({
-            pathname: '/class/[classid]',
-            query: { classid: props.classId, title: props.title },
-          });
+          router.push(`/class/${props.classId}?title=${encodeURIComponent(props.title)}`);
         }}
       >
         <CardMedia

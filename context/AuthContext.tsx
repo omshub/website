@@ -20,7 +20,7 @@ import {
   signInWithPopup,
   signOut,
 } from 'firebase/auth';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 export type TAuthContext = {
@@ -43,6 +43,7 @@ export const AuthContextProvider = ({ children }: TContextProviderProps) => {
   const [user, setUser] = useState<TNullable<FirebaseAuthUser>>(null);
   const [loading, setLoading] = useState<Boolean>(true);
   const { setAlert } = useAlert();
+  const router = useRouter();
 
   useEffect(() => {
     setLoading(true);

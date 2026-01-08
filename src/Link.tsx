@@ -1,7 +1,9 @@
+'use client';
+
 import { LinkProps as MuiLinkProps } from '@mui/material/Link';
 import clsx from 'clsx';
 import NextLink, { LinkProps as NextLinkProps } from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import * as React from 'react';
 
 import { Link as MuiLink } from '@mui/material';
@@ -69,10 +71,10 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       ...other
     } = props;
 
-    const router = useRouter();
-    const pathname = typeof href === 'string' ? href : href.pathname;
+    const currentPathname = usePathname();
+    const hrefPathname = typeof href === 'string' ? href : href.pathname;
     const className = clsx(classNameProps, {
-      [activeClassName]: router.pathname === pathname && activeClassName,
+      [activeClassName]: currentPathname === hrefPathname && activeClassName,
     });
 
     const linkAs = linkAsProp || as;

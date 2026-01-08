@@ -76,16 +76,14 @@ const Login: NextPage = () => {
             label={`🔮 Enter an email address`}
           ></TextField>
           {providers.map((provider: TProviderName, index) => (
-            <>
-              <SocialButton
-                key={index}
-                onClick={() => {
-                  signInWithProvider(provider);
-                  handleLoginClose();
-                }}
-                provider={provider}
-              ></SocialButton>
-            </>
+            <SocialButton
+              key={index}
+              onClick={() => {
+                signInWithProvider(provider);
+                handleLoginClose();
+              }}
+              provider={provider}
+            />
           ))}
           <Box mt={2}>
             <CloseIcon sx={{ width: '100%' }} onClick={handleLoginClose} />
