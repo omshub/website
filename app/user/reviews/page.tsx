@@ -47,7 +47,7 @@ export default function UserReviewsPage() {
       setUserReviews({});
       setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [user]);
 
   return (
@@ -80,7 +80,7 @@ export default function UserReviewsPage() {
                         reviewFields.CREATED,
                         DESC
                       ).map((value: Review) => (
-                        <Grid sx={{ width: `100%` }} key={value.reviewId} item>
+                        <Grid sx={{ width: `100%` }} key={value.reviewId} size="grow">
                           <ReviewCard {...value}></ReviewCard>
                         </Grid>
                       ))}

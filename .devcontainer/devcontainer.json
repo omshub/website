@@ -5,13 +5,20 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {
+      "configureGitHubCLI": true
+    }
+  },
   "runArgs": ["--name", "omshub-website-dev"],
   "mounts": [
     // cache `node_modules`
     "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     // cache firebase emulators suite JAR files -- ref: https://firebase.google.com/docs/emulator-suite/install_and_configure#integrate_with_your_ci_system
     "source=${localWorkspaceFolderBasename}-fb_emulators_root,target=/root/.cache/firebase/emulators/,type=volume", // root user
-    "source=${localWorkspaceFolderBasename}-fb_emulators_nonroot,target=/home/${containerUser}/.cache/firebase/emulators/,type=volume" // non-root user (e.g., `node`)
+    "source=${localWorkspaceFolderBasename}-fb_emulators_nonroot,target=/home/${containerUser}/.cache/firebase/emulators/,type=volume", // non-root user (e.g., `node`)
+    // persist git config across container rebuilds
+    "source=${localWorkspaceFolderBasename}-gitconfig,target=/root/.gitconfig-volume,type=volume"
   ],
   "customizations": {
     "vscode": {
@@ -29,7 +36,14 @@
   },
   "containerEnv": {
     "CHOKIDAR_USEPOLLING": "true",
-    "WATCHPACK_POLLING": "true"
+    "WATCHPACK_POLLING": "true",
+    // Editor for Storybook "open in editor" feature
+    "EDITOR": "code",
+    // Git configuration - set GIT_USER_NAME and GIT_USER_EMAIL in your shell profile
+    "GIT_AUTHOR_NAME": "${localEnv:GIT_USER_NAME}",
+    "GIT_AUTHOR_EMAIL": "${localEnv:GIT_USER_EMAIL}",
+    "GIT_COMMITTER_NAME": "${localEnv:GIT_USER_NAME}",
+    "GIT_COMMITTER_EMAIL": "${localEnv:GIT_USER_EMAIL}"
   },
   "forwardPorts": [
     // Application and Storybook
@@ -41,16 +55,16 @@
     // Application and Storybook
     "3000": {
       "label": "Website Application",
-      "onAutoForward": "openBrowser"
+      "onAutoForward": "notify"
     },
     "6006": {
       "label": "Storybook",
-      "onAutoForward": "openBrowser"
+      "onAutoForward": "notify"
     },
     // Local Firebase Emulator Suite
     "4000": {
       "label": "Firebase Emulator Suite UI Application",
-      "onAutoForward": "openBrowser"
+      "onAutoForward": "notify"
     },
     "4400": {
       "label": "Firebase Emulator Suite UI Hub"

@@ -14,12 +14,11 @@ module.exports = {
     measurementId: process.env.MEASUREMENT_ID,
   },
   compiler: {
-    removeConsole: true,
+    removeConsole: process.env.NODE_ENV === 'production',
   },
   transpilePackages: [
     '@mui/system',
     '@mui/material',
-    '@mui/material-nextjs',
     '@mui/icons-material',
     '@mui/x-data-grid',
   ],

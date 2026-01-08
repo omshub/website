@@ -11,23 +11,22 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import type { NextPage } from 'next';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SocialButton from '@components/SocialButton';
 import CloseIcon from '@mui/icons-material/Close';
 
 const Login: NextPage = () => {
   const authContext = useAuth();
 
-  /* eslint-disable no-unused-vars */
-  let signInWithProvider: TSignInAction = (email: string) => {};
-  let signWithMagic: TSignInAction = (email: string) => {};
-  /* eslint-enable no-unused-vars */
+  let signInWithProvider: TSignInAction = () => {};
+  let signWithMagic: TSignInAction = () => {};
 
   if (authContext) {
     ({ signInWithProvider, signWithMagic } = authContext);
   }
   const { loginOpen, handleLoginClose } = useMenu();
   const [email, setEmail] = useState<string>('');
+  const [mounted, setMounted] = useState(false);
   const handleEmailChange = (event: any) => {
     setEmail(event?.target?.value);
   };
@@ -37,7 +36,12 @@ const Login: NextPage = () => {
       handleLoginClose();
     }
   };
-  const isDesktop = useMediaQuery('(min-width:1025px)');
+  const isDesktopQuery = useMediaQuery('(min-width:1025px)', { noSsr: true });
+  const isDesktop = mounted ? isDesktopQuery : true;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const providers: TProviderName[] = ['Google', 'Facebook', 'Github'];
 
@@ -50,7 +54,6 @@ const Login: NextPage = () => {
           backgroundImage: 'none',
         },
       }}
-      ModalProps={{ onBackdropClick: handleLoginClose }}
       open={loginOpen}
       onClose={handleLoginClose}
       anchor={'right'}

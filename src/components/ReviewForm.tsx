@@ -61,7 +61,6 @@ type TPropsReviewForm = {
 };
 
 type TSemesterMap = {
-  // eslint-disable-next-line no-unused-vars
   [semesterId in TSemesterId]: Date;
 };
 
@@ -134,12 +133,12 @@ const ReviewForm = ({
       const semesterId = data.semesterId as TSemesterId;
       const year = Number(data.year);
       const body = data.body;
-      const reviewerId = user?.uid!;
+      const reviewerId = user!.uid;
       const reviewId = `${courseId}-${data.year}-${mapSemsterIdToTerm[semesterId]}-${currentTime}`;
       const workload = Number(data.workload);
       const difficulty = Number(data.difficulty) as TRatingScale;
       const overall = Number(data.overall) as TRatingScale;
-      const isGTVerifiedReviewer = isGTEmail(user?.email!);
+      const isGTVerifiedReviewer = isGTEmail(user!.email!);
 
       const reviewValues = {
         ['courseId']: reviewInput ? reviewInput.courseId : courseId,
@@ -161,9 +160,11 @@ const ReviewForm = ({
         overall,
       };
 
-      reviewInput?.reviewId
-        ? await updateReview(user?.uid!, reviewInput?.reviewId, reviewValues)
-        : await addReview(user?.uid!, reviewId, reviewValues);
+      if (reviewInput?.reviewId) {
+        await updateReview(user!.uid, reviewInput.reviewId, reviewValues);
+      } else {
+        await addReview(user!.uid, reviewId, reviewValues);
+      }
 
       setAlert({
         severity: 'success',
@@ -177,7 +178,8 @@ const ReviewForm = ({
   };
 
   useEffect(() => {
-    getUser(user?.uid!).then((results) => {
+    if (!user?.uid) return;
+    getUser(user.uid).then((results) => {
       if (results.userId) {
         setUserReviews(results['reviews']);
       } else if (user && user.uid && user.email) {
@@ -192,7 +194,6 @@ const ReviewForm = ({
 
   useEffect(() => {
     reset({ ...reviewInput });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reviewInput, reset]);
 
   return (
@@ -204,7 +205,7 @@ const ReviewForm = ({
       justifyContent='center'
     >
       <Typography variant='h6'>{`Add Review for ${courseId}: ${courseName}`}</Typography>
-      <Grid item xs={12} lg={12}>
+      <Grid size={12}>
         <TextField
           disabled
           fullWidth
@@ -213,7 +214,7 @@ const ReviewForm = ({
           defaultValue={`${courseId}: ${courseName}`}
         />
       </Grid>
-      <Grid item xs={12} lg={12}>
+      <Grid size={12}>
         <InputLabel id='review-form-year' sx={{ color: 'inherit' }}>
           Year
         </InputLabel>
@@ -223,6 +224,7 @@ const ReviewForm = ({
           render={({ field }) => (
             <Select
               {...field}
+              value={field.value ?? ''}
               disabled={reviewInput?.reviewId ? true : false}
               fullWidth
               error={Boolean(errors.year)}
@@ -257,9 +259,9 @@ const ReviewForm = ({
         ></Controller>
         {errors.year && errors.year.type === 'validateYearGivenSemester' && (
           <Alert severity='error'>{`Please wait until ${
-            fallbackDates[getValues()?.semesterId!]
+            fallbackDates[getValues().semesterId!]
           } to review ${courseId} for semester ${
-            mapSemesterIdToName[`${getValues()?.semesterId!}`]
+            mapSemesterIdToName[`${getValues().semesterId!}`]
           } ${getValues()['year']}`}</Alert>
         )}
         {errors.year && errors.year.type === 'validateNotTakenCourse' && (
@@ -268,7 +270,7 @@ const ReviewForm = ({
           </Alert>
         )}
       </Grid>
-      <Grid item xs={12} lg={12}>
+      <Grid size={12}>
         <InputLabel id='review-form-semester' sx={{ color: 'inherit' }}>
           Semester
         </InputLabel>
@@ -277,9 +279,10 @@ const ReviewForm = ({
           name={SEMESTER_ID}
           render={({ field }) => (
             <Select
+              {...field}
+              value={field.value ?? ''}
               disabled={reviewInput?.reviewId ? true : false}
               fullWidth
-              {...field}
               error={Boolean(errors.semesterId)}
             >
               <MenuItem value={'sp'}>Spring</MenuItem>
@@ -309,17 +312,17 @@ const ReviewForm = ({
         {errors.semesterId &&
           errors.semesterId.type === 'validateSemesterGivenYear' && (
             <Alert severity='error'>{`Please wait until ${
-              fallbackDates[getValues()?.semesterId!]
+              fallbackDates[getValues().semesterId!]
             } to review ${courseId} for semester ${
-              mapSemesterIdToName[`${getValues()?.semesterId!}`]
-            } ${getValues()?.year!}`}</Alert>
+              mapSemesterIdToName[`${getValues().semesterId!}`]
+            } ${getValues().year!}`}</Alert>
           )}
         {errors.semesterId &&
           errors.semesterId.type === 'validateNotTakenCourse' && (
             <Alert severity='error'>{`You've already reviewed this course for the semester and year!`}</Alert>
           )}
       </Grid>
-      <Grid item xs={12} lg={12}>
+      <Grid size={12}>
         <InputLabel id='review-form-workload' sx={{ color: 'inherit' }}>
           Workload
         </InputLabel>
@@ -329,13 +332,14 @@ const ReviewForm = ({
           render={({ field }) => (
             <TextField
               {...field}
+              value={field.value ?? ''}
               type='number'
               onChange={(event: any) => {
                 const double = parseFloat(event.target.value);
                 if (double) {
                   return field.onChange(double);
                 }
-                return;
+                return field.onChange(null);
               }}
               InputProps={{
                 inputMode: 'numeric',
@@ -368,7 +372,7 @@ const ReviewForm = ({
         )}
       </Grid>
 
-      <Grid item xs={12} md={4} lg={4} textAlign='center'>
+      <Grid size={{ xs: 12, md: 4, lg: 4 }} textAlign='center'>
         <Typography component='legend'>Difficulty</Typography>
         <Controller
           control={control}
@@ -380,7 +384,7 @@ const ReviewForm = ({
           }}
         ></Controller>
       </Grid>
-      <Grid item xs={12} md={4} lg={4} textAlign='center'>
+      <Grid size={{ xs: 12, md: 4, lg: 4 }} textAlign='center'>
         <Typography component='legend'>Overall</Typography>
         <Controller
           control={control}
@@ -394,7 +398,7 @@ const ReviewForm = ({
           }}
         ></Controller>
       </Grid>
-      <Grid item xs={12} lg={12}>
+      <Grid size={12}>
         <Typography sx={{ mb: 1, color: 'inherit' }} component='legend'>
           Review
         </Typography>
@@ -411,7 +415,7 @@ const ReviewForm = ({
           )}
         ></Controller>
       </Grid>
-      <Grid textAlign='center' item xs={12} lg={12}>
+      <Grid textAlign='center' size={12}>
         {isSubmitting ? (
           <CircularProgress color='secondary' />
         ) : (
@@ -450,7 +454,7 @@ const validateSemesterYear = (
       sm: new Date(`06/01/${currentYear}`),
       fa: new Date(`09/01/${currentYear}`),
     };
-    // @ts-ignore -- semester is TSemesterId in this usage/context
+    // @ts-expect-error -- semester is TSemesterId in this usage/context
     const compareDate = semesterMap[semester] as Date;
     if (year < new Date().getFullYear()) {
       return true;
@@ -463,7 +467,7 @@ const validateSemesterYear = (
 };
 
 const validateUserNotTakenCourse = (
-  userReviews: TUserReviews | {},
+  userReviews: TUserReviews | Record<string, never>,
   courseId: TCourseId,
   semester: TNullable<string>,
   year: TNullable<number>,

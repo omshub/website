@@ -43,7 +43,7 @@ import {
   mapSemesterTermToName,
   roundNumber,
 } from '@src/utilities';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import backend from '@backend/index';
 
@@ -104,7 +104,13 @@ export default function CourseContent({
   const [courseReviews, setCourseReviews] = useState<TPayloadReviews>(
     defaultReviews || {}
   );
-  const orientation = useMediaQuery('(min-width:600px)');
+  const [mounted, setMounted] = useState(false);
+  const orientationQuery = useMediaQuery('(min-width:600px)');
+  const orientation = mounted ? orientationQuery : true;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { mutate } = useSWRConfig();
   const { data: course_reviews } = useSWR(
@@ -210,7 +216,7 @@ export default function CourseContent({
       }
     );
     setLoading(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [selectedYear, selectedSemester]);
 
   return (
@@ -251,33 +257,34 @@ export default function CourseContent({
             spacing={4}
             justifyContent="center"
           >
-            <Grid item xs={12} lg={4}>
+            <Grid size={{ xs: 12, lg: 4 }}>
               <Card
                 variant="outlined"
-                sx={{ padding: '5 30', color: 'inherit' }}
+                sx={{ height:'100%', padding: '5px 30px', color: 'text.primary' }}
               >
                 <CardContent>
-                  <Typography sx={{ fontSize: 14 }} gutterBottom>
+                  <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                     {`Average Workload`}
                   </Typography>
-                  <Typography variant="h5">
+                  <Typography variant="h5" color="text.primary">
                     {roundNumber(Number(courseAvgWorkload), 1) + ' hrs/wk'}
                   </Typography>
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} lg={4}>
+            <Grid size={{ xs: 12, lg: 4 }}>
               <Card
                 variant="outlined"
                 sx={{
-                  padding: '5 30',
+                  height:'100%',
+                  padding: '5px 30px',
                   borderColor: mapRatingToColorInverted(
                     Number(courseAvgDifficulty)
                   ),
                 }}
               >
                 <CardContent>
-                  <Typography sx={{ fontSize: 14 }} gutterBottom>
+                  <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                     {`Average Difficulty`}
                   </Typography>
                   <Typography
@@ -293,17 +300,17 @@ export default function CourseContent({
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} lg={4}>
+            <Grid size={{ xs: 12, lg: 4 }}>
               <Card
                 variant="outlined"
                 sx={{
-                  margin: '10',
-                  padding: '5 30',
+                  height:'100%',
+                  padding: '5px 30px',
                   borderColor: mapRatingToColor(Number(courseAvgOverall)),
                 }}
               >
                 <CardContent>
-                  <Typography sx={{ fontSize: 14 }} gutterBottom>
+                  <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                     {`Average Overall`}
                   </Typography>
                   <Typography
@@ -329,6 +336,7 @@ export default function CourseContent({
               size="large"
               orientation={`${orientation ? `horizontal` : `vertical`}`}
               sx={{ my: 2, width: `100%`, justifyContent: 'center' }}
+              color="secondary"
             >
               {activeSemesters &&
                 Object.entries(activeSemesters).map(
@@ -337,8 +345,9 @@ export default function CourseContent({
                       value={key}
                       key={index}
                       disabled={Boolean(value) || selectedSemester === key}
+                      sx={{ color: 'text.primary', borderColor: 'divider' }}
                     >
-                      <Typography variant="body1">
+                      <Typography variant="body1" color="inherit">
                         {mapSemesterTermToName[Number(key)]}{' '}
                         {mapSemesterTermToEmoji[Number(key)]}
                       </Typography>
@@ -354,6 +363,7 @@ export default function CourseContent({
               size="large"
               orientation={`${orientation ? `horizontal` : `vertical`}`}
               sx={{ my: 2, width: `100%`, justifyContent: 'center' }}
+              color="secondary"
             >
               {courseYears &&
                 courseYears.map((year: number, index: number) => {
@@ -362,8 +372,9 @@ export default function CourseContent({
                       value={year}
                       key={index}
                       disabled={selectedYear === year}
+                      sx={{ color: 'text.primary', borderColor: 'divider' }}
                     >
-                      <Typography variant="body2">{year}</Typography>
+                      <Typography variant="body2" color="inherit">{year}</Typography>
                     </ToggleButton>
                   );
                 })}
@@ -382,7 +393,7 @@ export default function CourseContent({
                   <Grid container rowSpacing={5} sx={{ mt: 1 }}>
                     {mapPayloadToArray(courseReviews, REVIEW_ID, DESC).map(
                       (value: Review) => (
-                        <Grid sx={{ width: `100%` }} key={value.reviewId} item>
+                        <Grid sx={{ width: '100%' }} key={value.reviewId} size={12}>
                           <ReviewCard {...value}></ReviewCard>
                         </Grid>
                       )

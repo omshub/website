@@ -25,7 +25,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 export type TAuthContext = {
   user: TNullable<FirebaseAuthUser>;
-  loading: Boolean;
+  loading: boolean;
   signInWithProvider: TSignInAction;
   signWithMagic: TSignInAction;
   logout: () => void;
@@ -38,10 +38,10 @@ const AuthContext = createContext<TNullable<TAuthContext>>(null);
 
 export const useAuth = () => useContext(AuthContext);
 
-// eslint-disable-next-line no-undef
+ 
 export const AuthContextProvider = ({ children }: TContextProviderProps) => {
   const [user, setUser] = useState<TNullable<FirebaseAuthUser>>(null);
-  const [loading, setLoading] = useState<Boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const { setAlert } = useAlert();
   const router = useRouter();
 

@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Login from '@components/LoginContent';
 import MobileMenu from '@components/MobileMenu';
 import ProfileMenu from '@components/ProfileMenu';
@@ -19,19 +22,17 @@ import {
   Typography,
 } from '@mui/material';
 import { useColorScheme } from '@mui/material/styles';
-import { useTheme } from '@mui/material/styles';
 
 import Link from '@src/Link';
-interface NavBarProps {}
 
 export interface MenuLinksProps {
   [key: string]: any;
 }
 
-export const NavBar = ({ ...props }: NavBarProps) => {
+export const NavBar = () => {
   const authContext: TNullable<any> = useAuth();
   const user: TNullable<FirebaseAuthUser> = authContext.user;
-  const loading: TNullable<Boolean> = authContext.loading;
+  const loading: TNullable<boolean> = authContext.loading;
 
   const { handleLoginOpen } = useMenu();
 
@@ -48,23 +49,38 @@ export const NavBar = ({ ...props }: NavBarProps) => {
     'My Reviews': '/user/reviews',
   };
 
-  const theme = useTheme();
   const { mode, setMode } = useColorScheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Only use mode after mounting to prevent hydration mismatch
+  const currentMode = mounted ? mode : undefined;
+  const isDark = currentMode === 'dark';
+
+  const handleToggleMode = () => {
+    if (!mounted) return;
+    setMode(isDark ? 'light' : 'dark');
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
-        color={theme.palette.mode == 'dark' ? 'primary' : 'secondary'}
         position='static'
         elevation={0}
-        {...props}
+        sx={{
+          bgcolor: 'secondary.main',
+          color: 'secondary.contrastText',
+        }}
       >
         <Toolbar color='inherit'>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <Tooltip arrow title={'Home'}>
               <Link
                 variant='button'
-                color='secondary.contrastText'
+                color='inherit'
                 href='/'
                 sx={{
                   display: { xs: 'none', md: 'flex' },
@@ -107,21 +123,26 @@ export const NavBar = ({ ...props }: NavBarProps) => {
                 </Tooltip>
               ),
             )}
-            <Tooltip arrow title={`${theme.palette.mode} mode`}>
+            <Tooltip arrow title={mounted ? `Switch to ${isDark ? 'light' : 'dark'} mode` : 'Toggle theme'}>
               <IconButton
+                onClick={handleToggleMode}
+                color='inherit'
+                aria-label='Toggle light/dark mode'
                 sx={{
                   p: 0,
                   height: '100%',
                   my: 1,
                   mx: 1.5,
                 }}
-                onClick={() => setMode(mode == 'light' ? 'dark' : 'light')}
-                color='inherit'
               >
-                {theme.palette.mode === 'dark' ? (
-                  <Brightness7Icon />
+                {mounted ? (
+                  isDark ? (
+                    <Brightness7Icon />
+                  ) : (
+                    <Brightness4Icon />
+                  )
                 ) : (
-                  <Brightness4Icon />
+                  <Brightness4Icon/>
                 )}
               </IconButton>
             </Tooltip>
@@ -157,19 +178,23 @@ export const NavBar = ({ ...props }: NavBarProps) => {
           <MobileMenu {...navigationMenuItems} />
           <Box sx={{ flexGrow: 0, display: { xs: 'flex', md: 'none' }, m: 0 }}>
             <IconButton
-              sx={{
-                p: 0,
-                height: '100%',
-                my: 1,
-                mx: 1.5,
-              }}
-              onClick={() => setMode(mode == 'light' ? 'dark' : 'light')}
+              onClick={handleToggleMode}
               color='inherit'
+              aria-label='Toggle light/dark mode'
+              sx={{
+                p: 0.75,
+                my: 1,
+                mx: 1,
+              }}
             >
-              {theme.palette.mode === 'dark' ? (
-                <Brightness7Icon />
+              {mounted ? (
+                isDark ? (
+                  <Brightness7Icon sx={{ fontSize: 22 }} />
+                ) : (
+                  <Brightness4Icon sx={{ fontSize: 22 }} />
+                )
               ) : (
-                <Brightness4Icon />
+                <Brightness4Icon sx={{ fontSize: 22 }} />
               )}
             </IconButton>
           </Box>

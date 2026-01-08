@@ -65,7 +65,9 @@ const ReviewCard = ({
 }: Review) => {
   const authContext: TNullable<any> = useAuth();
   const user: TNullable<FirebaseAuthUser> = authContext.user;
-  const timestamp = new Date(created).toLocaleDateString();
+  // Use UTC date formatting to avoid hydration mismatch between server and client timezones
+  const createdDate = new Date(created);
+  const timestamp = `${createdDate.getUTCMonth() + 1}/${createdDate.getUTCDate()}/${createdDate.getUTCFullYear()}`;
   const clipboardRef = useRef<HTMLDivElement>(null);
   const { name: courseName } = getCourseDataStatic(courseId);
   const [snackBarOpen, setSnackBarOpen] = useState<boolean>(false);
@@ -77,9 +79,7 @@ const ReviewCard = ({
   const handleReviewModalClose = () => setReviewModalOpen(false);
 
   useEffect(() => {
-    navigator.userAgent.match(`Firefox`)
-      ? setIsFirefox(true)
-      : setIsFirefox(false);
+    setIsFirefox(Boolean(navigator.userAgent.match(`Firefox`)));
   }, []);
 
   const handleClose = (event: SyntheticEvent | Event, reason?: string) => {
@@ -89,13 +89,29 @@ const ReviewCard = ({
     setSnackBarOpen(false);
   };
 
+  const [snackBarMessage, setSnackBarMessage] = useState<string>('');
+
   const handleCopyToClipboard = async () => {
-    const blob: any = await toBlob(clipboardRef?.current!);
-    const item: any = { [blob.type]: blob };
-    // eslint-disable-next-line no-undef
-    const clipboardItem = new ClipboardItem(item);
-    await navigator.clipboard.write([clipboardItem]);
-    setSnackBarOpen(true);
+    if (!clipboardRef.current) return;
+    try {
+      const blob = await toBlob(clipboardRef.current, {
+        skipFonts: true,
+      });
+      if (!blob) {
+        setSnackBarMessage('Failed to capture screenshot');
+        setSnackBarOpen(true);
+        return;
+      }
+      const item = { [blob.type]: blob };
+      const clipboardItem = new ClipboardItem(item);
+      await navigator.clipboard.write([clipboardItem]);
+      setSnackBarMessage('Screenshotted Review to Clipboard!');
+      setSnackBarOpen(true);
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
+      setSnackBarMessage('Failed to copy screenshot to clipboard');
+      setSnackBarOpen(true);
+    }
   };
 
   const handleDeleteDialogOpen = () => {
@@ -150,24 +166,24 @@ const ReviewCard = ({
               justifyContent='flex-start'
               alignItems='flex-start'
             >
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Typography variant='subtitle1'>{courseId}</Typography>
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Typography variant='subtitle1'>{courseName}</Typography>
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Typography variant='subtitle1'>
                   Taken {mapSemesterIdToName[semesterId]} {year}
                 </Typography>
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Typography variant='subtitle1'>
                   Reviewed on {timestamp}
                 </Typography>
               </Grid>
               {isGTVerifiedReviewer && (
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Typography color={techGold}>Verified GT Email</Typography>
                 </Grid>
               )}
@@ -188,7 +204,7 @@ const ReviewCard = ({
               alignItems='flex-start'
             >
               {isLegacy && (
-                <Grid item>
+                <Grid size="auto">
                   <Chip
                     title='This review was originally collected on https://omscentral.com'
                     icon={<ErrorOutline />}
@@ -198,13 +214,13 @@ const ReviewCard = ({
                   />
                 </Grid>
               )}
-              <Grid item>
+              <Grid size="auto">
                 <Chip
                   label={`Workload: ${workload} hr/wk`}
                   variant='outlined'
                 ></Chip>
               </Grid>
-              <Grid item>
+              <Grid size="auto">
                 <Chip
                   label={`Difficulty: ${mapDifficulty[difficulty]}`}
                   sx={{
@@ -214,7 +230,7 @@ const ReviewCard = ({
                   variant='outlined'
                 ></Chip>
               </Grid>
-              <Grid item>
+              <Grid size="auto">
                 <Chip
                   label={`Overall: ${mapOverall[overall]}`}
                   sx={{
@@ -259,7 +275,7 @@ const ReviewCard = ({
                   Close
                 </Button>
               }
-              message={'Screenshotted Review to Clipboard!'}
+              message={snackBarMessage}
             />
             {!isLegacy && reviewerId == user?.uid ? (
               <>

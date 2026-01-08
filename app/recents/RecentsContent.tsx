@@ -45,7 +45,7 @@ export default function RecentsContent({ reviewsRecent }: RecentsContentProps) {
                   .sort((a, b) => b.created - a.created)
                   .slice(0, REVIEWS_RECENT_LEN)
                   .map((value: Review) => (
-                    <Grid sx={{ width: `100%` }} key={value.reviewId} item>
+                    <Grid sx={{ width: '100%' }} key={value.reviewId} size={12}>
                       <ReviewCard {...value}></ReviewCard>
                     </Grid>
                   ))}

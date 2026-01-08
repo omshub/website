@@ -9,3 +9,6 @@ RUN apt-get update && apt-get install -y \
   openjdk-11-jdk \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
+
+# Enable pnpm via corepack (built into Node.js 16.9+)
+RUN corepack enable && corepack prepare pnpm@latest --activate
