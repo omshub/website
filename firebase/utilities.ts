@@ -308,9 +308,7 @@ export const updateCourseDataOnAddReview = async (
   try {
     const parsed = parseReviewId(reviewId);
     const courseId = parsed.courseId;
-    // @ts-expect-error -- intended semantics in this context is `Number`
     const year = Number(parsed.year);
-    // @ts-expect-error -- intended semantics in this context is `Number`
     const semesterTerm = Number(parsed.semesterTerm);
 
     const courseDataDoc = await getCourse(courseId);
@@ -577,9 +575,7 @@ export const updateCourseDataOnDeleteReview = async (reviewId: string) => {
   try {
     const parsed = parseReviewId(reviewId);
     const courseId = parsed.courseId;
-    // @ts-expect-error -- intended semantics in this context is `Number`
     const year = Number(parsed.year);
-    // @ts-expect-error -- intended semantics in this context is `Number`
     const semesterTerm = Number(parsed.semesterTerm);
 
     const courseDataDoc = await getCourse(courseId);
