@@ -17,6 +17,6 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 20
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
       - run: pnpm install
       - run: pnpm test:ci

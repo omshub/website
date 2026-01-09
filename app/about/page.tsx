@@ -45,7 +45,7 @@ export default function AboutPage() {
           Terms of Use & Privacy
         </Typography>
         <Typography variant="body1" paragraph marginTop={1} align="center">
-          We are currently in the process of esablishing a non-profit organization
+          We are currently in the process of establishing a non-profit organization
           and charter to govern this project via decentralized ownership.
         </Typography>
         <Typography variant="body1" paragraph marginTop={1} align="center">

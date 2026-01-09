@@ -38,20 +38,16 @@ export default function RecentsContent({ reviewsRecent }: RecentsContentProps) {
             <CircularProgress />
           </Box>
         ) : (
-          <>
-            {reviewsRecent && (
-              <Grid container rowSpacing={5} sx={{ mt: 1 }}>
-                {reviewsRecent
-                  .sort((a, b) => b.created - a.created)
-                  .slice(0, REVIEWS_RECENT_LEN)
-                  .map((value: Review) => (
-                    <Grid sx={{ width: '100%' }} key={value.reviewId} size={12}>
-                      <ReviewCard {...value}></ReviewCard>
-                    </Grid>
-                  ))}
-              </Grid>
-            )}
-          </>
+          <Grid container rowSpacing={5} sx={{ mt: 1 }}>
+            {reviewsRecent
+              .sort((a, b) => b.created - a.created)
+              .slice(0, REVIEWS_RECENT_LEN)
+              .map((value: Review) => (
+                <Grid sx={{ width: '100%' }} key={value.reviewId} size={12}>
+                  <ReviewCard {...value}></ReviewCard>
+                </Grid>
+              ))}
+          </Grid>
         )}
       </Box>
     </Container>

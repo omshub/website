@@ -142,7 +142,7 @@ export const NavBar = () => {
                     <Brightness4Icon />
                   )
                 ) : (
-                  <Brightness4Icon/>
+                  <Brightness4Icon />
                 )}
               </IconButton>
             </Tooltip>
