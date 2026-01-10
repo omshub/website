@@ -24,7 +24,6 @@ import {
   CircularProgress,
   Container,
   Dialog,
-  Grid,
   Snackbar,
   SpeedDial,
   SpeedDialAction,
@@ -34,6 +33,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import Link from '@src/Link';
 import {
   mapPayloadToArray,

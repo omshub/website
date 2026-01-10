@@ -13,9 +13,9 @@ import {
   Box,
   CircularProgress,
   Container,
-  Grid,
   Typography,
 } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 
 const { addUser, getUser } = backend;
 

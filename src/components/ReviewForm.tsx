@@ -20,7 +20,6 @@ import {
   TextField,
   CircularProgress,
   Alert,
-  Grid,
   InputAdornment,
   InputLabel,
   MenuItem,
@@ -28,6 +27,7 @@ import {
   Select,
   Typography,
 } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { mapSemesterIdToName, mapSemsterIdToTerm } from '@src/utilities';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';

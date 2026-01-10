@@ -5,11 +5,10 @@ import { REVIEWS_RECENT_LEN } from '@globals/constants';
 import { Review } from '@globals/types';
 import {
   Box,
-  CircularProgress,
   Container,
-  Grid,
   Typography,
 } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 
 interface RecentsContentProps {
   reviewsRecent: Review[];
@@ -33,22 +32,16 @@ export default function RecentsContent({ reviewsRecent }: RecentsContentProps) {
         <Typography variant="subtitle1" gutterBottom>
           {`A Dynamic List of the ${REVIEWS_RECENT_LEN} Most Recent Reviews`}
         </Typography>
-        {!reviewsRecent ? (
-          <Box sx={{ display: 'flex', m: 10 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <Grid container rowSpacing={5} sx={{ mt: 1 }}>
-            {reviewsRecent
-              .sort((a, b) => b.created - a.created)
-              .slice(0, REVIEWS_RECENT_LEN)
-              .map((value: Review) => (
-                <Grid sx={{ width: '100%' }} key={value.reviewId} size={12}>
-                  <ReviewCard {...value}></ReviewCard>
-                </Grid>
-              ))}
-          </Grid>
-        )}
+        <Grid container rowSpacing={5} sx={{ mt: 1 }}>
+          {reviewsRecent
+            .sort((a, b) => b.created - a.created)
+            .slice(0, REVIEWS_RECENT_LEN)
+            .map((value: Review) => (
+              <Grid sx={{ width: '100%' }} key={value.reviewId} size={12}>
+                <ReviewCard {...value}></ReviewCard>
+              </Grid>
+            ))}
+        </Grid>
       </Box>
     </Container>
   );
