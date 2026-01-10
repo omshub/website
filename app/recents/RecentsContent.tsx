@@ -8,7 +8,7 @@ import {
   Container,
   Typography,
 } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 
 interface RecentsContentProps {
   reviewsRecent: Review[];
