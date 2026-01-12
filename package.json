@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
-    "build-sitemap": "next-sitemap",
+    "postbuild": "next-sitemap",
     "start": "next start",
     "test": "jest --watch",
     "test:ci": "jest --ci",
