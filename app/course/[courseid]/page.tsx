@@ -96,10 +96,11 @@ export async function generateMetadata({ params }: CoursePageProps): Promise<Met
   };
 }
 
-// Generate static params for all courses (improves build-time generation)
+// Generate static params only for courses that exist in Firebase
+// courses.json should only be used for the schedule page
 export async function generateStaticParams() {
-  const coursesDataStatic = await getCoursesDataStatic();
-  return Object.keys(coursesDataStatic).map((courseId) => ({
+  const coursesDataDynamic = await getCourses();
+  return Object.keys(coursesDataDynamic).map((courseId) => ({
     courseid: courseId,
   }));
 }

@@ -379,8 +379,19 @@ export default function TipTapEditor({
           padding: 16px;
           min-height: 200px;
           outline: none;
+          color: ${dark ? 'var(--mantine-color-gray-1)' : 'var(--mantine-color-dark-9)'};
+          background-color: ${dark ? 'var(--mantine-color-dark-7)' : '#fff'};
         }
-        .tiptap:focus {
+        .tiptap.ProseMirror {
+          color: ${dark ? '#c1c2c5' : '#1a1b1e'} !important;
+          background-color: ${dark ? '#25262b' : '#fff'} !important;
+        }
+        .ProseMirror {
+          color: ${dark ? '#c1c2c5' : '#1a1b1e'} !important;
+          background-color: ${dark ? '#25262b' : '#fff'} !important;
+        }
+        .tiptap:focus,
+        .ProseMirror:focus {
           outline: none;
         }
         .tiptap p {
