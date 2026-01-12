@@ -270,6 +270,11 @@ const ReviewForm = ({
                 error={Boolean(errors.semesterId)}
                 searchable
                 comboboxProps={{ withinPortal: true }}
+                onChange={(val) => {
+                  field.onChange(val);
+                  // Trigger year validation when semester changes
+                  trigger('year');
+                }}
                 styles={{
                   input: {
                     fontWeight: 500,
@@ -306,7 +311,11 @@ const ReviewForm = ({
                 label="Year"
                 placeholder="Select year"
                 value={field.value ? String(field.value) : null}
-                onChange={(val) => field.onChange(val ? Number(val) : null)}
+                onChange={(val) => {
+                  field.onChange(val ? Number(val) : null);
+                  // Trigger semester validation when year changes
+                  trigger('semesterId');
+                }}
                 disabled={Boolean(reviewInput?.reviewId)}
                 data={yearOptions}
                 error={Boolean(errors.year)}

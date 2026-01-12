@@ -3,11 +3,12 @@
 import backend from '@/lib/firebase/index';
 import { useAuth } from '@/context/AuthContext';
 import { FirebaseAuthUser } from '@/context/types';
-import { Review, TNullable } from '@/lib/types';
+import { Review, TCourseName, TNullable } from '@/lib/types';
 import {
   IconCamera,
   IconAlertCircle,
   IconTrash,
+  IconPencil,
 } from '@tabler/icons-react';
 import stringWidth from 'string-width';
 import remarkGfm from 'remark-gfm';
@@ -35,6 +36,7 @@ import { GT_COLORS, CSS_STAT_COLORS } from '@/lib/theme';
 import { toBlob } from 'html-to-image';
 import { useEffect, useRef, useState } from 'react';
 import Markdown from 'react-markdown';
+import ReviewForm from '@/components/ReviewForm';
 
 const { deleteReview } = backend;
 
@@ -50,11 +52,14 @@ const ReviewCard = ({
   workload,
   semesterId,
   created,
+  modified = null,
   year,
   courseId,
   reviewerId,
   isLegacy = false,
   isGTVerifiedReviewer = false,
+  upvotes = 0,
+  downvotes = 0,
   courseName = '',
 }: ReviewCardProps) => {
   const authContext: TNullable<any> = useAuth();
@@ -65,6 +70,7 @@ const ReviewCard = ({
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isFirefox, setIsFirefox] = useState<boolean>(false);
   const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] = useDisclosure(false);
+  const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
 
   useEffect(() => {
     setIsFirefox(Boolean(navigator.userAgent.match(`Firefox`)));
@@ -195,11 +201,18 @@ const ReviewCard = ({
                 </Tooltip>
               )}
               {!isLegacy && reviewerId === user?.uid && (
-                <Tooltip label="Delete Review">
-                  <ActionIcon variant="subtle" color="red" size="sm" onClick={openDeleteModal} aria-label="Delete Review">
-                    <IconTrash size={16} />
-                  </ActionIcon>
-                </Tooltip>
+                <>
+                  <Tooltip label="Edit Review">
+                    <ActionIcon variant="subtle" color="blue" size="sm" onClick={openEditModal} aria-label="Edit Review">
+                      <IconPencil size={16} />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Delete Review">
+                    <ActionIcon variant="subtle" color="red" size="sm" onClick={openDeleteModal} aria-label="Delete Review">
+                      <IconTrash size={16} />
+                    </ActionIcon>
+                  </Tooltip>
+                </>
               )}
             </Group>
           </Group>
@@ -310,6 +323,38 @@ const ReviewCard = ({
             )}
           </Group>
         </Stack>
+      </Modal>
+
+      {/* Edit Review Modal */}
+      <Modal
+        opened={editModalOpened}
+        onClose={closeEditModal}
+        title={`Edit ${mapSemesterIdToName[semesterId]} ${year} Review`}
+        centered
+        size="lg"
+      >
+        <ReviewForm
+          courseId={courseId}
+          courseName={courseName as TCourseName}
+          reviewInput={{
+            reviewId,
+            body,
+            overall,
+            difficulty,
+            workload,
+            semesterId,
+            created,
+            modified,
+            year,
+            courseId,
+            reviewerId,
+            isLegacy,
+            isGTVerifiedReviewer,
+            upvotes,
+            downvotes,
+          }}
+          handleReviewModalClose={closeEditModal}
+        />
       </Modal>
     </div>
   );
