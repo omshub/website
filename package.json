@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "engines": {
-    "node": ">=20.0"
+    "node": ">=24.0"
   },
   "scripts": {
     "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
