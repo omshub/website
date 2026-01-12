@@ -2,7 +2,7 @@
 
 import ReviewCard from '@/components/ReviewCard';
 import { REVIEWS_RECENT_LEN } from '@/lib/constants';
-import { Review } from '@/lib/types';
+import { Review, TPayloadCoursesDataStatic } from '@/lib/types';
 import {
   Container,
   Title,
@@ -20,9 +20,10 @@ import Link from 'next/link';
 
 interface RecentsContentProps {
   reviewsRecent: Review[];
+  coursesDataStatic: TPayloadCoursesDataStatic;
 }
 
-export default function RecentsContent({ reviewsRecent }: RecentsContentProps) {
+export default function RecentsContent({ reviewsRecent, coursesDataStatic }: RecentsContentProps) {
   const sortedReviews = reviewsRecent
     .sort((a, b) => b.created - a.created)
     .slice(0, REVIEWS_RECENT_LEN);
@@ -69,7 +70,7 @@ export default function RecentsContent({ reviewsRecent }: RecentsContentProps) {
                   size="sm"
                   c="boldBlue"
                 >
-                  {review.courseId}
+                  {review.courseId}: {coursesDataStatic[review.courseId]?.name}
                 </Anchor>
                 <Text size="xs" c="grayMatter" suppressHydrationWarning>
                   {new Date(review.created).toLocaleDateString('en-US', {
