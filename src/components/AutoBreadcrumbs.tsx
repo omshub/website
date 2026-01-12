@@ -19,11 +19,16 @@ export default function AutoBreadcrumbs() {
   const pathname = usePathname();
 
   // Don't show breadcrumbs on home page
-  if (pathname === '/') {
+  if (pathname === '/' || pathname === '/index') {
     return null;
   }
 
   const segments = pathname.split('/').filter(Boolean);
+
+  // Don't show breadcrumbs if no meaningful segments or only "index"
+  if (segments.length === 0 || (segments.length === 1 && segments[0] === 'index')) {
+    return null;
+  }
   const items: BreadcrumbItem[] = [];
 
   let currentPath = '';

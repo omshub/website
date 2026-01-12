@@ -19,7 +19,8 @@ export const mapDynamicCoursesDataToCourses = (
   coursesDataStatic: TPayloadCoursesDataStatic
 ) => {
   const courses = {} as TPayloadCourses;
-  (Object.keys(coursesDataStatic) as TCourseId[]).forEach((courseId) => {
+  // Only include courses that exist in Firebase (have dynamic data)
+  (Object.keys(coursesDataDynamic) as TCourseId[]).forEach((courseId) => {
     courses[courseId] = {
       ...coursesDataStatic[courseId],
       ...coursesDataDynamic[courseId],
