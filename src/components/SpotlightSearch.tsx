@@ -11,14 +11,9 @@ import {
   IconStar,
   IconMessageCircle,
 } from '@tabler/icons-react';
-import { Course, TCourseId } from '@/lib/types';
+import { TCourseId } from '@/lib/types';
 import backend from '@/lib/firebase/index';
 import { getCoursesDataStatic } from '@/lib/staticData';
-import { mapDynamicCoursesDataToCourses } from '@/lib/utilities';
-
-interface SpotlightSearchProps {
-  courses?: Record<TCourseId, Course>;
-}
 
 interface SimpleCourse {
   courseId: string;
@@ -28,6 +23,10 @@ interface SimpleCourse {
   avgDifficulty?: number | null;
   avgWorkload?: number | null;
   avgOverall?: number | null;
+}
+
+interface SpotlightSearchProps {
+  courses?: Record<TCourseId, SimpleCourse>;
 }
 
 // Cache keys and expiration
@@ -67,26 +66,29 @@ export default function SpotlightSearch({ courses: initialCourses }: SpotlightSe
         }
       }
 
-      // Fetch from Firebase (dynamic data with metrics) and merge with static data
+      // Fetch from Firebase and use static data for names/aliases
+      // IMPORTANT: Only include courses that exist in Firebase (not all courses from courses.json)
       const fetchCourses = async () => {
         try {
           const [coursesDataDynamic, coursesDataStatic] = await Promise.all([
             backend.getCourses(),
             getCoursesDataStatic(),
           ]);
-          const mergedData = mapDynamicCoursesDataToCourses(
-            coursesDataDynamic,
-            coursesDataStatic
-          );
-          const courses: SimpleCourse[] = Object.values(mergedData).map((course: any) => ({
-            courseId: course.courseId,
-            name: course.name,
-            aliases: course.aliases || [],
-            numReviews: course.numReviews || 0,
-            avgDifficulty: course.avgDifficulty ?? null,
-            avgWorkload: course.avgWorkload ?? null,
-            avgOverall: course.avgOverall ?? null,
-          }));
+          // Only include courses that exist in Firebase (have dynamic data)
+          // Use static data for name/aliases, dynamic data for metrics
+          const courses: SimpleCourse[] = Object.keys(coursesDataDynamic).map((courseId) => {
+            const dynamicData = coursesDataDynamic[courseId as TCourseId];
+            const staticData = coursesDataStatic[courseId as TCourseId] || {};
+            return {
+              courseId,
+              name: staticData.name || courseId,
+              aliases: staticData.aliases || [],
+              numReviews: dynamicData?.numReviews || 0,
+              avgDifficulty: dynamicData?.avgDifficulty ?? null,
+              avgWorkload: dynamicData?.avgWorkload ?? null,
+              avgOverall: dynamicData?.avgOverall ?? null,
+            };
+          });
           setSimpleCourses(courses);
 
           // Cache the result
