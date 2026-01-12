@@ -13,6 +13,10 @@ const customJestConfig = {
   moduleNameMapper: {
     // Handle module aliases (this will be automatically configured for you soon)
     '^@/pages/(.*)$': '<rootDir>/pages/$1',
+    '^@/lib/(.*)$': '<rootDir>/src/lib/$1',
+    '^@/components/(.*)$': '<rootDir>/src/components/$1',
+    '^@/context/(.*)$': '<rootDir>/src/context/$1',
+    '^@/(.*)$': '<rootDir>/src/$1',
     '@backend/(.*)$': '<rootDir>/src/lib/firebase/$1',
     '@src/(.*)$': '<rootDir>/src/$1',
     // Firebase modules mocks
