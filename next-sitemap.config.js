@@ -3,15 +3,12 @@
 module.exports = {
   siteUrl: process.env.SITE_URL || 'https://omshub.org',
   generateRobotsTxt: true,
-  generateIndexSitemap: true,
+  generateIndexSitemap: false,
   changefreq: 'daily',
   priority: 0.7,
   sitemapSize: 5000,
   exclude: ['/api/*', '/user/*'],
   robotsTxtOptions: {
-    additionalSitemaps: [
-      'https://omshub.org/sitemap-courses.xml',
-    ],
     policies: [
       {
         userAgent: '*',
