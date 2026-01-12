@@ -1,0 +1,21 @@
+/* Global CSS overrides for WCAG compliance */
+
+/* Override Mantine's dimmed color for better contrast (4.5:1 on white) */
+:root,
+[data-mantine-color-scheme="light"] {
+  --mantine-color-dimmed: #636c76 !important;
+  /* Accessible stat colors for light mode - dark shades on light background */
+  --stat-color-green: #1e7b34;
+  --stat-color-teal: #0c7b7c;
+  --stat-color-yellow: #996600;
+  --stat-color-red: #c92a2a;
+}
+
+[data-mantine-color-scheme="dark"] {
+  --mantine-color-dimmed: #a6a7ab !important;
+  /* Accessible stat colors for dark mode - light shades on dark background */
+  --stat-color-green: #8ce99a;
+  --stat-color-teal: #63e6be;
+  --stat-color-yellow: #ffe066;
+  --stat-color-red: #ffa8a8;
+}

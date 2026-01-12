@@ -1,14 +1,14 @@
-import { DESC } from '@globals/constants';
-import { TCourseId } from '@globals/types';
+import { DESC } from '@/lib/constants';
+import { TCourseId } from '@/lib/types';
 import {
   // mapRatingToColor,
   // mapRatingToColorInverted,
   mapPayloadToArray,
-} from '@src/utilities';
+} from '@/utilities';
 
 // types
 type TInputPayload = {
-  // eslint-disable-next-line no-unused-vars
+   
   [T in TCourseId]: any;
 };
 

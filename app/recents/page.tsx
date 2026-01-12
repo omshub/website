@@ -1,5 +1,5 @@
-import backend from '@backend/index';
-import RecentsContent from './RecentsContent';
+import backend from '@/lib/firebase/index';
+import RecentsContent from './_components/RecentsContent';
 
 const { getReviewsRecent } = backend;
 

@@ -31,8 +31,8 @@ const config: StorybookConfig = {
         ...config.optimizeDeps,
         include: [
           ...(config.optimizeDeps?.include || []),
-          '@mui/icons-material',
-          '@mui/material',
+          '@mantine/core',
+          '@mantine/hooks',
         ],
       },
     };

@@ -20,27 +20,11 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@globals/*": [
-        "globals/*"
-      ],
-      "@backend/*": [
-        "firebase/*"
-      ],
-      "@src/*": [
-        "src/*"
-      ],
-      "@pages/*": [
-        "pages/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@context/*": [
-        "context/*"
-      ],
-      "@services/*": [
-        "services/*"
-      ]
+      "@/*": ["src/*"],
+      "@/lib/*": ["src/lib/*"],
+      "@/components/*": ["src/components/*"],
+      "@/context/*": ["src/context/*"],
+      "@/hooks/*": ["src/hooks/*"]
     },
     "plugins": [
       {
@@ -57,6 +41,7 @@
   ],
   "exclude": [
     "node_modules",
-    "__seed__"
+    "__seed__",
+    "playwright.config.ts"
   ]
 }

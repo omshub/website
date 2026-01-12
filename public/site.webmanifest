@@ -1,0 +1,27 @@
+{
+  "name": "OMSHub - Georgia Tech OMS Course Reviews",
+  "short_name": "OMSHub",
+  "description": "Community-driven course reviews for Georgia Tech Online Master of Science programs",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#003057",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
