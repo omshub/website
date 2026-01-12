@@ -107,9 +107,9 @@ export const addOrUpdateCourse = async (
 
 // base updates
 
-const ON_ADD_REVIEW = 'ON_ADD_REVIEW';
-const ON_EDIT_REVIEW = 'ON_EDIT_REVIEW';
-const ON_DELETE_REVIEW = 'ON_DELETE_REVIEW';
+export const ON_ADD_REVIEW = 'ON_ADD_REVIEW';
+export const ON_EDIT_REVIEW = 'ON_EDIT_REVIEW';
+export const ON_DELETE_REVIEW = 'ON_DELETE_REVIEW';
 type TOperationUpdateOnReviewEvent =
   | 'ON_ADD_REVIEW'
   | 'ON_EDIT_REVIEW'
