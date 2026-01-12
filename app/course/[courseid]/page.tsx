@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import backend from '@/lib/firebase/index';
 import { getCoursesDataStatic } from '@/lib/staticData';
 import { TCourseId } from '@/lib/types';
@@ -116,6 +117,10 @@ export default async function CoursePage({ params }: CoursePageProps) {
     coursesDataStatic
   );
   const currentCourseData = allCourseData[courseId];
+
+  if (!currentCourseData) {
+    notFound();
+  }
 
   // Breadcrumb data for structured data
   const breadcrumbs = [
