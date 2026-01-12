@@ -39,7 +39,6 @@ import {
   IconCopy,
   IconCheck,
 } from '@tabler/icons-react';
-import Link from 'next/link';
 import { GT_COLORS } from '@/lib/theme';
 
 // Data repository URL
@@ -142,6 +141,7 @@ interface CourseSection {
   enrolled: number;
   seatsAvailable: number;
   waitlist: number;
+  url: string | null;
 }
 
 // Term code utilities
@@ -379,6 +379,7 @@ export default function ScheduleContent() {
               enrolled: section.enrolled,
               seatsAvailable: section.seatsAvailable,
               waitlist: section.waitCount || 0,
+              url: courseInfo?.url || null,
             });
           }
         }
@@ -578,14 +579,20 @@ export default function ScheduleContent() {
       <Table.Td>
         <Stack gap={4}>
           <Group gap="xs">
-            <Anchor
-              component={Link}
-              href={`/course/${section.courseId}`}
-              fw={600}
-              style={{ color: GT_COLORS.boldBlue }}
-            >
-              {section.courseId}
-            </Anchor>
+            {section.url ? (
+              <Anchor
+                href={section.url}
+                target="_blank"
+                fw={600}
+                style={{ color: GT_COLORS.boldBlue }}
+              >
+                {section.courseId}
+              </Anchor>
+            ) : (
+              <Text fw={600} style={{ color: GT_COLORS.boldBlue }}>
+                {section.courseId}
+              </Text>
+            )}
             {showCoreElectiveBadge && coreCourseIds.has(section.courseId) && (
               <Tooltip label="Core course for this specialization">
                 <Badge variant="filled" size="xs" color="violet">
