@@ -379,6 +379,8 @@ export default function TipTapEditor({
           padding: 16px;
           min-height: 200px;
           outline: none;
+          color: ${dark ? 'var(--mantine-color-gray-1)' : 'var(--mantine-color-dark-9)'};
+          background-color: ${dark ? 'var(--mantine-color-dark-7)' : '#fff'};
         }
         .tiptap:focus {
           outline: none;
