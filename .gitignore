@@ -4,10 +4,13 @@
 /node_modules
 /.pnp
 .pnp.js
+/.pnpm-store
+yarn.lock
+package-lock.json
 
 # testing
 /coverage
-
+*.log
 # next.js
 /.next/
 /out/
@@ -54,3 +57,15 @@ yarn-error.log*
 firebase-debug.log
 firestore-debug.log
 ui-debug.log
+
+# Lighthouse CI
+/.lighthouseci/
+
+# Playwright
+/playwright-report/
+/test-results/
+playwright/.cache/
+
+# Temporary files
+*.tmp
+*.temp

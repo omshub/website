@@ -1,16 +1,16 @@
-import type { StorybookConfig } from '@storybook/nextjs';
+import type { StorybookConfig } from '@storybook/nextjs-vite';
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
 
   addons: [
     '@storybook/addon-links',
-    '@storybook/addon-essentials',
-    '@storybook/addon-interactions',
+    '@storybook/addon-a11y',
     '@chromatic-com/storybook',
+    '@storybook/addon-docs'
   ],
 
   framework: {
-    name: '@storybook/nextjs',
+    name: '@storybook/nextjs-vite',
     options: {},
   },
 
@@ -18,6 +18,24 @@ const config: StorybookConfig = {
 
   typescript: {
     reactDocgen: 'react-docgen-typescript',
+  },
+
+  viteFinal: async (config) => {
+    return {
+      ...config,
+      resolve: {
+        ...config.resolve,
+        preserveSymlinks: false,
+      },
+      optimizeDeps: {
+        ...config.optimizeDeps,
+        include: [
+          ...(config.optimizeDeps?.include || []),
+          '@mantine/core',
+          '@mantine/hooks',
+        ],
+      },
+    };
   },
 };
 export default config;

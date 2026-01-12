@@ -2,6 +2,8 @@
 
 module.exports = {
   reactStrictMode: true,
+  // Disable source maps in production for better performance
+  productionBrowserSourceMaps: false,
 
   env: {
     baseUrl: process.env.BASE_URL,
@@ -13,14 +15,36 @@ module.exports = {
     appId: process.env.APP_ID,
     measurementId: process.env.MEASUREMENT_ID,
   },
+
   compiler: {
-    removeConsole: true,
-    styledComponents: true,
+    removeConsole: process.env.NODE_ENV === 'production',
   },
-  transpilePackages: [
-    '@mui/system',
-    '@mui/material',
-    '@mui/icons-material',
-    '@mui/styles',
-  ],
+
+  // Image optimization settings
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
+    minimumCacheTTL: 31536000, // 1 year cache
+  },
+
+  // Experimental features for performance
+  experimental: {
+    optimizePackageImports: [
+      '@mantine/core',
+      '@mantine/hooks',
+      '@mantine/spotlight',
+      '@mantine/notifications',
+      '@tabler/icons-react',
+      'firebase/auth',
+      'firebase/firestore',
+    ],
+  },
+
+  // Reduce unused JavaScript with tree shaking
+  modularizeImports: {
+    '@tabler/icons-react': {
+      transform: '@tabler/icons-react/dist/esm/icons/{{member}}',
+    },
+  },
 };
