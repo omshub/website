@@ -874,16 +874,6 @@ export default function ScheduleContent() {
                     {new Set(groupedSections.core.map((s) => s.courseId)).size} courses
                   </Badge>
                 </Group>
-                {selectedSpec.coreCourses && selectedSpec.coreCourses.length > 0 && (
-                  <Text size="sm" c="dimmed" mb="md">
-                    {selectedSpec.coreCourses.map((group, idx) => (
-                      <span key={idx}>
-                        {idx > 0 && ' • '}
-                        Pick {group.pickCount} from: {(group.courseIds || []).join(', ')}
-                      </span>
-                    ))}
-                  </Text>
-                )}
                 <Paper radius="lg" withBorder style={{ overflow: 'hidden' }}>
                   {renderTable(groupedSections.core)}
                 </Paper>
