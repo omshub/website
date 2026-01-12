@@ -365,6 +365,12 @@ export default function ScheduleContent() {
           }
 
           const courseInfo = metadata[courseId];
+
+          // Only include courses that are in the official course metadata
+          // This filters out non-OMSCS courses like ECE-8903 (Special Problems)
+          if (!courseInfo) {
+            continue;
+          }
           const sections = courseData.sections || [];
 
           for (const section of sections) {
@@ -442,9 +448,7 @@ export default function ScheduleContent() {
       return [];
     }
 
-    // Filter out special problems courses
-    const excludedCourses = ['ECE-8900'];
-    let filtered = sections.filter((s) => !excludedCourses.includes(s.courseId));
+    let filtered = sections;
 
     // If specialization is selected, only show relevant courses
     if (selectedSpec) {
