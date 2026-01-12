@@ -66,9 +66,9 @@ const features = [
   },
   {
     icon: <IconHeart size={24} stroke={1.5} />,
-    title: 'Non-Profit',
+    title: 'Free Forever',
     description:
-      'We are establishing a non-profit organization with decentralized ownership to govern this project transparently.',
+      'No ads, no paywalls, no corporate sponsors. This site runs entirely on volunteer effort and will always be free to use.',
     color: 'red',
   },
 ];
