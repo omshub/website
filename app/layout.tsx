@@ -1,6 +1,7 @@
 import React from 'react';
 import Script from 'next/script';
 import { Metadata, Viewport } from 'next';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { ColorSchemeScript } from '@mantine/core';
@@ -148,6 +149,9 @@ export default function RootLayout({
           </>
         )}
       </body>
+      {process.env.NEXT_PUBLIC_GA_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+      )}
     </html>
   );
 }
