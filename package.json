@@ -32,6 +32,7 @@
     "@mantine/hooks": "^7.15.0",
     "@mantine/notifications": "^7.15.0",
     "@mantine/spotlight": "^7.15.0",
+    "@next/third-parties": "^16.1.1",
     "@tabler/icons-react": "^3.28.0",
     "@tiptap/extension-code-block-lowlight": "^3.15.3",
     "@tiptap/extension-link": "^3.15.3",
