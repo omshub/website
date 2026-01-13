@@ -448,15 +448,7 @@ export default function ScheduleContent() {
       return [];
     }
 
-    let filtered = sections;
-
-    // If specialization is selected, only show relevant courses
-    if (selectedSpec) {
-      const allSpecCourseIds = new Set([...Array.from(coreCourseIds), ...Array.from(electiveCourseIds)]);
-      filtered = filtered.filter((s) => allSpecCourseIds.has(s.courseId));
-    }
-
-    const scored = filtered.map((section) => ({
+    const scored = sections.map((section) => ({
       section,
       score: getSearchScore(section, searchQuery),
     }));
@@ -465,9 +457,9 @@ export default function ScheduleContent() {
       .filter((item) => item.score > 0)
       .sort((a, b) => b.score - a.score)
       .map((item) => item.section);
-  }, [sections, selectedSpec, coreCourseIds, electiveCourseIds, searchQuery]);
+  }, [sections, searchQuery]);
 
-  // Group sections by core/elective when specialization is selected
+  // Group sections by core/elective/free when specialization is selected
   const groupedSections = useMemo(() => {
 
     if (!selectedSpec) {
@@ -476,16 +468,19 @@ export default function ScheduleContent() {
 
     const core: CourseSection[] = [];
     const electives: CourseSection[] = [];
+    const freeElectives: CourseSection[] = [];
 
     (filteredAndSortedSections || []).forEach((section) => {
       if (coreCourseIds.has(section.courseId)) {
         core.push(section);
       } else if (electiveCourseIds.has(section.courseId)) {
         electives.push(section);
+      } else {
+        freeElectives.push(section);
       }
     });
 
-    return { core, electives };
+    return { core, electives, freeElectives };
   }, [filteredAndSortedSections, selectedSpec, coreCourseIds, electiveCourseIds]);
 
   // Calculate stats
@@ -900,9 +895,30 @@ export default function ScheduleContent() {
               </div>
             )}
 
+            {/* Free Electives Section */}
+            {groupedSections.freeElectives && groupedSections.freeElectives.length > 0 && (
+              <div>
+                <Group gap="sm" mb="md">
+                  <ThemeIcon size={28} radius="md" variant="light" color="gray">
+                    <IconListCheck size={16} />
+                  </ThemeIcon>
+                  <Title order={3} size="h4">
+                    Free Electives
+                  </Title>
+                  <Badge variant="light" color="gray" size="sm">
+                    {new Set(groupedSections.freeElectives.map((s) => s.courseId)).size} courses
+                  </Badge>
+                </Group>
+                <Paper radius="lg" withBorder style={{ overflow: 'hidden' }}>
+                  {renderTable(groupedSections.freeElectives)}
+                </Paper>
+              </div>
+            )}
+
             {/* No courses found for this specialization */}
             {(!groupedSections.core || groupedSections.core.length === 0) &&
-             (!groupedSections.electives || groupedSections.electives.length === 0) && (
+             (!groupedSections.electives || groupedSections.electives.length === 0) &&
+             (!groupedSections.freeElectives || groupedSections.freeElectives.length === 0) && (
               <Paper radius="lg" withBorder p="xl" ta="center">
                 <Stack align="center" gap="md">
                   <ThemeIcon size={60} radius="xl" variant="light" color="gray">
