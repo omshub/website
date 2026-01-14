@@ -54,7 +54,7 @@
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",
-    "string-width": "^7.2.0",
+    "string-width": "^8.1.0",
     "swr": "^2.2.4"
   },
   "devDependencies": {
