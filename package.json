@@ -48,7 +48,7 @@
     "next": "^16.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-hook-form": "^7.60.0",
+    "react-hook-form": "^7.71.1",
     "react-markdown": "^10.1.0",
     "rehype-katex": "^7.0.1",
     "rehype-raw": "^7.0.0",
