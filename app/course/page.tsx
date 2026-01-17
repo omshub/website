@@ -1,12 +1,9 @@
 import { Suspense } from 'react';
 import { Container, Skeleton, Title, Text, Stack, Box, Badge } from '@mantine/core';
-import backend from '@/lib/firebase/index';
-import { getCoursesDataStatic } from '@/lib/staticData';
+import { getCoursesDataStatic, getCourseStats } from '@/lib/staticData';
 import { mapDynamicCoursesDataToCourses } from '@/lib/utilities';
 import CoursesTable from '../_components/CoursesTable';
 import { GT_COLORS } from '@/lib/theme';
-
-const { getCourses } = backend;
 
 export const metadata = {
   title: 'All Courses | OMSHub',
@@ -25,7 +22,7 @@ function TableSkeleton() {
 
 export default async function CoursesPage() {
   const [coursesDataDynamic, coursesDataStatic] = await Promise.all([
-    getCourses(),
+    getCourseStats(),
     getCoursesDataStatic(),
   ]);
   const coursesData = mapDynamicCoursesDataToCourses(

@@ -2,13 +2,10 @@
 
 import ReviewCard from '@/components/ReviewCard';
 import { useAuth } from '@/context/AuthContext';
-import { FirebaseAuthUser } from '@/context/types';
-import { DESC, EMOJI_NO_REVIEWS, reviewFields } from '@/lib/constants';
-import { Review, TUserReviews, TNullable } from '@/lib/types';
+import { DESC, reviewFields } from '@/lib/constants';
+import { Review, TUserReviews } from '@/lib/types';
 import { mapPayloadToArray } from '@/utilities';
 import { useEffect, useState } from 'react';
-import backend from '@/lib/firebase/index';
-import { isGTEmail } from '@/lib/utilities';
 import {
   Container,
   Title,
@@ -21,39 +18,41 @@ import {
   Paper,
   ThemeIcon,
 } from '@mantine/core';
-import { IconMessageCircle, IconPencil } from '@tabler/icons-react';
+import { IconPencil } from '@tabler/icons-react';
 import { GT_COLORS } from '@/lib/theme';
 
-const { addUser, getUser } = backend;
+// API function to interact with Supabase via API routes
+async function getUserReviewsFromApi(userId: string): Promise<TUserReviews> {
+  const response = await fetch(`/api/user/reviews?userId=${userId}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch user reviews');
+  }
+  return response.json();
+}
 
 export default function UserReviewsPage() {
   const [loading, setLoading] = useState<boolean>(true);
-
   const authContext = useAuth();
-
   const [userReviews, setUserReviews] = useState<TUserReviews>({});
-
-  let user: TNullable<FirebaseAuthUser> = null;
-  if (authContext) {
-    ({ user } = authContext);
-  }
+  const user = authContext?.user;
 
   useEffect(() => {
-    if (user) {
-      getUser(user.uid).then((results) => {
-        if (results.userId) {
-          setUserReviews(results['reviews']);
-        } else if (user && user.uid && user.email) {
-          const hasGTEmail = isGTEmail(user.email);
-          addUser(user.uid, hasGTEmail);
+    async function fetchUserData() {
+      if (user?.id) {
+        try {
+          const reviews = await getUserReviewsFromApi(user.id);
+          setUserReviews(reviews);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
           setUserReviews({});
         }
         setLoading(false);
-      });
-    } else {
-      setUserReviews({});
-      setLoading(false);
+      } else {
+        setUserReviews({});
+        setLoading(false);
+      }
     }
+    fetchUserData();
   }, [user]);
 
   const reviewCount = Object.keys(userReviews)?.length || 0;

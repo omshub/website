@@ -29,7 +29,6 @@ import {
   IconCalendar,
   IconUsers,
   IconListCheck,
-  IconChevronDown,
   IconSchool,
   IconAlertCircle,
   IconRefresh,
@@ -486,7 +485,6 @@ export default function ScheduleContent() {
   // Calculate stats
   const safeSections = sections || [];
   const totalEnrolled = safeSections.reduce((sum, s) => sum + s.enrolled, 0);
-  const totalCapacity = safeSections.reduce((sum, s) => sum + s.capacity, 0);
   const totalWaitlist = safeSections.reduce((sum, s) => sum + s.waitlist, 0);
   const uniqueCourses = new Set(safeSections.map((s) => s.courseId)).size;
 

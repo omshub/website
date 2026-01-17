@@ -1,9 +1,7 @@
 'use client';
 
-import backend from '@/lib/firebase/index';
 import { useAuth } from '@/context/AuthContext';
-import { FirebaseAuthUser } from '@/context/types';
-import { Review, TCourseName, TNullable } from '@/lib/types';
+import { Review, TCourseName } from '@/lib/types';
 import {
   IconCamera,
   IconAlertCircle,
@@ -34,14 +32,14 @@ import { useDisclosure } from '@mantine/hooks';
 import { mapSemesterIdToName } from '@/utilities';
 import { GT_COLORS, CSS_STAT_COLORS } from '@/lib/theme';
 import { toBlob } from 'html-to-image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import Markdown from 'react-markdown';
 import ReviewForm from '@/components/ReviewForm';
-
-const { deleteReview } = backend;
+import HighlightedText from '@/components/HighlightedText';
 
 interface ReviewCardProps extends Review {
   courseName?: string;
+  searchHighlight?: string;
 }
 
 const ReviewCard = ({
@@ -61,9 +59,10 @@ const ReviewCard = ({
   upvotes = 0,
   downvotes = 0,
   courseName = '',
+  searchHighlight = '',
 }: ReviewCardProps) => {
-  const authContext: TNullable<any> = useAuth();
-  const user: TNullable<FirebaseAuthUser> = authContext?.user;
+  const authContext = useAuth();
+  const user = authContext?.user;
   const createdDate = new Date(created);
   const timestamp = `${createdDate.getUTCMonth() + 1}/${createdDate.getUTCDate()}/${createdDate.getUTCFullYear()}`;
   const clipboardRef = useRef<HTMLDivElement>(null);
@@ -72,9 +71,50 @@ const ReviewCard = ({
   const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] = useDisclosure(false);
   const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
 
+  // Memoize reviewInput to prevent infinite re-renders in ReviewForm
+  const reviewInputMemo = useMemo(() => ({
+    reviewId,
+    body,
+    overall,
+    difficulty,
+    workload,
+    semesterId,
+    created,
+    modified,
+    year,
+    courseId,
+    reviewerId,
+    isLegacy,
+    isGTVerifiedReviewer,
+    upvotes,
+    downvotes,
+  }), [reviewId, body, overall, difficulty, workload, semesterId, created, modified, year, courseId, reviewerId, isLegacy, isGTVerifiedReviewer, upvotes, downvotes]);
+
   useEffect(() => {
     setIsFirefox(Boolean(navigator.userAgent.match(`Firefox`)));
   }, []);
+
+  // Extract a snippet around the search match
+  const searchExcerpt = useMemo(() => {
+    if (!searchHighlight?.trim() || !body) return null;
+
+    const lowerBody = body.toLowerCase();
+    const lowerSearch = searchHighlight.toLowerCase();
+    const matchIndex = lowerBody.indexOf(lowerSearch);
+
+    if (matchIndex === -1) return null;
+
+    // Get context around the match (50 chars before and after)
+    const contextLength = 50;
+    const start = Math.max(0, matchIndex - contextLength);
+    const end = Math.min(body.length, matchIndex + searchHighlight.length + contextLength);
+
+    let excerpt = body.substring(start, end);
+    if (start > 0) excerpt = '...' + excerpt;
+    if (end < body.length) excerpt = excerpt + '...';
+
+    return excerpt;
+  }, [body, searchHighlight]);
 
   const handleCopyToClipboard = async () => {
     if (!clipboardRef.current) return;
@@ -107,10 +147,28 @@ const ReviewCard = ({
 
   const handleDeleteReview = async () => {
     setIsSubmitting(true);
-    if (user && user.uid && reviewId) {
-      await deleteReview(user.uid, reviewId);
-      closeDeleteModal();
-      window.location.reload();
+    if (user && user.id && reviewId) {
+      try {
+        const response = await fetch(`/api/reviews/${reviewId}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          closeDeleteModal();
+          window.location.reload();
+        } else {
+          const error = await response.json();
+          notifyError({
+            title: 'Delete Failed',
+            message: error.error || 'Could not delete review',
+          });
+        }
+      } catch (error) {
+        console.error('Error deleting review:', error);
+        notifyError({
+          title: 'Delete Failed',
+          message: 'Could not delete review',
+        });
+      }
     }
     setIsSubmitting(false);
   };
@@ -200,7 +258,7 @@ const ReviewCard = ({
                   </ActionIcon>
                 </Tooltip>
               )}
-              {!isLegacy && reviewerId === user?.uid && (
+              {!isLegacy && reviewerId === user?.id && (
                 <>
                   <Tooltip label="Edit Review">
                     <ActionIcon variant="subtle" color="blue" size="sm" onClick={openEditModal} aria-label="Edit Review">
@@ -269,6 +327,25 @@ const ReviewCard = ({
             </Box>
           </Box>
 
+          {/* Search Match Highlight */}
+          {searchExcerpt && (
+            <Box
+              p="sm"
+              style={{
+                backgroundColor: 'var(--mantine-color-yellow-light)',
+                borderRadius: 'var(--mantine-radius-sm)',
+                borderLeft: '3px solid var(--mantine-color-yellow-6)',
+              }}
+            >
+              <Text size="xs" fw={600} c="dimmed" mb={4}>
+                Match found:
+              </Text>
+              <Text size="sm" style={{ wordBreak: 'break-word' }}>
+                <HighlightedText text={searchExcerpt} highlight={searchHighlight} />
+              </Text>
+            </Box>
+          )}
+
           {/* Review Body */}
           <Box className="review-body">
             <style>{`
@@ -336,23 +413,7 @@ const ReviewCard = ({
         <ReviewForm
           courseId={courseId}
           courseName={courseName as TCourseName}
-          reviewInput={{
-            reviewId,
-            body,
-            overall,
-            difficulty,
-            workload,
-            semesterId,
-            created,
-            modified,
-            year,
-            courseId,
-            reviewerId,
-            isLegacy,
-            isGTVerifiedReviewer,
-            upvotes,
-            downvotes,
-          }}
+          reviewInput={reviewInputMemo}
           handleReviewModalClose={closeEditModal}
         />
       </Modal>

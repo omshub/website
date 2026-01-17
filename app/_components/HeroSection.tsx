@@ -10,7 +10,6 @@ import {
   ThemeIcon,
   SimpleGrid,
   Title,
-  Overlay,
 } from '@mantine/core';
 import {
   IconBook,
@@ -81,7 +80,16 @@ export default function HeroSection({ stats }: HeroSectionProps) {
         }}
       />
 
-      <Overlay color={GT_COLORS.navy} opacity={0.85} zIndex={1} />
+      {/* Overlay - inline CSS for Clarity compatibility */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundColor: GT_COLORS.navy,
+          opacity: 0.85,
+          zIndex: 1,
+        }}
+      />
 
       <Container size="xl" h="100%" pos="relative" style={{ zIndex: 2 }} py="xl">
         <Stack h="100%" justify="center" gap="lg">

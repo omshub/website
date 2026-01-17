@@ -6,5 +6,5 @@ export const SOCIAL_LINKS = {
   discord: 'https://discord.gg/THnDwJAJ53',
   reddit: 'https://reddit.com/r/OMSCS',
   slack: 'https://omscs-study.slack.com',
-  email: 'mailto:contact@omshub.io',
+  email: 'mailto:gt.omshub@gmail.com',
 } as const;

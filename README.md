@@ -8,7 +8,7 @@ A website for Online Master's of Science (OMS) course reviews at Georgia Tech.
 
 ## Resources
 
-[Contact our team!](gt.omshub@gmail.com)
+[Contact our team!](mailto:gt.omshub@gmail.com)
 
 ### OMSHub
 
@@ -24,6 +24,15 @@ A website for Online Master's of Science (OMS) course reviews at Georgia Tech.
 ### Other
 
 - How to Write a Git Commit Message - https://cbea.ms/git-commit
+
+## Tech Stack
+
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **UI Components**: [Mantine 7](https://mantine.dev/)
+- **Database & Auth**: [Supabase](https://supabase.com/)
+- **Language**: TypeScript
+- **Styling**: Mantine CSS-in-JS + CSS Variables
+- **Deployment**: Vercel
 
 ## Development
 
@@ -46,66 +55,59 @@ To get started:
 Clone the repository and then run the following commands to build the NextJS application:
 
 ```bash
-yarn install
-yarn build
+pnpm install
+pnpm build
 ```
 
 To start the project locally, run:
 
 ```bash
-yarn start
+pnpm start
 ```
 
-Open `http://localhost:3000` with your browser to see the result. See `README.md` in `/__seed__` for more details regarding seeding backend data (e.g., in a cloud Firebase project).
+Open `http://localhost:3000` with your browser to see the result.
 
-### Running the local Firebase emulator for local dev environment
+### Environment Variables
 
-Ensure that the following is defined locally in environment file `website/.env`:
-
-```
-NEXT_PUBLIC_IS_EMULATOR_MODE=true
-NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST=localhost:8080
-```
-
-To launch the local emulator, run:
+Copy `example.env` to `.env.local` and fill in the required values:
 
 ```bash
-yarn install
-yarn fb:emu
+cp example.env .env.local
 ```
 
-This will create a local emulator instance of Firebase, with local UI Firebase dashboard accessible via `http://localhost:4000` which provides the Firebase Emulator Suite for local services (e.g., Firestore).
+Required environment variables:
 
-Next, to start the project locally, in a ***separate*** terminal instance run:
+- `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` - Your Supabase publishable (anon) key
 
-```bash
-yarn build
-yarn dev
-```
+Optional environment variables:
 
-> [!NOTE]
-> A cloud-based Firebase project must still exist in order to run the emulator locally in this manner. Simply create a blank/empty [Firebase](https://firebase.google.com/) project using a Google account for this purpose, and then populate file `website/.env` accordingly with corresponding API key and project information from Firebase (see `website/example.env` for additional reference, as well as `website/__seed__/README.md` for more information regarding seeding a cloud-based Firebase Firestore database).
+- `NEXT_PUBLIC_GA_ID` - Google Analytics ID
+- `NEXT_PUBLIC_CLARITY_ID` - Microsoft Clarity ID
+- `GOOGLE_SITE_VERIFICATION` - Google Search Console verification
 
-Open `http://localhost:3000` with your browser to see the result. The local data will be seeded from scratch. Furthermore, you can use the local auth service by simply logging in via any of the provided services (e.g., Google) with auto-generated credentials, which will simulate a logged in user account.
+### pnpm development scripts
 
-### Yarn development scripts
-
-- `yarn dev` — Starts the application in development mode at `http://localhost:3000`.
-- `yarn build` — Creates an optimized production build of your application.
-- `yarn start` — Starts the application in production mode.
-- `yarn lint` — Runs ESLint for all files in the `src` directory.
-- `yarn prettier` — Runs Prettier for all files in the `src` directory.
-- `yarn fmt` - Run `yarn prettier` and `yarn lint` successively.
-- `yarn precommit` — Run commitizen on `git`-staged files.
-- `yarn storybook` - Run storybook locally at `http://localhost:6006`.
-- `yarn fb:emu` - Run the local [Firebase Emulator Suite](https://firebase.google.com/docs/emulator-suite/) at `http://localhost:4000`.
+- `pnpm dev` — Starts the application in development mode at `http://localhost:3000`.
+- `pnpm build` — Creates an optimized production build of your application.
+- `pnpm start` — Starts the application in production mode.
+- `pnpm clean` — Removes `.next` and `node_modules` directories.
+- `pnpm lint` — Runs ESLint for all files in the project.
+- `pnpm prettier` — Runs Prettier for all files in the project.
+- `pnpm fmt` - Run `pnpm prettier` and `pnpm lint` successively.
+- `pnpm precommit` — Run commitizen on `git`-staged files.
+- `pnpm storybook` - Run storybook locally at `http://localhost:6006`.
 
 ### Directory structure
 
-- [`.github`](.github) — GitHub configuration including the CI workflow.<br>
-- [`.husky`](.husky) — Husky configuration and hooks.<br>
-- [`public`](./public) — Static assets such as robots.txt, images, and favicon.<br>
-- [`src`](./src) — Application source code, including pages, components, styles.
+- [`.github`](.github) — GitHub configuration including the CI workflow.
+- [`.husky`](.husky) — Husky configuration and hooks.
+- [`app`](./app) — Next.js App Router pages and API routes.
+- [`public`](./public) — Static assets such as robots.txt, images, and favicon.
+- [`src`](./src) — Application source code, including components, lib, and utilities.
+  - [`src/components`](./src/components) — React components.
+  - [`src/context`](./src/context) — React context providers.
+  - [`src/lib`](./src/lib) — Library code including Supabase client, types, and utilities.
 
 ### Commit messages
 

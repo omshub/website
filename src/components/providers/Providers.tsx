@@ -3,7 +3,7 @@
 import React, { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import { AlertContextProvider } from '@/context/AlertContext';
-import { AuthContextProvider } from '@/context/AuthContext';
+import { AuthProvider } from '@/context/AuthContext';
 import { MenuContextProvider } from '@/context/MenuContext';
 import { NavBarMantine } from '@/components/NavBarMantine';
 import Footer from '@/components/Footer';
@@ -32,7 +32,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <MantineThemeProvider>
       <AlertContextProvider>
-        <AuthContextProvider>
+        <AuthProvider>
           <MenuContextProvider>
             <NavBarMantine />
             <AutoBreadcrumbs />
@@ -45,7 +45,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             {children}
           </main>
           <Footer />
-        </AuthContextProvider>
+        </AuthProvider>
       </AlertContextProvider>
     </MantineThemeProvider>
   );

@@ -41,7 +41,7 @@ export interface CourseDataDynamic {
   avgDifficulty: TNullable<number>;
   avgOverall: TNullable<number>;
   avgStaffSupport: TNullable<number>;
-  reviewsCountsByYearSem: TReviewsCountsByYearSemObject; // NOTE: placeholder only; remove once migrated from Firebase to Supabase
+  reviewsCountsByYearSem: TReviewsCountsByYearSemObject;
 }
 
 export interface Course extends CourseDataStatic, CourseDataDynamic {}

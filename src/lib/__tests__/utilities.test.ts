@@ -9,7 +9,7 @@ import { DOMAIN_GATECH } from '@/lib/constants';
 describe('global utilities tests', () => {
   describe('mappers', () => {
     describe('mapDynamicCoursesDataToCourses()', () => {
-      it('maps dynamic course data from Firebase Firestore DB response to full course data model', () => {
+      it('merges dynamic course stats with static data to create full course model', () => {
         // TODO
       });
     });

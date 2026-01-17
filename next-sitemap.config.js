@@ -60,7 +60,7 @@ module.exports = {
       lastmod: new Date().toISOString(),
     };
   },
-  additionalPaths: async (config) => {
+  additionalPaths: async (_config) => {
     // Fetch courses from the data repo and add them to sitemap
     const result = [];
     try {

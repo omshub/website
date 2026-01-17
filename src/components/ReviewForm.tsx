@@ -1,11 +1,7 @@
 'use client';
 
-import { addUser, getUser } from '@/lib/firebase/dbOperations';
-import backend from '@/lib/firebase/index';
 import { useAlert } from '@/context/AlertContext';
 import { useAuth } from '@/context/AuthContext';
-import { FirebaseAuthUser } from '@/context/types';
-import { SEMESTER_ID } from '@/lib/constants';
 
 import {
   Review,
@@ -16,10 +12,8 @@ import {
   TSemesterId,
   TUserReviews,
 } from '@/lib/types';
-import { isGTEmail } from '@/lib/utilities';
 import {
   Button,
-  TextInput,
   Loader,
   Alert,
   Select,
@@ -32,7 +26,6 @@ import {
   Badge,
   Divider,
   ThemeIcon,
-  Slider,
   NumberInput,
 } from '@mantine/core';
 import {
@@ -54,8 +47,6 @@ import {
   useForm,
 } from 'react-hook-form';
 import { GT_COLORS } from '@/lib/theme';
-
-const { addReview, updateReview } = backend;
 
 const TipTapEditor = dynamic(() => import('@/components/TipTapEditor'), {
   ssr: false,
@@ -106,13 +97,11 @@ const overallLabels = ['Terrible', 'Poor', 'Average', 'Good', 'Excellent'];
 
 const ReviewForm = ({
   courseId,
-  courseName,
   reviewInput,
   handleReviewModalClose,
 }: TPropsReviewForm) => {
-  const authContext: TNullable<any> = useAuth();
-
-  const user: TNullable<FirebaseAuthUser> = authContext.user;
+  const authContext = useAuth();
+  const user = authContext?.user;
 
   const { setAlert } = useAlert();
   const [userReviews, setUserReviews] = useState<TUserReviews>({});
@@ -157,75 +146,104 @@ const ReviewForm = ({
         data.workload
     );
 
-    const isLoggedIn = Boolean(user && user.uid && user.email);
+    const isLoggedIn = Boolean(user && user.id && user.email);
 
     if (isGoodSubmission && isLoggedIn && hasNonNullDataValues) {
       const currentTime = Date.now();
       const semesterId = data.semesterId as TSemesterId;
       const year = Number(data.year);
       const body = data.body;
-      const reviewerId = user!.uid;
       const reviewId = `${courseId}-${data.year}-${mapSemsterIdToTerm[semesterId]}-${currentTime}`;
       const workload = Number(data.workload);
       const difficulty = Number(data.difficulty) as TRatingScale;
       const overall = Number(data.overall) as TRatingScale;
-      const isGTVerifiedReviewer = isGTEmail(user!.email!);
 
-      const reviewValues = {
-        ['courseId']: reviewInput ? reviewInput.courseId : courseId,
-        ['reviewerId']: reviewInput ? reviewInput.reviewerId : reviewerId,
-        ['reviewId']: reviewInput ? reviewInput.reviewId : reviewId,
-        ['created']: reviewInput ? reviewInput.created : currentTime,
-        ['modified']: currentTime,
-        ['semesterId']: reviewInput ? reviewInput.semesterId : semesterId,
-        ['upvotes']: reviewInput ? reviewInput.upvotes : 0,
-        ['downvotes']: reviewInput ? reviewInput.downvotes : 0,
-        ['isLegacy']: reviewInput ? reviewInput.isLegacy : false,
-        ['year']: reviewInput ? reviewInput.year : year,
-        ['isGTVerifiedReviewer']: reviewInput
-          ? reviewInput.isGTVerifiedReviewer
-          : isGTVerifiedReviewer,
-        body,
-        workload,
-        difficulty,
-        overall,
-      };
+      try {
+        if (reviewInput?.reviewId) {
+          // Update existing review
+          const response = await fetch(`/api/reviews/${reviewInput.reviewId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              body,
+              workload,
+              difficulty,
+              overall,
+            }),
+          });
+          if (!response.ok) {
+            throw new Error('Failed to update review');
+          }
+        } else {
+          // Create new review
+          const response = await fetch('/api/reviews', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              reviewId,
+              courseId,
+              year,
+              semesterId,
+              body,
+              workload,
+              difficulty,
+              overall,
+            }),
+          });
+          if (!response.ok) {
+            throw new Error('Failed to create review');
+          }
+        }
 
-      if (reviewInput?.reviewId) {
-        await updateReview(user!.uid, reviewInput.reviewId, reviewValues);
-      } else {
-        await addReview(user!.uid, reviewId, reviewValues);
+        setAlert({
+          severity: 'success',
+          text: `Successful review submission for ${courseId} for ${mapSemesterIdToName[semesterId]} ${year}`,
+          variant: 'outlined',
+        });
+
+        handleReviewModalClose();
+        window.location.reload();
+      } catch (error) {
+        console.error('Error submitting review:', error);
+        setAlert({
+          severity: 'error',
+          text: 'Failed to submit review. Please try again.',
+          variant: 'outlined',
+        });
       }
-
-      setAlert({
-        severity: 'success',
-        text: `Successful review submission for ${courseId} for ${mapSemesterIdToName[semesterId]} ${year}`,
-        variant: 'outlined',
-      });
-
-      handleReviewModalClose();
-      window.location.reload();
     }
   };
 
+  // Fetch user reviews only when userId changes (not entire user object)
+  const userId = user?.id;
   useEffect(() => {
-    if (!user?.uid) return;
-    getUser(user.uid).then((results) => {
-      if (results.userId) {
-        setUserReviews(results['reviews']);
-      } else if (user && user.uid && user.email) {
-        const hasGTEmail = isGTEmail(user.email);
-        addUser(user.uid, hasGTEmail);
-        setUserReviews({});
-      } else {
+    if (!userId) return;
+
+    const fetchUserReviews = async () => {
+      try {
+        const response = await fetch(`/api/user/reviews?userId=${userId}`);
+        if (response.ok) {
+          const reviews = await response.json();
+          setUserReviews(reviews);
+        } else {
+          setUserReviews({});
+        }
+      } catch (error) {
+        console.error('Error fetching user reviews:', error);
         setUserReviews({});
       }
-    });
-  }, [user]);
+    };
 
+    fetchUserReviews();
+  }, [userId]);
+
+  // Only reset form when reviewId changes (editing a different review)
+  // Using reviewInput?.reviewId as dependency instead of the whole object
   useEffect(() => {
-    reset({ ...reviewInput });
-  }, [reviewInput, reset]);
+    if (reviewInput) {
+      reset({ ...reviewInput });
+    }
+  }, [reviewInput?.reviewId, reset]);
 
   const yearOptions = yearRange.map((year) => ({
     value: String(year),

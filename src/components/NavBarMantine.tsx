@@ -18,7 +18,6 @@ import {
   Container,
   Kbd,
   Divider,
-  Badge,
   ThemeIcon,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -27,7 +26,6 @@ import {
   IconSun,
   IconMoon,
   IconBrandGithub,
-  IconMail,
   IconChevronDown,
   IconLogout,
   IconFileText,
@@ -40,8 +38,6 @@ import {
 } from '@tabler/icons-react';
 import { useAuth } from '@/context/AuthContext';
 import { useMenu } from '@/context/MenuContext';
-import { FirebaseAuthUser } from '@/context/types';
-import { TNullable } from '@/lib/types';
 import { GT_COLORS } from '@/lib/theme';
 
 const navLinks = [
@@ -61,12 +57,16 @@ export function NavBarMantine() {
     setMounted(true);
   }, []);
 
-  const authContext: TNullable<any> = useAuth();
-  const user: TNullable<FirebaseAuthUser> = authContext?.user;
-  const loading: TNullable<boolean> = authContext?.loading;
+  const authContext = useAuth();
+  const user = authContext?.user;
+  const loading = authContext?.loading;
   const logout = authContext?.logout;
 
-  const { handleLoginOpen, loginOpen, handleLoginClose } = useMenu();
+  // Helper to get user display values from Supabase user metadata
+  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+  const photoURL = user?.user_metadata?.avatar_url || null;
+
+  const { handleLoginOpen } = useMenu();
 
   return (
     <Box
@@ -218,8 +218,8 @@ export function NavBarMantine() {
                       <UnstyledButton>
                         <Group gap="xs">
                           <Avatar
-                            src={user.photoURL}
-                            alt={user.displayName || 'User'}
+                            src={photoURL}
+                            alt={displayName}
                             radius="xl"
                             size={36}
                             style={{ border: `2px solid ${GT_COLORS.techGold}` }}
@@ -232,13 +232,11 @@ export function NavBarMantine() {
                     <Menu.Dropdown>
                       <Menu.Label>
                         <Text size="sm" fw={600} truncate>
-                          {user.displayName || user.email}
+                          {displayName}
                         </Text>
-                        {user.displayName && (
-                          <Text size="xs" c="dimmed" truncate>
-                            {user.email}
-                          </Text>
-                        )}
+                        <Text size="xs" c="dimmed" truncate>
+                          {user?.email}
+                        </Text>
                       </Menu.Label>
                       <Menu.Divider />
                       <Menu.Item
@@ -252,7 +250,7 @@ export function NavBarMantine() {
                       <Menu.Item
                         color="red"
                         leftSection={<IconLogout size={16} />}
-                        onClick={logout}
+                        onClick={() => logout?.()}
                       >
                         Sign Out
                       </Menu.Item>
@@ -385,18 +383,18 @@ export function NavBarMantine() {
             <Stack gap="xs">
               <Group gap="sm" p="xs" style={{ backgroundColor: 'var(--mantine-color-default)', borderRadius: 8 }}>
                 <Avatar
-                  src={user.photoURL}
-                  alt={user.displayName || 'User'}
+                  src={photoURL}
+                  alt={displayName}
                   radius="xl"
                   size="md"
                   imageProps={{ referrerPolicy: 'no-referrer' }}
                 />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <Text size="sm" fw={600} truncate>
-                    {user.displayName || 'User'}
+                    {displayName}
                   </Text>
                   <Text size="xs" c="dimmed" truncate>
-                    {user.email}
+                    {user?.email}
                   </Text>
                 </div>
               </Group>
@@ -417,7 +415,7 @@ export function NavBarMantine() {
                 leftSection={<IconLogout size={18} />}
                 fullWidth
                 justify="flex-start"
-                onClick={() => { logout(); closeDrawer(); }}
+                onClick={() => { logout?.(); closeDrawer(); }}
               >
                 Sign Out
               </Button>

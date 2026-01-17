@@ -61,11 +61,11 @@ const CourseActionBarStory = ({
   };
 
   const getCourseInfoText = () => {
-    return `${courseId}: ${courseName}\nhttps://omshub.io/courses/${courseId}`;
+    return `${courseId}: ${courseName}\nhttps://omshub.org/courses/${courseId}`;
   };
 
   const getCourseMarkdown = () => {
-    return `**${courseId}**: ${courseName}\n[View Reviews](https://omshub.io/courses/${courseId})`;
+    return `**${courseId}**: ${courseName}\n[View Reviews](https://omshub.org/courses/${courseId})`;
   };
 
   return (
@@ -155,7 +155,7 @@ const CourseActionBarStory = ({
               </Menu.Target>
               <Menu.Dropdown>
                 <Menu.Label>Copy to Clipboard</Menu.Label>
-                <CopyButton value={`https://omshub.io/courses/${courseId}`}>
+                <CopyButton value={`https://omshub.org/courses/${courseId}`}>
                   {({ copied, copy }) => (
                     <Menu.Item
                       leftSection={copied ? <IconCheck size={14} color={GT_COLORS.canopyLime} /> : <IconLink size={14} />}

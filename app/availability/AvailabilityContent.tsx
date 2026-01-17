@@ -25,7 +25,6 @@ import {
   IconSearch,
   IconCalendar,
   IconUsers,
-  IconClock,
   IconChevronDown,
   IconSchool,
   IconListCheck,
@@ -322,7 +321,6 @@ export default function AvailabilityContent() {
 
   // Calculate stats
   const totalEnrolled = sections.reduce((sum, s) => sum + s.enrolled, 0);
-  const totalCapacity = sections.reduce((sum, s) => sum + s.capacity, 0);
   const totalWaitlist = sections.reduce((sum, s) => sum + s.waitlist, 0);
 
   const getEnrollmentColor = (enrolled: number, capacity: number) => {

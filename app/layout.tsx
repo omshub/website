@@ -4,6 +4,7 @@ import { Metadata, Viewport } from 'next';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import MicrosoftClarity from '@/components/analytics/MicrosoftClarity';
 import { ColorSchemeScript } from '@mantine/core';
 import { OrganizationSchema, WebsiteSchema } from '@/components/StructuredData';
 import Providers from '@/components/providers/Providers';
@@ -54,21 +55,12 @@ export const metadata: Metadata = {
     title: 'OMSHub - Georgia Tech OMS Course Reviews',
     description:
       'Community-driven course reviews for Georgia Tech Online Master\'s programs. Read honest student reviews for OMSCS, OMSA, and OMSCyber.',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'OMSHub - Georgia Tech OMS Course Reviews',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'OMSHub - Georgia Tech OMS Course Reviews',
     description:
       'Community-driven course reviews for Georgia Tech Online Master\'s programs.',
-    images: ['/og-image.png'],
   },
   robots: {
     index: true,
@@ -111,11 +103,6 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        {/* Preconnect to external resources for faster loading */}
-        <link rel="preconnect" href="https://firestore.googleapis.com" />
-        <link rel="preconnect" href="https://www.googleapis.com" />
-        <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
-        <link rel="dns-prefetch" href="https://www.googleapis.com" />
         <ColorSchemeScript defaultColorScheme="auto" />
         {/* WCAG-compliant dimmed color override */}
         <style dangerouslySetInnerHTML={{ __html: `
@@ -128,6 +115,10 @@ export default function RootLayout({
         <WebsiteSchema />
       </head>
       <body suppressHydrationWarning>
+        {/* Microsoft Clarity - beforeInteractive for session recording */}
+        {process.env.NEXT_PUBLIC_CLARITY_ID && (
+          <MicrosoftClarity projectId={process.env.NEXT_PUBLIC_CLARITY_ID} />
+        )}
         <Providers>{children}</Providers>
         {process.env.VERCEL && <Analytics />}
         {process.env.VERCEL && <SpeedInsights />}

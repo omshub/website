@@ -5,7 +5,7 @@ import { Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
 
 // CSS Variables resolver for WCAG-compliant colors
-const resolver: CSSVariablesResolver = (theme) => ({
+const resolver: CSSVariablesResolver = (_theme) => ({
   variables: {
     // Override dimmed color for 4.5:1 contrast on white backgrounds
     '--mantine-color-dimmed': '#636c76',
