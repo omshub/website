@@ -1,7 +1,7 @@
 'use client';
 
-import { useAlert } from '@/context/AlertContext';
 import { useAuth } from '@/context/AuthContext';
+import { notifySuccess, notifyError } from '@/utils/notifications';
 
 import {
   Review,
@@ -103,7 +103,6 @@ const ReviewForm = ({
   const authContext = useAuth();
   const user = authContext?.user;
 
-  const { setAlert } = useAlert();
   const [userReviews, setUserReviews] = useState<TUserReviews>({});
 
   const yearRange = getYearRange();
@@ -195,20 +194,18 @@ const ReviewForm = ({
           }
         }
 
-        setAlert({
-          severity: 'success',
-          text: `Successful review submission for ${courseId} for ${mapSemesterIdToName[semesterId]} ${year}`,
-          variant: 'outlined',
+        notifySuccess({
+          title: 'Review Submitted!',
+          message: `Your review for ${courseId} (${mapSemesterIdToName[semesterId]} ${year}) has been saved.`,
         });
 
         handleReviewModalClose();
         window.location.reload();
       } catch (error) {
         console.error('Error submitting review:', error);
-        setAlert({
-          severity: 'error',
-          text: 'Failed to submit review. Please try again.',
-          variant: 'outlined',
+        notifyError({
+          title: 'Submission Failed',
+          message: 'Failed to submit review. Please try again.',
         });
       }
     }

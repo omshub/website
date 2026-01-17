@@ -57,9 +57,13 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
     setLoadingProvider('magic');
 
     try {
-      authContext.signInWithMagicLink(email);
-      onClose();
+      await authContext.signInWithMagicLink(email);
+      // Close drawer and reset AFTER the magic link is sent
+      // so the user sees the success alert
       setEmail('');
+      onClose();
+    } catch {
+      // Error alert is shown by signInWithMagicLink, keep drawer open
     } finally {
       setIsLoading(false);
       setLoadingProvider(null);

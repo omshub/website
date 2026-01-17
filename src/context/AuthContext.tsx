@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { getClient } from '@/lib/supabase/client';
-import { useAlert } from '@/context/AlertContext';
 import { useRouter } from 'next/navigation';
+import { notifySuccess, notifyError } from '@/utils/notifications';
 import type { User, Session } from '@supabase/supabase-js';
 import type { TContextProviderProps } from '@/context/types';
 import type { TNullable } from '@/lib/types';
@@ -50,16 +50,13 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
   const [user, setUser] = useState<TNullable<User>>(null);
   const [session, setSession] = useState<TNullable<Session>>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const { setAlert } = useAlert();
   const router = useRouter();
 
   // Use refs to track state for the subscription callback without causing re-subscriptions
   const previousUserRef = useRef<TNullable<User>>(null);
-  const setAlertRef = useRef(setAlert);
   const routerRef = useRef(router);
 
   // Keep refs up to date
-  setAlertRef.current = setAlert;
   routerRef.current = router;
 
   useEffect(() => {
@@ -93,10 +90,9 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
           newUser.user_metadata?.full_name ||
           newUser.email?.split('@')[0] ||
           'there';
-        setAlertRef.current({
-          severity: 'success',
-          text: `Welcome back, ${displayName}!`,
-          variant: 'outlined',
+        notifySuccess({
+          title: 'Welcome back!',
+          message: `Signed in as ${displayName}`,
         });
 
         // Smart redirect
@@ -122,10 +118,9 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
     });
 
     if (error) {
-      setAlert({
-        severity: 'error',
-        text: error.message,
-        variant: 'outlined',
+      notifyError({
+        title: 'Sign in failed',
+        message: error.message,
       });
     }
   };
@@ -140,10 +135,9 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
     });
 
     if (error) {
-      setAlert({
-        severity: 'error',
-        text: error.message,
-        variant: 'outlined',
+      notifyError({
+        title: 'Magic link failed',
+        message: error.message,
       });
       return;
     }
@@ -152,13 +146,13 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
     const isOutlookEmail = email.endsWith('@outlook.com');
     const additionalInstructions =
       isGTEmail || isOutlookEmail
-        ? ' NOTE: gatech.edu or outlook.com domain may require release from Quarantine. See https://security.microsoft.com/quarantine'
+        ? ' Check Microsoft Quarantine if using gatech.edu or outlook.com.'
         : '';
 
-    setAlert({
-      severity: 'success',
-      text: `A Magic Link was sent to ${email}! Check your spam folder just in-case.${additionalInstructions}`,
-      variant: 'outlined',
+    notifySuccess({
+      title: 'Magic Link Sent!',
+      message: `Check your inbox at ${email}.${additionalInstructions}`,
+      autoClose: 8000,
     });
   };
 
