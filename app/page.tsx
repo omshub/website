@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Container, Skeleton, Box, Stack, SimpleGrid } from '@mantine/core';
+import { Container, Skeleton } from '@mantine/core';
 import { getCoursesDataStatic, getCourseStats } from '@/lib/staticData';
 import { mapDynamicCoursesDataToCourses } from '@/lib/utilities';
 import { courseFields } from '@/lib/constants';

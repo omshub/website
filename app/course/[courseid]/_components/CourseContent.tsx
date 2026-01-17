@@ -7,7 +7,6 @@ import { useAuth } from '@/context/AuthContext';
 import {
   Course,
   Review,
-  TCourseId,
 } from '@/lib/types';
 import {
   IconCopy,
@@ -56,9 +55,6 @@ import {
 } from '@/utilities';
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import { GT_COLORS } from '@/lib/theme';
-import type { Database } from '@/lib/supabase/database.types';
-
-type SupabaseReview = Database['public']['Tables']['reviews']['Row'];
 
 // Map semester id (sp, sm, fa) to term number (1, 2, 3)
 const semesterIdToTerm: Record<string, number> = {
@@ -66,28 +62,6 @@ const semesterIdToTerm: Record<string, number> = {
   sm: 2,
   fa: 3,
 };
-
-// Convert Supabase review to Review format
-function mapSupabaseReviewToReview(review: SupabaseReview): Review {
-  return {
-    reviewId: review.id,
-    courseId: review.course_id as TCourseId,
-    year: review.year,
-    semesterId: review.semester as 'sp' | 'sm' | 'fa',
-    isLegacy: review.is_legacy,
-    reviewerId: review.reviewer_id ?? '',
-    isGTVerifiedReviewer: review.is_gt_verified,
-    created: new Date(review.created_at).getTime(),
-    modified: review.modified_at ? new Date(review.modified_at).getTime() : null,
-    body: review.body ?? '',
-    upvotes: review.upvotes,
-    downvotes: review.downvotes,
-    workload: review.workload ?? 0,
-    difficulty: (review.difficulty ?? 3) as 1 | 2 | 3 | 4 | 5,
-    overall: (review.overall ?? 3) as 1 | 2 | 3 | 4 | 5,
-    staffSupport: review.staff_support as 1 | 2 | 3 | 4 | 5 | undefined,
-  };
-}
 
 const PAGE_SIZE = 20;
 

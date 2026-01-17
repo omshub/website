@@ -14,7 +14,6 @@ export async function GET(
   const avgDifficulty = 'N/A';
   const avgWorkload = 'N/A';
   const avgOverall = 'N/A';
-  const numReviews = 0;
 
   try {
     const response = await fetch(

@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
-import { Review, TCourseName, TNullable } from '@/lib/types';
+import { Review, TCourseName } from '@/lib/types';
 import {
   IconCamera,
   IconAlertCircle,

@@ -18,7 +18,7 @@ import {
   Paper,
   ThemeIcon,
 } from '@mantine/core';
-import { IconMessageCircle, IconPencil } from '@tabler/icons-react';
+import { IconPencil } from '@tabler/icons-react';
 import { GT_COLORS } from '@/lib/theme';
 
 // API function to interact with Supabase via API routes

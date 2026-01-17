@@ -18,7 +18,6 @@ import {
   Container,
   Kbd,
   Divider,
-  Badge,
   ThemeIcon,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -27,7 +26,6 @@ import {
   IconSun,
   IconMoon,
   IconBrandGithub,
-  IconMail,
   IconChevronDown,
   IconLogout,
   IconFileText,
@@ -68,7 +66,7 @@ export function NavBarMantine() {
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
   const photoURL = user?.user_metadata?.avatar_url || null;
 
-  const { handleLoginOpen, loginOpen, handleLoginClose } = useMenu();
+  const { handleLoginOpen } = useMenu();
 
   return (
     <Box

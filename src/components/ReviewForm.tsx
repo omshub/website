@@ -2,7 +2,6 @@
 
 import { useAlert } from '@/context/AlertContext';
 import { useAuth } from '@/context/AuthContext';
-import { SEMESTER_ID } from '@/lib/constants';
 
 import {
   Review,
@@ -15,7 +14,6 @@ import {
 } from '@/lib/types';
 import {
   Button,
-  TextInput,
   Loader,
   Alert,
   Select,
@@ -28,7 +26,6 @@ import {
   Badge,
   Divider,
   ThemeIcon,
-  Slider,
   NumberInput,
 } from '@mantine/core';
 import {
@@ -100,7 +97,6 @@ const overallLabels = ['Terrible', 'Poor', 'Average', 'Good', 'Excellent'];
 
 const ReviewForm = ({
   courseId,
-  courseName,
   reviewInput,
   handleReviewModalClose,
 }: TPropsReviewForm) => {

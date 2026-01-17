@@ -5,13 +5,6 @@ import { TCourseId, TPayloadReviews } from '@/lib/types';
 
 type SupabaseReview = Database['public']['Tables']['reviews']['Row'];
 
-// Map semester id (sp, sm, fa) to term number (1, 2, 3)
-const semesterIdToTerm: Record<string, number> = {
-  sp: 1,
-  sm: 2,
-  fa: 3,
-};
-
 // Convert Supabase reviews array to TPayloadReviews object format
 function mapSupabaseReviewsToPayload(reviews: SupabaseReview[]): TPayloadReviews {
   const payload: TPayloadReviews = {};

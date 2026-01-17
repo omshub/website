@@ -1,7 +1,8 @@
 'use client';
 
 import ReviewCard from '@/components/ReviewCard';
-import { Review, TPayloadCoursesDataStatic, TCourseId } from '@/lib/types';
+import { Review, TPayloadCoursesDataStatic } from '@/lib/types';
+import { mapSupabaseReviewToReview } from '@/lib/supabase/mappers';
 import {
   Container,
   Title,
@@ -23,36 +24,11 @@ import { IconMessageCircle, IconSearch, IconX } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { GT_COLORS } from '@/lib/theme';
-import type { Database } from '@/lib/supabase/database.types';
-
-type SupabaseReview = Database['public']['Tables']['reviews']['Row'];
 
 interface RecentsContentProps {
   initialReviews: Review[];
   coursesDataStatic: TPayloadCoursesDataStatic;
   initialHasMore: boolean;
-}
-
-// Convert Supabase review to Review format
-function mapSupabaseReviewToReview(review: SupabaseReview): Review {
-  return {
-    reviewId: review.id,
-    courseId: review.course_id as TCourseId,
-    year: review.year,
-    semesterId: review.semester as 'sp' | 'sm' | 'fa',
-    isLegacy: review.is_legacy,
-    reviewerId: review.reviewer_id ?? '',
-    isGTVerifiedReviewer: review.is_gt_verified,
-    created: new Date(review.created_at).getTime(),
-    modified: review.modified_at ? new Date(review.modified_at).getTime() : null,
-    body: review.body ?? '',
-    upvotes: review.upvotes,
-    downvotes: review.downvotes,
-    workload: review.workload ?? 0,
-    difficulty: (review.difficulty ?? 3) as 1 | 2 | 3 | 4 | 5,
-    overall: (review.overall ?? 3) as 1 | 2 | 3 | 4 | 5,
-    staffSupport: review.staff_support as 1 | 2 | 3 | 4 | 5 | undefined,
-  };
 }
 
 const PAGE_SIZE = 20;

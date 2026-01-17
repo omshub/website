@@ -22,7 +22,7 @@ export default function HighlightedText({
     const regex = new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     const splitText = text.split(regex);
 
-    return splitText.map((part, i) => ({
+    return splitText.map((part) => ({
       text: part,
       isHighlight: regex.test(part),
     }));

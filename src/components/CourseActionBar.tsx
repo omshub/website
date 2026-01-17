@@ -14,7 +14,6 @@ import {
   Badge,
   Menu,
   CopyButton,
-  rem,
 } from '@mantine/core';
 import { useWindowScroll, useLocalStorage } from '@mantine/hooks';
 import {
@@ -66,16 +65,6 @@ export default function CourseActionBar({
 
   const handleScrollToTop = () => {
     scrollTo({ y: 0 });
-  };
-
-  const handleScrollToReviews = () => {
-    const reviewsSection = document.querySelector('[data-reviews-section]');
-    if (reviewsSection) {
-      reviewsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      // Fallback: scroll to approximately where reviews would be
-      scrollTo({ y: 600 });
-    }
   };
 
   const handleRandomReview = () => {
