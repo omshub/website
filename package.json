@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
+    "clean": "rm -rf .next node_modules",
     "postbuild": "next-sitemap",
     "start": "next start",
     "test": "jest --watch",
