@@ -2,6 +2,34 @@
 
 module.exports = {
   reactStrictMode: true,
+
+  // Allow Clarity bot to access assets for session replay
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+        ],
+      },
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
+  },
   // Disable source maps in production for better performance
   productionBrowserSourceMaps: false,
 
@@ -38,6 +66,8 @@ module.exports = {
       '@tabler/icons-react',
       '@supabase/supabase-js',
     ],
+    // Inline CSS into HTML for better Clarity session replay support
+    inlineCss: true,
   },
 
   // Reduce unused JavaScript with tree shaking
