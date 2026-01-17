@@ -55,21 +55,12 @@ export const metadata: Metadata = {
     title: 'OMSHub - Georgia Tech OMS Course Reviews',
     description:
       'Community-driven course reviews for Georgia Tech Online Master\'s programs. Read honest student reviews for OMSCS, OMSA, and OMSCyber.',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'OMSHub - Georgia Tech OMS Course Reviews',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'OMSHub - Georgia Tech OMS Course Reviews',
     description:
       'Community-driven course reviews for Georgia Tech Online Master\'s programs.',
-    images: ['/og-image.png'],
   },
   robots: {
     index: true,
@@ -122,12 +113,12 @@ export default function RootLayout({
         {/* Schema.org Structured Data for SEO */}
         <OrganizationSchema />
         <WebsiteSchema />
-        {/* Microsoft Clarity - in head for proper style capture */}
+      </head>
+      <body suppressHydrationWarning>
+        {/* Microsoft Clarity - beforeInteractive for session recording */}
         {process.env.NEXT_PUBLIC_CLARITY_ID && (
           <MicrosoftClarity projectId={process.env.NEXT_PUBLIC_CLARITY_ID} />
         )}
-      </head>
-      <body suppressHydrationWarning>
         <Providers>{children}</Providers>
         {process.env.VERCEL && <Analytics />}
         {process.env.VERCEL && <SpeedInsights />}
