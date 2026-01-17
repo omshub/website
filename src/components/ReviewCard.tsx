@@ -32,7 +32,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { mapSemesterIdToName } from '@/utilities';
 import { GT_COLORS, CSS_STAT_COLORS } from '@/lib/theme';
 import { toBlob } from 'html-to-image';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import Markdown from 'react-markdown';
 import ReviewForm from '@/components/ReviewForm';
 import HighlightedText from '@/components/HighlightedText';
@@ -70,6 +70,25 @@ const ReviewCard = ({
   const [isFirefox, setIsFirefox] = useState<boolean>(false);
   const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] = useDisclosure(false);
   const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
+
+  // Memoize reviewInput to prevent infinite re-renders in ReviewForm
+  const reviewInputMemo = useMemo(() => ({
+    reviewId,
+    body,
+    overall,
+    difficulty,
+    workload,
+    semesterId,
+    created,
+    modified,
+    year,
+    courseId,
+    reviewerId,
+    isLegacy,
+    isGTVerifiedReviewer,
+    upvotes,
+    downvotes,
+  }), [reviewId, body, overall, difficulty, workload, semesterId, created, modified, year, courseId, reviewerId, isLegacy, isGTVerifiedReviewer, upvotes, downvotes]);
 
   useEffect(() => {
     setIsFirefox(Boolean(navigator.userAgent.match(`Firefox`)));
@@ -394,23 +413,7 @@ const ReviewCard = ({
         <ReviewForm
           courseId={courseId}
           courseName={courseName as TCourseName}
-          reviewInput={{
-            reviewId,
-            body,
-            overall,
-            difficulty,
-            workload,
-            semesterId,
-            created,
-            modified,
-            year,
-            courseId,
-            reviewerId,
-            isLegacy,
-            isGTVerifiedReviewer,
-            upvotes,
-            downvotes,
-          }}
+          reviewInput={reviewInputMemo}
           handleReviewModalClose={closeEditModal}
         />
       </Modal>

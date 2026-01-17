@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { getClient } from '@/lib/supabase/client';
 import { useAlert } from '@/context/AlertContext';
 import { useRouter } from 'next/navigation';
@@ -50,9 +50,17 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
   const [user, setUser] = useState<TNullable<User>>(null);
   const [session, setSession] = useState<TNullable<Session>>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [previousUser, setPreviousUser] = useState<TNullable<User>>(null);
   const { setAlert } = useAlert();
   const router = useRouter();
+
+  // Use refs to track state for the subscription callback without causing re-subscriptions
+  const previousUserRef = useRef<TNullable<User>>(null);
+  const setAlertRef = useRef(setAlert);
+  const routerRef = useRef(router);
+
+  // Keep refs up to date
+  setAlertRef.current = setAlert;
+  routerRef.current = router;
 
   useEffect(() => {
     const supabase = getClient();
@@ -61,17 +69,20 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      previousUserRef.current = session?.user ?? null;
       setLoading(false);
     });
 
-    // Listen for auth changes
+    // Listen for auth changes - subscription should only be created once
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       const newUser = session?.user ?? null;
-      const isNewSignIn = !previousUser && newUser;
+      const wasSignedOut = !previousUserRef.current;
+      const isNewSignIn = wasSignedOut && newUser;
 
-      setPreviousUser(user);
+      // Update refs and state
+      previousUserRef.current = newUser;
       setSession(session);
       setUser(newUser);
       setLoading(false);
@@ -82,7 +93,7 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
           newUser.user_metadata?.full_name ||
           newUser.email?.split('@')[0] ||
           'there';
-        setAlert({
+        setAlertRef.current({
           severity: 'success',
           text: `Welcome back, ${displayName}!`,
           variant: 'outlined',
@@ -91,13 +102,13 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
         // Smart redirect
         const returnTo = getAndClearReturnUrl();
         if (returnTo !== '/') {
-          router.push(returnTo);
+          routerRef.current.push(returnTo);
         }
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [previousUser, router, setAlert, user]);
+  }, []); // Empty dependency array - subscription should only be created once
 
   const signInWithProvider = async (
     provider: 'google' | 'github'

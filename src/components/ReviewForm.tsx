@@ -214,12 +214,14 @@ const ReviewForm = ({
     }
   };
 
+  // Fetch user reviews only when userId changes (not entire user object)
+  const userId = user?.id;
   useEffect(() => {
-    if (!user?.id) return;
+    if (!userId) return;
 
     const fetchUserReviews = async () => {
       try {
-        const response = await fetch(`/api/user/reviews?userId=${user.id}`);
+        const response = await fetch(`/api/user/reviews?userId=${userId}`);
         if (response.ok) {
           const reviews = await response.json();
           setUserReviews(reviews);
@@ -233,11 +235,15 @@ const ReviewForm = ({
     };
 
     fetchUserReviews();
-  }, [user]);
+  }, [userId]);
 
+  // Only reset form when reviewId changes (editing a different review)
+  // Using reviewInput?.reviewId as dependency instead of the whole object
   useEffect(() => {
-    reset({ ...reviewInput });
-  }, [reviewInput, reset]);
+    if (reviewInput) {
+      reset({ ...reviewInput });
+    }
+  }, [reviewInput?.reviewId, reset]);
 
   const yearOptions = yearRange.map((year) => ({
     value: String(year),
