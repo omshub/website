@@ -27,7 +27,6 @@
     "@mantine/hooks": "^7.15.0",
     "@mantine/notifications": "^7.15.0",
     "@mantine/spotlight": "^7.15.0",
-    "@microsoft/clarity": "^1.0.2",
     "@next/third-parties": "^16.1.1",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.90.1",

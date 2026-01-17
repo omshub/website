@@ -122,6 +122,10 @@ export default function RootLayout({
         {/* Schema.org Structured Data for SEO */}
         <OrganizationSchema />
         <WebsiteSchema />
+        {/* Microsoft Clarity - in head for proper style capture */}
+        {process.env.NEXT_PUBLIC_CLARITY_ID && (
+          <MicrosoftClarity projectId={process.env.NEXT_PUBLIC_CLARITY_ID} />
+        )}
       </head>
       <body suppressHydrationWarning>
         <Providers>{children}</Providers>
@@ -143,10 +147,6 @@ export default function RootLayout({
               `}
             </Script>
           </>
-        )}
-        {/* Microsoft Clarity */}
-        {process.env.NEXT_PUBLIC_CLARITY_ID && (
-          <MicrosoftClarity projectId={process.env.NEXT_PUBLIC_CLARITY_ID} />
         )}
       </body>
       {process.env.NEXT_PUBLIC_GA_ID && (
