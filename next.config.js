@@ -36,8 +36,7 @@ module.exports = {
       '@mantine/spotlight',
       '@mantine/notifications',
       '@tabler/icons-react',
-      'firebase/auth',
-      'firebase/firestore',
+      '@supabase/supabase-js',
     ],
   },
 

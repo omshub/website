@@ -4,13 +4,10 @@ import ReviewCard from '@/components/ReviewCard';
 import ReviewForm from '@/components/ReviewForm';
 import CourseActionBar from '@/components/CourseActionBar';
 import { useAuth } from '@/context/AuthContext';
-import { FirebaseAuthUser } from '@/context/types';
-import { DESC, REVIEW_ID } from '@/lib/constants';
 import {
   Course,
   Review,
-  TPayloadReviews,
-  TNullable,
+  TCourseId,
 } from '@/lib/types';
 import {
   IconCopy,
@@ -24,8 +21,9 @@ import {
   IconFilter,
   IconCalendar,
   IconChevronDown,
-  IconTrendingUp,
   IconUsers,
+  IconSearch,
+  IconX,
 } from '@tabler/icons-react';
 import {
   Container,
@@ -36,10 +34,8 @@ import {
   Stack,
   Badge,
   Button,
-  Loader,
   Center,
   Modal,
-  Anchor,
   ActionIcon,
   Tooltip,
   Box,
@@ -47,55 +43,74 @@ import {
   SimpleGrid,
   Select,
   Progress,
-  RingProgress,
   Flex,
+  TextInput,
+  Loader,
 } from '@mantine/core';
 import { notifyLinkCopied } from '@/utils/notifications';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
 import Link from 'next/link';
 import {
-  mapPayloadToArray,
   mapSemesterTermToEmoji,
   mapSemesterTermToName,
 } from '@/utilities';
-import { useEffect, useState, useMemo } from 'react';
-import useSWR, { useSWRConfig } from 'swr';
-import backend from '@/lib/firebase/index';
+import { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import { GT_COLORS } from '@/lib/theme';
+import type { Database } from '@/lib/supabase/database.types';
 
-const { getReviews } = backend;
+type SupabaseReview = Database['public']['Tables']['reviews']['Row'];
 
-type TActiveSemesters = {
-  [semesterTerm: number]: boolean;
+// Map semester id (sp, sm, fa) to term number (1, 2, 3)
+const semesterIdToTerm: Record<string, number> = {
+  sp: 1,
+  sm: 2,
+  fa: 3,
 };
+
+// Convert Supabase review to Review format
+function mapSupabaseReviewToReview(review: SupabaseReview): Review {
+  return {
+    reviewId: review.id,
+    courseId: review.course_id as TCourseId,
+    year: review.year,
+    semesterId: review.semester as 'sp' | 'sm' | 'fa',
+    isLegacy: review.is_legacy,
+    reviewerId: review.reviewer_id ?? '',
+    isGTVerifiedReviewer: review.is_gt_verified,
+    created: new Date(review.created_at).getTime(),
+    modified: review.modified_at ? new Date(review.modified_at).getTime() : null,
+    body: review.body ?? '',
+    upvotes: review.upvotes,
+    downvotes: review.downvotes,
+    workload: review.workload ?? 0,
+    difficulty: (review.difficulty ?? 3) as 1 | 2 | 3 | 4 | 5,
+    overall: (review.overall ?? 3) as 1 | 2 | 3 | 4 | 5,
+    staffSupport: review.staff_support as 1 | 2 | 3 | 4 | 5 | undefined,
+  };
+}
+
+const PAGE_SIZE = 20;
 
 interface CourseContentProps {
   courseData: Course;
-  courseTimeline: Record<number, Record<string, number>> | null;
-  courseYears: number[] | null;
-  defaultYear: number | null;
-  defaultSemester: string | null;
-  defaultSemesterToggles: Record<string, boolean> | null;
-  defaultReviews: TPayloadReviews | null;
+  initialReviews: Review[];
+  initialHasMore: boolean;
+  totalReviewCount: number;
 }
 
 function getDifficultyInfo(value: number) {
-  // Using CSS custom properties for proper dark/light mode contrast
-  // statCssVar references --stat-color-* variables defined in globals.css
   if (value >= 4) return { label: 'Hard', color: GT_COLORS.newHorizon, statCssVar: 'var(--stat-color-red)', bgColor: '#FDE8E4', textColor: '#5c1008' };
   if (value >= 2.5) return { label: 'Medium', color: GT_COLORS.buzzGold, statCssVar: 'var(--stat-color-yellow)', bgColor: '#FEF3E2', textColor: '#594200' };
   return { label: 'Easy', color: GT_COLORS.canopyLime, statCssVar: 'var(--stat-color-green)', bgColor: '#F0F7E6', textColor: '#1e4620' };
 }
 
 function getWorkloadInfo(value: number) {
-  // Using CSS custom properties for proper dark/light mode contrast
   if (value >= 20) return { label: 'Heavy', color: GT_COLORS.newHorizon, statCssVar: 'var(--stat-color-red)', bgColor: '#FDE8E4', textColor: '#5c1008' };
   if (value >= 12) return { label: 'Moderate', color: GT_COLORS.buzzGold, statCssVar: 'var(--stat-color-yellow)', bgColor: '#FEF3E2', textColor: '#594200' };
   return { label: 'Light', color: GT_COLORS.olympicTeal, statCssVar: 'var(--stat-color-teal)', bgColor: '#E6F5F6', textColor: '#134e4a' };
 }
 
 function getRatingInfo(value: number) {
-  // Using CSS custom properties for proper dark/light mode contrast
   if (value >= 4) return { label: 'Excellent', color: GT_COLORS.canopyLime, statCssVar: 'var(--stat-color-green)', bgColor: '#F0F7E6', textColor: '#1e4620' };
   if (value >= 3) return { label: 'Good', color: GT_COLORS.olympicTeal, statCssVar: 'var(--stat-color-teal)', bgColor: '#E6F5F6', textColor: '#134e4a' };
   if (value >= 2) return { label: 'Average', color: GT_COLORS.buzzGold, statCssVar: 'var(--stat-color-yellow)', bgColor: '#FEF3E2', textColor: '#594200' };
@@ -104,12 +119,9 @@ function getRatingInfo(value: number) {
 
 export default function CourseContent({
   courseData,
-  courseTimeline,
-  courseYears,
-  defaultYear,
-  defaultSemester,
-  defaultSemesterToggles,
-  defaultReviews,
+  initialReviews,
+  initialHasMore,
+  totalReviewCount,
 }: CourseContentProps) {
   const {
     courseId,
@@ -121,117 +133,196 @@ export default function CourseContent({
     avgOverall: courseAvgOverall,
   } = courseData;
 
-  const [loading, setLoading] = useState<boolean>(false);
   const [reviewModalOpened, { open: openReviewModal, close: closeReviewModal }] = useDisclosure(false);
 
-  const authContext: TNullable<any> = useAuth();
-  const user: TNullable<FirebaseAuthUser> = authContext?.user;
+  const authContext = useAuth();
+  const user = authContext?.user;
 
-  const [activeSemesters, setActiveSemesters] = useState<TActiveSemesters>(
-    defaultSemesterToggles || {}
-  );
-  const [selectedSemester, setSelectedSemester] = useState<string>(
-    defaultSemester || ''
-  );
-  const [selectedYear, setSelectedYear] = useState<number>(defaultYear || 0);
-  const [courseReviews, setCourseReviews] = useState<TPayloadReviews>(
-    defaultReviews || {}
-  );
-  const [mounted, setMounted] = useState(false);
+  // Infinite scroll state
+  const [reviews, setReviews] = useState<Review[]>(initialReviews);
+  const [hasMore, setHasMore] = useState(initialHasMore);
+  const [loading, setLoading] = useState(false);
+  const [offset, setOffset] = useState(initialReviews.length);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const { mutate } = useSWRConfig();
-  const { data: course_reviews } = useSWR(
-    `/course/${courseId}/${selectedYear}/${selectedSemester}`
-  );
+  // Filter state
+  const [selectedYear, setSelectedYear] = useState<string>('all');
+  const [selectedSemester, setSelectedSemester] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [debouncedSearch] = useDebouncedValue(searchQuery, 300);
+  const [isSearching, setIsSearching] = useState(false);
 
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(window.location.href);
     notifyLinkCopied();
   };
 
-  const handleSemester = (value: string | null) => {
-    if (value) setSelectedSemester(value);
-  };
+  // Build query params for API calls
+  const buildQueryParams = useCallback((currentOffset: number) => {
+    const params = new URLSearchParams({
+      courseId,
+      paginated: 'true',
+      limit: String(PAGE_SIZE),
+      offset: String(currentOffset),
+    });
+    if (selectedYear !== 'all') params.set('year', selectedYear);
+    if (selectedSemester !== 'all') params.set('semester', selectedSemester);
+    if (debouncedSearch) params.set('search', debouncedSearch);
+    return params.toString();
+  }, [courseId, selectedYear, selectedSemester, debouncedSearch]);
 
-  const handleYear = (value: string | null) => {
-    if (value) setSelectedYear(Number(value));
-  };
-
+  // Reset and fetch when filters/search change
   useEffect(() => {
-    if (course_reviews) {
-      setCourseReviews(course_reviews);
-    }
-  }, [course_reviews]);
+    const fetchFiltered = async () => {
+      // Skip if we're at initial state with no filters
+      if (selectedYear === 'all' && selectedSemester === 'all' && !debouncedSearch) {
+        // Reset to initial state if filters were cleared
+        if (reviews !== initialReviews) {
+          setReviews(initialReviews);
+          setHasMore(initialHasMore);
+          setOffset(initialReviews.length);
+        }
+        return;
+      }
 
-  useEffect(() => {
-    if (selectedYear && selectedSemester && courseTimeline) {
+      setIsSearching(true);
       setLoading(true);
-      const yearData = courseTimeline[selectedYear];
-      const newAvailableSemesters: string[] = yearData
-        ? Object.keys(yearData)
-        : [];
-      const newActiveSemesters: Record<string, boolean> = Object.keys(
-        mapSemesterTermToName
-      ).reduce(
-        (attrs, key) => ({
-          ...attrs,
-          [key]: !(newAvailableSemesters.indexOf(key.toString()) > -1),
-        }),
-        {}
-      );
-      if (newActiveSemesters[selectedSemester]) {
-        setSelectedSemester(
-          newAvailableSemesters[newAvailableSemesters.length - 1]
-        );
+      try {
+        const response = await fetch(`/api/reviews?${buildQueryParams(0)}`);
+        if (!response.ok) throw new Error('Failed to fetch');
+
+        const data = await response.json();
+        const newReviews = Object.values(data.reviews || {}) as Review[];
+
+        setReviews(newReviews);
+        setHasMore(data.pagination?.hasMore ?? false);
+        setOffset(newReviews.length);
+      } catch (error) {
+        console.error('Error fetching filtered reviews:', error);
+      } finally {
+        setLoading(false);
+        setIsSearching(false);
       }
-      setActiveSemesters(newActiveSemesters);
+    };
+
+    fetchFiltered();
+  }, [selectedYear, selectedSemester, debouncedSearch, buildQueryParams]);
+
+  // Load more reviews
+  const loadMore = useCallback(async () => {
+    if (loading || !hasMore) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/reviews?${buildQueryParams(offset)}`);
+      if (!response.ok) throw new Error('Failed to fetch');
+
+      const data = await response.json();
+      const newReviews = Object.values(data.reviews || {}) as Review[];
+
+      setReviews((prev) => [...prev, ...newReviews]);
+      setHasMore(data.pagination?.hasMore ?? false);
+      setOffset((prev) => prev + newReviews.length);
+    } catch (error) {
+      console.error('Error loading more reviews:', error);
+    } finally {
+      setLoading(false);
     }
-    mutate(
-      selectedYear && selectedSemester
-        ? `/course/${courseId}/${selectedYear}/${selectedSemester}`
-        : null,
-      () => {
-        return getReviews(
-          courseId,
-          String(selectedYear),
-          String(selectedSemester)
-        );
-      }
+  }, [loading, hasMore, offset, buildQueryParams]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1, rootMargin: '100px' }
     );
-    setLoading(false);
-  }, [selectedYear, selectedSemester, courseTimeline, courseId, mutate]);
 
-  const semesterOptions = useMemo(() => {
-    if (!mounted) return [];
-    return Object.entries(mapSemesterTermToName)
-      .filter(([key]) => !activeSemesters[Number(key)])
-      .map(([key, name]) => ({
-        value: key,
-        label: `${name} ${mapSemesterTermToEmoji[Number(key)]}`,
-      }));
-  }, [mounted, activeSemesters]);
+    const currentRef = loaderRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
 
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [hasMore, loading, loadMore]);
+
+  // Get all reviews as array (already an array now)
+  const allReviewsArray = useMemo(() => {
+    return reviews;
+  }, [reviews]);
+
+  // Extract available years and semesters from all reviews
+  const { availableYears, availableSemesters } = useMemo(() => {
+    const years = new Set<number>();
+    const semesters = new Set<string>();
+
+    allReviewsArray.forEach((review) => {
+      years.add(review.year);
+      semesters.add(review.semesterId);
+    });
+
+    return {
+      availableYears: Array.from(years).sort((a, b) => b - a), // Descending
+      availableSemesters: Array.from(semesters).sort((a, b) => {
+        const order = { sp: 1, sm: 2, fa: 3 };
+        return (order[a as keyof typeof order] || 0) - (order[b as keyof typeof order] || 0);
+      }),
+    };
+  }, [allReviewsArray]);
+
+  // Reviews are now filtered server-side, so we just use the reviews array directly
+  const filteredReviews = useMemo(() => {
+    return allReviewsArray;
+  }, [allReviewsArray]);
+
+  // Build year options
   const yearOptions = useMemo(() => {
-    if (!courseYears) return [];
-    return courseYears.map((year) => ({
-      value: String(year),
-      label: String(year),
-    }));
-  }, [courseYears]);
+    const options = [{ value: 'all', label: 'All Years' }];
+    availableYears.forEach((year) => {
+      options.push({ value: String(year), label: String(year) });
+    });
+    return options;
+  }, [availableYears]);
 
-  const reviewsArray = useMemo(() => {
-    return mapPayloadToArray(courseReviews, REVIEW_ID, DESC);
-  }, [courseReviews]);
+  // Build semester options
+  const semesterOptions = useMemo(() => {
+    const options = [{ value: 'all', label: 'All Semesters' }];
+    availableSemesters.forEach((sem) => {
+      const term = semesterIdToTerm[sem];
+      if (term) {
+        options.push({
+          value: sem,
+          label: `${mapSemesterTermToName[term]} ${mapSemesterTermToEmoji[term]}`,
+        });
+      }
+    });
+    return options;
+  }, [availableSemesters]);
 
   const difficultyInfo = courseAvgDifficulty ? getDifficultyInfo(Number(courseAvgDifficulty)) : null;
   const workloadInfo = courseAvgWorkload ? getWorkloadInfo(Number(courseAvgWorkload)) : null;
   const ratingInfo = courseAvgOverall ? getRatingInfo(Number(courseAvgOverall)) : null;
 
   const hasStats = Boolean(courseNumReviews && courseNumReviews > 0);
+  const hasReviews = allReviewsArray.length > 0;
+
+  // Current filter description
+  const filterDescription = useMemo(() => {
+    const parts = [];
+    if (selectedYear !== 'all') parts.push(selectedYear);
+    if (selectedSemester !== 'all') {
+      const term = semesterIdToTerm[selectedSemester];
+      if (term) parts.push(mapSemesterTermToName[term]);
+    }
+    return parts.length > 0 ? parts.join(' ') : null;
+  }, [selectedYear, selectedSemester]);
 
   return (
     <>
@@ -486,58 +577,96 @@ export default function CourseContent({
           </Paper>
         )}
 
-        {/* Filters */}
-        {courseYears && courseYears.length > 0 && mounted && (
+        {/* Search and Filters */}
+        {hasReviews && (
           <Paper p="md" radius="lg" withBorder mb="xl">
-            <Group gap="md" wrap="wrap">
-              <Group gap="xs">
-                <ThemeIcon size="sm" variant="light" color="gray">
-                  <IconFilter size={14} />
-                </ThemeIcon>
-                <Text size="sm" fw={500} c="grayMatter">Filter reviews:</Text>
-              </Group>
+            <Stack gap="md">
+              {/* Search */}
+              <TextInput
+                placeholder="Search reviews..."
+                leftSection={<IconSearch size={16} />}
+                rightSection={
+                  searchQuery ? (
+                    <ActionIcon
+                      size="sm"
+                      variant="subtle"
+                      onClick={() => setSearchQuery('')}
+                      aria-label="Clear search"
+                    >
+                      <IconX size={14} />
+                    </ActionIcon>
+                  ) : isSearching ? (
+                    <Loader size="xs" />
+                  ) : null
+                }
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.currentTarget.value)}
+                aria-label="Search reviews"
+              />
+              {debouncedSearch && (
+                <Text size="sm" c="grayMatter">
+                  {filteredReviews.length} result{filteredReviews.length !== 1 ? 's' : ''} for "{debouncedSearch}"
+                </Text>
+              )}
 
-              {yearOptions.length > 0 && (
+              {/* Filters */}
+              <Group gap="md" wrap="wrap">
+                <Group gap="xs">
+                  <ThemeIcon size="sm" variant="light" color="gray">
+                    <IconFilter size={14} />
+                  </ThemeIcon>
+                  <Text size="sm" fw={500} c="grayMatter">Filter:</Text>
+                </Group>
+
                 <Select
-                  value={String(selectedYear)}
-                  onChange={handleYear}
+                  value={selectedYear}
+                  onChange={(value) => setSelectedYear(value || 'all')}
                   data={yearOptions}
                   size="sm"
-                  w={120}
-                  searchable
+                  w={140}
                   comboboxProps={{ withinPortal: true }}
                   leftSection={<IconCalendar size={14} />}
                   rightSection={<IconChevronDown size={14} />}
-                  aria-label="Select year"
+                  aria-label="Filter by year"
                   styles={{
                     input: {
                       fontWeight: 500,
                     },
                   }}
                 />
-              )}
 
-              {semesterOptions.length > 0 && (
-                <Group gap="xs">
-                  {semesterOptions.map((option) => (
-                    <Button
-                      key={option.value}
-                      variant={selectedSemester === option.value ? 'filled' : 'light'}
-                      size="sm"
-                      radius="xl"
-                      onClick={() => handleSemester(option.value)}
-                      style={
-                        selectedSemester === option.value
-                          ? { backgroundColor: GT_COLORS.navy, color: 'white' }
-                          : {}
-                      }
-                    >
-                      {option.label}
-                    </Button>
-                  ))}
-                </Group>
-              )}
-            </Group>
+                <Select
+                  value={selectedSemester}
+                  onChange={(value) => setSelectedSemester(value || 'all')}
+                  data={semesterOptions}
+                  size="sm"
+                  w={180}
+                  comboboxProps={{ withinPortal: true }}
+                  rightSection={<IconChevronDown size={14} />}
+                  aria-label="Filter by semester"
+                  styles={{
+                    input: {
+                      fontWeight: 500,
+                    },
+                  }}
+                />
+
+                {(selectedYear !== 'all' || selectedSemester !== 'all' || searchQuery) && (
+                  <Button
+                    variant="subtle"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedYear('all');
+                      setSelectedSemester('all');
+                      setSearchQuery('');
+                    }}
+                    leftSection={<IconX size={14} />}
+                  >
+                    Clear filters
+                  </Button>
+                )}
+              </Group>
+            </Stack>
           </Paper>
         )}
 
@@ -547,76 +676,107 @@ export default function CourseContent({
             <Title order={2} size="h3">
               Reviews
             </Title>
-            {reviewsArray.length > 0 && selectedYear && selectedSemester && (
+            {filterDescription && (
               <Badge
                 variant="light"
                 styles={{
                   root: { backgroundColor: '#f1f3f5', color: '#495057' },
                 }}
               >
-                {mapSemesterTermToName[Number(selectedSemester)]} {selectedYear}
+                {filterDescription}
               </Badge>
             )}
           </Group>
-          {reviewsArray.length > 0 && (
+          {filteredReviews.length > 0 && (
             <Text size="sm" c="grayMatter">
-              {reviewsArray.length} review{reviewsArray.length !== 1 ? 's' : ''}
+              {filteredReviews.length} of {totalReviewCount} review{totalReviewCount !== 1 ? 's' : ''}
+              {hasMore && ' (scroll for more)'}
             </Text>
           )}
         </Group>
 
-        {loading ? (
-          <Center h={200}>
-            <Loader color={GT_COLORS.techGold} />
-          </Center>
-        ) : (
+        {filteredReviews.length > 0 ? (
           <>
-            {reviewsArray.length > 0 ? (
-              <Stack gap="md">
-                {reviewsArray.map((value: Review) => (
-                  <ReviewCard key={value.reviewId} {...value} courseName={courseName} />
-                ))}
-              </Stack>
-            ) : (
-              <Paper p="xl" radius="lg" withBorder>
-                <Stack align="center" gap="lg" py="xl">
-                  <ThemeIcon
-                    size={80}
-                    radius="xl"
-                    variant="light"
-                    style={{ backgroundColor: `${GT_COLORS.techGold}20` }}
-                  >
-                    <IconMessageCircle size={40} stroke={1.5} color={GT_COLORS.techGold} />
-                  </ThemeIcon>
-                  <Stack align="center" gap="xs">
-                    <Title order={3} ta="center">
-                      No reviews for this period
-                    </Title>
-                    <Text c="grayMatter" ta="center" maw={400}>
-                      {hasStats
-                        ? `No reviews found for ${selectedSemester ? mapSemesterTermToName[Number(selectedSemester)] : ''} ${selectedYear}. Try selecting a different semester or year.`
-                        : `Be the first to share your experience with ${courseName}! Your review helps other students make informed decisions.`
-                      }
-                    </Text>
-                  </Stack>
-                  {user && !hasStats && (
-                    <Button
-                      leftSection={<IconSparkles size={18} />}
-                      size="lg"
-                      onClick={openReviewModal}
-                      radius="md"
-                      style={{
-                        backgroundColor: GT_COLORS.techGold,
-                        color: GT_COLORS.navy,
-                      }}
-                    >
-                      Write the First Review
-                    </Button>
-                  )}
-                </Stack>
-              </Paper>
-            )}
+            <Stack gap="md">
+              {filteredReviews.map((value: Review) => (
+                <ReviewCard key={value.reviewId} {...value} courseName={courseName} searchHighlight={debouncedSearch} />
+              ))}
+            </Stack>
+
+            {/* Loading indicator / Intersection target */}
+            <Box ref={loaderRef} py="xl">
+              {loading && (
+                <Center>
+                  <Loader color={GT_COLORS.techGold} size="md" />
+                </Center>
+              )}
+              {!loading && hasMore && (
+                <Center>
+                  <Text size="sm" c="grayMatter">
+                    Scroll to load more reviews
+                  </Text>
+                </Center>
+              )}
+              {!hasMore && reviews.length > 0 && reviews.length < totalReviewCount && (
+                <Center>
+                  <Text size="sm" c="grayMatter">
+                    All reviews loaded
+                  </Text>
+                </Center>
+              )}
+            </Box>
           </>
+        ) : (
+          <Paper p="xl" radius="lg" withBorder>
+            <Stack align="center" gap="lg" py="xl">
+              <ThemeIcon
+                size={80}
+                radius="xl"
+                variant="light"
+                style={{ backgroundColor: `${GT_COLORS.techGold}20` }}
+              >
+                <IconMessageCircle size={40} stroke={1.5} color={GT_COLORS.techGold} />
+              </ThemeIcon>
+              <Stack align="center" gap="xs">
+                <Title order={3} ta="center">
+                  {hasReviews ? 'No reviews match your filters' : 'No reviews yet'}
+                </Title>
+                <Text c="grayMatter" ta="center" maw={400}>
+                  {hasReviews
+                    ? 'Try adjusting your search or filter criteria to see more reviews.'
+                    : `Be the first to share your experience with ${courseName}! Your review helps other students make informed decisions.`
+                  }
+                </Text>
+              </Stack>
+              {hasReviews && (selectedYear !== 'all' || selectedSemester !== 'all' || searchQuery) && (
+                <Button
+                  variant="light"
+                  onClick={() => {
+                    setSelectedYear('all');
+                    setSelectedSemester('all');
+                    setSearchQuery('');
+                  }}
+                  leftSection={<IconX size={16} />}
+                >
+                  Clear all filters
+                </Button>
+              )}
+              {user && !hasReviews && (
+                <Button
+                  leftSection={<IconSparkles size={18} />}
+                  size="lg"
+                  onClick={openReviewModal}
+                  radius="md"
+                  style={{
+                    backgroundColor: GT_COLORS.techGold,
+                    color: GT_COLORS.navy,
+                  }}
+                >
+                  Write the First Review
+                </Button>
+              )}
+            </Stack>
+          </Paper>
         )}
 
         {/* Review Modal */}
@@ -648,7 +808,7 @@ export default function CourseContent({
         courseName={courseName}
         onAddReview={openReviewModal}
         isLoggedIn={!!user}
-        reviewCount={reviewsArray.length}
+        reviewCount={filteredReviews.length}
       />
     </>
   );

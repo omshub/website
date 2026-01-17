@@ -9,8 +9,8 @@ import { DOMAIN_GATECH, DOMAIN_OUTLOOK } from '@/lib/constants';
 /* --- MAPPERS --- */
 
 /**
- * Converts Firebase Firestore DB payload to full `Course` data model
- * @param coursesDataDynamic Response payload from Firebase Firestore DB
+ * Merges dynamic course stats with static course data to create full Course model
+ * @param coursesDataDynamic Dynamic stats (object keyed by courseId)
  * @param coursesDataStatic Static course data fetched from data repo
  * @returns Complete `Course` data model as `TPayloadCourses`
  */
@@ -19,13 +19,23 @@ export const mapDynamicCoursesDataToCourses = (
   coursesDataStatic: TPayloadCoursesDataStatic
 ) => {
   const courses = {} as TPayloadCourses;
-  // Only include courses that exist in Firebase (have dynamic data)
-  (Object.keys(coursesDataDynamic) as TCourseId[]).forEach((courseId) => {
-    courses[courseId] = {
-      ...coursesDataStatic[courseId],
-      ...coursesDataDynamic[courseId],
-    };
-  });
+  // Include ALL courses from static data repo, add dynamic stats where available
+  (Object.keys(coursesDataStatic) as TCourseId[])
+    .filter((courseId) => !coursesDataStatic[courseId]?.isDeprecated)
+    .forEach((courseId) => {
+      const staticData = coursesDataStatic[courseId];
+      const dynamicData = coursesDataDynamic[courseId];
+      courses[courseId] = {
+        ...staticData,
+        courseId,
+        numReviews: dynamicData?.numReviews ?? 0,
+        avgWorkload: dynamicData?.avgWorkload ?? null,
+        avgDifficulty: dynamicData?.avgDifficulty ?? null,
+        avgOverall: dynamicData?.avgOverall ?? null,
+        avgStaffSupport: dynamicData?.avgStaffSupport ?? null,
+        reviewsCountsByYearSem: dynamicData?.reviewsCountsByYearSem ?? {},
+      };
+    });
   return courses;
 };
 

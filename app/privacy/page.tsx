@@ -142,7 +142,7 @@ export default function PrivacyPage() {
 
         <Section icon={<IconLock size={20} />} title="Data Security">
           <Text size="sm" c="dimmed">
-            Your data is stored securely using Firebase, which provides enterprise-grade security. We use HTTPS encryption for all data transmission and follow security best practices for our codebase.
+            Your data is stored securely using Supabase, which provides enterprise-grade security with PostgreSQL. We use HTTPS encryption for all data transmission and follow security best practices for our codebase.
           </Text>
         </Section>
 

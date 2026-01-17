@@ -11,8 +11,7 @@ import {
   IconStar,
   IconMessageCircle,
 } from '@tabler/icons-react';
-import { TCourseId } from '@/lib/types';
-import backend from '@/lib/firebase/index';
+import { TCourseId, CourseDataDynamic } from '@/lib/types';
 import { getCoursesDataStatic } from '@/lib/staticData';
 
 interface SimpleCourse {
@@ -38,7 +37,7 @@ export default function SpotlightSearch({ courses: initialCourses }: SpotlightSe
   const router = useRouter();
   const [simpleCourses, setSimpleCourses] = useState<SimpleCourse[]>([]);
 
-  // Initialize with passed courses or fetch from Firebase with caching
+  // Initialize with passed courses
   useEffect(() => {
     if (initialCourses && Object.keys(initialCourses).length > 0) {
       setSimpleCourses(
@@ -66,29 +65,31 @@ export default function SpotlightSearch({ courses: initialCourses }: SpotlightSe
         }
       }
 
-      // Fetch from Firebase and use static data for names/aliases
-      // IMPORTANT: Only include courses that exist in Firebase (not all courses from courses.json)
+      // Fetch all courses from data repo
       const fetchCourses = async () => {
         try {
-          const [coursesDataDynamic, coursesDataStatic] = await Promise.all([
-            backend.getCourses(),
+          const [courseStatsResponse, coursesDataStatic] = await Promise.all([
+            fetch('https://raw.githubusercontent.com/omshub/data/main/static/course-stats.json')
+              .then(res => res.ok ? res.json() : {}),
             getCoursesDataStatic(),
           ]);
-          // Only include courses that exist in Firebase (have dynamic data)
-          // Use static data for name/aliases, dynamic data for metrics
-          const courses: SimpleCourse[] = Object.keys(coursesDataDynamic).map((courseId) => {
-            const dynamicData = coursesDataDynamic[courseId as TCourseId];
-            const staticData = coursesDataStatic[courseId as TCourseId] || {};
-            return {
-              courseId,
-              name: staticData.name || courseId,
-              aliases: staticData.aliases || [],
-              numReviews: dynamicData?.numReviews || 0,
-              avgDifficulty: dynamicData?.avgDifficulty ?? null,
-              avgWorkload: dynamicData?.avgWorkload ?? null,
-              avgOverall: dynamicData?.avgOverall ?? null,
-            };
-          });
+          const coursesDataDynamic = courseStatsResponse as Record<TCourseId, CourseDataDynamic>;
+          // Include ALL courses from data repo, add stats where available
+          const courses: SimpleCourse[] = (Object.keys(coursesDataStatic) as TCourseId[])
+            .filter((courseId) => !coursesDataStatic[courseId]?.isDeprecated)
+            .map((courseId) => {
+              const staticData = coursesDataStatic[courseId];
+              const dynamicData = coursesDataDynamic[courseId];
+              return {
+                courseId,
+                name: staticData.name || courseId,
+                aliases: staticData.aliases || [],
+                numReviews: dynamicData?.numReviews || 0,
+                avgDifficulty: dynamicData?.avgDifficulty ?? null,
+                avgWorkload: dynamicData?.avgWorkload ?? null,
+                avgOverall: dynamicData?.avgOverall ?? null,
+              };
+            });
           setSimpleCourses(courses);
 
           // Cache the result

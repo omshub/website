@@ -1,14 +1,11 @@
 import { Suspense } from 'react';
 import { Container, Skeleton, Box, Stack, SimpleGrid } from '@mantine/core';
-import backend from '@/lib/firebase/index';
-import { getCoursesDataStatic } from '@/lib/staticData';
+import { getCoursesDataStatic, getCourseStats } from '@/lib/staticData';
 import { mapDynamicCoursesDataToCourses } from '@/lib/utilities';
 import { courseFields } from '@/lib/constants';
 import { mapPayloadToArray } from '@/utilities';
 import HeroSection from './_components/HeroSection';
 import CoursesTable from './_components/CoursesTable';
-
-const { getCourses } = backend;
 
 // Loading skeleton for the table
 function TableSkeleton() {
@@ -22,7 +19,7 @@ function TableSkeleton() {
 
 export default async function HomePage() {
   const [coursesDataDynamic, coursesDataStatic] = await Promise.all([
-    getCourses(),
+    getCourseStats(),
     getCoursesDataStatic(),
   ]);
   const coursesData = mapDynamicCoursesDataToCourses(

@@ -4,6 +4,7 @@ import { Metadata, Viewport } from 'next';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import MicrosoftClarity from '@/components/analytics/MicrosoftClarity';
 import { ColorSchemeScript } from '@mantine/core';
 import { OrganizationSchema, WebsiteSchema } from '@/components/StructuredData';
 import Providers from '@/components/providers/Providers';
@@ -111,11 +112,6 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        {/* Preconnect to external resources for faster loading */}
-        <link rel="preconnect" href="https://firestore.googleapis.com" />
-        <link rel="preconnect" href="https://www.googleapis.com" />
-        <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
-        <link rel="dns-prefetch" href="https://www.googleapis.com" />
         <ColorSchemeScript defaultColorScheme="auto" />
         {/* WCAG-compliant dimmed color override */}
         <style dangerouslySetInnerHTML={{ __html: `
@@ -147,6 +143,10 @@ export default function RootLayout({
               `}
             </Script>
           </>
+        )}
+        {/* Microsoft Clarity */}
+        {process.env.NEXT_PUBLIC_CLARITY_ID && (
+          <MicrosoftClarity projectId={process.env.NEXT_PUBLIC_CLARITY_ID} />
         )}
       </body>
       {process.env.NEXT_PUBLIC_GA_ID && (

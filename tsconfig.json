@@ -41,7 +41,7 @@
   ],
   "exclude": [
     "node_modules",
-    "__seed__",
+    "scripts",
     "playwright.config.ts"
   ]
 }

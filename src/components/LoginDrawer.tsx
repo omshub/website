@@ -17,7 +17,6 @@ import {
   IconMail,
   IconBrandGoogle,
   IconBrandGithub,
-  IconBrandFacebook,
   IconBook,
 } from '@tabler/icons-react';
 import { useAuth } from '@/context/AuthContext';
@@ -58,7 +57,7 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
     setLoadingProvider('magic');
 
     try {
-      authContext.signWithMagic(email);
+      authContext.signInWithMagicLink(email);
       onClose();
       setEmail('');
     } finally {
@@ -67,7 +66,7 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
     }
   };
 
-  const handleProviderLogin = async (provider: string) => {
+  const handleProviderLogin = async (provider: 'google' | 'github') => {
     if (!authContext) {
       return;
     }
@@ -93,10 +92,16 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
     }
   };
 
-  const providers = [
-    { name: 'Google', icon: IconBrandGoogle, color: '#4285F4', bg: '#ffffff', textColor: '#1f1f1f' },
-    { name: 'Github', icon: IconBrandGithub, color: '#ffffff', bg: '#24292e', textColor: '#ffffff' },
-    { name: 'Facebook', icon: IconBrandFacebook, color: '#ffffff', bg: '#1877F2', textColor: '#ffffff' },
+  const providers: Array<{
+    name: 'google' | 'github';
+    displayName: string;
+    icon: typeof IconBrandGoogle;
+    color: string;
+    bg: string;
+    textColor: string;
+  }> = [
+    { name: 'google', displayName: 'Google', icon: IconBrandGoogle, color: '#4285F4', bg: '#ffffff', textColor: '#1f1f1f' },
+    { name: 'github', displayName: 'GitHub', icon: IconBrandGithub, color: '#ffffff', bg: '#24292e', textColor: '#ffffff' },
   ];
 
   return (
@@ -215,7 +220,7 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
                 root: {
                   backgroundColor: provider.bg,
                   color: provider.textColor,
-                  border: provider.name === 'Google' ? '1px solid #dadce0' : 'none',
+                  border: provider.name === 'google' ? '1px solid #dadce0' : 'none',
                   '&:hover': {
                     backgroundColor: provider.bg,
                     opacity: 0.9,
@@ -227,7 +232,7 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
                 },
               }}
             >
-              Continue with {provider.name === 'Github' ? 'GitHub' : provider.name}
+              Continue with {provider.displayName}
             </Button>
           ))}
         </Stack>

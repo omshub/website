@@ -69,3 +69,9 @@ playwright/.cache/
 # Temporary files
 *.tmp
 *.temp
+
+# Migration scripts
+scripts/migration/node_modules/
+scripts/migration/export/
+scripts/migration/firestore-export.json
+service-account-key.json
