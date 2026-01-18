@@ -146,7 +146,7 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
     const isOutlookEmail = email.endsWith('@outlook.com');
     const additionalInstructions =
       isGTEmail || isOutlookEmail
-        ? ' Check Microsoft Quarantine if using gatech.edu or outlook.com.'
+        ? ' NOTE: gatech.edu or outlook.com may require release from Quarantine. See https://security.microsoft.com/quarantine'
         : '';
 
     notifySuccess({

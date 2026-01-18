@@ -78,7 +78,7 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
         setOtpSent(true);
       }
       // If not successful, error notification is shown by signInWithMagicLink
-    } catch (err) {
+    } catch {
       notifyError({
         title: 'Error',
         message: 'Something went wrong. Please try again.',
