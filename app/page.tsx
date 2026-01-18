@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { Container, Skeleton } from '@mantine/core';
-import { getCoursesDataStatic, getCourseStats } from '@/lib/staticData';
+import { getCoursesDataStatic, getCourseStats, getGlobalStats } from '@/lib/staticData';
 import { mapDynamicCoursesDataToCourses } from '@/lib/utilities';
 import { courseFields } from '@/lib/constants';
 import { mapPayloadToArray } from '@/utilities';
@@ -18,9 +18,10 @@ function TableSkeleton() {
 }
 
 export default async function HomePage() {
-  const [coursesDataDynamic, coursesDataStatic] = await Promise.all([
+  const [coursesDataDynamic, coursesDataStatic, globalStats] = await Promise.all([
     getCourseStats(),
     getCoursesDataStatic(),
+    getGlobalStats(),
   ]);
   const coursesData = mapDynamicCoursesDataToCourses(
     coursesDataDynamic,
@@ -35,7 +36,8 @@ export default async function HomePage() {
       (sum, course) => sum + (course.numReviews || 0),
       0
     ),
-    hoursSuffered: Math.round(
+    // Use global stats for hoursSuffered (accounts for semester weeks), fallback to simple calculation
+    hoursSuffered: globalStats?.hoursSuffered ?? Math.round(
       coursesArray.reduce(
         (sum, course) => sum + ((course.avgWorkload || 0) * (course.numReviews || 0)),
         0

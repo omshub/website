@@ -13,7 +13,7 @@ type TAuthContext = {
   session: TNullable<Session>;
   loading: boolean;
   signInWithProvider: (provider: 'google' | 'github') => Promise<void>;
-  signInWithMagicLink: (email: string) => Promise<void>;
+  signInWithMagicLink: (email: string) => Promise<boolean>;
   logout: () => Promise<void>;
 };
 
@@ -75,8 +75,6 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       const newUser = session?.user ?? null;
-      const wasSignedOut = !previousUserRef.current;
-      const isNewSignIn = wasSignedOut && newUser;
 
       // Update refs and state
       previousUserRef.current = newUser;
@@ -84,8 +82,10 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
       setUser(newUser);
       setLoading(false);
 
-      // Show welcome message on new sign-in
-      if (isNewSignIn && newUser) {
+      // Show welcome message only on actual sign-in, not on page load/refresh
+      // SIGNED_IN fires when user actively signs in (OAuth, magic link, OTP)
+      // INITIAL_SESSION fires on page load with existing session - don't show notification
+      if (event === 'SIGNED_IN' && newUser) {
         const displayName =
           newUser.user_metadata?.full_name ||
           newUser.email?.split('@')[0] ||
@@ -125,7 +125,7 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
     }
   };
 
-  const signInWithMagicLink = async (email: string) => {
+  const signInWithMagicLink = async (email: string): Promise<boolean> => {
     const supabase = getClient();
     const { error } = await supabase.auth.signInWithOtp({
       email,
@@ -139,7 +139,7 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
         title: 'Magic link failed',
         message: error.message,
       });
-      return;
+      return false;
     }
 
     const isGTEmail = email.endsWith('@gatech.edu');
@@ -154,6 +154,7 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
       message: `Check your inbox at ${email}.${additionalInstructions}`,
       autoClose: 8000,
     });
+    return true;
   };
 
   const logout = async () => {
