@@ -103,6 +103,8 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
+        {/* Preload LCP image for home page */}
+        <link rel="preload" as="image" type="image/webp" href="/gt_quad.webp" fetchPriority="high" />
         <ColorSchemeScript defaultColorScheme="auto" />
         {/* WCAG-compliant dimmed color override */}
         <style dangerouslySetInnerHTML={{ __html: `

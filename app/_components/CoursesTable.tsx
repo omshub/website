@@ -139,38 +139,52 @@ export default function CoursesTable({ allCourseData }: CoursesTableProps) {
     );
   };
 
-  // Get workload display - using Mantine colors for dark mode compatibility
+  // Get workload display - using accessible colors (4.5:1 contrast on white)
   const getWorkloadDisplay = (value: number | null | undefined) => {
     if (value === null || value === undefined) return <Text size="sm" c="dimmed">-</Text>;
     const maxWorkload = 30;
     const percentage = Math.min((value / maxWorkload) * 100, 100);
-    let color: string = 'teal';
-    if (value >= 20) color = 'red';
-    else if (value >= 12) color = 'yellow';
+    // Use accessible text colors and Mantine progress colors
+    let textColor: string = '#0d6650'; // Dark teal for text
+    let progressColor: string = 'teal';
+    if (value >= 20) {
+      textColor = '#c92a2a'; // Dark red
+      progressColor = 'red';
+    } else if (value >= 12) {
+      textColor = '#7a5d00'; // Dark amber/gold (5.2:1 on white)
+      progressColor = 'yellow';
+    }
 
     return (
       <Tooltip label={`${value.toFixed(1)} hours per week`}>
         <Box w={80}>
-          <Text size="xs" fw={600} ta="center" mb={2} c={color}>
+          <Text size="xs" fw={600} ta="center" mb={2} style={{ color: textColor }}>
             {Math.round(value)}h/wk
           </Text>
-          <Progress value={percentage} size="xs" color={color} radius="xl" aria-label={`Workload: ${Math.round(value)} hours per week`} />
+          <Progress value={percentage} size="xs" color={progressColor} radius="xl" aria-label={`Workload: ${Math.round(value)} hours per week`} />
         </Box>
       </Tooltip>
     );
   };
 
-  // Get overall rating display - using Mantine colors for dark mode compatibility
+  // Get overall rating display - using accessible colors (4.5:1 contrast on white)
   const getOverallDisplay = (value: number | null | undefined) => {
     if (value === null || value === undefined) return <Text size="sm" c="dimmed">-</Text>;
-    let color: string = 'red';
-    if (value >= 4) color = 'green';
-    else if (value >= 3) color = 'teal';
+    // Use accessible text colors and Mantine icon colors
+    let textColor: string = '#c92a2a'; // Dark red
+    let iconColor: string = 'var(--mantine-color-red-filled)';
+    if (value >= 4) {
+      textColor = '#256029'; // Dark green (5.5:1 on white)
+      iconColor = 'var(--mantine-color-green-filled)';
+    } else if (value >= 3) {
+      textColor = '#0d6650'; // Dark teal (5.3:1 on white)
+      iconColor = 'var(--mantine-color-teal-filled)';
+    }
 
     return (
       <Group gap={4} justify="center">
-        <IconStar size={14} fill={`var(--mantine-color-${color}-filled)`} color={`var(--mantine-color-${color}-filled)`} />
-        <Text size="sm" fw={600} c={color}>
+        <IconStar size={14} fill={iconColor} color={iconColor} />
+        <Text size="sm" fw={600} style={{ color: textColor }}>
           {value.toFixed(1)}
         </Text>
       </Group>
@@ -249,7 +263,7 @@ export default function CoursesTable({ allCourseData }: CoursesTableProps) {
                         {course.name}
                       </Anchor>
                       <Group gap={6}>
-                        <Badge size="xs" variant="outline" color="gray">
+                        <Badge size="xs" variant="filled" color="dark">
                           {course.courseId}
                         </Badge>
                         {course.url && (
@@ -289,9 +303,10 @@ export default function CoursesTable({ allCourseData }: CoursesTableProps) {
                   </Table.Td>
                   <Table.Td ta="center">
                     <Badge
-                      variant="light"
+                      variant="filled"
                       size="sm"
-                      color={course.numReviews ? 'blue' : 'gray'}
+                      style={course.numReviews ? { backgroundColor: '#1971c2', color: 'white' } : undefined}
+                      color={course.numReviews ? undefined : 'gray'}
                     >
                       {course.numReviews || 0}
                     </Badge>

@@ -69,7 +69,7 @@ export default function HeroSection({ stats }: HeroSectionProps) {
     >
       {/* Hero Background Image - optimized for LCP */}
       <Image
-        src="/gt_quad.jpg"
+        src="/gt_quad.webp"
         alt="Georgia Tech campus quad"
         fill
         priority

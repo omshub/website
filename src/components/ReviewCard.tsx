@@ -227,9 +227,11 @@ const ReviewCard = ({
                 <Tooltip label="This review was originally collected on omscentral.com">
                   <Badge
                     leftSection={<IconAlertCircle size={12} />}
-                    variant="outline"
+                    variant="filled"
                     size="sm"
-                    color="orange"
+                    styles={{
+                      root: { backgroundColor: '#c2410c', color: '#ffffff' },
+                    }}
                   >
                     Legacy
                   </Badge>
