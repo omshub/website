@@ -488,11 +488,12 @@ export default function ScheduleContent() {
   const totalWaitlist = safeSections.reduce((sum, s) => sum + s.waitlist, 0);
   const uniqueCourses = new Set(safeSections.map((s) => s.courseId)).size;
 
+  // Accessible text colors (5:1+ contrast on white)
   const getEnrollmentColor = (enrolled: number, capacity: number) => {
     const ratio = enrolled / capacity;
-    if (ratio >= 0.9) return GT_COLORS.newHorizon;
-    if (ratio >= 0.7) return GT_COLORS.buzzGold;
-    return GT_COLORS.canopyLime;
+    if (ratio >= 0.9) return '#c92a2a'; // Dark red (accessible)
+    if (ratio >= 0.7) return '#7a5d00'; // Dark amber (5.2:1 on white)
+    return '#256029'; // Dark green (accessible)
   };
 
   const getEnrollmentBadgeColor = (enrolled: number, capacity: number) => {
@@ -541,7 +542,7 @@ export default function ScheduleContent() {
     <Table.Tr key={`${section.crn}-${section.sectionNumber}`}>
       <Table.Td>
         <Group gap={4} wrap="nowrap">
-          <Badge variant="outline" size="sm" style={{ borderColor: GT_COLORS.grayMatter, color: GT_COLORS.grayMatter }}>
+          <Badge variant="filled" size="sm" color="dark">
             {section.crn}
           </Badge>
           <CopyButton value={section.crn} timeout={2000}>
@@ -552,6 +553,7 @@ export default function ScheduleContent() {
                   variant="subtle"
                   color={copied ? 'teal' : 'gray'}
                   onClick={copy}
+                  aria-label={copied ? 'CRN copied to clipboard' : `Copy CRN ${section.crn} to clipboard`}
                 >
                   {copied ? <IconCheck size={14} /> : <IconCopy size={14} />}
                 </ActionIcon>
@@ -566,7 +568,7 @@ export default function ScheduleContent() {
             <Badge
               variant="filled"
               size="sm"
-              style={{ backgroundColor: regStatus.color, color: regStatus.status === 'Open' ? GT_COLORS.navy : 'white' }}
+              style={{ backgroundColor: regStatus.color, color: (regStatus.status === 'Open' || regStatus.status === 'Limited') ? GT_COLORS.navy : 'white' }}
             >
               {regStatus.status}
             </Badge>
@@ -582,6 +584,7 @@ export default function ScheduleContent() {
                 target="_blank"
                 fw={600}
                 style={{ color: GT_COLORS.boldBlue }}
+                underline="always"
               >
                 {section.courseId}
               </Anchor>
@@ -606,7 +609,7 @@ export default function ScheduleContent() {
             )}
             {section.aliases.length > 0 && (
               <Tooltip label="Common abbreviations for this course">
-                <Badge variant="light" size="xs" style={{ backgroundColor: `${GT_COLORS.olympicTeal}15`, color: GT_COLORS.olympicTeal }}>
+                <Badge variant="light" size="xs" style={{ backgroundColor: `${GT_COLORS.olympicTeal}25`, color: '#006670' }}>
                   {section.aliases.join(' / ')}
                 </Badge>
               </Tooltip>
@@ -630,17 +633,18 @@ export default function ScheduleContent() {
               {section.capacity > 0 ? Math.round((section.enrolled / section.capacity) * 100) : 0}%
             </Text>
           </Group>
-          <Progress
-            value={section.capacity > 0 ? (section.enrolled / section.capacity) * 100 : 0}
-            size="sm"
-            radius="xl"
-            color={getEnrollmentBadgeColor(section.enrolled, section.capacity)}
-          />
+          <Progress.Root size="sm" radius="xl">
+            <Progress.Section
+              value={section.capacity > 0 ? (section.enrolled / section.capacity) * 100 : 0}
+              color={getEnrollmentBadgeColor(section.enrolled, section.capacity)}
+              aria-label={`Enrollment progress: ${section.enrolled} out of ${section.capacity} seats filled`}
+            />
+          </Progress.Root>
         </Stack>
       </Table.Td>
       <Table.Td ta="center">
         {section.waitlist > 0 ? (
-          <Badge variant="filled" size="sm" style={{ backgroundColor: GT_COLORS.buzzGold, color: GT_COLORS.navy }}>
+          <Badge variant="filled" size="sm" style={{ backgroundColor: '#7a5d00', color: 'white' }}>
             {section.waitlist}
           </Badge>
         ) : (
@@ -818,7 +822,7 @@ export default function ScheduleContent() {
               `}</style>
             </Group>
           </div>
-          <Badge variant="light" color="gray" size="lg">
+          <Badge variant="filled" color="dark" size="lg">
             {filteredAndSortedSections.length} sections
           </Badge>
         </Group>
@@ -959,7 +963,7 @@ export default function ScheduleContent() {
         {/* Data Source Attribution */}
         <Text size="xs" c="dimmed" ta="center" mt="xl">
           Data sourced from{' '}
-          <Anchor href="https://github.com/omshub/data" target="_blank" size="xs">
+          <Anchor href="https://github.com/omshub/data" target="_blank" size="xs" underline="always">
             omshub/data
           </Anchor>
           {' '}repository, updated automatically from OSCAR.

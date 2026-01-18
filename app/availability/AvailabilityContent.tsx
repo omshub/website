@@ -323,11 +323,12 @@ export default function AvailabilityContent() {
   const totalEnrolled = sections.reduce((sum, s) => sum + s.enrolled, 0);
   const totalWaitlist = sections.reduce((sum, s) => sum + s.waitlist, 0);
 
+  // Accessible text colors (5:1+ contrast on white)
   const getEnrollmentColor = (enrolled: number, capacity: number) => {
     const ratio = enrolled / capacity;
-    if (ratio >= 0.9) return GT_COLORS.newHorizon;
-    if (ratio >= 0.7) return GT_COLORS.buzzGold;
-    return GT_COLORS.canopyLime;
+    if (ratio >= 0.9) return '#c92a2a'; // Dark red (accessible)
+    if (ratio >= 0.7) return '#7a5d00'; // Dark amber (5.2:1 on white)
+    return '#256029'; // Dark green (accessible)
   };
 
   const getEnrollmentBadgeColor = (enrolled: number, capacity: number) => {
@@ -418,6 +419,7 @@ export default function AvailabilityContent() {
               w={180}
               leftSection={<IconCalendar size={16} />}
               rightSection={<IconChevronDown size={14} />}
+              aria-label="Select semester"
               styles={{
                 input: {
                   fontWeight: 600,
@@ -432,6 +434,7 @@ export default function AvailabilityContent() {
               onChange={(e) => setSearchQuery(e.currentTarget.value)}
               size="md"
               style={{ flex: 1, minWidth: 300 }}
+              aria-label="Search courses by alias, course ID, or instructor"
               styles={{
                 input: {
                   backgroundColor: 'white',
@@ -451,7 +454,7 @@ export default function AvailabilityContent() {
               Last updated at 8:35 AM from OSCAR
             </Text>
           </div>
-          <Badge variant="light" color="gray" size="lg">
+          <Badge variant="filled" color="dark" size="lg">
             {filteredAndSortedSections.length} courses
           </Badge>
         </Group>
@@ -478,7 +481,7 @@ export default function AvailabilityContent() {
                   {filteredAndSortedSections.map((section) => (
                     <Table.Tr key={section.crn}>
                       <Table.Td>
-                        <Badge variant="outline" size="sm" style={{ borderColor: GT_COLORS.grayMatter, color: GT_COLORS.grayMatter }}>
+                        <Badge variant="filled" size="sm" color="dark">
                           {section.crn}
                         </Badge>
                       </Table.Td>
@@ -490,12 +493,13 @@ export default function AvailabilityContent() {
                               href={`/course/${section.courseId}`}
                               fw={600}
                               style={{ color: GT_COLORS.boldBlue }}
+                              underline="always"
                             >
                               {section.courseId}
                             </Anchor>
                             {section.aliases.length > 0 && (
                               <Tooltip label="Common abbreviations for this course">
-                                <Badge variant="light" size="xs" style={{ backgroundColor: `${GT_COLORS.olympicTeal}15`, color: GT_COLORS.olympicTeal }}>
+                                <Badge variant="light" size="xs" style={{ backgroundColor: `${GT_COLORS.olympicTeal}25`, color: '#006670' }}>
                                   {section.aliases.join(' / ')}
                                 </Badge>
                               </Tooltip>
@@ -519,17 +523,18 @@ export default function AvailabilityContent() {
                               {Math.round((section.enrolled / section.capacity) * 100)}%
                             </Text>
                           </Group>
-                          <Progress
-                            value={(section.enrolled / section.capacity) * 100}
-                            size="sm"
-                            radius="xl"
-                            color={getEnrollmentBadgeColor(section.enrolled, section.capacity)}
-                          />
+                          <Progress.Root size="sm" radius="xl">
+                            <Progress.Section
+                              value={(section.enrolled / section.capacity) * 100}
+                              color={getEnrollmentBadgeColor(section.enrolled, section.capacity)}
+                              aria-label={`Enrollment progress: ${section.enrolled} out of ${section.capacity} seats filled`}
+                            />
+                          </Progress.Root>
                         </Stack>
                       </Table.Td>
                       <Table.Td ta="center">
                         {section.waitlist > 0 ? (
-                          <Badge variant="filled" size="sm" style={{ backgroundColor: GT_COLORS.buzzGold, color: GT_COLORS.navy }}>
+                          <Badge variant="filled" size="sm" style={{ backgroundColor: '#7a5d00', color: 'white' }}>
                             {section.waitlist}
                           </Badge>
                         ) : (

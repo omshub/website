@@ -40,7 +40,7 @@ export default function Error({ error, reset }: ErrorProps) {
           </ThemeIcon>
 
           <Stack align="center" gap="xs">
-            <Title order={2} ta="center" c={GT_COLORS.navy}>
+            <Title order={2} ta="center">
               Something went wrong
             </Title>
             <Text c="dimmed" ta="center" maw={400}>
@@ -87,7 +87,7 @@ export default function Error({ error, reset }: ErrorProps) {
               href="/"
               variant="outline"
               leftSection={<IconHome size={18} />}
-              color="gray"
+              color="dark"
             >
               Go home
             </Button>

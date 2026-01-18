@@ -9,12 +9,16 @@ const resolver: CSSVariablesResolver = (_theme) => ({
   variables: {
     // Override dimmed color for 4.5:1 contrast on white backgrounds
     '--mantine-color-dimmed': '#636c76',
+    // Override placeholder color for WCAG compliance (4.5:1 contrast)
+    '--mantine-color-placeholder': '#767676',
   },
   light: {
     '--mantine-color-dimmed': '#636c76',
+    '--mantine-color-placeholder': '#767676',
   },
   dark: {
     '--mantine-color-dimmed': '#a6a7ab',
+    '--mantine-color-placeholder': '#a6a7ab',
   },
 });
 
