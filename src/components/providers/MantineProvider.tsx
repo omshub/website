@@ -266,15 +266,17 @@ export default function MantineThemeProvider({ children }: MantineThemeProviderP
   return (
     <MantineProvider theme={theme} defaultColorScheme="auto" cssVariablesResolver={resolver}>
       <Notifications
-        position="top-right"
+        position="top-left"
         autoClose={4000}
         containerWidth={380}
         notificationMaxHeight={200}
         limit={5}
+        zIndex={1100}
         styles={{
           root: {
             top: rem(80),
-            right: rem(16),
+            left: rem(16),
+            right: 'unset',
             pointerEvents: 'none', // Allow clicks to pass through container
           },
           notification: {

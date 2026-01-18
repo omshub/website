@@ -28,11 +28,6 @@ interface SpotlightSearchProps {
   courses?: Record<TCourseId, SimpleCourse>;
 }
 
-// Cache keys and expiration
-const CACHE_KEY = 'omshub_spotlight_courses';
-const CACHE_TIMESTAMP_KEY = 'omshub_spotlight_courses_timestamp';
-const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 1 day
-
 export default function SpotlightSearch({ courses: initialCourses }: SpotlightSearchProps) {
   const router = useRouter();
   const [simpleCourses, setSimpleCourses] = useState<SimpleCourse[]>([]);
@@ -52,19 +47,6 @@ export default function SpotlightSearch({ courses: initialCourses }: SpotlightSe
         }))
       );
     } else {
-      // Check localStorage cache first
-      const cachedData = localStorage.getItem(CACHE_KEY);
-      const cachedTimestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
-
-      if (cachedData && cachedTimestamp) {
-        const age = Date.now() - parseInt(cachedTimestamp);
-        if (age < CACHE_DURATION_MS) {
-          // Use cached data
-          setSimpleCourses(JSON.parse(cachedData));
-          return;
-        }
-      }
-
       // Fetch all courses from data repo
       const fetchCourses = async () => {
         try {
@@ -91,10 +73,6 @@ export default function SpotlightSearch({ courses: initialCourses }: SpotlightSe
               };
             });
           setSimpleCourses(courses);
-
-          // Cache the result
-          localStorage.setItem(CACHE_KEY, JSON.stringify(courses));
-          localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
         } catch (error) {
           console.error('Error fetching courses:', error);
         }
@@ -277,13 +255,18 @@ export default function SpotlightSearch({ courses: initialCourses }: SpotlightSe
         action: {
           padding: 'var(--mantine-spacing-md)',
           borderRadius: 'var(--mantine-radius-sm)',
+          '&[data-selected]': {
+            backgroundColor: 'var(--mantine-color-navy-5)',
+            '& *': {
+              color: 'var(--mantine-color-white)',
+            },
+          },
         },
         actionLabel: {
           fontWeight: 600,
           fontSize: 'var(--mantine-font-size-md)',
         },
         actionDescription: {
-          color: 'var(--mantine-color-dimmed)',
           fontSize: 'var(--mantine-font-size-sm)',
         },
       }}

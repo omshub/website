@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { getClient } from '@/lib/supabase/client';
-import { useAlert } from '@/context/AlertContext';
 import { useRouter } from 'next/navigation';
+import { notifySuccess, notifyError } from '@/utils/notifications';
 import type { User, Session } from '@supabase/supabase-js';
 import type { TContextProviderProps } from '@/context/types';
 import type { TNullable } from '@/lib/types';
@@ -13,7 +13,7 @@ type TAuthContext = {
   session: TNullable<Session>;
   loading: boolean;
   signInWithProvider: (provider: 'google' | 'github') => Promise<void>;
-  signInWithMagicLink: (email: string) => Promise<void>;
+  signInWithMagicLink: (email: string) => Promise<boolean>;
   logout: () => Promise<void>;
 };
 
@@ -50,16 +50,13 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
   const [user, setUser] = useState<TNullable<User>>(null);
   const [session, setSession] = useState<TNullable<Session>>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const { setAlert } = useAlert();
   const router = useRouter();
 
   // Use refs to track state for the subscription callback without causing re-subscriptions
   const previousUserRef = useRef<TNullable<User>>(null);
-  const setAlertRef = useRef(setAlert);
   const routerRef = useRef(router);
 
   // Keep refs up to date
-  setAlertRef.current = setAlert;
   routerRef.current = router;
 
   useEffect(() => {
@@ -78,8 +75,6 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       const newUser = session?.user ?? null;
-      const wasSignedOut = !previousUserRef.current;
-      const isNewSignIn = wasSignedOut && newUser;
 
       // Update refs and state
       previousUserRef.current = newUser;
@@ -87,16 +82,17 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
       setUser(newUser);
       setLoading(false);
 
-      // Show welcome message on new sign-in
-      if (isNewSignIn && newUser) {
+      // Show welcome message only on actual sign-in, not on page load/refresh
+      // SIGNED_IN fires when user actively signs in (OAuth, magic link, OTP)
+      // INITIAL_SESSION fires on page load with existing session - don't show notification
+      if (event === 'SIGNED_IN' && newUser) {
         const displayName =
           newUser.user_metadata?.full_name ||
           newUser.email?.split('@')[0] ||
           'there';
-        setAlertRef.current({
-          severity: 'success',
-          text: `Welcome back, ${displayName}!`,
-          variant: 'outlined',
+        notifySuccess({
+          title: 'Welcome back!',
+          message: `Signed in as ${displayName}`,
         });
 
         // Smart redirect
@@ -122,15 +118,14 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
     });
 
     if (error) {
-      setAlert({
-        severity: 'error',
-        text: error.message,
-        variant: 'outlined',
+      notifyError({
+        title: 'Sign in failed',
+        message: error.message,
       });
     }
   };
 
-  const signInWithMagicLink = async (email: string) => {
+  const signInWithMagicLink = async (email: string): Promise<boolean> => {
     const supabase = getClient();
     const { error } = await supabase.auth.signInWithOtp({
       email,
@@ -140,26 +135,26 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
     });
 
     if (error) {
-      setAlert({
-        severity: 'error',
-        text: error.message,
-        variant: 'outlined',
+      notifyError({
+        title: 'Magic link failed',
+        message: error.message,
       });
-      return;
+      return false;
     }
 
     const isGTEmail = email.endsWith('@gatech.edu');
     const isOutlookEmail = email.endsWith('@outlook.com');
     const additionalInstructions =
       isGTEmail || isOutlookEmail
-        ? ' NOTE: gatech.edu or outlook.com domain may require release from Quarantine. See https://security.microsoft.com/quarantine'
+        ? ' NOTE: gatech.edu or outlook.com may require release from Quarantine. See https://security.microsoft.com/quarantine'
         : '';
 
-    setAlert({
-      severity: 'success',
-      text: `A Magic Link was sent to ${email}! Check your spam folder just in-case.${additionalInstructions}`,
-      variant: 'outlined',
+    notifySuccess({
+      title: 'Magic Link Sent!',
+      message: `Check your inbox at ${email}.${additionalInstructions}`,
+      autoClose: 8000,
     });
+    return true;
   };
 
   const logout = async () => {
