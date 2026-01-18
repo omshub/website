@@ -25,6 +25,7 @@ import { spotlight } from '@mantine/spotlight';
 import {
   IconSun,
   IconMoon,
+  IconDeviceDesktop,
   IconBrandGithub,
   IconChevronDown,
   IconLogout,
@@ -35,6 +36,7 @@ import {
   IconCalendar,
   IconInfoCircle,
   IconUser,
+  IconCheck,
 } from '@tabler/icons-react';
 import { useAuth } from '@/context/AuthContext';
 import { useMenu } from '@/context/MenuContext';
@@ -49,8 +51,15 @@ const navLinks = [
 export function NavBarMantine() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
   const [mounted, setMounted] = useState(false);
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const dark = colorScheme === 'dark';
+  const { colorScheme, setColorScheme } = useMantineColorScheme();
+
+  // Get the current theme icon based on color scheme
+  const getThemeIcon = () => {
+    if (!mounted) return <IconSun size={18} />;
+    if (colorScheme === 'auto') return <IconDeviceDesktop size={18} />;
+    if (colorScheme === 'dark') return <IconMoon size={18} />;
+    return <IconSun size={18} />;
+  };
 
   // Prevent hydration mismatch by only rendering theme-dependent UI after mount
   useEffect(() => {
@@ -175,22 +184,49 @@ export function NavBarMantine() {
               <IconBrandGithub size={18} />
             </ActionIcon>
 
-            <ActionIcon
-              variant="subtle"
-              onClick={() => toggleColorScheme()}
-              title={mounted ? (dark ? 'Switch to light mode' : 'Switch to dark mode') : 'Toggle color scheme'}
-              styles={{
-                root: {
-                  color: 'rgba(255,255,255,0.7)',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                    color: 'white',
-                  },
-                },
-              }}
-            >
-              {mounted ? (dark ? <IconSun size={18} /> : <IconMoon size={18} />) : <IconSun size={18} />}
-            </ActionIcon>
+            <Menu shadow="md" width={160} position="bottom-end" radius="md">
+              <Menu.Target>
+                <ActionIcon
+                  variant="subtle"
+                  title="Change theme"
+                  styles={{
+                    root: {
+                      color: 'rgba(255,255,255,0.7)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255,255,255,0.1)',
+                        color: 'white',
+                      },
+                    },
+                  }}
+                >
+                  {getThemeIcon()}
+                </ActionIcon>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Label>Theme</Menu.Label>
+                <Menu.Item
+                  leftSection={<IconDeviceDesktop size={16} />}
+                  rightSection={colorScheme === 'auto' && mounted ? <IconCheck size={14} /> : null}
+                  onClick={() => setColorScheme('auto')}
+                >
+                  System
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconSun size={16} />}
+                  rightSection={colorScheme === 'light' && mounted ? <IconCheck size={14} /> : null}
+                  onClick={() => setColorScheme('light')}
+                >
+                  Light
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconMoon size={16} />}
+                  rightSection={colorScheme === 'dark' && mounted ? <IconCheck size={14} /> : null}
+                  onClick={() => setColorScheme('dark')}
+                >
+                  Dark
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
 
             {!loading && (
               <>
@@ -339,27 +375,50 @@ export function NavBarMantine() {
           <Divider />
 
           {/* Actions */}
-          <Group>
-            <ActionIcon
-              variant="light"
-              color="gray"
-              onClick={() => toggleColorScheme()}
-              size="lg"
-            >
-              {mounted ? (dark ? <IconSun size={18} /> : <IconMoon size={18} />) : <IconSun size={18} />}
-            </ActionIcon>
-
-            <ActionIcon
-              variant="light"
-              color="gray"
-              component="a"
-              href="https://github.com/omshub/website/"
-              target="_blank"
-              size="lg"
-            >
-              <IconBrandGithub size={18} />
-            </ActionIcon>
-          </Group>
+          <Stack gap="xs">
+            <Text size="sm" fw={500} c="dimmed">Theme</Text>
+            <Group gap="xs">
+              <ActionIcon
+                variant={colorScheme === 'auto' && mounted ? 'filled' : 'light'}
+                color={colorScheme === 'auto' && mounted ? 'blue' : 'gray'}
+                onClick={() => setColorScheme('auto')}
+                size="lg"
+                title="System theme"
+              >
+                <IconDeviceDesktop size={18} />
+              </ActionIcon>
+              <ActionIcon
+                variant={colorScheme === 'light' && mounted ? 'filled' : 'light'}
+                color={colorScheme === 'light' && mounted ? 'blue' : 'gray'}
+                onClick={() => setColorScheme('light')}
+                size="lg"
+                title="Light theme"
+              >
+                <IconSun size={18} />
+              </ActionIcon>
+              <ActionIcon
+                variant={colorScheme === 'dark' && mounted ? 'filled' : 'light'}
+                color={colorScheme === 'dark' && mounted ? 'blue' : 'gray'}
+                onClick={() => setColorScheme('dark')}
+                size="lg"
+                title="Dark theme"
+              >
+                <IconMoon size={18} />
+              </ActionIcon>
+              <Divider orientation="vertical" />
+              <ActionIcon
+                variant="light"
+                color="gray"
+                component="a"
+                href="https://github.com/omshub/website/"
+                target="_blank"
+                size="lg"
+                title="GitHub"
+              >
+                <IconBrandGithub size={18} />
+              </ActionIcon>
+            </Group>
+          </Stack>
 
           <Divider />
 

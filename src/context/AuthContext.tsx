@@ -19,6 +19,7 @@ type TAuthContext = {
 
 // Storage keys
 const RETURN_TO_KEY = 'authReturnTo';
+const WELCOME_SHOWN_KEY = 'authWelcomeShown';
 
 // Helper to store return URL before auth
 export const storeReturnUrl = () => {
@@ -85,21 +86,31 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
       // Show welcome message only on actual sign-in, not on page load/refresh
       // SIGNED_IN fires when user actively signs in (OAuth, magic link, OTP)
       // INITIAL_SESSION fires on page load with existing session - don't show notification
+      // Use sessionStorage to ensure notification only shows once per browser session
       if (event === 'SIGNED_IN' && newUser) {
-        const displayName =
-          newUser.user_metadata?.full_name ||
-          newUser.email?.split('@')[0] ||
-          'there';
-        notifySuccess({
-          title: 'Welcome back!',
-          message: `Signed in as ${displayName}`,
-        });
+        const welcomeShown = sessionStorage.getItem(WELCOME_SHOWN_KEY);
+        if (!welcomeShown) {
+          const displayName =
+            newUser.user_metadata?.full_name ||
+            newUser.email?.split('@')[0] ||
+            'there';
+          notifySuccess({
+            title: 'Welcome back!',
+            message: `Signed in as ${displayName}`,
+          });
+          sessionStorage.setItem(WELCOME_SHOWN_KEY, 'true');
+        }
 
         // Smart redirect
         const returnTo = getAndClearReturnUrl();
         if (returnTo !== '/') {
           routerRef.current.push(returnTo);
         }
+      }
+
+      // Clear welcome flag on sign out so it shows again on next sign-in
+      if (event === 'SIGNED_OUT') {
+        sessionStorage.removeItem(WELCOME_SHOWN_KEY);
       }
     });
 

@@ -38,7 +38,10 @@ export function notifySuccess({ title, message, autoClose = 4000 }: NotifyOption
         borderLeft: `4px solid ${GT_COLORS.canopyLime}`,
       },
       title: {
-        color: GT_COLORS.navy,
+        color: 'var(--mantine-color-text)',
+      },
+      description: {
+        color: 'var(--mantine-color-text)',
       },
     },
   });
@@ -51,6 +54,7 @@ export function notifyError({ title, message, autoClose = 6000 }: NotifyOptions)
     message,
     autoClose,
     withCloseButton: true,
+    color: 'red',
     icon: (
       <ThemeIcon
         size={32}
@@ -66,7 +70,10 @@ export function notifyError({ title, message, autoClose = 6000 }: NotifyOptions)
         borderLeft: `4px solid ${GT_COLORS.newHorizon}`,
       },
       title: {
-        color: GT_COLORS.newHorizon,
+        color: 'var(--mantine-color-text)',
+      },
+      description: {
+        color: 'var(--mantine-color-text)',
       },
     },
   });
@@ -94,7 +101,10 @@ export function notifyBookmarkAdded(courseId: string) {
         borderLeft: `4px solid ${GT_COLORS.techGold}`,
       },
       title: {
-        color: GT_COLORS.navy,
+        color: 'var(--mantine-color-text)',
+      },
+      description: {
+        color: 'var(--mantine-color-text)',
       },
     },
   });
@@ -147,7 +157,10 @@ export function notifyLinkCopied() {
         borderLeft: `4px solid ${GT_COLORS.boldBlue}`,
       },
       title: {
-        color: GT_COLORS.navy,
+        color: 'var(--mantine-color-text)',
+      },
+      description: {
+        color: 'var(--mantine-color-text)',
       },
     },
   });
