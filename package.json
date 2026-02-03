@@ -75,7 +75,7 @@
     "@storybook/react": "^10.1.11",
     "@testing-library/jest-dom": "^6.6.3",
     "@types/lodash": "^4.17.23",
-    "@types/node": "^25.0.9",
+    "@types/node": "^25.2.0",
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.1.0",
     "commitizen": "^4.3.1",
