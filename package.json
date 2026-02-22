@@ -61,7 +61,7 @@
     "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",
     "string-width": "^7.2.0",
-    "swr": "^2.2.4"
+    "swr": "^2.4.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.3",
