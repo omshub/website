@@ -106,7 +106,7 @@ export default function Footer() {
               </Text>
             </Group>
             <Text size="sm" style={{ color: 'rgba(255,255,255,0.7)' }} maw={280} lh={1.6}>
-              Community-driven course reviews for Georgia Tech's Online Master's programs. Helping students make informed decisions since 2020.
+              Community-driven course reviews for Georgia Tech's Online Master's programs. Helping students make informed decisions since 2022.
             </Text>
             {/* Social Icons */}
             <Group gap="xs" mt="xs">
