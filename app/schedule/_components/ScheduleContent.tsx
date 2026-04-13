@@ -39,9 +39,11 @@ import {
   IconCheck,
 } from '@tabler/icons-react';
 import { GT_COLORS } from '@/lib/theme';
+import { mapSemesterIdToName } from '@/utilities';
 
-// Data repository URL
 const DATA_REPO_BASE = 'https://raw.githubusercontent.com/omshub/data/main';
+const SEMESTER_ORDER: ('sp' | 'sm' | 'fa')[] = ['sp', 'sm', 'fa'];
+const FUTURE_PROBE_COUNT = 3;
 
 // Decode HTML entities from API data
 function decodeHtmlEntities(text: string): string {
@@ -176,22 +178,19 @@ function getCurrentSemester(): { year: number; semester: 'sp' | 'sm' | 'fa' } {
   }
 }
 
-// Past semesters from current back to 2014, most recent first
 function getPastSemesters(): { value: string; label: string }[] {
   const { year: currentYear, semester: currentSem } = getCurrentSemester();
   const semesters: { value: string; label: string }[] = [];
-  const semesterOrder: ('sp' | 'sm' | 'fa')[] = ['sp', 'sm', 'fa'];
   const startYear = 2014; // OMSCS program started
 
   let year = currentYear;
-  let semIndex = semesterOrder.indexOf(currentSem);
+  let semIndex = SEMESTER_ORDER.indexOf(currentSem);
 
   while (year >= startYear) {
-    const sem = semesterOrder[semIndex];
-    const semLabel = sem === 'sp' ? 'Spring' : sem === 'sm' ? 'Summer' : 'Fall';
+    const sem = SEMESTER_ORDER[semIndex];
     semesters.push({
       value: getTermCode(year, sem),
-      label: `${semLabel} ${year}`,
+      label: `${mapSemesterIdToName[sem]} ${year}`,
     });
 
     semIndex--;
@@ -204,22 +203,21 @@ function getPastSemesters(): { value: string; label: string }[] {
   return semesters;
 }
 
-// Returns the next N future term codes after the current semester
-function getFutureCandidates(n: number): string[] {
+function getFutureCandidates(n: number): { value: string; label: string }[] {
   const { year: currentYear, semester: currentSem } = getCurrentSemester();
-  const semesterOrder: ('sp' | 'sm' | 'fa')[] = ['sp', 'sm', 'fa'];
-  const candidates: string[] = [];
+  const candidates: { value: string; label: string }[] = [];
 
   let year = currentYear;
-  let semIndex = semesterOrder.indexOf(currentSem);
+  let semIndex = SEMESTER_ORDER.indexOf(currentSem);
 
   for (let i = 0; i < n; i++) {
     semIndex++;
-    if (semIndex >= semesterOrder.length) {
+    if (semIndex >= SEMESTER_ORDER.length) {
       semIndex = 0;
       year++;
     }
-    candidates.push(getTermCode(year, semesterOrder[semIndex]));
+    const termCode = getTermCode(year, SEMESTER_ORDER[semIndex]);
+    candidates.push({ value: termCode, label: getTermLabel(termCode) });
   }
 
   return candidates;
@@ -323,32 +321,36 @@ export default function ScheduleContent() {
 
   // Probe future semester candidates and prepend any that have data
   useEffect(() => {
+    const controller = new AbortController();
+
     async function probeFutureSemesters() {
-      const candidates = getFutureCandidates(3);
+      const candidates = getFutureCandidates(FUTURE_PROBE_COUNT);
       const results = await Promise.all(
-        candidates.map(async (termCode) => {
+        candidates.map(async (candidate) => {
           try {
-            const res = await fetch(`${DATA_REPO_BASE}/data/${termCode}.json`, { method: 'HEAD' });
-            return res.ok ? termCode : null;
+            const res = await fetch(`${DATA_REPO_BASE}/data/${candidate.value}.json`, {
+              method: 'HEAD',
+              signal: controller.signal,
+            });
+            return res.ok ? candidate : null;
           } catch {
             return null;
           }
         })
       );
 
-      const available = results.filter((t): t is string => t !== null);
+      if (controller.signal.aborted) return;
+
+      const available = results.filter((t): t is { value: string; label: string } => t !== null);
       if (available.length > 0) {
-        const futureOptions = available.map((termCode) => ({
-          value: termCode,
-          label: getTermLabel(termCode),
-        }));
-        setSemesters([...futureOptions, ...pastSemesters]);
-        setActiveSemester(futureOptions[0].value);
+        setSemesters([...available, ...pastSemesters]);
+        setActiveSemester((prev) => (prev === pastSemesters[0]?.value ? available[0].value : prev));
       }
     }
 
     probeFutureSemesters();
-  }, [pastSemesters]);
+    return () => controller.abort();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     async function fetchData() {
