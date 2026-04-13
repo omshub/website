@@ -14,6 +14,14 @@ body:
       placeholder: e.g. CS 6200
     validations:
       required: true
+  - type: textarea
+    id: review_content
+    attributes:
+      label: Review content or link
+      description: Paste the review text or a direct URL to the review page so we can find it quickly.
+      placeholder: Paste the review text here...
+    validations:
+      required: true
   - type: dropdown
     id: reason
     attributes:

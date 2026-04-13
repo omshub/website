@@ -37,6 +37,7 @@ body:
     id: browser
     attributes:
       label: Browser
+      description: Which browser did you experience this in?
       options:
         - Chrome
         - Firefox
