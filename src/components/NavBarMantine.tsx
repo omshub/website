@@ -461,19 +461,84 @@ export function NavBarMantine() {
               >
                 <IconMoon size={18} />
               </ActionIcon>
-              <Divider orientation="vertical" />
-              <ActionIcon
-                variant="light"
-                color="gray"
-                component="a"
-                href="https://github.com/omshub/website/"
-                target="_blank"
-                size="lg"
-                title="GitHub"
-              >
-                <IconBrandGithub size={18} />
-              </ActionIcon>
             </Group>
+          </Stack>
+
+          <Divider />
+
+          {/* GitHub */}
+          <Stack gap="xs">
+            <Text size="sm" fw={500} c="dimmed">GitHub</Text>
+            <Button
+              variant="subtle"
+              color="gray"
+              component="a"
+              href="https://github.com/omshub/website/"
+              target="_blank"
+              rel="noopener noreferrer"
+              fullWidth
+              justify="flex-start"
+              size="md"
+              leftSection={<IconExternalLink size={18} />}
+            >
+              View Repository
+            </Button>
+            <Button
+              variant="subtle"
+              color="gray"
+              component="a"
+              href="https://github.com/omshub/website/issues/new?template=bug_report.yml"
+              target="_blank"
+              rel="noopener noreferrer"
+              fullWidth
+              justify="flex-start"
+              size="md"
+              leftSection={<IconBug size={18} />}
+            >
+              Report a Bug
+            </Button>
+            <Button
+              variant="subtle"
+              color="gray"
+              component="a"
+              href="https://github.com/omshub/website/issues/new?template=feature_request.yml"
+              target="_blank"
+              rel="noopener noreferrer"
+              fullWidth
+              justify="flex-start"
+              size="md"
+              leftSection={<IconSparkles size={18} />}
+            >
+              Request a Feature
+            </Button>
+            <Button
+              variant="subtle"
+              color="gray"
+              component="a"
+              href="https://github.com/omshub/website/issues/new?template=course_data.yml"
+              target="_blank"
+              rel="noopener noreferrer"
+              fullWidth
+              justify="flex-start"
+              size="md"
+              leftSection={<IconTable size={18} />}
+            >
+              Report Course Data Issue
+            </Button>
+            <Button
+              variant="subtle"
+              color="gray"
+              component="a"
+              href="https://github.com/omshub/website/issues/new?template=flag_review.yml"
+              target="_blank"
+              rel="noopener noreferrer"
+              fullWidth
+              justify="flex-start"
+              size="md"
+              leftSection={<IconFlag size={18} />}
+            >
+              Flag Inappropriate Review
+            </Button>
           </Stack>
 
           <Divider />
