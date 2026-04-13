@@ -36,5 +36,5 @@ body:
   - type: textarea
     id: source
     attributes:
-      label: Source (optional)
+      label: Source
       description: Link to OSCAR, official syllabus, or other authoritative source.
