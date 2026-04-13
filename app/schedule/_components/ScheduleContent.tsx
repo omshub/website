@@ -176,26 +176,17 @@ function getCurrentSemester(): { year: number; semester: 'sp' | 'sm' | 'fa' } {
   }
 }
 
-// Available semesters - 2 ahead of current, back to 2014, most recent first
-function getAvailableSemesters(): { value: string; label: string }[] {
+// Past semesters from current back to 2014, most recent first
+function getPastSemesters(): { value: string; label: string }[] {
   const { year: currentYear, semester: currentSem } = getCurrentSemester();
   const semesters: { value: string; label: string }[] = [];
   const semesterOrder: ('sp' | 'sm' | 'fa')[] = ['sp', 'sm', 'fa'];
   const startYear = 2014; // OMSCS program started
 
-  // Start 2 semesters ahead of current to include upcoming registration periods
   let year = currentYear;
   let semIndex = semesterOrder.indexOf(currentSem);
-  for (let i = 0; i < 2; i++) {
-    semIndex++;
-    if (semIndex >= semesterOrder.length) {
-      semIndex = 0; // wrap to Spring
-      year++;
-    }
-  }
 
-  while (year >= startYear || (year === startYear && semIndex >= 0)) {
-    if (year < startYear) break;
+  while (year >= startYear) {
     const sem = semesterOrder[semIndex];
     const semLabel = sem === 'sp' ? 'Spring' : sem === 'sm' ? 'Summer' : 'Fall';
     semesters.push({
@@ -203,15 +194,35 @@ function getAvailableSemesters(): { value: string; label: string }[] {
       label: `${semLabel} ${year}`,
     });
 
-    // Move to previous semester
     semIndex--;
     if (semIndex < 0) {
-      semIndex = 2; // wrap to Fall
+      semIndex = 2;
       year--;
     }
   }
 
   return semesters;
+}
+
+// Returns the next N future term codes after the current semester
+function getFutureCandidates(n: number): string[] {
+  const { year: currentYear, semester: currentSem } = getCurrentSemester();
+  const semesterOrder: ('sp' | 'sm' | 'fa')[] = ['sp', 'sm', 'fa'];
+  const candidates: string[] = [];
+
+  let year = currentYear;
+  let semIndex = semesterOrder.indexOf(currentSem);
+
+  for (let i = 0; i < n; i++) {
+    semIndex++;
+    if (semIndex >= semesterOrder.length) {
+      semIndex = 0;
+      year++;
+    }
+    candidates.push(getTermCode(year, semesterOrder[semIndex]));
+  }
+
+  return candidates;
 }
 
 interface StatCardProps {
@@ -298,14 +309,9 @@ function getSearchScore(section: CourseSection, query: string): number {
 }
 
 export default function ScheduleContent() {
-  const semesters = useMemo(() => {
-    return getAvailableSemesters();
-  }, []);
-  const { year: defaultYear, semester: defaultSem } = getCurrentSemester();
-  const defaultTermCode = getTermCode(defaultYear, defaultSem);
-  const [activeSemester, setActiveSemester] = useState(
-    semesters.find((s) => s.value === defaultTermCode)?.value || semesters[0]?.value || defaultTermCode
-  );
+  const pastSemesters = useMemo(() => getPastSemesters(), []);
+  const [semesters, setSemesters] = useState(pastSemesters);
+  const [activeSemester, setActiveSemester] = useState(pastSemesters[0]?.value || '');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -314,6 +320,35 @@ export default function ScheduleContent() {
   const [specializations, setSpecializations] = useState<SpecializationMap>({});
   const [programs, setPrograms] = useState<ProgramMap>({});
   const [selectedSpecialization, setSelectedSpecialization] = useState<string | null>(null);
+
+  // Probe future semester candidates and prepend any that have data
+  useEffect(() => {
+    async function probeFutureSemesters() {
+      const candidates = getFutureCandidates(3);
+      const results = await Promise.all(
+        candidates.map(async (termCode) => {
+          try {
+            const res = await fetch(`${DATA_REPO_BASE}/data/${termCode}.json`, { method: 'HEAD' });
+            return res.ok ? termCode : null;
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      const available = results.filter((t): t is string => t !== null);
+      if (available.length > 0) {
+        const futureOptions = available.map((termCode) => ({
+          value: termCode,
+          label: getTermLabel(termCode),
+        }));
+        setSemesters([...futureOptions, ...pastSemesters]);
+        setActiveSemester(futureOptions[0].value);
+      }
+    }
+
+    probeFutureSemesters();
+  }, [pastSemesters]);
 
   useEffect(() => {
     async function fetchData() {
