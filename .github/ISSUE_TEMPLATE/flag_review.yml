@@ -1,0 +1,35 @@
+name: Flag Inappropriate Review
+description: Report a review that is spam, abusive, or violates community guidelines
+title: "[Flag Review]: "
+labels: ["moderation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please use this form to flag reviews that violate our community guidelines. Do not include personally identifying information about the reviewer.
+  - type: input
+    id: course
+    attributes:
+      label: Course the review is for
+      placeholder: e.g. CS 6200
+    validations:
+      required: true
+  - type: dropdown
+    id: reason
+    attributes:
+      label: Reason for flagging
+      options:
+        - Spam or advertising
+        - Abusive or offensive language
+        - Not a genuine review
+        - Personal attack on instructor
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Additional details
+      description: Briefly describe why this review should be removed.
+    validations:
+      required: true

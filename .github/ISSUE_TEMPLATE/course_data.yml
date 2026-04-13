@@ -1,0 +1,40 @@
+name: Course Data Issue
+description: Report incorrect or missing course information (grade distributions, descriptions, etc.)
+title: "[Course Data]: "
+labels: ["data", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us keep course data accurate. Please be as specific as possible.
+  - type: input
+    id: course
+    attributes:
+      label: Course name or ID
+      placeholder: e.g. CS 6200, ISYE 6501
+    validations:
+      required: true
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: Type of issue
+      options:
+        - Wrong grade distribution
+        - Missing course
+        - Incorrect course description
+        - Stale/outdated information
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What's wrong?
+      description: Describe the inaccuracy and, if known, what the correct data should be.
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source (optional)
+      description: Link to OSCAR, official syllabus, or other authoritative source.
