@@ -176,18 +176,26 @@ function getCurrentSemester(): { year: number; semester: 'sp' | 'sm' | 'fa' } {
   }
 }
 
-// Available semesters - current and past back to 2014, most recent first
+// Available semesters - 2 ahead of current, back to 2014, most recent first
 function getAvailableSemesters(): { value: string; label: string }[] {
   const { year: currentYear, semester: currentSem } = getCurrentSemester();
   const semesters: { value: string; label: string }[] = [];
   const semesterOrder: ('sp' | 'sm' | 'fa')[] = ['sp', 'sm', 'fa'];
   const startYear = 2014; // OMSCS program started
 
-  // Start from current semester and go backwards to 2014
+  // Start 2 semesters ahead of current to include upcoming registration periods
   let year = currentYear;
   let semIndex = semesterOrder.indexOf(currentSem);
+  for (let i = 0; i < 2; i++) {
+    semIndex++;
+    if (semIndex >= semesterOrder.length) {
+      semIndex = 0; // wrap to Spring
+      year++;
+    }
+  }
 
-  while (year >= startYear) {
+  while (year >= startYear || (year === startYear && semIndex >= 0)) {
+    if (year < startYear) break;
     const sem = semesterOrder[semIndex];
     const semLabel = sem === 'sp' ? 'Spring' : sem === 'sm' ? 'Summer' : 'Fall';
     semesters.push({
@@ -293,7 +301,11 @@ export default function ScheduleContent() {
   const semesters = useMemo(() => {
     return getAvailableSemesters();
   }, []);
-  const [activeSemester, setActiveSemester] = useState(semesters[0]?.value || '202602');
+  const { year: defaultYear, semester: defaultSem } = getCurrentSemester();
+  const defaultTermCode = getTermCode(defaultYear, defaultSem);
+  const [activeSemester, setActiveSemester] = useState(
+    semesters.find((s) => s.value === defaultTermCode)?.value || semesters[0]?.value || defaultTermCode
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
