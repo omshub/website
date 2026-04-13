@@ -37,6 +37,11 @@ import {
   IconInfoCircle,
   IconUser,
   IconCheck,
+  IconExternalLink,
+  IconBug,
+  IconSparkles,
+  IconTable,
+  IconFlag,
 } from '@tabler/icons-react';
 import { useAuth } from '@/context/AuthContext';
 import { useMenu } from '@/context/MenuContext';
@@ -165,24 +170,75 @@ export function NavBarMantine() {
 
             <Divider orientation="vertical" color="rgba(255,255,255,0.15)" h={24} style={{ alignSelf: 'center' }} />
 
-            <ActionIcon
-              variant="subtle"
-              component="a"
-              href="https://github.com/omshub/website/"
-              target="_blank"
-              title="GitHub"
-              styles={{
-                root: {
-                  color: 'rgba(255,255,255,0.7)',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                    color: 'white',
-                  },
-                },
-              }}
-            >
-              <IconBrandGithub size={18} />
-            </ActionIcon>
+            <Menu shadow="md" width={220} position="bottom-end" radius="md">
+              <Menu.Target>
+                <ActionIcon
+                  variant="subtle"
+                  title="GitHub"
+                  styles={{
+                    root: {
+                      color: 'rgba(255,255,255,0.7)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255,255,255,0.1)',
+                        color: 'white',
+                      },
+                    },
+                  }}
+                >
+                  <IconBrandGithub size={18} />
+                </ActionIcon>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Label>GitHub</Menu.Label>
+                <Menu.Item
+                  leftSection={<IconExternalLink size={16} />}
+                  component="a"
+                  href="https://github.com/omshub/website/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View Repository
+                </Menu.Item>
+                <Menu.Divider />
+                <Menu.Label>Open an Issue</Menu.Label>
+                <Menu.Item
+                  leftSection={<IconBug size={16} />}
+                  component="a"
+                  href="https://github.com/omshub/website/issues/new?template=bug_report.yml"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Report a Bug
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconSparkles size={16} />}
+                  component="a"
+                  href="https://github.com/omshub/website/issues/new?template=feature_request.yml"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Request a Feature
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconTable size={16} />}
+                  component="a"
+                  href="https://github.com/omshub/website/issues/new?template=course_data.yml"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Report Course Data Issue
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconFlag size={16} />}
+                  component="a"
+                  href="https://github.com/omshub/website/issues/new?template=flag_review.yml"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Flag Inappropriate Review
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
 
             <Menu shadow="md" width={160} position="bottom-end" radius="md">
               <Menu.Target>
