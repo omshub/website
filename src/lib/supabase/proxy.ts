@@ -29,8 +29,9 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Refresh session if expired
-  await supabase.auth.getUser();
+  // Validate JWT claims and refresh session if expired.
+  // Must use getClaims() here — getUser() can cause random sign-outs in SSR.
+  await supabase.auth.getClaims();
 
   return supabaseResponse;
 }

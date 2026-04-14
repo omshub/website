@@ -76,3 +76,4 @@ scripts/migration/node_modules/
 scripts/migration/export/
 scripts/migration/firestore-export.json
 service-account-key.json
+.env*.local
