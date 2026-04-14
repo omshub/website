@@ -38,9 +38,9 @@ export async function GET(request: Request) {
       }
     );
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (!error) {
+    if (!error && data?.session) {
       return NextResponse.redirect(`${origin}${next}`);
     }
   }
