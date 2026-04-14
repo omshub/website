@@ -6,6 +6,7 @@ import { courseFields } from '@/lib/constants';
 import { mapPayloadToArray } from '@/utilities';
 import HeroSection from './_components/HeroSection';
 import CoursesTable from './_components/CoursesTable';
+import AuthErrorNotification from './_components/AuthErrorNotification';
 
 // Loading skeleton for the table
 function TableSkeleton() {
@@ -17,7 +18,12 @@ function TableSkeleton() {
   );
 }
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; error_description?: string }>;
+}) {
+  const { error, error_description } = await searchParams;
   const [coursesDataDynamic, coursesDataStatic, globalStats] = await Promise.all([
     getCourseStats(),
     getCoursesDataStatic(),
@@ -47,6 +53,7 @@ export default async function HomePage() {
 
   return (
     <>
+      {error && <AuthErrorNotification error={error} errorDescription={error_description} />}
       {/* Hero renders immediately on server - no JS required */}
       <HeroSection stats={stats} />
 
