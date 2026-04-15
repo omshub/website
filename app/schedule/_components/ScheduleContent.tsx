@@ -176,9 +176,26 @@ function getCurrentSemester(): { year: number; semester: 'sp' | 'sm' | 'fa' } {
   }
 }
 
+// Get current registration period based on month
+function getCurrentRegistrationSemester(): { year: number; semester: 'sp' | 'sm' | 'fa' } {
+  const now = new Date();
+  const month = now.getMonth() + 1; // 1-12
+  let year = now.getFullYear();
+
+  if (month >= 4 && month < 6) {
+    return { year, semester: 'sm' };           // Summer registration: Apr-May
+  } else if (month >= 6 && month < 11) {
+    return { year, semester: 'fa' };           // Fall registration: Jun-Aug
+  } else if (month >= 11) {
+    return { year: year + 1, semester: 'sp' }; // Spring registration: Nov-Jan
+  } else {
+    return { year, semester: 'sp' };
+  }
+}
+
 // Past semesters from current back to 2014, most recent first
 function getPastSemesters(): { value: string; label: string }[] {
-  const { year: currentYear, semester: currentSem } = getCurrentSemester();
+  const { year: currentYear, semester: currentSem } = getCurrentRegistrationSemester();
   const semesters: { value: string; label: string }[] = [];
   const semesterOrder: ('sp' | 'sm' | 'fa')[] = ['sp', 'sm', 'fa'];
   const startYear = 2014; // OMSCS program started
@@ -206,7 +223,7 @@ function getPastSemesters(): { value: string; label: string }[] {
 
 // Returns the next N future term codes after the current semester
 function getFutureCandidates(n: number): string[] {
-  const { year: currentYear, semester: currentSem } = getCurrentSemester();
+  const { year: currentYear, semester: currentSem } = getCurrentRegistrationSemester();
   const semesterOrder: ('sp' | 'sm' | 'fa')[] = ['sp', 'sm', 'fa'];
   const candidates: string[] = [];
 
