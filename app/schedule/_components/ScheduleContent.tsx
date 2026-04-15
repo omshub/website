@@ -351,9 +351,17 @@ export default function ScheduleContent() {
   }, [pastSemesters]);
 
   useEffect(() => {
+    // Cancellation flag: the probe effect can change activeSemester mid-fetch,
+    // triggering a second run of this effect. Without this guard, a slower
+    // earlier fetch can land after the newer one and overwrite fresh data with
+    // the previous semester's rows — producing the "Summer 2026 shows Spring 2026
+    // enrollment" hydration artifact reported on Slack.
+    let cancelled = false;
+
     async function fetchData() {
       setLoading(true);
       setError(null);
+      setSections([]);
 
       try {
         // Fetch course metadata, availability, specializations, and programs in parallel
@@ -363,6 +371,8 @@ export default function ScheduleContent() {
           fetch(`${DATA_REPO_BASE}/static/specializations.json`),
           fetch(`${DATA_REPO_BASE}/static/programs.json`),
         ]);
+
+        if (cancelled) return;
 
         if (!metadataResponse.ok) {
           throw new Error('Failed to fetch course metadata');
@@ -382,14 +392,16 @@ export default function ScheduleContent() {
         const metadata: CourseMetadataMap = await metadataResponse.json();
         const availability: RawAvailabilityData = await availabilityResponse.json();
 
+        if (cancelled) return;
+
         // Parse specializations and programs (non-critical, so don't fail on error)
         if (specializationsResponse.ok) {
           const specData: SpecializationMap = await specializationsResponse.json();
-          setSpecializations(specData);
+          if (!cancelled) setSpecializations(specData);
         }
         if (programsResponse.ok) {
           const progData: ProgramMap = await programsResponse.json();
-          setPrograms(progData);
+          if (!cancelled) setPrograms(progData);
         }
 
         // Combine data
@@ -439,17 +451,24 @@ export default function ScheduleContent() {
         // Sort by courseId
         combinedSections.sort((a, b) => a.courseId.localeCompare(b.courseId));
 
+        if (cancelled) return;
+
         setSections(combinedSections);
         setLastUpdated(availability.lastUpdated ? new Date(availability.lastUpdated).toLocaleString() : new Date().toLocaleTimeString());
       } catch (err) {
+        if (cancelled) return;
         console.error('Error fetching availability data:', err);
         setError(err instanceof Error ? err.message : 'Failed to load data');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     fetchData();
+
+    return () => {
+      cancelled = true;
+    };
   }, [activeSemester]);
 
   // Build specialization options for dropdown (flat list with program prefix)
