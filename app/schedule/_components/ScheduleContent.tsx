@@ -180,7 +180,7 @@ function getCurrentSemester(): { year: number; semester: 'sp' | 'sm' | 'fa' } {
 function getCurrentRegistrationSemester(): { year: number; semester: 'sp' | 'sm' | 'fa' } {
   const now = new Date();
   const month = now.getMonth() + 1; // 1-12
-  let year = now.getFullYear();
+  const year = now.getFullYear();
 
   if (month >= 4 && month < 6) {
     return { year, semester: 'sm' };           // Summer registration: Apr-May
