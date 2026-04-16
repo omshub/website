@@ -15,8 +15,9 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/?${params}`);
   }
 
+  const cookieStore = await cookies();
+
   if (code) {
-    const cookieStore = await cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
@@ -38,13 +39,20 @@ export async function GET(request: Request) {
       }
     );
 
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (!error && data?.session) {
+    if (!error) {
       return NextResponse.redirect(`${origin}${next}`);
     }
   }
 
-  // Return to home with error
-  return NextResponse.redirect(`${origin}/?error=auth_callback_error`);
+  // Return to home with error. Clear only the PKCE code_verifier cookie so the
+  // next sign-in attempt starts with a fresh verifier. We avoid wiping the
+  // entire session (all sb-* cookies) to prevent logging out a user who has a
+  // valid session but hit a transient Supabase error during the exchange.
+  const errorResponse = NextResponse.redirect(`${origin}/?error=auth_callback_error`);
+  cookieStore.getAll()
+    .filter(c => c.name.endsWith('-auth-token-code-verifier'))
+    .forEach(c => errorResponse.cookies.set(c.name, '', { maxAge: 0, path: '/' }));
+  return errorResponse;
 }
