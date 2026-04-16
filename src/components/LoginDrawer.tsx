@@ -157,7 +157,7 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
     setLoadingProvider(provider);
 
     try {
-      authContext.signInWithProvider(provider);
+      await authContext.signInWithProvider(provider);
       handleClose();
     } finally {
       // Reset after a delay to allow popup to open
