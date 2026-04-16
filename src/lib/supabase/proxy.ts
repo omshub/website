@@ -29,9 +29,16 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Validate JWT claims and refresh session if expired.
-  // Must use getClaims() here — getUser() can cause random sign-outs in SSR.
-  await supabase.auth.getClaims();
+  // Only refresh session when a session cookie is present — avoids an
+  // unconditional auth-service round-trip for anonymous/unauthenticated requests.
+  // Matches sb-{projectRef}-auth-token and chunked variants (e.g. .0, .1),
+  // but not the PKCE code_verifier cookie.
+  const hasSession = request.cookies.getAll().some(
+    c => /^sb-.+-auth-token/.test(c.name) && !c.name.endsWith('-code-verifier')
+  );
+  if (hasSession) {
+    await supabase.auth.getUser();
+  }
 
   return supabaseResponse;
 }
