@@ -1,32 +1,22 @@
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
 /**
  * OAuth / magic-link callback.
  *
- * Uses Next.js's `redirect()` from `next/navigation` instead of
- * `NextResponse.redirect(...)` so that cookie mutations performed by
- * @supabase/ssr via `cookies().set(...)` inside `createClient()` are
- * automatically attached to the redirect response.
- *
- * Why this matters:
- *   `NextResponse.redirect(...)` returns a standalone response object that
- *   Next.js forwards as-is — the pending cookie-mutation buffer from
- *   `cookies().set()` is not merged onto it. `redirect()` instead throws
- *   NEXT_REDIRECT which the framework catches and converts to a redirect
- *   response that DOES inherit the cookie mutations. This is the pattern
- *   Supabase uses in their canonical `/auth/confirm` example and is the
- *   one constraint that fixes the "Set-Cookie never reaches the browser"
- *   class of failures on Vercel.
- *
- * `x-forwarded-host` is honoured so that on Vercel (where
- * `new URL(request.url).origin` can resolve to an internal host) the
- * redirect target matches the domain the session cookies were set on.
+ * Follows the canonical @supabase/ssr Next.js App Router pattern:
+ *   - `createClient()` from `@/lib/supabase/server` handles `setAll` by
+ *     writing cookies through `cookies().set(...)`, and Next.js propagates
+ *     those onto the outgoing response automatically.
+ *   - `x-forwarded-host` is honoured so that on Vercel (where
+ *     `new URL(request.url).origin` can resolve to an internal host) the
+ *     redirect target matches the domain the session cookies were set on.
+ *     Without this branch the browser lands on a different origin than the
+ *     one Set-Cookie was scoped to, and the session appears "lost".
  *
  * Refs:
  *   - https://supabase.com/docs/guides/auth/server-side/nextjs (App Router)
- *   - https://nextjs.org/docs/app/api-reference/functions/redirect
  *   - https://nextjs.org/docs/app/api-reference/functions/cookies
  */
 export async function GET(request: Request) {
@@ -43,7 +33,7 @@ export async function GET(request: Request) {
     const params = new URLSearchParams({ error: oauthError });
     const desc = searchParams.get('error_description');
     if (desc) params.set('error_description', desc);
-    redirect(`${origin}/?${params}`);
+    return NextResponse.redirect(`${origin}/?${params}`);
   }
 
   if (code) {
@@ -52,23 +42,25 @@ export async function GET(request: Request) {
 
     if (!error) {
       // On Vercel, `origin` can be the internal load-balancer host rather
-      // than the public domain. Redirecting to the wrong origin cross-
-      // domains the browser away from where @supabase/ssr stamped the
-      // session cookies. Prefer x-forwarded-host in production.
+      // than the public domain the user is actually on. Redirecting to the
+      // wrong origin cross-domains the browser away from where
+      // @supabase/ssr just stamped the session cookies, so the session
+      // appears to be dropped. Prefer x-forwarded-host in production.
       const forwardedHost = request.headers.get('x-forwarded-host');
       const isLocalEnv = process.env.NODE_ENV === 'development';
 
-      // Single diagnostic param so we can confirm which branch ran in
-      // production. Safe to remove once the auth flow is confirmed working.
+      // Single diagnostic param so we can confirm the x-forwarded-host branch
+      // is what's actually running in production. Safe to remove once the
+      // auth flow is confirmed working.
       const diag = new URLSearchParams({ _fh: forwardedHost ?? '' });
       const sep = next.includes('?') ? '&' : '?';
 
       if (isLocalEnv) {
-        redirect(`${origin}${next}${sep}${diag}`);
+        return NextResponse.redirect(`${origin}${next}${sep}${diag}`);
       } else if (forwardedHost) {
-        redirect(`https://${forwardedHost}${next}${sep}${diag}`);
+        return NextResponse.redirect(`https://${forwardedHost}${next}${sep}${diag}`);
       } else {
-        redirect(`${origin}${next}${sep}${diag}`);
+        return NextResponse.redirect(`${origin}${next}${sep}${diag}`);
       }
     }
 
@@ -78,10 +70,11 @@ export async function GET(request: Request) {
   // Clear the PKCE verifier so the next attempt starts fresh.
   // Avoid clearing all sb-* cookies — a valid parallel session should survive.
   const cookieStore = await cookies();
+  const errorResponse = NextResponse.redirect(`${origin}/?error=auth_callback_error`);
   for (const c of cookieStore.getAll()) {
     if (c.name.endsWith('-auth-token-code-verifier')) {
-      cookieStore.set(c.name, '', { maxAge: 0, path: '/' });
+      errorResponse.cookies.set(c.name, '', { maxAge: 0, path: '/' });
     }
   }
-  redirect(`${origin}/?error=auth_callback_error`);
+  return errorResponse;
 }
