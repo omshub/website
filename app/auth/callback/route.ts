@@ -2,6 +2,33 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
+/**
+ * OAuth / magic-link callback.
+ *
+ * Combines two independent fixes so the session survives the redirect on
+ * Vercel:
+ *
+ *   1. Manual cookie stamping. `cookies().set(...)` mutations do NOT
+ *      propagate onto a `NextResponse.redirect(...)` response automatically
+ *      in a Route Handler, so we buffer whatever @supabase/ssr wants to
+ *      write during `exchangeCodeForSession` into `pendingCookies`, then
+ *      stamp each one onto the response we actually return.
+ *
+ *   2. x-forwarded-host redirect target. On Vercel, `new URL(request.url).origin`
+ *      can resolve to an internal load-balancer host rather than the public
+ *      domain the user is on. If we redirect to the wrong origin, the
+ *      browser lands on a different domain than the one `Set-Cookie` was
+ *      scoped to and the session appears "lost". Prefer `x-forwarded-host`
+ *      in production.
+ *
+ * A single diagnostic query param (`_fh`) is appended to the redirect so we
+ * can confirm from the landed URL which redirect branch actually ran in
+ * production. Safe to remove once the auth flow is confirmed working.
+ *
+ * Refs:
+ *   - https://supabase.com/docs/guides/auth/server-side/nextjs (App Router)
+ *   - https://nextjs.org/docs/app/api-reference/functions/cookies
+ */
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
@@ -50,7 +77,23 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      const response = NextResponse.redirect(`${origin}${next}`);
+      // Pick the correct redirect target. On Vercel, `origin` can be the
+      // internal load-balancer host; prefer x-forwarded-host so the browser
+      // lands on the same domain the Set-Cookie header was scoped to.
+      const forwardedHost = request.headers.get('x-forwarded-host');
+      const isLocalEnv = process.env.NODE_ENV === 'development';
+
+      // Single diagnostic param so we can confirm which redirect branch
+      // actually ran in production. Safe to remove once auth is verified.
+      const diag = new URLSearchParams({ _fh: forwardedHost ?? '' });
+      const sep = next.includes('?') ? '&' : '?';
+
+      const redirectUrl =
+        isLocalEnv || !forwardedHost
+          ? `${origin}${next}${sep}${diag}`
+          : `https://${forwardedHost}${next}${sep}${diag}`;
+
+      const response = NextResponse.redirect(redirectUrl);
       for (const { name, value, options } of pendingCookies) {
         response.cookies.set(
           name,
