@@ -157,7 +157,9 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
     setLoadingProvider(provider);
 
     try {
-      authContext.signInWithProvider(provider);
+      await authContext.signInWithProvider(provider);
+      // On success, signInWithOAuth navigates the browser away immediately,
+      // so handleClose() is only reached on error paths.
       handleClose();
     } finally {
       // Reset after a delay to allow popup to open
