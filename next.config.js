@@ -45,7 +45,11 @@ module.exports = {
   },
 
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
+    // Strip console.* in prod for performance/security, UNLESS DEBUG_AUTH=1
+    // is set — in which case preserve console.* so the auth callback route's
+    // diagnostic logs survive `pnpm build && pnpm start` for local debugging.
+    removeConsole:
+      process.env.NODE_ENV === 'production' && process.env.DEBUG_AUTH !== '1',
   },
 
   // Image optimization settings
