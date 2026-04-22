@@ -21,9 +21,14 @@ function TableSkeleton() {
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; error_description?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    error_description?: string;
+    reason?: string;
+    message?: string;
+  }>;
 }) {
-  const { error, error_description } = await searchParams;
+  const { error, error_description, reason, message } = await searchParams;
   const [coursesDataDynamic, coursesDataStatic, globalStats] = await Promise.all([
     getCourseStats(),
     getCoursesDataStatic(),
@@ -53,7 +58,14 @@ export default async function HomePage({
 
   return (
     <>
-      {error && <AuthErrorNotification error={error} errorDescription={error_description} />}
+      {error && (
+        <AuthErrorNotification
+          error={error}
+          errorDescription={error_description}
+          reason={reason}
+          message={message}
+        />
+      )}
       {/* Hero renders immediately on server - no JS required */}
       <HeroSection stats={stats} />
 
