@@ -28,8 +28,8 @@ import { NextResponse } from 'next/server';
 
 /**
  * Build the failure redirect for the home page. Encodes a machine-readable
- * `reason` so the next sign-in attempt is conclusive without needing logs —
- * `removeConsole: true` strips server-side console.error in prod.
+ * `reason` so a sign-in attempt is conclusive from the URL alone, without
+ * needing server logs.
  */
 function failureRedirect(
   origin: string,
@@ -37,8 +37,7 @@ function failureRedirect(
     | 'no_code'
     | 'exchange_failed'
     | 'no_session'
-    | 'no_pending_cookies'
-    | 'oauth_error',
+    | 'no_pending_cookies',
   extras?: Record<string, string>
 ) {
   const params = new URLSearchParams({ error: 'auth_callback_error', reason });
@@ -98,31 +97,30 @@ export async function GET(request: Request) {
 
   const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
-  // Full diagnostic dump, only when DEBUG_AUTH=1. `removeConsole` is
-  // wired in next.config.js to preserve console.* when that flag is set,
-  // so these lines survive `pnpm build && pnpm start` for local repro.
-  if (process.env.DEBUG_AUTH === '1') {
-    console.log('[auth/callback] exchange result', {
-      error: error?.message,
-      errorStatus: (error as { status?: number } | null)?.status,
-      hasSession: !!data?.session,
-      hasUser: !!data?.user,
-      userId: data?.user?.id,
-      pendingCookieCount: pendingCookies.length,
-      pendingCookieNames: pendingCookies.map((c) => c.name),
-      requestCookieNames: cookieStore.getAll().map((c) => c.name),
-      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-      // Don't log full key — just enough to tell legacy anon vs sb_publishable_*
-      publishableKeyPrefix: (
-        process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? ''
-      ).slice(0, 20),
-      forwardedHost: request.headers.get('x-forwarded-host'),
-      origin,
-    });
-  }
+  // Diagnostic context shared by all abnormal branches. Logged to Vercel via
+  // console.error (preserved by next.config.js `removeConsole.exclude`) so a
+  // failing sign-in is fully explained by the URL `reason=` param plus one log
+  // line — no need to turn on DEBUG_AUTH or repro locally.
+  const diag = {
+    hasSession: !!data?.session,
+    hasUser: !!data?.user,
+    pendingCookieCount: pendingCookies.length,
+    pendingCookieNames: pendingCookies.map((c) => c.name),
+    requestCookieNames: cookieStore.getAll().map((c) => c.name),
+    // Just enough of the key to distinguish legacy anon vs sb_publishable_*
+    publishableKeyPrefix: (
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? ''
+    ).slice(0, 20),
+    forwardedHost: request.headers.get('x-forwarded-host'),
+    origin,
+  };
 
   if (error) {
-    console.error('[auth/callback] exchangeCodeForSession failed:', error.message);
+    console.error('[auth/callback] reason=exchange_failed', {
+      ...diag,
+      message: error.message,
+      status: (error as { status?: number } | null)?.status,
+    });
     return clearVerifierAndReturn(
       cookieStore,
       failureRedirect(origin, 'exchange_failed', {
@@ -132,6 +130,7 @@ export async function GET(request: Request) {
   }
 
   if (!data?.session) {
+    console.error('[auth/callback] reason=no_session', diag);
     return clearVerifierAndReturn(
       cookieStore,
       failureRedirect(origin, 'no_session')
@@ -139,6 +138,7 @@ export async function GET(request: Request) {
   }
 
   if (pendingCookies.length === 0) {
+    console.error('[auth/callback] reason=no_pending_cookies', diag);
     return clearVerifierAndReturn(
       cookieStore,
       failureRedirect(origin, 'no_pending_cookies')
@@ -184,24 +184,6 @@ export async function GET(request: Request) {
       ...(cookieDomain ? { domain: cookieDomain } : {}),
     });
   }
-
-  // Short-lived, non-HttpOnly diagnostic cookie. Client JS can read it to
-  // confirm which branch ran, which host we redirected to, and how many
-  // session cookies we attempted to set. Expires in 60s — purely diagnostic.
-  const debugPayload = JSON.stringify({
-    host: publicHost,
-    usedForwardedHost: Boolean(forwardedHost),
-    cookieDomain: cookieDomain ?? null,
-    pendingCookieCount: pendingCookies.length,
-    ts: Date.now(),
-  });
-  response.cookies.set('auth_debug', debugPayload, {
-    path: '/',
-    maxAge: 60,
-    httpOnly: false,
-    sameSite: 'lax',
-    ...(cookieDomain ? { domain: cookieDomain } : {}),
-  });
 
   return response;
 }
