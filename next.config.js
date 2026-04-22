@@ -45,11 +45,14 @@ module.exports = {
   },
 
   compiler: {
-    // Strip console.* in prod for performance/security, UNLESS DEBUG_AUTH=1
-    // is set — in which case preserve console.* so the auth callback route's
-    // diagnostic logs survive `pnpm build && pnpm start` for local debugging.
+    // Strip console.log/warn/info/debug in prod for performance and to avoid
+    // leaking internal state, but KEEP console.error so real errors reach
+    // Vercel's runtime logs. Set DEBUG_AUTH=1 to preserve all console.* for
+    // local `pnpm build && pnpm start` repro of auth flows.
     removeConsole:
-      process.env.NODE_ENV === 'production' && process.env.DEBUG_AUTH !== '1',
+      process.env.NODE_ENV === 'production' && process.env.DEBUG_AUTH !== '1'
+        ? { exclude: ['error'] }
+        : false,
   },
 
   // Image optimization settings
