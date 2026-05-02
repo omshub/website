@@ -71,7 +71,7 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
     setLoadingProvider('magic');
 
     try {
-      const success = await authContext.signInWithMagicLink(email);
+      const success = await authContext.signInWithEmailOtp(email);
       if (success) {
         // Show OTP input only if email was sent successfully
         setOtpEmail(email);
@@ -276,7 +276,7 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
                 </Box>
 
                 <Text size="sm" c="dimmed" ta="center">
-                  Enter the code from your email, or click the magic link
+                  Enter the code from your email
                 </Text>
               </Stack>
 
@@ -389,10 +389,10 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
                   },
                 }}
               >
-                Send Magic Link
+                Email me a code
               </Button>
               <Text size="xs" c="dimmed" ta="center">
-                We'll email you a sign-in link and a one-time code.
+                We'll email you a one-time code to sign in.
               </Text>
             </Stack>
 

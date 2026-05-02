@@ -13,7 +13,7 @@ type TAuthContext = {
   session: TNullable<Session>;
   loading: boolean;
   signInWithProvider: (provider: 'google' | 'github') => Promise<void>;
-  signInWithMagicLink: (email: string) => Promise<boolean>;
+  signInWithEmailOtp: (email: string) => Promise<boolean>;
   logout: () => Promise<void>;
 };
 
@@ -136,18 +136,13 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
     }
   };
 
-  const signInWithMagicLink = async (email: string): Promise<boolean> => {
+  const signInWithEmailOtp = async (email: string): Promise<boolean> => {
     const supabase = getClient();
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+    const { error } = await supabase.auth.signInWithOtp({ email });
 
     if (error) {
       notifyError({
-        title: 'Magic link failed',
+        title: 'Failed to send code',
         message: error.message,
       });
       return false;
@@ -161,7 +156,7 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
         : '';
 
     notifySuccess({
-      title: 'Magic Link Sent!',
+      title: 'Code Sent!',
       message: `Check your inbox at ${email}.${additionalInstructions}`,
       autoClose: 8000,
     });
@@ -183,7 +178,7 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
         session,
         loading,
         signInWithProvider,
-        signInWithMagicLink,
+        signInWithEmailOtp,
         logout,
       }}
     >
