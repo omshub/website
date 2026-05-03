@@ -5,20 +5,13 @@ import type { Database } from './database.types';
 // so they survive www <-> apex navigations on the canonical production host.
 // Return undefined for all other environments so the browser uses host-only
 // semantics (correct for localhost, Vercel preview URLs, and IP literals).
-function getCookieDomain(): string | undefined {
-  if (typeof window === 'undefined') return undefined;
-  const host = window.location.hostname;
-  // localhost / IPs / Vercel preview domains — use host-only cookies
-  if (
-    host === 'localhost' ||
-    /^\d+\.\d+\.\d+\.\d+$/.test(host) ||
-    host.endsWith('.vercel.app')
-  ) {
-    return undefined;
+export function getCookieDomain(hostname?: string): string | undefined {
+  if (typeof window === 'undefined' && !hostname) return undefined;
+  const host = (hostname ?? window.location.hostname).toLowerCase();
+  if (host === 'omshub.org' || host === 'www.omshub.org') {
+    return 'omshub.org';
   }
-  // Strip leading subdomain (e.g. www.omshub.org -> omshub.org)
-  const parts = host.split('.');
-  return parts.length > 2 ? parts.slice(-2).join('.') : host;
+  return undefined;
 }
 
 export function createClient() {

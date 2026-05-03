@@ -63,13 +63,29 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
   useEffect(() => {
     const supabase = getClient();
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      previousUserRef.current = session?.user ?? null;
-      setLoading(false);
-    });
+    // Get initial session. If local auth state is corrupt/stale, fail closed
+    // to anonymous and ask the server cleanup route to expire any leftover
+    // Supabase cookies rather than leaving the app permanently "loading".
+    supabase.auth
+      .getSession()
+      .then(({ data: { session }, error }) => {
+        if (error) {
+          void fetch('/auth/logout', { method: 'POST' }).catch(() => {});
+        }
+        const safeSession = error ? null : session;
+        setSession(safeSession);
+        setUser(safeSession?.user ?? null);
+        previousUserRef.current = safeSession?.user ?? null;
+      })
+      .catch(() => {
+        void fetch('/auth/logout', { method: 'POST' }).catch(() => {});
+        setSession(null);
+        setUser(null);
+        previousUserRef.current = null;
+      })
+      .finally(() => {
+        setLoading(false);
+      });
 
     // Listen for auth changes - subscription should only be created once
     const {
@@ -165,7 +181,11 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
 
   const logout = async () => {
     const supabase = getClient();
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } finally {
+      await fetch('/auth/logout', { method: 'POST' }).catch(() => {});
+    }
     setUser(null);
     setSession(null);
     router.push('/');

@@ -47,13 +47,74 @@ function failureRedirect(
   return NextResponse.redirect(`${origin}/?${params}`);
 }
 
+function getPublicOrigin(request: Request, fallbackOrigin: string) {
+  const forwardedHost = getTrustedForwardedHost(request);
+  if (!forwardedHost) return fallbackOrigin;
+
+  const forwardedProto = getForwardedProto(request);
+  return `${forwardedProto}://${forwardedHost}`;
+}
+
+function getForwardedProto(request: Request) {
+  const proto = request.headers.get('x-forwarded-proto');
+  return proto === 'http' || proto === 'https' ? proto : 'https';
+}
+
+function getTrustedForwardedHost(request: Request) {
+  const forwardedHost = request.headers.get('x-forwarded-host')?.split(',')[0]?.trim();
+  if (!forwardedHost) return null;
+
+  const host = forwardedHost.replace(/:\d+$/, '').toLowerCase();
+  const vercelUrl = process.env.VERCEL_URL?.toLowerCase();
+  const vercelBranchUrl = process.env.VERCEL_BRANCH_URL?.toLowerCase();
+  const isLocalHost = host === 'localhost' || /^\d+\.\d+\.\d+\.\d+$/.test(host);
+  const isProjectPreviewHost =
+    host.startsWith('website-') && host.endsWith('.vercel.app');
+  const isCurrentVercelPreviewHost =
+    host.endsWith('.vercel.app') &&
+    (host === vercelUrl || host === vercelBranchUrl);
+  if (
+    isLocalHost ||
+    isProjectPreviewHost ||
+    isCurrentVercelPreviewHost ||
+    host === 'omshub.org' ||
+    host === 'www.omshub.org'
+  ) {
+    return forwardedHost;
+  }
+  return null;
+}
+
+function getCookieDomainForHost(host: string) {
+  const publicHost = host.replace(/:\d+$/, '').toLowerCase();
+  const isLocalHost =
+    publicHost === 'localhost' || /^\d+\.\d+\.\d+\.\d+$/.test(publicHost);
+  const isProjectPreviewHost =
+    publicHost.startsWith('website-') && publicHost.endsWith('.vercel.app');
+  if (isLocalHost || isProjectPreviewHost) return undefined;
+  if (publicHost === 'omshub.org' || publicHost === 'www.omshub.org') {
+    return 'omshub.org';
+  }
+  return undefined;
+}
+
+function getCookieDomainForRequest(request: Request, fallbackOrigin: string) {
+  const forwardedHost = getTrustedForwardedHost(request);
+  const host = forwardedHost ?? new URL(fallbackOrigin).host;
+  return getCookieDomainForHost(host);
+}
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
+  const publicOrigin = getPublicOrigin(request, origin);
   const code = searchParams.get('code');
 
   // Reject non-relative paths (including //host bypasses) to prevent open-redirect.
   const rawNext = searchParams.get('next') ?? '/';
   const next = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/';
+
+  // cookieStore is needed for both the success and error paths below.
+  const cookieStore = await cookies();
 
   // GoTrue redirects here with error params when OAuth fails server-side.
   const oauthError = searchParams.get('error');
@@ -61,14 +122,21 @@ export async function GET(request: Request) {
     const params = new URLSearchParams({ error: oauthError });
     const desc = searchParams.get('error_description');
     if (desc) params.set('error_description', desc);
-    return NextResponse.redirect(`${origin}/?${params}`);
+    return clearVerifierAndReturn(
+      cookieStore,
+      request,
+      origin,
+      NextResponse.redirect(`${publicOrigin}/?${params}`)
+    );
   }
 
-  // cookieStore is needed for both the success and error paths below.
-  const cookieStore = await cookies();
-
   if (!code) {
-    return failureRedirect(origin, 'no_code');
+    return clearVerifierAndReturn(
+      cookieStore,
+      request,
+      origin,
+      failureRedirect(publicOrigin, 'no_code')
+    );
   }
 
   // Buffer cookies from setAll() so we can explicitly stamp them onto the
@@ -95,7 +163,27 @@ export async function GET(request: Request) {
     }
   );
 
-  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+  let exchangeResult: Awaited<ReturnType<typeof supabase.auth.exchangeCodeForSession>>;
+  try {
+    exchangeResult = await supabase.auth.exchangeCodeForSession(code);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unexpected token exchange failure';
+    console.error('[auth/callback] reason=exchange_failed', {
+      message,
+      forwardedHost: request.headers.get('x-forwarded-host'),
+      origin,
+    });
+    return clearVerifierAndReturn(
+      cookieStore,
+      request,
+      origin,
+      failureRedirect(publicOrigin, 'exchange_failed', {
+        message: message.slice(0, 120),
+      })
+    );
+  }
+
+  const { data, error } = exchangeResult;
 
   // Diagnostic context shared by all abnormal branches. Logged to Vercel via
   // console.error (preserved by next.config.js `removeConsole.exclude`) so a
@@ -123,7 +211,9 @@ export async function GET(request: Request) {
     });
     return clearVerifierAndReturn(
       cookieStore,
-      failureRedirect(origin, 'exchange_failed', {
+      request,
+      origin,
+      failureRedirect(publicOrigin, 'exchange_failed', {
         message: error.message.slice(0, 120),
       })
     );
@@ -133,7 +223,9 @@ export async function GET(request: Request) {
     console.error('[auth/callback] reason=no_session', diag);
     return clearVerifierAndReturn(
       cookieStore,
-      failureRedirect(origin, 'no_session')
+      request,
+      origin,
+      failureRedirect(publicOrigin, 'no_session')
     );
   }
 
@@ -141,7 +233,9 @@ export async function GET(request: Request) {
     console.error('[auth/callback] reason=no_pending_cookies', diag);
     return clearVerifierAndReturn(
       cookieStore,
-      failureRedirect(origin, 'no_pending_cookies')
+      request,
+      origin,
+      failureRedirect(publicOrigin, 'no_pending_cookies')
     );
   }
 
@@ -153,9 +247,8 @@ export async function GET(request: Request) {
   // `x-forwarded-proto: http`, and hardcoding https there causes
   // ERR_SSL_PROTOCOL_ERROR. On Vercel prod, x-forwarded-proto is always
   // `https`, so behavior is unchanged there.
-  const forwardedHost = request.headers.get('x-forwarded-host');
-  const forwardedProto =
-    request.headers.get('x-forwarded-proto') ?? 'https';
+  const forwardedHost = getTrustedForwardedHost(request);
+  const forwardedProto = getForwardedProto(request);
 
   const redirectUrl = forwardedHost
     ? `${forwardedProto}://${forwardedHost}${next}`
@@ -165,17 +258,14 @@ export async function GET(request: Request) {
   // to the domain the browser is on, not whatever internal Vercel host
   // answered the request.
   //
-  // Dropping the `www.` prefix scopes the cookie to the registrable domain
-  // (".omshub.org") so a session set on www.omshub.org is also valid on the
-  // bare apex — eliminates the www-vs-apex drift that has repeatedly broken
-  // this flow (#830, #832, #833, #835).
+  // Scope production cookies to omshub.org so a session set on www.omshub.org
+  // is also valid on the bare apex — eliminates the www-vs-apex drift that has
+  // repeatedly broken this flow (#830, #832, #833, #835).
   //
-  // Leave `domain` unset for localhost / IP literals — some browsers reject
-  // `Domain=localhost`, and Host-only is the right scope for local dev anyway.
-  const publicHost = (forwardedHost ?? new URL(origin).host).replace(/:\d+$/, '');
-  const isLocalHost =
-    publicHost === 'localhost' || /^\d+\.\d+\.\d+\.\d+$/.test(publicHost);
-  const cookieDomain = isLocalHost ? undefined : publicHost.replace(/^www\./, '');
+  // Leave `domain` unset for localhost, IP literals, Vercel previews, and
+  // unknown hosts. Host-only is the right scope outside the canonical prod
+  // domains and matches the browser client.
+  const cookieDomain = getCookieDomainForRequest(request, origin);
 
   const response = NextResponse.redirect(redirectUrl);
   for (const { name, value, options } of pendingCookies) {
@@ -185,18 +275,29 @@ export async function GET(request: Request) {
     });
   }
 
-  return response;
+  return clearVerifierAndReturn(cookieStore, request, origin, response);
 }
 
 function clearVerifierAndReturn(
   cookieStore: Awaited<ReturnType<typeof cookies>>,
+  request: Request,
+  origin: string,
   response: NextResponse
 ) {
+  const cookieDomain = getCookieDomainForRequest(request, origin);
+
   // Clear the PKCE verifier so the next attempt starts fresh.
   // Avoid clearing all sb-* cookies — a valid parallel session should survive.
   for (const c of cookieStore.getAll()) {
     if (c.name.endsWith('-auth-token-code-verifier')) {
       response.cookies.set(c.name, '', { maxAge: 0, path: '/' });
+      if (cookieDomain) {
+        response.cookies.set(c.name, '', {
+          domain: cookieDomain,
+          maxAge: 0,
+          path: '/',
+        });
+      }
     }
   }
   return response;

@@ -77,7 +77,7 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
         setOtpEmail(email);
         setOtpSent(true);
       }
-      // If not successful, error notification is shown by signInWithMagicLink
+      // If not successful, error notification is shown by signInWithEmailOtp
     } catch {
       notifyError({
         title: 'Error',

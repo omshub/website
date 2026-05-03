@@ -26,6 +26,8 @@ const customJestConfig = {
     'firebase/storage': '<rootDir>/src/lib/firebase/__mocks__/fbStorage.ts',
   },
   moduleDirectories: ['node_modules', '<rootDir>/'],
+  testPathIgnorePatterns: ['<rootDir>/.worktrees/', '<rootDir>/.next/'],
+  modulePathIgnorePatterns: ['<rootDir>/.worktrees/', '<rootDir>/.next/'],
   testEnvironment: 'jest-environment-jsdom',
 };
 

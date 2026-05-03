@@ -1,5 +1,8 @@
 .yarn
 .next
+.worktrees
+.claude
+.playwright-mcp
 dist
 node_modules
 out
