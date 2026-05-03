@@ -37,6 +37,7 @@ describe('post-deploy auth check helpers', () => {
     expect(isAllowedDeploymentHost('omshub.org')).toBe(true);
     expect(isAllowedDeploymentHost('www.omshub.org')).toBe(true);
     expect(isAllowedDeploymentHost('website-git-fix-email-otp-auth-cookies-omshub.vercel.app')).toBe(true);
+    expect(isAllowedDeploymentHost('website-a0mbbkjc7-omshub.vercel.app')).toBe(true);
   });
 
   it('resolves allowed deployments to fixed origins', () => {
@@ -48,6 +49,9 @@ describe('post-deploy auth check helpers', () => {
         'https://website-git-fix-email-otp-auth-cookies-omshub.vercel.app/path?q=1'
       )
     ).toBe('https://website-git-fix-email-otp-auth-cookies-omshub.vercel.app');
+    expect(resolveAllowedDeploymentOrigin('https://website-a0mbbkjc7-omshub.vercel.app')).toBe(
+      'https://website-git-fix-email-otp-auth-cookies-omshub.vercel.app'
+    );
   });
 
   it('rejects untrusted deployment hosts before making auth callback requests', async () => {

@@ -28,7 +28,8 @@ function isAllowedDeploymentHost(hostname) {
   const host = hostname.toLowerCase();
   return (
     isProductionHost(host) ||
-    host === new URL(DEPLOYMENT_ORIGINS.preview).hostname
+    host === new URL(DEPLOYMENT_ORIGINS.preview).hostname ||
+    /^website-[a-z0-9]+-omshub\.vercel\.app$/.test(host)
   );
 }
 
