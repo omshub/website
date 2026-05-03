@@ -49,6 +49,9 @@ next-env.d.ts
 # user preference files
 .idea/
 .vscode/
+.claude/
+.playwright-mcp/
+.worktrees/
 
 # generated
 /storybook-static

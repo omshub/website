@@ -1,24 +1,13 @@
-import { Suspense } from 'react';
-import { Container, Skeleton, Title, Text, Stack, Box, Badge } from '@mantine/core';
+import { Container, Title, Text, Stack, Box, Badge } from '@mantine/core';
 import { getCoursesDataStatic, getCourseStats } from '@/lib/staticData';
 import { mapDynamicCoursesDataToCourses } from '@/lib/utilities';
-import CoursesTable from '../_components/CoursesTable';
+import LazyCoursesTable from '../_components/LazyCoursesTable';
 import { GT_COLORS } from '@/lib/theme';
 
 export const metadata = {
   title: 'All Courses | OMSHub',
   description: 'Browse all Georgia Tech OMS courses with reviews, ratings, difficulty scores, and workload information.',
 };
-
-// Loading skeleton for the table
-function TableSkeleton() {
-  return (
-    <Container size="xl" py="xl">
-      <Skeleton height={32} width={200} mb="md" />
-      <Skeleton height={400} radius="lg" />
-    </Container>
-  );
-}
 
 export default async function CoursesPage() {
   const [coursesDataDynamic, coursesDataStatic] = await Promise.all([
@@ -59,10 +48,7 @@ export default async function CoursesPage() {
         </Container>
       </Box>
 
-      {/* Table loads with Suspense for streaming */}
-      <Suspense fallback={<TableSkeleton />}>
-        <CoursesTable allCourseData={coursesData} />
-      </Suspense>
+      <LazyCoursesTable allCourseData={coursesData} />
     </Box>
   );
 }
