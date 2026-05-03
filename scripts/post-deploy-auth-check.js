@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-const http = require('node:http');
 const https = require('node:https');
 
 const DEFAULT_TIMEOUT_MS = 15000;
@@ -32,16 +31,25 @@ function assertAllowedDeploymentHost(baseUrl) {
   }
 }
 
+function assertAllowedRequestTarget(target) {
+  if (target.protocol !== 'https:') {
+    throw new Error(`Unsupported deployment protocol: ${target.protocol}`);
+  }
+  if (!isAllowedDeploymentHost(target.hostname)) {
+    throw new Error(`Unsupported deployment host: ${target.hostname}`);
+  }
+}
+
 function expectedLocation(baseUrl, pathAndSearch) {
   return `${baseUrl}${pathAndSearch}`;
 }
 
 async function fetchNoFollow(url, options = {}) {
   const target = new URL(url);
-  const transport = target.protocol === 'http:' ? http : https;
+  assertAllowedRequestTarget(target);
 
   return await new Promise((resolve, reject) => {
-    const req = transport.request(
+    const req = https.request(
       target,
       {
         method: options.method ?? 'GET',
@@ -201,6 +209,7 @@ if (require.main === module) {
 
 module.exports = {
   assertAllowedDeploymentHost,
+  assertAllowedRequestTarget,
   assertRedirect,
   assertRedirectStartsWith,
   assertVerifierCookieCleared,

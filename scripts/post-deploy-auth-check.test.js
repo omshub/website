@@ -45,6 +45,9 @@ describe('post-deploy auth check helpers', () => {
     await expect(runAuthCallbackChecks('https://example.com')).rejects.toThrow(
       'Unsupported deployment host'
     );
+    await expect(runAuthCallbackChecks('http://omshub.org')).rejects.toThrow(
+      'Unsupported deployment protocol'
+    );
   });
 
   it('allows host-only verifier clear cookies on previews', () => {
