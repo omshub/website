@@ -3,6 +3,11 @@
 const https = require('node:https');
 
 const DEFAULT_TIMEOUT_MS = 15000;
+const DEPLOYMENT_ORIGINS = {
+  production: 'https://omshub.org',
+  productionWww: 'https://www.omshub.org',
+  preview: 'https://website-git-fix-email-otp-auth-cookies-omshub.vercel.app',
+};
 
 function normalizeBaseUrl(value) {
   if (!value) throw new Error('Deployment URL is required');
@@ -21,14 +26,31 @@ function isProductionHost(hostname) {
 
 function isAllowedDeploymentHost(hostname) {
   const host = hostname.toLowerCase();
-  return isProductionHost(host) || /^website(?:-[a-z0-9]+)*-omshub\.vercel\.app$/.test(host);
+  return (
+    isProductionHost(host) ||
+    host === new URL(DEPLOYMENT_ORIGINS.preview).hostname
+  );
 }
 
-function assertAllowedDeploymentHost(baseUrl) {
-  const { hostname } = new URL(baseUrl);
+function resolveAllowedDeploymentOrigin(value) {
+  const baseUrl = normalizeBaseUrl(value);
+  const { hostname, protocol } = new URL(baseUrl);
+
+  if (protocol !== 'https:') {
+    throw new Error(`Unsupported deployment protocol: ${protocol}`);
+  }
+
   if (!isAllowedDeploymentHost(hostname)) {
     throw new Error(`Unsupported deployment host: ${hostname}`);
   }
+
+  if (hostname.toLowerCase() === 'omshub.org') {
+    return DEPLOYMENT_ORIGINS.production;
+  }
+  if (hostname.toLowerCase() === 'www.omshub.org') {
+    return DEPLOYMENT_ORIGINS.productionWww;
+  }
+  return DEPLOYMENT_ORIGINS.preview;
 }
 
 function assertAllowedRequestTarget(target) {
@@ -157,8 +179,7 @@ function protectionBypassHeaders() {
 }
 
 async function runAuthCallbackChecks(inputUrl = process.env.DEPLOYMENT_URL) {
-  const baseUrl = normalizeBaseUrl(inputUrl);
-  assertAllowedDeploymentHost(baseUrl);
+  const baseUrl = resolveAllowedDeploymentOrigin(inputUrl);
   const commonHeaders = protectionBypassHeaders();
 
   const providerError = await fetchNoFollow(
@@ -208,8 +229,8 @@ if (require.main === module) {
 }
 
 module.exports = {
-  assertAllowedDeploymentHost,
   assertAllowedRequestTarget,
+  DEPLOYMENT_ORIGINS,
   assertRedirect,
   assertRedirectStartsWith,
   assertVerifierCookieCleared,
@@ -219,5 +240,6 @@ module.exports = {
   isAllowedDeploymentHost,
   isProductionHost,
   normalizeBaseUrl,
+  resolveAllowedDeploymentOrigin,
   runAuthCallbackChecks,
 };

@@ -4,6 +4,7 @@ const {
   isAllowedDeploymentHost,
   isProductionHost,
   normalizeBaseUrl,
+  resolveAllowedDeploymentOrigin,
   runAuthCallbackChecks,
 } = require('./post-deploy-auth-check');
 
@@ -35,11 +36,22 @@ describe('post-deploy auth check helpers', () => {
   it('allows production and OMSHub Vercel deployment hosts', () => {
     expect(isAllowedDeploymentHost('omshub.org')).toBe(true);
     expect(isAllowedDeploymentHost('www.omshub.org')).toBe(true);
-    expect(isAllowedDeploymentHost('website-git-branch-omshub.vercel.app')).toBe(true);
+    expect(isAllowedDeploymentHost('website-git-fix-email-otp-auth-cookies-omshub.vercel.app')).toBe(true);
+  });
+
+  it('resolves allowed deployments to fixed origins', () => {
+    expect(resolveAllowedDeploymentOrigin('https://omshub.org/path?q=1')).toBe(
+      'https://omshub.org'
+    );
+    expect(
+      resolveAllowedDeploymentOrigin(
+        'https://website-git-fix-email-otp-auth-cookies-omshub.vercel.app/path?q=1'
+      )
+    ).toBe('https://website-git-fix-email-otp-auth-cookies-omshub.vercel.app');
   });
 
   it('rejects untrusted deployment hosts before making auth callback requests', async () => {
-    await expect(runAuthCallbackChecks('http://127.0.0.1:3000')).rejects.toThrow(
+    await expect(runAuthCallbackChecks('https://127.0.0.1:3000')).rejects.toThrow(
       'Unsupported deployment host'
     );
     await expect(runAuthCallbackChecks('https://example.com')).rejects.toThrow(
