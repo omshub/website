@@ -1,8 +1,10 @@
 const {
   assertVerifierCookieCleared,
   describePlatformBlock,
+  isAllowedDeploymentHost,
   isProductionHost,
   normalizeBaseUrl,
+  runAuthCallbackChecks,
 } = require('./post-deploy-auth-check');
 
 function makeResponse(setCookie, status = 200, extraHeaders = {}) {
@@ -28,6 +30,21 @@ describe('post-deploy auth check helpers', () => {
   it('detects production hosts case-insensitively', () => {
     expect(isProductionHost('WWW.OMSHUB.ORG')).toBe(true);
     expect(isProductionHost('website-git-branch-omshub.vercel.app')).toBe(false);
+  });
+
+  it('allows production and OMSHub Vercel deployment hosts', () => {
+    expect(isAllowedDeploymentHost('omshub.org')).toBe(true);
+    expect(isAllowedDeploymentHost('www.omshub.org')).toBe(true);
+    expect(isAllowedDeploymentHost('website-git-branch-omshub.vercel.app')).toBe(true);
+  });
+
+  it('rejects untrusted deployment hosts before making auth callback requests', async () => {
+    await expect(runAuthCallbackChecks('http://127.0.0.1:3000')).rejects.toThrow(
+      'Unsupported deployment host'
+    );
+    await expect(runAuthCallbackChecks('https://example.com')).rejects.toThrow(
+      'Unsupported deployment host'
+    );
   });
 
   it('allows host-only verifier clear cookies on previews', () => {

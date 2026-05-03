@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: ['main', 'dev']
 
+permissions:
+  contents: read
+
 jobs:
   test-lint-build:
     name: Test, lint, and build

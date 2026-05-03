@@ -3,6 +3,9 @@ name: Post Deployment Checks
 on:
   deployment_status:
 
+permissions:
+  contents: read
+
 jobs:
   auth-callback:
     name: Auth callback smoke check

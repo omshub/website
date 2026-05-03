@@ -20,6 +20,18 @@ function isProductionHost(hostname) {
   return host === 'omshub.org' || host === 'www.omshub.org';
 }
 
+function isAllowedDeploymentHost(hostname) {
+  const host = hostname.toLowerCase();
+  return isProductionHost(host) || /^website(?:-[a-z0-9]+)*-omshub\.vercel\.app$/.test(host);
+}
+
+function assertAllowedDeploymentHost(baseUrl) {
+  const { hostname } = new URL(baseUrl);
+  if (!isAllowedDeploymentHost(hostname)) {
+    throw new Error(`Unsupported deployment host: ${hostname}`);
+  }
+}
+
 function expectedLocation(baseUrl, pathAndSearch) {
   return `${baseUrl}${pathAndSearch}`;
 }
@@ -138,6 +150,7 @@ function protectionBypassHeaders() {
 
 async function runAuthCallbackChecks(inputUrl = process.env.DEPLOYMENT_URL) {
   const baseUrl = normalizeBaseUrl(inputUrl);
+  assertAllowedDeploymentHost(baseUrl);
   const commonHeaders = protectionBypassHeaders();
 
   const providerError = await fetchNoFollow(
@@ -187,12 +200,14 @@ if (require.main === module) {
 }
 
 module.exports = {
+  assertAllowedDeploymentHost,
   assertRedirect,
   assertRedirectStartsWith,
   assertVerifierCookieCleared,
   describePlatformBlock,
   expectedLocation,
   getSetCookie,
+  isAllowedDeploymentHost,
   isProductionHost,
   normalizeBaseUrl,
   runAuthCallbackChecks,
