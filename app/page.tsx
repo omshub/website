@@ -1,22 +1,10 @@
-import { Suspense } from 'react';
-import { Container, Skeleton } from '@mantine/core';
 import { getCoursesDataStatic, getCourseStats, getGlobalStats } from '@/lib/staticData';
 import { mapDynamicCoursesDataToCourses } from '@/lib/utilities';
 import { courseFields } from '@/lib/constants';
 import { mapPayloadToArray } from '@/utilities';
 import HeroSection from './_components/HeroSection';
-import CoursesTable from './_components/CoursesTable';
+import LazyCoursesTable from './_components/LazyCoursesTable';
 import AuthErrorNotification from './_components/AuthErrorNotification';
-
-// Loading skeleton for the table
-function TableSkeleton() {
-  return (
-    <Container size="xl" py="xl">
-      <Skeleton height={32} width={200} mb="md" />
-      <Skeleton height={400} radius="lg" />
-    </Container>
-  );
-}
 
 export default async function HomePage({
   searchParams,
@@ -69,10 +57,7 @@ export default async function HomePage({
       {/* Hero renders immediately on server - no JS required */}
       <HeroSection stats={stats} />
 
-      {/* Table loads with Suspense for streaming */}
-      <Suspense fallback={<TableSkeleton />}>
-        <CoursesTable allCourseData={coursesData} />
-      </Suspense>
+      <LazyCoursesTable allCourseData={coursesData} />
     </>
   );
 }

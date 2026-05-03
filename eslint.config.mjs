@@ -8,6 +8,7 @@ const eslintConfig = tseslint.config(
   {
     ignores: [
       '.next/**',
+      '.worktrees/**',
       'node_modules/**',
       'out/**',
       'storybook-static/**',
