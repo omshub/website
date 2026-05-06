@@ -1,5 +1,5 @@
 import {
-  // mapDynamicCoursesDataToCourses,
+  mapDynamicCoursesDataToCourses,
   extractEmailDomain,
   isGTEmail,
   isOutlookEmail,
@@ -10,7 +10,46 @@ describe('global utilities tests', () => {
   describe('mappers', () => {
     describe('mapDynamicCoursesDataToCourses()', () => {
       it('merges dynamic course stats with static data to create full course model', () => {
-        // TODO
+        const courses = mapDynamicCoursesDataToCourses(
+          {
+            'CS-6200': {
+              numReviews: 12,
+              avgWorkload: 14,
+              avgDifficulty: 3.5,
+              avgOverall: 4.2,
+              avgStaffSupport: 4,
+              reviewsCountsByYearSem: { 2025: { fa: 2 } },
+            },
+          } as any,
+          {
+            'CS-6200': { name: 'Graduate Introduction to Operating Systems' },
+            'CS-9999': { name: 'Deprecated Course', isDeprecated: true },
+            'CS-6250': { name: 'Computer Networks' },
+          } as any
+        );
+
+        expect(courses).toEqual({
+          'CS-6200': {
+            courseId: 'CS-6200',
+            name: 'Graduate Introduction to Operating Systems',
+            numReviews: 12,
+            avgWorkload: 14,
+            avgDifficulty: 3.5,
+            avgOverall: 4.2,
+            avgStaffSupport: 4,
+            reviewsCountsByYearSem: { 2025: { fa: 2 } },
+          },
+          'CS-6250': {
+            courseId: 'CS-6250',
+            name: 'Computer Networks',
+            numReviews: 0,
+            avgWorkload: null,
+            avgDifficulty: null,
+            avgOverall: null,
+            avgStaffSupport: null,
+            reviewsCountsByYearSem: {},
+          },
+        });
       });
     });
   });

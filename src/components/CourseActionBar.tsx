@@ -43,6 +43,40 @@ interface CourseActionBarProps {
   reviewCount?: number;
 }
 
+export const getCourseInfoText = (courseId: string, courseName: string, href: string) => {
+  return `${courseId}: ${courseName}\n${href}`;
+};
+
+export const getCourseMarkdown = (courseId: string, courseName: string, href: string) => {
+  return `**${courseId}**: ${courseName}\n[View Reviews](${href})`;
+};
+
+export const toggleBookmarkedCourses = (
+  bookmarkedCourses: string[],
+  courseId: string
+) => {
+  const isBookmarked = bookmarkedCourses.includes(courseId);
+  return isBookmarked
+    ? bookmarkedCourses.filter(id => id !== courseId)
+    : [...bookmarkedCourses, courseId];
+};
+
+export const scrollToRandomReview = (
+  reviews: NodeListOf<Element>,
+  random = Math.random()
+) => {
+  if (reviews.length === 0) {
+    return false;
+  }
+  const randomIndex = Math.floor(random * reviews.length);
+  reviews[randomIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  reviews[randomIndex].classList.add('highlight-review');
+  setTimeout(() => {
+    reviews[randomIndex].classList.remove('highlight-review');
+  }, 2000);
+  return true;
+};
+
 export default function CourseActionBar({
   courseId,
   courseName,
@@ -69,35 +103,18 @@ export default function CourseActionBar({
 
   const handleRandomReview = () => {
     const reviews = document.querySelectorAll('[data-review-card]');
-    if (reviews.length > 0) {
-      const randomIndex = Math.floor(Math.random() * reviews.length);
-      reviews[randomIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
-      // Add a brief highlight effect
-      reviews[randomIndex].classList.add('highlight-review');
-      setTimeout(() => {
-        reviews[randomIndex].classList.remove('highlight-review');
-      }, 2000);
-    } else {
+    if (!scrollToRandomReview(reviews)) {
       notifyNoReviews();
     }
   };
 
   const handleToggleBookmark = () => {
+    setBookmarkedCourses(toggleBookmarkedCourses(bookmarkedCourses, courseId));
     if (isBookmarked) {
-      setBookmarkedCourses(bookmarkedCourses.filter(id => id !== courseId));
       notifyBookmarkRemoved(courseId);
     } else {
-      setBookmarkedCourses([...bookmarkedCourses, courseId]);
       notifyBookmarkAdded(courseId);
     }
-  };
-
-  const getCourseInfoText = () => {
-    return `${courseId}: ${courseName}\n${window.location.href}`;
-  };
-
-  const getCourseMarkdown = () => {
-    return `**${courseId}**: ${courseName}\n[View Reviews](${window.location.href})`;
   };
 
   return (
@@ -221,7 +238,7 @@ export default function CourseActionBar({
                             </Menu.Item>
                           )}
                         </CopyButton>
-                        <CopyButton value={getCourseInfoText()}>
+                        <CopyButton value={getCourseInfoText(courseId, courseName, window.location.href)}>
                           {({ copied, copy }) => (
                             <Menu.Item
                               leftSection={copied ? <IconCheck size={14} color={GT_COLORS.canopyLime} /> : <IconClipboard size={14} />}
@@ -231,7 +248,7 @@ export default function CourseActionBar({
                             </Menu.Item>
                           )}
                         </CopyButton>
-                        <CopyButton value={getCourseMarkdown()}>
+                        <CopyButton value={getCourseMarkdown(courseId, courseName, window.location.href)}>
                           {({ copied, copy }) => (
                             <Menu.Item
                               leftSection={copied ? <IconCheck size={14} color={GT_COLORS.canopyLime} /> : <IconHash size={14} />}

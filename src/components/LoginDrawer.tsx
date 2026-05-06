@@ -32,6 +32,34 @@ interface LoginDrawerProps {
   onClose: () => void;
 }
 
+export const validateLoginEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+export const isCompleteOtpCode = (otpCode: string) => Boolean(otpCode && otpCode.length === 8);
+
+export const loginProviders: Array<{
+  name: 'google' | 'github';
+  displayName: string;
+  icon: typeof IconBrandGoogle;
+  color: string;
+  bg: string;
+  textColor: string;
+}> = [
+  { name: 'google', displayName: 'Google', icon: IconBrandGoogle, color: '#4285F4', bg: '#ffffff', textColor: '#1f1f1f' },
+  { name: 'github', displayName: 'GitHub', icon: IconBrandGithub, color: '#ffffff', bg: '#24292e', textColor: '#ffffff' },
+];
+
+export const verifyEmailOtp = async (email: string, otpCode: string) => {
+  const supabase = getClient();
+  return supabase.auth.verifyOtp({
+    email,
+    token: otpCode,
+    type: 'email',
+  });
+};
+
 export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
   const authContext = useAuth();
   const [email, setEmail] = useState('');
@@ -44,17 +72,12 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
   const [otpCode, setOtpCode] = useState('');
   const [otpEmail, setOtpEmail] = useState('');
 
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
   const handleMagicLink = async () => {
     if (!email) {
       setEmailError('Please enter your email address');
       return;
     }
-    if (!validateEmail(email)) {
+    if (!validateLoginEmail(email)) {
       setEmailError('Please enter a valid email address');
       return;
     }
@@ -90,7 +113,7 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
   };
 
   const handleVerifyOtp = async () => {
-    if (!otpCode || otpCode.length !== 8) {
+    if (!isCompleteOtpCode(otpCode)) {
       notifyError({
         title: 'Invalid Code',
         message: 'Please enter the 8-digit code from your email',
@@ -102,12 +125,7 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
     setLoadingProvider('otp');
 
     try {
-      const supabase = getClient();
-      const { error } = await supabase.auth.verifyOtp({
-        email: otpEmail,
-        token: otpCode,
-        type: 'email',
-      });
+      const { error } = await verifyEmailOtp(otpEmail, otpCode);
 
       if (error) {
         notifyError({
@@ -169,18 +187,6 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
       }, 1000);
     }
   };
-
-  const providers: Array<{
-    name: 'google' | 'github';
-    displayName: string;
-    icon: typeof IconBrandGoogle;
-    color: string;
-    bg: string;
-    textColor: string;
-  }> = [
-    { name: 'google', displayName: 'Google', icon: IconBrandGoogle, color: '#4285F4', bg: '#ffffff', textColor: '#1f1f1f' },
-    { name: 'github', displayName: 'GitHub', icon: IconBrandGithub, color: '#ffffff', bg: '#24292e', textColor: '#ffffff' },
-  ];
 
   return (
     <Drawer
@@ -400,7 +406,7 @@ export default function LoginDrawer({ opened, onClose }: LoginDrawerProps) {
 
             {/* Provider Buttons */}
             <Stack gap="sm">
-              {providers.map((provider) => (
+              {loginProviders.map((provider) => (
                 <Button
                   key={provider.name}
                   type="button"

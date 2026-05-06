@@ -1,12 +1,14 @@
 import { updateSession } from '../proxy';
+import { createServerClient } from '@supabase/ssr';
 
 const mockGetUser = jest.fn().mockResolvedValue({ data: { user: null }, error: null });
 
 jest.mock('@supabase/ssr', () => ({
-  createServerClient: jest.fn(() => ({
+  createServerClient: jest.fn((_url, _key, options) => ({
     auth: {
       getUser: mockGetUser,
     },
+    __options: options,
   })),
 }));
 
@@ -67,6 +69,26 @@ describe('updateSession()', () => {
       makeMockRequest([{ name: 'sb-abc123-auth-token', value: 'token' }])
     );
     expect(mockGetUser).toHaveBeenCalledTimes(1);
+  });
+
+  it('applies Supabase cookie writes to the request and response', async () => {
+    const request = makeMockRequest([{ name: 'sb-abc123-auth-token', value: 'token' }]);
+
+    await updateSession(request);
+    const options = (createServerClient as jest.Mock).mock.calls[0][2];
+    expect(options.cookies.getAll()).toEqual([
+      { name: 'sb-abc123-auth-token', value: 'token' },
+    ]);
+    options.cookies.setAll([
+      { name: 'sb-abc123-auth-token', value: 'new-token', options: { path: '/' } },
+    ]);
+
+    expect(request.cookies.set).toHaveBeenCalledWith('sb-abc123-auth-token', 'new-token');
+    expect(mockNextResponseCookies.set).toHaveBeenCalledWith(
+      'sb-abc123-auth-token',
+      'new-token',
+      { path: '/' }
+    );
   });
 
   it('calls getUser() for chunked session token cookies', async () => {
@@ -142,6 +164,23 @@ describe('updateSession()', () => {
     );
   });
 
+  it('does not clear auth-token cookies when getUser returns an error without a message', async () => {
+    mockGetUser.mockResolvedValueOnce({
+      data: { user: null },
+      error: { status: 500 },
+    });
+
+    await updateSession(
+      makeMockRequest([{ name: 'sb-abc123-auth-token', value: 'token' }])
+    );
+
+    expect(mockNextResponseCookies.set).not.toHaveBeenCalledWith(
+      'sb-abc123-auth-token',
+      '',
+      expect.objectContaining({ maxAge: 0, path: '/' })
+    );
+  });
+
   it('also clears production domain auth-token cookies for www/apex hosts', async () => {
     mockGetUser.mockResolvedValueOnce({
       data: { user: null },
@@ -200,6 +239,25 @@ describe('updateSession()', () => {
     );
   });
 
+  it('handles comma-separated forwarded hosts when clearing domain cookies', async () => {
+    mockGetUser.mockResolvedValueOnce({
+      data: { user: null },
+      error: { message: 'refresh token not found', status: 400 },
+    });
+
+    await updateSession(
+      makeMockRequest([{ name: 'sb-abc123-auth-token', value: 'token' }], {
+        headers: { 'x-forwarded-host': 'www.omshub.org, internal.vercel.test' },
+      })
+    );
+
+    expect(mockNextResponseCookies.set).toHaveBeenCalledWith(
+      'sb-abc123-auth-token',
+      '',
+      expect.objectContaining({ domain: 'omshub.org', maxAge: 0, path: '/' })
+    );
+  });
+
   it('does not let thrown auth refresh failures break public requests', async () => {
     mockGetUser.mockRejectedValueOnce({
       message: 'Invalid Refresh Token: Refresh Token Not Found',
@@ -217,6 +275,16 @@ describe('updateSession()', () => {
       '',
       expect.objectContaining({ maxAge: 0, path: '/' })
     );
+  });
+
+  it('rethrows unexpected auth refresh failures', async () => {
+    mockGetUser.mockRejectedValueOnce(new Error('network unavailable'));
+
+    await expect(
+      updateSession(
+        makeMockRequest([{ name: 'sb-abc123-auth-token', value: 'token' }])
+      )
+    ).rejects.toThrow('network unavailable');
   });
 
   it('returns a NextResponse', async () => {

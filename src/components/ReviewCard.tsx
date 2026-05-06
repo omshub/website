@@ -32,7 +32,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { mapSemesterIdToName } from '@/utilities';
 import { GT_COLORS, CSS_STAT_COLORS } from '@/lib/theme';
 import { toBlob } from 'html-to-image';
-import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Markdown from 'react-markdown';
 import ReviewForm from '@/components/ReviewForm';
 import HighlightedText from '@/components/HighlightedText';
@@ -41,6 +41,102 @@ interface ReviewCardProps extends Review {
   courseName?: string;
   searchHighlight?: string;
 }
+
+export const getSearchExcerpt = (body: string, searchHighlight = '') => {
+  if (!searchHighlight.trim() || !body) return null;
+
+  const lowerBody = body.toLowerCase();
+  const lowerSearch = searchHighlight.toLowerCase();
+  const matchIndex = lowerBody.indexOf(lowerSearch);
+
+  if (matchIndex === -1) return null;
+
+  const contextLength = 50;
+  const start = Math.max(0, matchIndex - contextLength);
+  const end = Math.min(body.length, matchIndex + searchHighlight.length + contextLength);
+
+  let excerpt = body.substring(start, end);
+  if (start > 0) excerpt = '...' + excerpt;
+  if (end < body.length) excerpt = excerpt + '...';
+
+  return excerpt;
+};
+
+export const getDifficultyLabel = (diff: number) => {
+  if (diff <= 2) return 'Easy';
+  if (diff <= 3) return 'Medium';
+  return 'Hard';
+};
+
+export const getDifficultyCssColor = (diff: number) => {
+  // Using CSS variables for automatic dark/light mode contrast
+  if (diff <= 2) return CSS_STAT_COLORS.lime;
+  if (diff <= 3) return CSS_STAT_COLORS.gold;
+  return CSS_STAT_COLORS.orange;
+};
+
+export const getOverallLabel = (rating: number) => {
+  if (rating >= 4) return 'Loved it';
+  if (rating >= 3) return 'Liked it';
+  if (rating >= 2) return 'Mixed';
+  return 'Disliked';
+};
+
+export const getOverallCssColor = (rating: number) => {
+  // Using CSS variables for automatic dark/light mode contrast
+  if (rating >= 4) return CSS_STAT_COLORS.lime;
+  if (rating >= 3) return CSS_STAT_COLORS.teal;
+  if (rating >= 2) return CSS_STAT_COLORS.gold;
+  return CSS_STAT_COLORS.orange;
+};
+
+export const copyReviewScreenshot = async (
+  element: HTMLElement | null,
+  clipboard: Pick<Clipboard, 'write'> = navigator.clipboard
+) => {
+  if (!element) return 'missing-element' as const;
+  try {
+    const blob = await toBlob(element, {
+      skipFonts: true,
+    });
+    if (!blob) {
+      notifyError({
+        title: 'Screenshot Failed',
+        message: 'Failed to capture review screenshot',
+      });
+      return 'missing-blob' as const;
+    }
+    const item = { [blob.type]: blob };
+    const clipboardItem = new ClipboardItem(item);
+    await clipboard.write([clipboardItem]);
+    notifySuccess({
+      title: 'Screenshot Captured!',
+      message: 'Review screenshot copied to clipboard',
+    });
+    return 'copied' as const;
+  } catch (error) {
+    console.error('Failed to copy to clipboard:', error);
+    notifyError({
+      title: 'Screenshot Failed',
+      message: 'Could not copy screenshot to clipboard',
+    });
+    return 'failed' as const;
+  }
+};
+
+export const deleteReviewRequest = async (reviewId: string) => {
+  const response = await fetch(`/api/reviews/${reviewId}`, {
+    method: 'DELETE',
+  });
+  if (response.ok) return true;
+
+  const error = await response.json();
+  notifyError({
+    title: 'Delete Failed',
+    message: error.error || 'Could not delete review',
+  });
+  return false;
+};
 
 const ReviewCard = ({
   reviewId,
@@ -96,71 +192,20 @@ const ReviewCard = ({
 
   // Extract a snippet around the search match
   const searchExcerpt = useMemo(() => {
-    if (!searchHighlight?.trim() || !body) return null;
-
-    const lowerBody = body.toLowerCase();
-    const lowerSearch = searchHighlight.toLowerCase();
-    const matchIndex = lowerBody.indexOf(lowerSearch);
-
-    if (matchIndex === -1) return null;
-
-    // Get context around the match (50 chars before and after)
-    const contextLength = 50;
-    const start = Math.max(0, matchIndex - contextLength);
-    const end = Math.min(body.length, matchIndex + searchHighlight.length + contextLength);
-
-    let excerpt = body.substring(start, end);
-    if (start > 0) excerpt = '...' + excerpt;
-    if (end < body.length) excerpt = excerpt + '...';
-
-    return excerpt;
+    return getSearchExcerpt(body, searchHighlight);
   }, [body, searchHighlight]);
 
   const handleCopyToClipboard = async () => {
-    if (!clipboardRef.current) return;
-    try {
-      const blob = await toBlob(clipboardRef.current, {
-        skipFonts: true,
-      });
-      if (!blob) {
-        notifyError({
-          title: 'Screenshot Failed',
-          message: 'Failed to capture review screenshot',
-        });
-        return;
-      }
-      const item = { [blob.type]: blob };
-      const clipboardItem = new ClipboardItem(item);
-      await navigator.clipboard.write([clipboardItem]);
-      notifySuccess({
-        title: 'Screenshot Captured!',
-        message: 'Review screenshot copied to clipboard',
-      });
-    } catch (error) {
-      console.error('Failed to copy to clipboard:', error);
-      notifyError({
-        title: 'Screenshot Failed',
-        message: 'Could not copy screenshot to clipboard',
-      });
-    }
+    await copyReviewScreenshot(clipboardRef.current);
   };
 
   const handleDeleteReview = async () => {
     setIsSubmitting(true);
     if (user && user.id && reviewId) {
       try {
-        const response = await fetch(`/api/reviews/${reviewId}`, {
-          method: 'DELETE',
-        });
-        if (response.ok) {
+        if (await deleteReviewRequest(reviewId)) {
           closeDeleteModal();
           window.location.reload();
-        } else {
-          const error = await response.json();
-          notifyError({
-            title: 'Delete Failed',
-            message: error.error || 'Could not delete review',
-          });
         }
       } catch (error) {
         console.error('Error deleting review:', error);
@@ -171,34 +216,6 @@ const ReviewCard = ({
       }
     }
     setIsSubmitting(false);
-  };
-
-  const getDifficultyLabel = (diff: number) => {
-    if (diff <= 2) return 'Easy';
-    if (diff <= 3) return 'Medium';
-    return 'Hard';
-  };
-
-  const getDifficultyCssColor = (diff: number) => {
-    // Using CSS variables for automatic dark/light mode contrast
-    if (diff <= 2) return CSS_STAT_COLORS.lime;
-    if (diff <= 3) return CSS_STAT_COLORS.gold;
-    return CSS_STAT_COLORS.orange;
-  };
-
-  const getOverallLabel = (rating: number) => {
-    if (rating >= 4) return 'Loved it';
-    if (rating >= 3) return 'Liked it';
-    if (rating >= 2) return 'Mixed';
-    return 'Disliked';
-  };
-
-  const getOverallCssColor = (rating: number) => {
-    // Using CSS variables for automatic dark/light mode contrast
-    if (rating >= 4) return CSS_STAT_COLORS.lime;
-    if (rating >= 3) return CSS_STAT_COLORS.teal;
-    if (rating >= 2) return CSS_STAT_COLORS.gold;
-    return CSS_STAT_COLORS.orange;
   };
 
   const semesterLabel = `${mapSemesterIdToName[semesterId]?.toUpperCase() || semesterId.toUpperCase()} ${year}`;

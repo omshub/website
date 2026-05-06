@@ -218,6 +218,7 @@ async function runAuthCallbackChecks(inputUrl = process.env.DEPLOYMENT_URL) {
   return { baseUrl };
 }
 
+/* istanbul ignore next */
 if (require.main === module) {
   runAuthCallbackChecks(process.argv[2])
     .then(({ baseUrl }) => {
@@ -237,10 +238,12 @@ module.exports = {
   assertVerifierCookieCleared,
   describePlatformBlock,
   expectedLocation,
+  fetchNoFollow,
   getSetCookie,
   isAllowedDeploymentHost,
   isProductionHost,
   normalizeBaseUrl,
+  protectionBypassHeaders,
   resolveAllowedDeploymentOrigin,
   runAuthCallbackChecks,
 };

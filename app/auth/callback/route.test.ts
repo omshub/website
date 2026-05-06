@@ -15,6 +15,7 @@ jest.mock('next/headers', () => ({
 
 jest.mock('@supabase/ssr', () => ({
   createServerClient: jest.fn((_url, _key, options) => {
+    options.cookies.getAll();
     mockExchangeCodeForSession.mockImplementation(async () => {
       options.cookies.setAll([
         {
@@ -68,6 +69,27 @@ describe('/auth/callback', () => {
     );
   });
 
+  it('falls back to the request origin when no trusted forwarded host is present', async () => {
+    const response = await GET(makeCallbackRequest('/auth/callback'));
+
+    expect(response.headers.get('location')).toBe(
+      'https://internal.vercel.test/?error=auth_callback_error&reason=no_code'
+    );
+  });
+
+  it('uses forwarded localhost and http protocol in local callbacks', async () => {
+    const response = await GET(
+      makeCallbackRequest('/auth/callback', {
+        'x-forwarded-host': 'localhost:3000',
+        'x-forwarded-proto': 'http',
+      })
+    );
+
+    expect(response.headers.get('location')).toBe(
+      'http://localhost:3000/?error=auth_callback_error&reason=no_code'
+    );
+  });
+
   it('accepts uppercase canonical forwarded hosts', async () => {
     const response = await GET(
       makeCallbackRequest('/auth/callback', {
@@ -99,6 +121,23 @@ describe('/auth/callback', () => {
     expect(response.headers.get('set-cookie')).toEqual(
       expect.stringContaining('Domain=omshub.org')
     );
+  });
+
+  it('keeps verifier clearing host-only on preview missing-code callbacks', async () => {
+    mockCookieGetAll.mockReturnValue([
+      { name: 'sb-abc123-auth-token-code-verifier', value: 'verifier' },
+    ]);
+
+    const response = await GET(
+      makeCallbackRequest('/auth/callback', {
+        'x-forwarded-host': 'website-preview-omshub.vercel.app',
+        'x-forwarded-proto': 'https',
+      })
+    );
+
+    const setCookie = response.headers.get('set-cookie') ?? '';
+    expect(setCookie).toContain('sb-abc123-auth-token-code-verifier=');
+    expect(setCookie).not.toContain('Domain=');
   });
 
   it('ignores unexpected forwarded hosts for failure redirects', async () => {
@@ -150,6 +189,19 @@ describe('/auth/callback', () => {
     );
   });
 
+  it('preserves provider error descriptions', async () => {
+    const response = await GET(
+      makeCallbackRequest('/auth/callback?error=access_denied&error_description=Nope', {
+        'x-forwarded-host': 'www.omshub.org',
+        'x-forwarded-proto': 'https',
+      })
+    );
+
+    expect(response.headers.get('location')).toBe(
+      'https://www.omshub.org/?error=access_denied&error_description=Nope'
+    );
+  });
+
   it('clears production domain PKCE verifier cookies on exchange failures', async () => {
     mockCookieGetAll.mockReturnValue([
       { name: 'sb-abc123-auth-token-code-verifier', value: 'verifier' },
@@ -174,6 +226,42 @@ describe('/auth/callback', () => {
     );
   });
 
+  it('redirects when exchange succeeds without a session', async () => {
+    mockExchangeCodeForSession.mockResolvedValueOnce({
+      data: { session: null, user: null },
+      error: null,
+    });
+
+    const response = await GET(
+      makeCallbackRequest('/auth/callback?code=ok', {
+        'x-forwarded-host': 'www.omshub.org',
+        'x-forwarded-proto': 'https',
+      })
+    );
+
+    expect(response.headers.get('location')).toBe(
+      'https://www.omshub.org/?error=auth_callback_error&reason=no_session'
+    );
+  });
+
+  it('redirects when exchange succeeds but no cookies were staged', async () => {
+    mockExchangeCodeForSession.mockResolvedValueOnce({
+      data: { session: { access_token: 'token' }, user: { id: 'user' } },
+      error: null,
+    });
+
+    const response = await GET(
+      makeCallbackRequest('/auth/callback?code=ok', {
+        'x-forwarded-host': 'www.omshub.org',
+        'x-forwarded-proto': 'https',
+      })
+    );
+
+    expect(response.headers.get('location')).toBe(
+      'https://www.omshub.org/?error=auth_callback_error&reason=no_pending_cookies'
+    );
+  });
+
   it('redirects with diagnostics and clears verifier cookies when exchange throws', async () => {
     mockCookieGetAll.mockReturnValue([
       { name: 'sb-abc123-auth-token-code-verifier', value: 'verifier' },
@@ -195,6 +283,21 @@ describe('/auth/callback', () => {
     );
     expect(response.headers.get('set-cookie')).toEqual(
       expect.stringContaining('Domain=omshub.org')
+    );
+  });
+
+  it('handles non-Error exchange throws', async () => {
+    mockExchangeCodeForSession.mockRejectedValueOnce('bad things');
+
+    const response = await GET(
+      makeCallbackRequest('/auth/callback?code=bad', {
+        'x-forwarded-host': 'www.omshub.org',
+        'x-forwarded-proto': 'https',
+      })
+    );
+
+    expect(response.headers.get('location')).toBe(
+      'https://www.omshub.org/?error=auth_callback_error&reason=exchange_failed&message=Unexpected+token+exchange+failure'
     );
   });
 
@@ -256,6 +359,20 @@ describe('/auth/callback', () => {
     expect(setCookie).toContain('sb-abc123-auth-token=token');
     expect(setCookie).toContain('sb-abc123-auth-token-code-verifier=');
     expect(setCookie).toContain('Domain=omshub.org');
+  });
+
+  it('ignores unsafe next redirects and unrelated cookies after successful exchange', async () => {
+    mockCookieGetAll.mockReturnValue([{ name: 'unrelated', value: 'keep' }]);
+
+    const response = await GET(
+      makeCallbackRequest('/auth/callback?code=ok&next=//evil.example.com', {
+        'x-forwarded-host': 'www.omshub.org',
+        'x-forwarded-proto': 'https',
+      })
+    );
+
+    expect(response.headers.get('location')).toBe('https://www.omshub.org/');
+    expect(response.headers.get('set-cookie') ?? '').not.toContain('unrelated=');
   });
 
   it('ignores unexpected forwarded hosts for successful redirects', async () => {

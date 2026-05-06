@@ -34,6 +34,23 @@ describe('createClient()', () => {
   });
 });
 
+describe('getClient()', () => {
+  beforeEach(() => {
+    jest.resetModules();
+    jest.clearAllMocks();
+  });
+
+  it('memoizes the browser Supabase client', async () => {
+    mockCreateBrowserClient.mockReturnValueOnce({ id: 'client' });
+
+    const { getClient } = await import('../client');
+
+    expect(getClient()).toEqual({ id: 'client' });
+    expect(getClient()).toEqual({ id: 'client' });
+    expect(mockCreateBrowserClient).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe('getCookieDomain()', () => {
   it('keeps cookies host-only on unknown custom domains', async () => {
     const { getCookieDomain } = await import('../client');
