@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserReviews } from '@/lib/supabase/dbOperations';
+import { createClient } from '@/lib/supabase/server';
 import type { Database } from '@/lib/supabase/database.types';
 import { TCourseId, TPayloadReviews } from '@/lib/types';
 
@@ -55,6 +56,20 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (user.id !== userId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const supabaseReviews = await getUserReviews(userId);
     const reviews = mapSupabaseReviewsToPayload(supabaseReviews);
     return NextResponse.json(reviews);

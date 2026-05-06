@@ -48,7 +48,9 @@ import {
 } from 'react-hook-form';
 import { GT_COLORS } from '@/lib/theme';
 
-const TipTapEditor = dynamic(() => import('@/components/TipTapEditor'), {
+export const loadTipTapEditor = () => import('@/components/TipTapEditor');
+
+const TipTapEditor = dynamic(loadTipTapEditor, {
   ssr: false,
   loading: () => (
     <Box p="xl" ta="center">
@@ -95,6 +97,116 @@ const ReviewFormDefaults: DefaultValues<ReviewFormInputs> = {
 const difficultyLabels = ['Very Easy', 'Easy', 'Medium', 'Hard', 'Very Hard'];
 const overallLabels = ['Terrible', 'Poor', 'Average', 'Good', 'Excellent'];
 
+export const buildReviewPayload = (
+  courseId: TCourseId,
+  data: ReviewFormInputs,
+  currentTime = Date.now()
+) => {
+  const semesterId = data.semesterId as TSemesterId;
+  const year = Number(data.year);
+  return {
+    reviewId: `${courseId}-${data.year}-${mapSemsterIdToTerm[semesterId]}-${currentTime}`,
+    courseId,
+    year,
+    semesterId,
+    body: data.body,
+    workload: Number(data.workload),
+    difficulty: Number(data.difficulty) as TRatingScale,
+    overall: Number(data.overall) as TRatingScale,
+  };
+};
+
+export const canSubmitReview = (
+  courseId: TCourseId,
+  data: ReviewFormInputs,
+  user: unknown,
+  isGoodSubmission: boolean
+) => Boolean(
+  isGoodSubmission &&
+    user &&
+    (user as { id?: string; email?: string }).id &&
+    (user as { id?: string; email?: string }).email &&
+    courseId &&
+    data.year &&
+    data.semesterId &&
+    data.difficulty &&
+    data.overall &&
+    data.workload
+);
+
+export const submitReviewRequest = async (
+  courseId: TCourseId,
+  data: ReviewFormInputs,
+  reviewInput: TNullable<Review>
+) => {
+  const payload = buildReviewPayload(courseId, data);
+  if (reviewInput?.reviewId) {
+    const response = await fetch(`/api/reviews/${reviewInput.reviewId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        body: payload.body,
+        workload: payload.workload,
+        difficulty: payload.difficulty,
+        overall: payload.overall,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to update review');
+    }
+    return payload;
+  }
+
+  const response = await fetch('/api/reviews', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create review');
+  }
+  return payload;
+};
+
+export const submitReviewAndNotify = async (
+  courseId: TCourseId,
+  data: ReviewFormInputs,
+  reviewInput: TNullable<Review>,
+  handleReviewModalClose: () => void,
+  reload = () => window.location.reload()
+) => {
+  try {
+    const payload = await submitReviewRequest(courseId, data, reviewInput);
+
+    notifySuccess({
+      title: 'Review Submitted!',
+      message: `Your review for ${courseId} (${mapSemesterIdToName[payload.semesterId]} ${payload.year}) has been saved.`,
+    });
+
+    handleReviewModalClose();
+    reload();
+  } catch (error) {
+    console.error('Error submitting review:', error);
+    notifyError({
+      title: 'Submission Failed',
+      message: 'Failed to submit review. Please try again.',
+    });
+  }
+};
+
+export const fetchUserReviews = async (userId: string): Promise<TUserReviews> => {
+  try {
+    const response = await fetch(`/api/user/reviews?userId=${userId}`);
+    if (response.ok) {
+      return await response.json();
+    }
+    return {};
+  } catch (error) {
+    console.error('Error fetching user reviews:', error);
+    return {};
+  }
+};
+
 const ReviewForm = ({
   courseId,
   reviewInput,
@@ -136,78 +248,8 @@ const ReviewForm = ({
   ) => {
     const isGoodSubmission = await trigger();
 
-    const hasNonNullDataValues = Boolean(
-      courseId &&
-        data.year &&
-        data.semesterId &&
-        data.difficulty &&
-        data.overall &&
-        data.workload
-    );
-
-    const isLoggedIn = Boolean(user && user.id && user.email);
-
-    if (isGoodSubmission && isLoggedIn && hasNonNullDataValues) {
-      const currentTime = Date.now();
-      const semesterId = data.semesterId as TSemesterId;
-      const year = Number(data.year);
-      const body = data.body;
-      const reviewId = `${courseId}-${data.year}-${mapSemsterIdToTerm[semesterId]}-${currentTime}`;
-      const workload = Number(data.workload);
-      const difficulty = Number(data.difficulty) as TRatingScale;
-      const overall = Number(data.overall) as TRatingScale;
-
-      try {
-        if (reviewInput?.reviewId) {
-          // Update existing review
-          const response = await fetch(`/api/reviews/${reviewInput.reviewId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              body,
-              workload,
-              difficulty,
-              overall,
-            }),
-          });
-          if (!response.ok) {
-            throw new Error('Failed to update review');
-          }
-        } else {
-          // Create new review
-          const response = await fetch('/api/reviews', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              reviewId,
-              courseId,
-              year,
-              semesterId,
-              body,
-              workload,
-              difficulty,
-              overall,
-            }),
-          });
-          if (!response.ok) {
-            throw new Error('Failed to create review');
-          }
-        }
-
-        notifySuccess({
-          title: 'Review Submitted!',
-          message: `Your review for ${courseId} (${mapSemesterIdToName[semesterId]} ${year}) has been saved.`,
-        });
-
-        handleReviewModalClose();
-        window.location.reload();
-      } catch (error) {
-        console.error('Error submitting review:', error);
-        notifyError({
-          title: 'Submission Failed',
-          message: 'Failed to submit review. Please try again.',
-        });
-      }
+    if (canSubmitReview(courseId, data, user, isGoodSubmission)) {
+      await submitReviewAndNotify(courseId, data, reviewInput, handleReviewModalClose);
     }
   };
 
@@ -216,22 +258,7 @@ const ReviewForm = ({
   useEffect(() => {
     if (!userId) return;
 
-    const fetchUserReviews = async () => {
-      try {
-        const response = await fetch(`/api/user/reviews?userId=${userId}`);
-        if (response.ok) {
-          const reviews = await response.json();
-          setUserReviews(reviews);
-        } else {
-          setUserReviews({});
-        }
-      } catch (error) {
-        console.error('Error fetching user reviews:', error);
-        setUserReviews({});
-      }
-    };
-
-    fetchUserReviews();
+    fetchUserReviews(userId).then(setUserReviews);
   }, [userId]);
 
   // Only reset form when reviewId changes (editing a different review)
@@ -592,7 +619,7 @@ const ReviewForm = ({
   );
 };
 
-const getYearRange = () => {
+export const getYearRange = () => {
   const currentYear = new Date().getFullYear();
   const programStart = 2013;
   const limitYear = 5;
@@ -602,12 +629,13 @@ const getYearRange = () => {
   );
 };
 
-const validateSemesterYear = (
+export const validateSemesterYear = (
   semester: TNullable<string>,
-  year: TNullable<number>
+  year: TNullable<number>,
+  now = new Date()
 ) => {
   if (semester && year) {
-    const currentYear = new Date().getFullYear();
+    const currentYear = now.getFullYear();
     const semesterMap: TSemesterMap = {
       sp: new Date(`02/01/${currentYear}`),
       sm: new Date(`06/01/${currentYear}`),
@@ -615,17 +643,17 @@ const validateSemesterYear = (
     };
     // @ts-expect-error -- semester is TSemesterId in this usage/context
     const compareDate = semesterMap[semester] as Date;
-    if (year < new Date().getFullYear()) {
+    if (year < now.getFullYear()) {
       return true;
     }
-    if (new Date() < compareDate) {
+    if (now < compareDate) {
       return false;
     }
     return true;
   }
 };
 
-const validateUserNotTakenCourse = (
+export const validateUserNotTakenCourse = (
   userReviews: TUserReviews | Record<string, never>,
   courseId: TCourseId,
   semester: TNullable<string>,

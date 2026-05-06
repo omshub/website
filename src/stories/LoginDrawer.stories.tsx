@@ -148,7 +148,7 @@ const LoginDrawerStory = ({
                 </Box>
 
                 <Text size="sm" c="dimmed" ta="center">
-                  Enter the code from your email, or click the magic link
+                  Enter the code from your email
                 </Text>
               </Stack>
 
@@ -326,7 +326,7 @@ const meta: Meta<typeof LoginDrawerStory> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'Login drawer with magic link email authentication and social login providers (Google, GitHub). Supports OTP code verification.',
+        component: 'Login drawer with email OTP authentication and social login providers (Google, GitHub).',
       },
     },
   },

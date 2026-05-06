@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import ScheduleContent from './_components/ScheduleContent';
+import LazyScheduleContent from './_components/LazyScheduleContent';
 
 export const metadata: Metadata = {
   title: 'Course Schedule - OMSHub',
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function SchedulePage() {
-  return <ScheduleContent />;
+  return <LazyScheduleContent />;
 }

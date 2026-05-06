@@ -13,7 +13,7 @@ type TAuthContext = {
   session: TNullable<Session>;
   loading: boolean;
   signInWithProvider: (provider: 'google' | 'github') => Promise<void>;
-  signInWithMagicLink: (email: string) => Promise<boolean>;
+  signInWithEmailOtp: (email: string) => Promise<boolean>;
   logout: () => Promise<void>;
 };
 
@@ -32,7 +32,7 @@ export const storeReturnUrl = () => {
 };
 
 // Helper to get and clear return URL
-const getAndClearReturnUrl = (): string => {
+export const getAndClearReturnUrl = (): string => {
   if (typeof window !== 'undefined') {
     const returnTo = sessionStorage.getItem(RETURN_TO_KEY);
     sessionStorage.removeItem(RETURN_TO_KEY);
@@ -63,13 +63,29 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
   useEffect(() => {
     const supabase = getClient();
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      previousUserRef.current = session?.user ?? null;
-      setLoading(false);
-    });
+    // Get initial session. If local auth state is corrupt/stale, fail closed
+    // to anonymous and ask the server cleanup route to expire any leftover
+    // Supabase cookies rather than leaving the app permanently "loading".
+    supabase.auth
+      .getSession()
+      .then(({ data: { session }, error }) => {
+        if (error) {
+          void fetch('/auth/logout', { method: 'POST' }).catch(() => {});
+        }
+        const safeSession = error ? null : session;
+        setSession(safeSession);
+        setUser(safeSession?.user ?? null);
+        previousUserRef.current = safeSession?.user ?? null;
+      })
+      .catch(() => {
+        void fetch('/auth/logout', { method: 'POST' }).catch(() => {});
+        setSession(null);
+        setUser(null);
+        previousUserRef.current = null;
+      })
+      .finally(() => {
+        setLoading(false);
+      });
 
     // Listen for auth changes - subscription should only be created once
     const {
@@ -136,18 +152,13 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
     }
   };
 
-  const signInWithMagicLink = async (email: string): Promise<boolean> => {
+  const signInWithEmailOtp = async (email: string): Promise<boolean> => {
     const supabase = getClient();
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+    const { error } = await supabase.auth.signInWithOtp({ email });
 
     if (error) {
       notifyError({
-        title: 'Magic link failed',
+        title: 'Failed to send code',
         message: error.message,
       });
       return false;
@@ -161,7 +172,7 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
         : '';
 
     notifySuccess({
-      title: 'Magic Link Sent!',
+      title: 'Code Sent!',
       message: `Check your inbox at ${email}.${additionalInstructions}`,
       autoClose: 8000,
     });
@@ -170,7 +181,11 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
 
   const logout = async () => {
     const supabase = getClient();
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } finally {
+      await fetch('/auth/logout', { method: 'POST' }).catch(() => {});
+    }
     setUser(null);
     setSession(null);
     router.push('/');
@@ -183,7 +198,7 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
         session,
         loading,
         signInWithProvider,
-        signInWithMagicLink,
+        signInWithEmailOtp,
         logout,
       }}
     >

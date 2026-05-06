@@ -19,6 +19,8 @@ const customJestConfig = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '@backend/(.*)$': '<rootDir>/src/lib/firebase/$1',
     '@src/(.*)$': '<rootDir>/src/$1',
+    '^@tabler/icons-react$': '<rootDir>/test/mocks/tabler-icons-react.js',
+    '^@tabler/icons-react/.*$': '<rootDir>/test/mocks/tabler-icons-react.js',
     // Firebase modules mocks
     'firebase/app': '<rootDir>/src/lib/firebase/__mocks__/fbApp.ts',
     'firebase/auth': '<rootDir>/src/lib/firebase/__mocks__/fbAuth.ts',
@@ -26,6 +28,19 @@ const customJestConfig = {
     'firebase/storage': '<rootDir>/src/lib/firebase/__mocks__/fbStorage.ts',
   },
   moduleDirectories: ['node_modules', '<rootDir>/'],
+  testPathIgnorePatterns: ['<rootDir>/.worktrees/', '<rootDir>/.next/'],
+  modulePathIgnorePatterns: ['<rootDir>/.worktrees/', '<rootDir>/.next/'],
+  transformIgnorePatterns: ['/node_modules/(?!@tabler/icons-react/)'],
+  collectCoverageFrom: [
+    'app/api/**/*.{ts,tsx}',
+    'app/auth/**/*.{ts,tsx}',
+    'scripts/**/*.js',
+    'src/**/*.{ts,tsx}',
+    '!**/*.d.ts',
+    '!**/*.test.{js,ts,tsx}',
+    '!**/*.stories.{ts,tsx}',
+    '!src/lib/supabase/database.types.ts',
+  ],
   testEnvironment: 'jest-environment-jsdom',
 };
 
