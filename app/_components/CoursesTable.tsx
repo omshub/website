@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import Link from 'next/link';
 import { Course, TCourseId } from '@/lib/types';
 import {
+  Button,
   Container,
   Paper,
   Table,
@@ -25,7 +26,9 @@ import {
   IconSelector,
   IconStar,
   IconExternalLink,
+  IconTrash,
 } from '@tabler/icons-react';
+import { useLocalStorage } from '@mantine/hooks';
 import { courseFields } from '@/lib/constants';
 import { mapPayloadToArray } from '@/utilities';
 import { GT_COLORS } from '@/lib/theme';
@@ -59,9 +62,23 @@ function Th({ children, reversed, sorted, onSort, ta = 'left' }: ThProps) {
 
 type SortField = 'name' | 'courseId' | 'difficulty' | 'workload' | 'overall' | 'reviews';
 
+const COURSES_TABLE_SETTINGS_STORAGE_KEY = 'omshub:courses-table:settings';
+
+const DEFAULT_TABLE_SETTINGS: {
+  sortBy: SortField;
+  reverseSortDirection: boolean;
+} = {
+  sortBy: 'name',
+  reverseSortDirection: false,
+};
+
 export default function CoursesTable({ allCourseData }: CoursesTableProps) {
-  const [sortBy, setSortBy] = useState<SortField>('name');
-  const [reverseSortDirection, setReverseSortDirection] = useState(false);
+  const [tableSettings, setTableSettings, clearSavedTableSettings] =
+    useLocalStorage({
+      key: COURSES_TABLE_SETTINGS_STORAGE_KEY,
+      defaultValue: DEFAULT_TABLE_SETTINGS,
+    });
+  const { sortBy, reverseSortDirection } = tableSettings;
 
   const coursesArray: Course[] = mapPayloadToArray(
     allCourseData,
@@ -99,8 +116,7 @@ export default function CoursesTable({ allCourseData }: CoursesTableProps) {
 
   const setSorting = (field: SortField) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
-    setReverseSortDirection(reversed);
-    setSortBy(field);
+    setTableSettings({ sortBy: field, reverseSortDirection: reversed });
   };
 
   // Get difficulty badge
@@ -193,14 +209,25 @@ export default function CoursesTable({ allCourseData }: CoursesTableProps) {
 
   return (
     <Container size="xl" py="xl">
-      <Box mb="lg">
-        <Title order={2} size="h3" fw={600}>
-          All Courses
-        </Title>
-        <Text size="sm" c="grayMatter">
-          {sortedCourses.length} courses available across all OMS programs
-        </Text>
-      </Box>
+      <Group justify="space-between" align="flex-end" gap="md" mb="lg">
+        <Box>
+          <Title order={2} size="h3" fw={600}>
+            All Courses
+          </Title>
+          <Text size="sm" c="grayMatter">
+            {sortedCourses.length} courses available across all OMS programs
+          </Text>
+        </Box>
+        <Button
+          variant="subtle"
+          color="gray"
+          size="xs"
+          leftSection={<IconTrash size={14} />}
+          onClick={clearSavedTableSettings}
+        >
+          Clear saved table settings
+        </Button>
+      </Group>
 
       <Paper radius="lg" withBorder style={{ overflow: 'auto' }}>
         <Table.ScrollContainer minWidth={700}>
