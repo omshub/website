@@ -202,9 +202,15 @@ export default function CoursesTable({ allCourseData }: CoursesTableProps) {
         </Text>
       </Box>
 
-      <Paper radius="lg" withBorder style={{ overflow: 'auto' }}>
+      <Paper radius="lg" withBorder>
         <Table.ScrollContainer minWidth={700}>
-          <Table verticalSpacing="sm" highlightOnHover style={{ minWidth: 700 }}>
+          <Table
+            verticalSpacing="sm"
+            highlightOnHover
+            stickyHeader
+            stickyHeaderOffset={72}
+            style={{ minWidth: 700 }}
+          >
             <Table.Thead style={{ backgroundColor: GT_COLORS.navy }}>
               <Table.Tr>
                 <Th
