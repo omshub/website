@@ -39,6 +39,15 @@ import {
   IconCheck,
 } from '@tabler/icons-react';
 import { GT_COLORS } from '@/lib/theme';
+import {
+  getCurrentSemester,
+  getFutureCandidates,
+  getInitialActiveSemester,
+  getPastSemesters,
+  getScheduleSemesterOptions,
+  getTermCode,
+  getTermLabel,
+} from '../_lib/semesters';
 
 // Data repository URL
 const DATA_REPO_BASE = 'https://raw.githubusercontent.com/omshub/data/main';
@@ -143,88 +152,6 @@ interface CourseSection {
   url: string | null;
 }
 
-// Term code utilities
-function getTermCode(year: number, semester: 'sp' | 'sm' | 'fa'): string {
-  const semesterCodes = { sp: '02', sm: '05', fa: '08' };
-  return `${year}${semesterCodes[semester]}`;
-}
-
-function parseTermCode(termCode: string): { year: number; semester: string } {
-  const year = parseInt(termCode.substring(0, 4));
-  const semCode = termCode.substring(4);
-  const semesterMap: Record<string, string> = { '02': 'Spring', '05': 'Summer', '08': 'Fall' };
-  return { year, semester: semesterMap[semCode] || 'Unknown' };
-}
-
-function getTermLabel(termCode: string): string {
-  const { year, semester } = parseTermCode(termCode);
-  return `${semester} ${year}`;
-}
-
-// Get current semester based on month
-function getCurrentSemester(): { year: number; semester: 'sp' | 'sm' | 'fa' } {
-  const now = new Date();
-  const month = now.getMonth() + 1; // 1-12
-  const year = now.getFullYear();
-
-  if (month >= 1 && month <= 4) {
-    return { year, semester: 'sp' }; // Spring: Jan-Apr
-  } else if (month >= 5 && month <= 7) {
-    return { year, semester: 'sm' }; // Summer: May-Jul
-  } else {
-    return { year, semester: 'fa' }; // Fall: Aug-Dec
-  }
-}
-
-// Past semesters from current back to 2014, most recent first
-function getPastSemesters(): { value: string; label: string }[] {
-  const { year: currentYear, semester: currentSem } = getCurrentSemester();
-  const semesters: { value: string; label: string }[] = [];
-  const semesterOrder: ('sp' | 'sm' | 'fa')[] = ['sp', 'sm', 'fa'];
-  const startYear = 2014; // OMSCS program started
-
-  let year = currentYear;
-  let semIndex = semesterOrder.indexOf(currentSem);
-
-  while (year >= startYear) {
-    const sem = semesterOrder[semIndex];
-    const semLabel = sem === 'sp' ? 'Spring' : sem === 'sm' ? 'Summer' : 'Fall';
-    semesters.push({
-      value: getTermCode(year, sem),
-      label: `${semLabel} ${year}`,
-    });
-
-    semIndex--;
-    if (semIndex < 0) {
-      semIndex = 2;
-      year--;
-    }
-  }
-
-  return semesters;
-}
-
-// Returns the next N future term codes after the current semester
-function getFutureCandidates(n: number): string[] {
-  const { year: currentYear, semester: currentSem } = getCurrentSemester();
-  const semesterOrder: ('sp' | 'sm' | 'fa')[] = ['sp', 'sm', 'fa'];
-  const candidates: string[] = [];
-
-  let year = currentYear;
-  let semIndex = semesterOrder.indexOf(currentSem);
-
-  for (let i = 0; i < n; i++) {
-    semIndex++;
-    if (semIndex >= semesterOrder.length) {
-      semIndex = 0;
-      year++;
-    }
-    candidates.push(getTermCode(year, semesterOrder[semIndex]));
-  }
-
-  return candidates;
-}
-
 interface StatCardProps {
   icon: React.ReactNode;
   value: string | number;
@@ -311,7 +238,7 @@ function getSearchScore(section: CourseSection, query: string): number {
 export default function ScheduleContent() {
   const pastSemesters = useMemo(() => getPastSemesters(), []);
   const [semesters, setSemesters] = useState(pastSemesters);
-  const [activeSemester, setActiveSemester] = useState(pastSemesters[0]?.value || '');
+  const [activeSemester, setActiveSemester] = useState(getInitialActiveSemester(pastSemesters));
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -338,12 +265,7 @@ export default function ScheduleContent() {
 
       const available = results.filter((t): t is string => t !== null);
       if (available.length > 0) {
-        const futureOptions = available.map((termCode) => ({
-          value: termCode,
-          label: getTermLabel(termCode),
-        }));
-        setSemesters([...futureOptions, ...pastSemesters]);
-        setActiveSemester(futureOptions[0].value);
+        setSemesters(getScheduleSemesterOptions(pastSemesters, available));
       }
     }
 
@@ -351,11 +273,8 @@ export default function ScheduleContent() {
   }, [pastSemesters]);
 
   useEffect(() => {
-    // Cancellation flag: the probe effect can change activeSemester mid-fetch,
-    // triggering a second run of this effect. Without this guard, a slower
-    // earlier fetch can land after the newer one and overwrite fresh data with
-    // the previous semester's rows — producing the "Summer 2026 shows Spring 2026
-    // enrollment" hydration artifact reported on Slack.
+    // Cancellation flag: if activeSemester changes while a fetch is in flight,
+    // a slower earlier request must not overwrite the newer semester's rows.
     let cancelled = false;
 
     async function fetchData() {
