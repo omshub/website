@@ -643,7 +643,12 @@ export default function ScheduleContent() {
   // Reusable table component
   const renderTable = (sectionsList: CourseSection[], showCoreElectiveBadge = false) => (
     <Table.ScrollContainer minWidth={800}>
-      <Table verticalSpacing="sm" highlightOnHover>
+      <Table
+        verticalSpacing="sm"
+        highlightOnHover
+        stickyHeader
+        stickyHeaderOffset={72}
+      >
         <Table.Thead style={{ backgroundColor: GT_COLORS.navy }}>
           <Table.Tr>
             <Table.Th style={{ color: 'white' }}>CRN</Table.Th>
@@ -856,7 +861,7 @@ export default function ScheduleContent() {
                     {new Set(groupedSections.core.map((s) => s.courseId)).size} courses
                   </Badge>
                 </Group>
-                <Paper radius="lg" withBorder style={{ overflow: 'hidden' }}>
+                <Paper radius="lg" withBorder>
                   {renderTable(groupedSections.core)}
                 </Paper>
               </div>
@@ -876,7 +881,7 @@ export default function ScheduleContent() {
                     {new Set(groupedSections.electives.map((s) => s.courseId)).size} courses
                   </Badge>
                 </Group>
-                <Paper radius="lg" withBorder style={{ overflow: 'hidden' }}>
+                <Paper radius="lg" withBorder>
                   {renderTable(groupedSections.electives)}
                 </Paper>
               </div>
@@ -896,7 +901,7 @@ export default function ScheduleContent() {
                     {new Set(groupedSections.freeElectives.map((s) => s.courseId)).size} courses
                   </Badge>
                 </Group>
-                <Paper radius="lg" withBorder style={{ overflow: 'hidden' }}>
+                <Paper radius="lg" withBorder>
                   {renderTable(groupedSections.freeElectives)}
                 </Paper>
               </div>
@@ -923,7 +928,7 @@ export default function ScheduleContent() {
           </Stack>
         ) : (
           // Default ungrouped view
-          <Paper radius="lg" withBorder style={{ overflow: 'hidden' }}>
+          <Paper radius="lg" withBorder>
             {renderTable(filteredAndSortedSections)}
           </Paper>
         )}
