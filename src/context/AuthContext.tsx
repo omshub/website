@@ -32,7 +32,7 @@ export const storeReturnUrl = () => {
 };
 
 // Helper to get and clear return URL
-const getAndClearReturnUrl = (): string => {
+export const getAndClearReturnUrl = (): string => {
   if (typeof window !== 'undefined') {
     const returnTo = sessionStorage.getItem(RETURN_TO_KEY);
     sessionStorage.removeItem(RETURN_TO_KEY);

@@ -12,10 +12,13 @@ import MantineThemeProvider from './MantineProvider';
 import { useMenu } from '@/context/MenuContext';
 
 // Lazy load non-critical components to improve initial load time
-const SpotlightSearch = dynamic(() => import('@/components/SpotlightSearch'), {
+export const loadSpotlightSearch = () => import('@/components/SpotlightSearch');
+export const loadLoginDrawer = () => import('@/components/LoginDrawer');
+
+const SpotlightSearch = dynamic(loadSpotlightSearch, {
   ssr: false,
 });
-const LoginDrawer = dynamic(() => import('@/components/LoginDrawer'), {
+const LoginDrawer = dynamic(loadLoginDrawer, {
   ssr: false,
 });
 

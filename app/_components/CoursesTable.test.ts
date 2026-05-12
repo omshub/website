@@ -1,11 +1,16 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-describe('courses table saved settings', () => {
+describe('CoursesTable', () => {
   const source = readFileSync(
     join(process.cwd(), 'app/_components/CoursesTable.tsx'),
     'utf8'
   );
+
+  it('keeps table headers sticky while scrolling the course list', () => {
+    expect(source).toContain('stickyHeader');
+    expect(source).toContain('stickyHeaderOffset={72}');
+  });
 
   it('persists sort settings in browser storage', () => {
     expect(source).toContain("import { useLocalStorage } from '@mantine/hooks';");

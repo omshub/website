@@ -66,4 +66,20 @@ describe('/auth/logout', () => {
 
     expect(response.headers.get('set-cookie') ?? '').toContain('Domain=omshub.org');
   });
+
+  it('keeps preview logout cookie clearing host-only and skips unrelated cookies', async () => {
+    const response = await POST(
+      new Request('https://preview.vercel.app/auth/logout', {
+        method: 'POST',
+        headers: {
+          host: 'preview.vercel.app',
+        },
+      })
+    );
+
+    const setCookie = response.headers.get('set-cookie') ?? '';
+    expect(setCookie).toContain('sb-abc123-auth-token=');
+    expect(setCookie).not.toContain('Domain=omshub.org');
+    expect(setCookie).not.toContain('unrelated=');
+  });
 });

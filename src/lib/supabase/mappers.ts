@@ -3,6 +3,10 @@ import type { Review, TCourseId, TProgrammingLanguageId } from '@/lib/types';
 
 export type SupabaseReview = Database['public']['Tables']['reviews']['Row'];
 
+function nullToUndefined<T>(value: T | null): T | undefined {
+  return value === null ? undefined : value;
+}
+
 /**
  * Convert a single Supabase review row to the Review type used throughout the app
  */
@@ -24,21 +28,21 @@ export function mapSupabaseReviewToReview(review: SupabaseReview): Review {
     difficulty: (review.difficulty ?? 3) as 1 | 2 | 3 | 4 | 5,
     overall: (review.overall ?? 3) as 1 | 2 | 3 | 4 | 5,
     staffSupport: review.staff_support as 1 | 2 | 3 | 4 | 5 | undefined,
-    isRecommended: review.is_recommended ?? undefined,
-    isGoodFirstCourse: review.is_good_first_course ?? undefined,
-    isPairable: review.is_pairable ?? undefined,
-    hasGroupProjects: review.has_group_projects ?? undefined,
-    hasWritingAssignments: review.has_writing_assignments ?? undefined,
-    hasExamsQuizzes: review.has_exams_quizzes ?? undefined,
-    hasMandatoryReadings: review.has_mandatory_readings ?? undefined,
-    hasProgrammingAssignments: review.has_programming_assignments ?? undefined,
-    hasProvidedDevEnv: review.has_provided_dev_env ?? undefined,
+    isRecommended: nullToUndefined(review.is_recommended),
+    isGoodFirstCourse: nullToUndefined(review.is_good_first_course),
+    isPairable: nullToUndefined(review.is_pairable),
+    hasGroupProjects: nullToUndefined(review.has_group_projects),
+    hasWritingAssignments: nullToUndefined(review.has_writing_assignments),
+    hasExamsQuizzes: nullToUndefined(review.has_exams_quizzes),
+    hasMandatoryReadings: nullToUndefined(review.has_mandatory_readings),
+    hasProgrammingAssignments: nullToUndefined(review.has_programming_assignments),
+    hasProvidedDevEnv: nullToUndefined(review.has_provided_dev_env),
     programmingLanguagesIds: review.programming_languages as TProgrammingLanguageId[] | undefined,
     preparation: review.preparation as 1 | 2 | 3 | 4 | 5 | undefined,
     omsCoursesTaken: review.oms_courses_taken,
-    hasRelevantWorkExperience: review.has_relevant_work_experience ?? undefined,
-    experienceLevelId: review.experience_level as 'jr' | 'mid' | 'sr' | undefined,
-    gradeId: review.grade ?? undefined,
+    hasRelevantWorkExperience: nullToUndefined(review.has_relevant_work_experience),
+    experienceLevelId: nullToUndefined(review.experience_level) as 'jr' | 'mid' | 'sr' | undefined,
+    gradeId: nullToUndefined(review.grade),
   };
 }
 
