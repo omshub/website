@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, useRef } from 'react';
-import { getClient } from '@/lib/supabase/client';
+import { getClient, hasSupabaseBrowserConfig } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { notifySuccess, notifyError } from '@/utils/notifications';
 import type { User, Session } from '@supabase/supabase-js';
@@ -61,7 +61,24 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
   routerRef.current = router;
 
   useEffect(() => {
-    const supabase = getClient();
+    if (!hasSupabaseBrowserConfig()) {
+      setSession(null);
+      setUser(null);
+      previousUserRef.current = null;
+      setLoading(false);
+      return;
+    }
+
+    let supabase: ReturnType<typeof getClient>;
+    try {
+      supabase = getClient();
+    } catch {
+      setSession(null);
+      setUser(null);
+      previousUserRef.current = null;
+      setLoading(false);
+      return;
+    }
 
     // Get initial session. If local auth state is corrupt/stale, fail closed
     // to anonymous and ask the server cleanup route to expire any leftover
@@ -136,7 +153,25 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
   const signInWithProvider = async (
     provider: 'google' | 'github'
   ) => {
-    const supabase = getClient();
+    if (!hasSupabaseBrowserConfig()) {
+      notifyError({
+        title: 'Sign in unavailable',
+        message: 'Authentication is not configured for this deployment.',
+      });
+      return;
+    }
+
+    let supabase: ReturnType<typeof getClient>;
+    try {
+      supabase = getClient();
+    } catch {
+      notifyError({
+        title: 'Sign in unavailable',
+        message: 'Authentication is not configured for this deployment.',
+      });
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
@@ -153,7 +188,25 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
   };
 
   const signInWithEmailOtp = async (email: string): Promise<boolean> => {
-    const supabase = getClient();
+    if (!hasSupabaseBrowserConfig()) {
+      notifyError({
+        title: 'Sign in unavailable',
+        message: 'Authentication is not configured for this deployment.',
+      });
+      return false;
+    }
+
+    let supabase: ReturnType<typeof getClient>;
+    try {
+      supabase = getClient();
+    } catch {
+      notifyError({
+        title: 'Sign in unavailable',
+        message: 'Authentication is not configured for this deployment.',
+      });
+      return false;
+    }
+
     const { error } = await supabase.auth.signInWithOtp({ email });
 
     if (error) {
@@ -180,9 +233,17 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
   };
 
   const logout = async () => {
-    const supabase = getClient();
+    let supabase: ReturnType<typeof getClient> | null = null;
+    if (hasSupabaseBrowserConfig()) {
+      try {
+        supabase = getClient();
+      } catch {
+        // Auth is unavailable in this deployment; still clear local app state.
+      }
+    }
+
     try {
-      await supabase.auth.signOut();
+      await supabase?.auth.signOut();
     } finally {
       await fetch('/auth/logout', { method: 'POST' }).catch(() => {});
     }

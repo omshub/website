@@ -466,7 +466,7 @@ export default function AvailabilityContent() {
               <Loader color={GT_COLORS.techGold} />
             </Center>
           ) : (
-            <Table.ScrollContainer minWidth={800}>
+            <Table.ScrollContainer minWidth={800} type="native">
               <Table verticalSpacing="sm" highlightOnHover>
                 <Table.Thead style={{ backgroundColor: GT_COLORS.navy }}>
                   <Table.Tr>

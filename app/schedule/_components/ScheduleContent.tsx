@@ -5,7 +5,6 @@ import {
   Container,
   Title,
   Text,
-  Table,
   Badge,
   Paper,
   Group,
@@ -157,6 +156,72 @@ interface StatCardProps {
   value: string | number;
   label: string;
   color: string;
+}
+
+interface GroupedScheduleSections {
+  all: CourseSection[];
+  core: CourseSection[];
+  electives: CourseSection[];
+  freeElectives: CourseSection[];
+}
+
+const tableHeaderBackground = GT_COLORS.navy;
+const tableHeaderBorderColor = GT_COLORS.techGold;
+const tableBorderColor = 'var(--mantine-color-default-border)';
+const scheduleTableHeaderHeight = 72;
+const scheduleTableColumns = '120px 90px minmax(360px, 1.8fr) minmax(200px, 1fr) 150px 90px';
+
+export function getScheduleTablePaperProps() {
+  return {
+    radius: 'lg' as const,
+    withBorder: true,
+    style: {
+      overflow: 'hidden',
+    },
+  };
+}
+
+export function getScheduleHeaderCellStyle(textAlign?: React.CSSProperties['textAlign']): React.CSSProperties {
+  return {
+    backgroundColor: tableHeaderBackground,
+    color: 'white',
+    position: 'relative',
+    textAlign,
+    zIndex: 2,
+  };
+}
+
+export function getGroupedScheduleSections(
+  filteredSections: CourseSection[],
+  selectedSpec: Specialization | null,
+  coreCourseIds: Set<string>,
+  electiveCourseIds: Set<string>
+): GroupedScheduleSections {
+  if (!selectedSpec) {
+    return { all: filteredSections || [], core: [], electives: [], freeElectives: [] };
+  }
+
+  const core: CourseSection[] = [];
+  const electives: CourseSection[] = [];
+
+  (filteredSections || []).forEach((section) => {
+    if (coreCourseIds.has(section.courseId)) {
+      core.push(section);
+    } else if (electiveCourseIds.has(section.courseId)) {
+      electives.push(section);
+    }
+  });
+
+  return { all: [], core, electives, freeElectives: [] };
+}
+
+export function getDisplayedScheduleSections(groupedSections: GroupedScheduleSections) {
+  return [
+    ...(groupedSections.all || []),
+    ...(groupedSections.core || []),
+    ...(groupedSections.electives || []),
+    ...(groupedSections.freeElectives || []),
+  ];
 }
 
 function StatCard({ icon, value, label, color }: StatCardProps) {
@@ -445,27 +510,9 @@ export default function ScheduleContent() {
 
   // Group sections by core/elective/free when specialization is selected
   const groupedSections = useMemo(() => {
-
-    if (!selectedSpec) {
-      return { all: filteredAndSortedSections || [] };
-    }
-
-    const core: CourseSection[] = [];
-    const electives: CourseSection[] = [];
-    const freeElectives: CourseSection[] = [];
-
-    (filteredAndSortedSections || []).forEach((section) => {
-      if (coreCourseIds.has(section.courseId)) {
-        core.push(section);
-      } else if (electiveCourseIds.has(section.courseId)) {
-        electives.push(section);
-      } else {
-        freeElectives.push(section);
-      }
-    });
-
-    return { core, electives, freeElectives };
+    return getGroupedScheduleSections(filteredAndSortedSections, selectedSpec, coreCourseIds, electiveCourseIds);
   }, [filteredAndSortedSections, selectedSpec, coreCourseIds, electiveCourseIds]);
+  const displayedSections = useMemo(() => getDisplayedScheduleSections(groupedSections), [groupedSections]);
 
   // Calculate stats
   const safeSections = sections || [];
@@ -524,8 +571,18 @@ export default function ScheduleContent() {
     const regStatus = getRegistrationStatus(section);
 
     return (
-    <Table.Tr key={`${section.crn}-${section.sectionNumber}`}>
-      <Table.Td>
+    <Box
+      key={`${section.crn}-${section.sectionNumber}`}
+      role="row"
+      style={{
+        display: 'grid',
+        gridTemplateColumns: scheduleTableColumns,
+        alignItems: 'center',
+        borderBottom: '1px solid var(--table-border-color, var(--mantine-color-dark-4))',
+        minHeight: 74,
+      }}
+    >
+      <Box role="cell" px="sm" py="sm">
         <Group gap={4} wrap="nowrap">
           <Badge variant="filled" size="sm" color="dark">
             {section.crn}
@@ -546,9 +603,9 @@ export default function ScheduleContent() {
             )}
           </CopyButton>
         </Group>
-      </Table.Td>
+      </Box>
       {isCurrentSemester && (
-        <Table.Td ta="center">
+        <Box role="cell" px="sm" py="sm" ta="center">
           <Tooltip label={regStatus.description}>
             <Badge
               variant="filled"
@@ -558,9 +615,9 @@ export default function ScheduleContent() {
               {regStatus.status}
             </Badge>
           </Tooltip>
-        </Table.Td>
+        </Box>
       )}
-      <Table.Td>
+      <Box role="cell" px="sm" py="sm">
         <Stack gap={4}>
           <Group gap="xs">
             {section.url ? (
@@ -604,11 +661,11 @@ export default function ScheduleContent() {
             {section.name}
           </Text>
         </Stack>
-      </Table.Td>
-      <Table.Td>
+      </Box>
+      <Box role="cell" px="sm" py="sm">
         <Text size="sm">{section.instructor}</Text>
-      </Table.Td>
-      <Table.Td>
+      </Box>
+      <Box role="cell" px="sm" py="sm">
         <Stack gap={4} w={120}>
           <Group justify="space-between">
             <Text size="xs" c="dimmed">
@@ -626,8 +683,8 @@ export default function ScheduleContent() {
             />
           </Progress.Root>
         </Stack>
-      </Table.Td>
-      <Table.Td ta="center">
+      </Box>
+      <Box role="cell" px="sm" py="sm" ta="center">
         {section.waitlist > 0 ? (
           <Badge variant="filled" size="sm" style={{ backgroundColor: '#7a5d00', color: 'white' }}>
             {section.waitlist}
@@ -635,35 +692,45 @@ export default function ScheduleContent() {
         ) : (
           <Text size="sm" c="dimmed">-</Text>
         )}
-      </Table.Td>
-    </Table.Tr>
+      </Box>
+    </Box>
     );
   };
 
   // Reusable table component
   const renderTable = (sectionsList: CourseSection[], showCoreElectiveBadge = false) => (
-    <Table.ScrollContainer minWidth={800}>
-      <Table
-        verticalSpacing="sm"
-        highlightOnHover
-        stickyHeader
-        stickyHeaderOffset={72}
+    <Box style={{ overflowX: 'auto' }}>
+      <Box
+        role="table"
+        style={{
+          minWidth: 800,
+          ['--table-border-color' as string]: tableBorderColor,
+          ['--table-header-border-color' as string]: tableHeaderBorderColor,
+        }}
       >
-        <Table.Thead style={{ backgroundColor: GT_COLORS.navy }}>
-          <Table.Tr>
-            <Table.Th style={{ color: 'white' }}>CRN</Table.Th>
-            {isCurrentSemester && <Table.Th style={{ color: 'white', textAlign: 'center' }}>Status</Table.Th>}
-            <Table.Th style={{ color: 'white' }}>Course</Table.Th>
-            <Table.Th style={{ color: 'white' }}>Instructor</Table.Th>
-            <Table.Th style={{ color: 'white', textAlign: 'center' }}>Enrollment</Table.Th>
-            <Table.Th style={{ color: 'white', textAlign: 'center' }}>Waitlist</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
+        <Box
+          role="row"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: scheduleTableColumns,
+            alignItems: 'center',
+            minHeight: scheduleTableHeaderHeight,
+            borderBottom: '2px solid var(--table-header-border-color)',
+            backgroundColor: tableHeaderBackground,
+          }}
+        >
+          <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle()}>CRN</Box>
+          {isCurrentSemester && <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle('center')}>Status</Box>}
+          <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle()}>Course</Box>
+          <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle()}>Instructor</Box>
+          <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle('center')}>Enrollment</Box>
+          <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle('center')}>Waitlist</Box>
+        </Box>
+        <Box role="rowgroup">
           {(sectionsList || []).map((section) => renderSectionRow(section, showCoreElectiveBadge))}
-        </Table.Tbody>
-      </Table>
-    </Table.ScrollContainer>
+        </Box>
+      </Box>
+    </Box>
   );
 
   return (
@@ -813,7 +880,7 @@ export default function ScheduleContent() {
             </Group>
           </div>
           <Badge variant="filled" color="dark" size="lg">
-            {filteredAndSortedSections.length} sections
+            {displayedSections.length} sections
           </Badge>
         </Group>
 
@@ -861,7 +928,7 @@ export default function ScheduleContent() {
                     {new Set(groupedSections.core.map((s) => s.courseId)).size} courses
                   </Badge>
                 </Group>
-                <Paper radius="lg" withBorder>
+                <Paper {...getScheduleTablePaperProps()}>
                   {renderTable(groupedSections.core)}
                 </Paper>
               </div>
@@ -881,28 +948,8 @@ export default function ScheduleContent() {
                     {new Set(groupedSections.electives.map((s) => s.courseId)).size} courses
                   </Badge>
                 </Group>
-                <Paper radius="lg" withBorder>
+                <Paper {...getScheduleTablePaperProps()}>
                   {renderTable(groupedSections.electives)}
-                </Paper>
-              </div>
-            )}
-
-            {/* Free Electives Section */}
-            {groupedSections.freeElectives && groupedSections.freeElectives.length > 0 && (
-              <div>
-                <Group gap="sm" mb="md">
-                  <ThemeIcon size={28} radius="md" variant="light" color="gray">
-                    <IconListCheck size={16} />
-                  </ThemeIcon>
-                  <Title order={3} size="h4">
-                    Free Electives
-                  </Title>
-                  <Badge variant="light" color="gray" size="sm">
-                    {new Set(groupedSections.freeElectives.map((s) => s.courseId)).size} courses
-                  </Badge>
-                </Group>
-                <Paper radius="lg" withBorder>
-                  {renderTable(groupedSections.freeElectives)}
                 </Paper>
               </div>
             )}
@@ -920,7 +967,9 @@ export default function ScheduleContent() {
                     No courses available
                   </Title>
                   <Text c="dimmed" size="sm">
-                    No courses for {decodeHtmlEntities(selectedSpec.name)} are offered in {getTermLabel(activeSemester)}.
+                    {searchQuery
+                      ? `No ${decodeHtmlEntities(selectedSpec.name)} courses match "${searchQuery}" in ${getTermLabel(activeSemester)}.`
+                      : `No courses for ${decodeHtmlEntities(selectedSpec.name)} are offered in ${getTermLabel(activeSemester)}.`}
                   </Text>
                 </Stack>
               </Paper>
@@ -928,13 +977,13 @@ export default function ScheduleContent() {
           </Stack>
         ) : (
           // Default ungrouped view
-          <Paper radius="lg" withBorder>
+          <Paper {...getScheduleTablePaperProps()}>
             {renderTable(filteredAndSortedSections)}
           </Paper>
         )}
 
         {/* Empty Search State */}
-        {!loading && sections.length > 0 && filteredAndSortedSections.length === 0 && (
+        {!loading && !selectedSpec && sections.length > 0 && displayedSections.length === 0 && (
           <Paper p="xl" radius="lg" withBorder ta="center" mt="xl">
             <Stack align="center" gap="md">
               <ThemeIcon size={60} radius="xl" variant="light" color="gray">
