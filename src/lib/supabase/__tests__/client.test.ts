@@ -22,8 +22,9 @@ describe('createClient()', () => {
   });
 
   it('keeps browser auth cookies host-only on the default test host', async () => {
-    const { createClient } = await import('../client');
+    const { createClient, hasSupabaseBrowserConfig } = await import('../client');
 
+    expect(hasSupabaseBrowserConfig()).toBe(true);
     createClient();
 
     expect(mockCreateBrowserClient).toHaveBeenCalledWith(
@@ -32,12 +33,44 @@ describe('createClient()', () => {
       { cookieOptions: { domain: undefined } }
     );
   });
+
+  it('reports missing browser config before constructing Supabase client', async () => {
+    process.env = { ...originalEnv };
+    const { hasSupabaseBrowserConfig } = await import('../client');
+
+    expect(hasSupabaseBrowserConfig()).toBe(false);
+    expect(mockCreateBrowserClient).not.toHaveBeenCalled();
+  });
+
+  it('rejects serialized undefined browser config placeholders', async () => {
+    process.env = {
+      ...originalEnv,
+      NEXT_PUBLIC_SUPABASE_URL: 'undefined',
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'undefined',
+    };
+    const { createClient, hasSupabaseBrowserConfig } = await import('../client');
+
+    expect(hasSupabaseBrowserConfig()).toBe(false);
+    expect(() => createClient()).toThrow('Supabase browser client is not configured');
+    expect(mockCreateBrowserClient).not.toHaveBeenCalled();
+  });
 });
 
 describe('getClient()', () => {
+  const originalEnv = process.env;
+
   beforeEach(() => {
     jest.resetModules();
     jest.clearAllMocks();
+    process.env = {
+      ...originalEnv,
+      NEXT_PUBLIC_SUPABASE_URL: 'https://example.supabase.co',
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'publishable-key',
+    };
+  });
+
+  afterEach(() => {
+    process.env = originalEnv;
   });
 
   it('memoizes the browser Supabase client', async () => {

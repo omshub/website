@@ -14,10 +14,36 @@ export function getCookieDomain(hostname?: string): string | undefined {
   return undefined;
 }
 
+export function hasSupabaseBrowserConfig() {
+  return getSupabaseBrowserConfig() !== null;
+}
+
+function getSupabaseBrowserConfig() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+  if (
+    !url ||
+    !publishableKey ||
+    url === 'undefined' ||
+    publishableKey === 'undefined' ||
+    !/^https?:\/\//.test(url)
+  ) {
+    return null;
+  }
+
+  return { publishableKey, url };
+}
+
 export function createClient() {
+  const config = getSupabaseBrowserConfig();
+  if (!config) {
+    throw new Error('Supabase browser client is not configured');
+  }
+
   return createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    config.url,
+    config.publishableKey,
     { cookieOptions: { domain: getCookieDomain() } }
   );
 }

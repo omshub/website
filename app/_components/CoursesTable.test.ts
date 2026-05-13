@@ -7,9 +7,10 @@ describe('CoursesTable', () => {
     'utf8'
   );
 
-  it('keeps table headers sticky while scrolling the course list', () => {
-    expect(source).toContain('stickyHeader');
-    expect(source).toContain('stickyHeaderOffset={72}');
+  it('renders course tables without a sticky header offset gap', () => {
+    expect(source).not.toContain('stickyHeader');
+    expect(source).not.toContain('stickyHeaderOffset');
+    expect(source).toContain('type="native"');
   });
 
   it('persists sort settings in browser storage', () => {

@@ -6,6 +6,19 @@ const signInWithOAuth = jest.fn();
 const signInWithOtp = jest.fn();
 const signOut = jest.fn();
 const getSession = jest.fn();
+const hasSupabaseBrowserConfig = jest.fn(() => true);
+const getClient = jest.fn(() => ({
+  auth: {
+    getSession,
+    onAuthStateChange: (callback: typeof authCallback) => {
+      authCallback = callback;
+      return { data: { subscription: { unsubscribe } } };
+    },
+    signInWithOAuth,
+    signInWithOtp,
+    signOut,
+  },
+}));
 let authCallback: ((event: string, session: any) => void) | undefined;
 const setters: jest.Mock[] = [];
 
@@ -19,18 +32,8 @@ jest.mock('@/utils/notifications', () => ({
 }));
 
 jest.mock('@/lib/supabase/client', () => ({
-  getClient: () => ({
-    auth: {
-      getSession,
-      onAuthStateChange: (callback: typeof authCallback) => {
-        authCallback = callback;
-        return { data: { subscription: { unsubscribe } } };
-      },
-      signInWithOAuth,
-      signInWithOtp,
-      signOut,
-    },
-  }),
+  getClient: (...args: unknown[]) => getClient(...args),
+  hasSupabaseBrowserConfig: (...args: unknown[]) => hasSupabaseBrowserConfig(...args),
 }));
 
 jest.mock('react', () => {
@@ -65,6 +68,19 @@ describe('context providers', () => {
     signInWithOAuth.mockResolvedValue({ error: null });
     signInWithOtp.mockResolvedValue({ error: null });
     signOut.mockResolvedValue(undefined);
+    hasSupabaseBrowserConfig.mockReturnValue(true);
+    getClient.mockImplementation(() => ({
+      auth: {
+        getSession,
+        onAuthStateChange: (callback: typeof authCallback) => {
+          authCallback = callback;
+          return { data: { subscription: { unsubscribe } } };
+        },
+        signInWithOAuth,
+        signInWithOtp,
+        signOut,
+      },
+    }));
     global.fetch = jest.fn(async () => ({ ok: true })) as any;
   });
 
@@ -152,5 +168,27 @@ describe('context providers', () => {
     await Promise.resolve();
     expect(global.fetch).toHaveBeenCalledWith('/auth/logout', { method: 'POST' });
     expect(unsubscribe).toHaveBeenCalled();
+  });
+
+  it('falls back to anonymous auth state when Supabase browser config is unavailable', async () => {
+    hasSupabaseBrowserConfig.mockReturnValue(false);
+
+    const { AuthProvider } = await import('@/context/AuthContext');
+    const element = AuthProvider({ children: null } as any) as any;
+
+    expect(element.props.value.user).toBeNull();
+    expect(element.props.value.session).toBeNull();
+    expect(setters.some((setter) => setter.mock.calls.some(([value]) => value === false))).toBe(true);
+
+    await expect(element.props.value.signInWithEmailOtp('student@example.com')).resolves.toBe(false);
+    await element.props.value.signInWithProvider('github');
+    await element.props.value.logout();
+
+    expect(notifyError).toHaveBeenCalledWith(expect.objectContaining({ title: 'Sign in unavailable' }));
+    expect(getClient).not.toHaveBeenCalled();
+    expect(signInWithOtp).not.toHaveBeenCalled();
+    expect(signInWithOAuth).not.toHaveBeenCalled();
+    expect(signOut).not.toHaveBeenCalled();
+    expect(global.fetch).toHaveBeenCalledWith('/auth/logout', { method: 'POST' });
   });
 });

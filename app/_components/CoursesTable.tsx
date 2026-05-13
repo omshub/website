@@ -230,12 +230,10 @@ export default function CoursesTable({ allCourseData }: CoursesTableProps) {
       </Group>
 
       <Paper radius="lg" withBorder>
-        <Table.ScrollContainer minWidth={700}>
+        <Table.ScrollContainer minWidth={700} type="native">
           <Table
             verticalSpacing="sm"
             highlightOnHover
-            stickyHeader
-            stickyHeaderOffset={72}
             style={{ minWidth: 700 }}
           >
             <Table.Thead style={{ backgroundColor: GT_COLORS.navy }}>

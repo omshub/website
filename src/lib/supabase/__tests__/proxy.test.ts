@@ -19,6 +19,8 @@ jest.mock('next/server', () => ({
   },
 }));
 
+const originalEnv = process.env;
+
 function makeMockRequest(
   cookies: Array<{ name: string; value: string }> = [],
   options: {
@@ -49,7 +51,25 @@ function makeMockRequest(
 describe('updateSession()', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    process.env = {
+      ...originalEnv,
+      NEXT_PUBLIC_SUPABASE_URL: 'https://example.supabase.co',
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'publishable-key',
+    };
     mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
+  });
+
+  afterAll(() => {
+    process.env = originalEnv;
+  });
+
+  it('skips Supabase session refresh when preview runtime env vars are missing', async () => {
+    process.env = { ...originalEnv };
+
+    await expect(updateSession(makeMockRequest())).resolves.toBeDefined();
+
+    expect(createServerClient).not.toHaveBeenCalled();
+    expect(mockGetUser).not.toHaveBeenCalled();
   });
 
   it('does NOT call getUser() when no session cookie is present', async () => {
