@@ -12,4 +12,14 @@ describe('CoursesTable', () => {
     expect(source).not.toContain('stickyHeaderOffset');
     expect(source).toContain('type="native"');
   });
+
+  it('uses the schedule table visual treatment for the home page table', () => {
+    expect(source).toContain("from './tableStyles'");
+    expect(source).not.toContain('const tableHeaderBackground = GT_COLORS.navy');
+    expect(source).not.toContain('const tableHeaderBorderColor = GT_COLORS.techGold');
+    expect(source).not.toContain("const tableBorderColor = 'var(--mantine-color-default-border)'");
+    expect(source).not.toContain('const tableHeaderHeight = 72');
+    expect(source).toContain('getHomeTablePaperProps');
+    expect(source).toContain('getHomeHeaderCellStyle');
+  });
 });
