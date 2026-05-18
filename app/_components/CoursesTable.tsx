@@ -32,9 +32,24 @@ import { useLocalStorage } from '@mantine/hooks';
 import { courseFields } from '@/lib/constants';
 import { mapPayloadToArray } from '@/utilities';
 import { GT_COLORS } from '@/lib/theme';
+import {
+  getSharedTableHeaderCellStyle,
+  getSharedTablePaperProps,
+  sharedTableBorderColor,
+  sharedTableHeaderBackground,
+  sharedTableHeaderBorderColor,
+} from './tableStyles';
 
 interface CoursesTableProps {
   allCourseData: Record<TCourseId, Course>;
+}
+
+function getHomeTablePaperProps() {
+  return getSharedTablePaperProps();
+}
+
+function getHomeHeaderCellStyle(textAlign?: React.CSSProperties['textAlign']): React.CSSProperties {
+  return getSharedTableHeaderCellStyle(textAlign);
 }
 
 // Sortable table header
@@ -49,7 +64,7 @@ interface ThProps {
 function Th({ children, reversed, sorted, onSort, ta = 'left' }: ThProps) {
   const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
   return (
-    <Table.Th style={{ textAlign: ta }}>
+    <Table.Th style={getHomeHeaderCellStyle(ta)}>
       <UnstyledButton onClick={onSort} style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: ta === 'center' ? 'center' : 'flex-start' }}>
         <Text fw={600} size="sm" c="white">
           {children}
@@ -229,14 +244,22 @@ export default function CoursesTable({ allCourseData }: CoursesTableProps) {
         </Button>
       </Group>
 
-      <Paper radius="lg" withBorder>
+      <Paper {...getHomeTablePaperProps()}>
         <Table.ScrollContainer minWidth={700} type="native">
           <Table
             verticalSpacing="sm"
             highlightOnHover
-            style={{ minWidth: 700 }}
+            style={{
+              minWidth: 700,
+              ['--table-border-color' as string]: sharedTableBorderColor,
+            }}
           >
-            <Table.Thead style={{ backgroundColor: GT_COLORS.navy }}>
+            <Table.Thead
+              style={{
+                backgroundColor: sharedTableHeaderBackground,
+                borderBottom: `2px solid ${sharedTableHeaderBorderColor}`,
+              }}
+            >
               <Table.Tr>
                 <Th
                   sorted={sortBy === 'name'}

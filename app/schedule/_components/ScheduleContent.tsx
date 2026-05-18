@@ -47,6 +47,14 @@ import {
   getTermCode,
   getTermLabel,
 } from '../_lib/semesters';
+import {
+  getSharedTableHeaderCellStyle,
+  getSharedTablePaperProps,
+  sharedTableBorderColor,
+  sharedTableHeaderBackground,
+  sharedTableHeaderBorderColor,
+  sharedTableHeaderHeight,
+} from '../../_components/tableStyles';
 
 // Data repository URL
 const DATA_REPO_BASE = 'https://raw.githubusercontent.com/omshub/data/main';
@@ -165,30 +173,18 @@ interface GroupedScheduleSections {
   freeElectives: CourseSection[];
 }
 
-const tableHeaderBackground = GT_COLORS.navy;
-const tableHeaderBorderColor = GT_COLORS.techGold;
-const tableBorderColor = 'var(--mantine-color-default-border)';
-const scheduleTableHeaderHeight = 72;
+const scheduleTableHeaderHeight = sharedTableHeaderHeight;
 const scheduleTableColumns = '120px 90px minmax(360px, 1.8fr) minmax(200px, 1fr) 150px 90px';
 
 export function getScheduleTablePaperProps() {
-  return {
-    radius: 'lg' as const,
-    withBorder: true,
-    style: {
-      overflow: 'hidden',
-    },
-  };
+  return getSharedTablePaperProps();
 }
 
 export function getScheduleHeaderCellStyle(textAlign?: React.CSSProperties['textAlign']): React.CSSProperties {
-  return {
-    backgroundColor: tableHeaderBackground,
-    color: 'white',
+  return getSharedTableHeaderCellStyle(textAlign, {
     position: 'relative',
-    textAlign,
     zIndex: 2,
-  };
+  });
 }
 
 export function getGroupedScheduleSections(
@@ -704,8 +700,8 @@ export default function ScheduleContent() {
         role="table"
         style={{
           minWidth: 800,
-          ['--table-border-color' as string]: tableBorderColor,
-          ['--table-header-border-color' as string]: tableHeaderBorderColor,
+          ['--table-border-color' as string]: sharedTableBorderColor,
+          ['--table-header-border-color' as string]: sharedTableHeaderBorderColor,
         }}
       >
         <Box
@@ -716,7 +712,7 @@ export default function ScheduleContent() {
             alignItems: 'center',
             minHeight: scheduleTableHeaderHeight,
             borderBottom: '2px solid var(--table-header-border-color)',
-            backgroundColor: tableHeaderBackground,
+            backgroundColor: sharedTableHeaderBackground,
           }}
         >
           <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle()}>CRN</Box>

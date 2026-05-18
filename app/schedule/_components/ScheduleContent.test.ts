@@ -15,9 +15,10 @@ describe('ScheduleContent', () => {
     expect(source).not.toContain('aria-hidden="true" role="row"');
     expect(source).not.toContain('boxShadow');
     expect(source).not.toContain("var(--mantine-color-dark-7)");
-    expect(source).toContain('const tableHeaderBackground = GT_COLORS.navy');
-    expect(source).toContain('const tableHeaderBorderColor = GT_COLORS.techGold');
-    expect(source).toContain("const tableBorderColor = 'var(--mantine-color-default-border)'");
+    expect(source).toContain("from '../../_components/tableStyles'");
+    expect(source).not.toContain('const tableHeaderBackground = GT_COLORS.navy');
+    expect(source).not.toContain('const tableHeaderBorderColor = GT_COLORS.techGold');
+    expect(source).not.toContain("const tableBorderColor = 'var(--mantine-color-default-border)'");
     expect(source).toContain("overflowX: 'auto'");
     expect(source).toContain('getScheduleTablePaperProps');
     expect(source).toContain('getScheduleHeaderCellStyle');
