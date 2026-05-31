@@ -189,6 +189,7 @@ export default function RecentsContent({
                 <Anchor
                   component={Link}
                   href={`/course/${review.courseId}`}
+                  prefetch={false}
                   fw={600}
                   size="sm"
                   c="boldBlue"

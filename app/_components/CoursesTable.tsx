@@ -310,6 +310,7 @@ export default function CoursesTable({ allCourseData }: CoursesTableProps) {
                       <Anchor
                         component={Link}
                         href={`/course/${course.courseId}`}
+                        prefetch={false}
                         fw={500}
                         size="sm"
                         style={{ color: GT_COLORS.boldBlue }}

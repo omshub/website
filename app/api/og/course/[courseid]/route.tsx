@@ -3,6 +3,9 @@ import { NextRequest } from 'next/server';
 
 export const runtime = 'edge';
 
+const PUBLIC_OG_CACHE_CONTROL =
+  'public, s-maxage=86400, stale-while-revalidate=604800';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ courseid: string }> }
@@ -14,6 +17,9 @@ export async function GET(
   const avgDifficulty = 'N/A';
   const avgWorkload = 'N/A';
   const avgOverall = 'N/A';
+  const difficultyLabel = `${avgDifficulty}/5`;
+  const workloadLabel = `${avgWorkload} hrs/wk`;
+  const ratingLabel = `${avgOverall}/5`;
 
   try {
     const response = await fetch(
@@ -119,7 +125,7 @@ export async function GET(
               DIFFICULTY
             </div>
             <div style={{ color: 'white', fontSize: 28, fontWeight: 700 }}>
-              {avgDifficulty}/5
+              {difficultyLabel}
             </div>
           </div>
 
@@ -137,7 +143,7 @@ export async function GET(
               WORKLOAD
             </div>
             <div style={{ color: 'white', fontSize: 28, fontWeight: 700 }}>
-              {avgWorkload} hrs/wk
+              {workloadLabel}
             </div>
           </div>
 
@@ -155,7 +161,7 @@ export async function GET(
               RATING
             </div>
             <div style={{ color: 'white', fontSize: 28, fontWeight: 700 }}>
-              {avgOverall}/5
+              {ratingLabel}
             </div>
           </div>
         </div>
@@ -176,6 +182,9 @@ export async function GET(
     {
       width: 1200,
       height: 630,
+      headers: {
+        'Cache-Control': PUBLIC_OG_CACHE_CONTROL,
+      },
     }
   );
 }

@@ -39,4 +39,8 @@ describe('CoursesTable', () => {
     );
     expect(source).toContain('onClick={clearSavedTableSettings}');
   });
+
+  it('does not prefetch every linked course row', () => {
+    expect(source).toContain('prefetch={false}');
+  });
 });

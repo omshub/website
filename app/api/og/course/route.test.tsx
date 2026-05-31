@@ -2,6 +2,8 @@ jest.mock('next/og', () => ({
   ImageResponse: jest.fn((element, options) => ({ element, options })),
 }));
 
+const PUBLIC_OG_CACHE_CONTROL = 'public, s-maxage=86400, stale-while-revalidate=604800';
+
 describe('course OG route', () => {
   beforeEach(() => {
     jest.resetModules();
@@ -24,7 +26,11 @@ describe('course OG route', () => {
       'https://raw.githubusercontent.com/omshub/data/main/static/courses.json'
     );
     expect(response).toMatchObject({
-      options: { width: 1200, height: 630 },
+      options: {
+        width: 1200,
+        height: 630,
+        headers: { 'Cache-Control': PUBLIC_OG_CACHE_CONTROL },
+      },
     });
   });
 

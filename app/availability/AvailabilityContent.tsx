@@ -491,6 +491,7 @@ export default function AvailabilityContent() {
                             <Anchor
                               component={Link}
                               href={`/course/${section.courseId}`}
+                              prefetch={false}
                               fw={600}
                               style={{ color: GT_COLORS.boldBlue }}
                               underline="always"

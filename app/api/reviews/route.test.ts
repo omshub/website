@@ -6,6 +6,7 @@ import { GET, POST } from './route';
 
 const mockCreateClient = jest.fn();
 const mockAuthGetUser = jest.fn();
+const PUBLIC_API_CACHE_CONTROL = 'public, s-maxage=300, stale-while-revalidate=3600';
 
 jest.mock('@/lib/supabase/server', () => ({
   createClient: (...args: unknown[]) => mockCreateClient(...args),
@@ -139,6 +140,7 @@ describe('/api/reviews', () => {
     const body = await response.json();
 
     expect(response.status).toBe(200);
+    expect(response.headers.get('Cache-Control')).toBe(PUBLIC_API_CACHE_CONTROL);
     expect(query.eq).toHaveBeenCalledWith('year', 2025);
     expect(query.eq).toHaveBeenCalledWith('semester', 'fa');
     expect(query.ilike).toHaveBeenCalledWith('body', '%kernel%');
@@ -162,6 +164,7 @@ describe('/api/reviews', () => {
     );
 
     expect(query.range).toHaveBeenCalledWith(20, 119);
+    expect(response.headers.get('Cache-Control')).toBe(PUBLIC_API_CACHE_CONTROL);
     await expect(response.json()).resolves.toEqual({
       reviews: {},
       pagination: {

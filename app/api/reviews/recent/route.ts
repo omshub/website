@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { publicApiJson } from '@/lib/cacheHeaders';
 
 // GET /api/reviews/recent?limit=20&offset=0&search=keyword
 export async function GET(request: NextRequest) {
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest) {
     // Get total count for pagination info
     const { count } = await countQuery;
 
-    return NextResponse.json({
+    return publicApiJson({
       reviews: reviews || [],
       pagination: {
         offset,

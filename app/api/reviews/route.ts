@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import type { Database } from '@/lib/supabase/database.types';
 import { TCourseId, TPayloadReviews } from '@/lib/types';
+import { publicApiJson } from '@/lib/cacheHeaders';
 
 type SupabaseReview = Database['public']['Tables']['reviews']['Row'];
 
@@ -90,7 +91,7 @@ export async function GET(request: NextRequest) {
 
     // Return paginated response if requested
     if (paginated) {
-      return NextResponse.json({
+      return publicApiJson({
         reviews,
         pagination: {
           offset,
@@ -102,7 +103,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Return legacy format for backwards compatibility
-    return NextResponse.json(reviews);
+    return publicApiJson(reviews);
   } catch (error) {
     console.error('Error fetching reviews:', error);
     return NextResponse.json({ error: 'Failed to fetch reviews' }, { status: 500 });
