@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Container,
   Title,
@@ -39,12 +39,10 @@ import {
 } from '@tabler/icons-react';
 import { GT_COLORS } from '@/lib/theme';
 import {
-  getCurrentSemester,
   getFutureCandidates,
   getInitialActiveSemester,
   getPastSemesters,
   getScheduleSemesterOptions,
-  getTermCode,
   getTermLabel,
 } from '../_lib/semesters';
 import {
@@ -58,6 +56,36 @@ import {
 
 // Data repository URL
 const DATA_REPO_BASE = 'https://raw.githubusercontent.com/omshub/data/main';
+
+async function hasAvailabilityData(termCode: string): Promise<boolean> {
+  const url = `${DATA_REPO_BASE}/data/${termCode}.json`;
+
+  try {
+    const headResponse = await fetch(url, {
+      method: 'HEAD',
+      cache: 'no-store',
+    });
+
+    if (headResponse.ok) return true;
+    if (headResponse.status !== 405 && headResponse.status !== 501) return false;
+  } catch {
+    // Some browsers/proxies are less reliable with cross-origin HEAD requests.
+    // Fall back to GET below so future terms are not hidden by a failed probe.
+  }
+
+  try {
+    const getResponse = await fetch(url, {
+      cache: 'no-store',
+      headers: {
+        Range: 'bytes=0-0',
+      },
+    });
+
+    return getResponse.ok;
+  } catch {
+    return false;
+  }
+}
 
 // Decode HTML entities from API data
 function decodeHtmlEntities(text: string): string {
@@ -174,7 +202,8 @@ interface GroupedScheduleSections {
 }
 
 const scheduleTableHeaderHeight = sharedTableHeaderHeight;
-const scheduleTableColumns = '120px 90px minmax(360px, 1.8fr) minmax(200px, 1fr) 150px 90px';
+const currentScheduleTableColumns = '100px 85px minmax(295px, 1.8fr) minmax(165px, 1fr) 135px 80px';
+const historicalScheduleTableColumns = '100px minmax(295px, 1.8fr) minmax(165px, 1fr) 135px 80px';
 
 export function getScheduleTablePaperProps() {
   return getSharedTablePaperProps();
@@ -298,8 +327,10 @@ function getSearchScore(section: CourseSection, query: string): number {
 
 export default function ScheduleContent() {
   const pastSemesters = useMemo(() => getPastSemesters(), []);
+  const initialActiveSemester = getInitialActiveSemester(pastSemesters);
   const [semesters, setSemesters] = useState(pastSemesters);
-  const [activeSemester, setActiveSemester] = useState(getInitialActiveSemester(pastSemesters));
+  const [activeSemester, setActiveSemester] = useState(initialActiveSemester);
+  const [latestAvailableSemester, setLatestAvailableSemester] = useState(initialActiveSemester);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -308,30 +339,41 @@ export default function ScheduleContent() {
   const [specializations, setSpecializations] = useState<SpecializationMap>({});
   const [programs, setPrograms] = useState<ProgramMap>({});
   const [selectedSpecialization, setSelectedSpecialization] = useState<string | null>(null);
+  const userSelectedSemesterRef = useRef(false);
 
   // Probe future semester candidates and prepend any that have data
   useEffect(() => {
+    let cancelled = false;
+
     async function probeFutureSemesters() {
       const candidates = getFutureCandidates(3);
       const results = await Promise.all(
         candidates.map(async (termCode) => {
-          try {
-            const res = await fetch(`${DATA_REPO_BASE}/data/${termCode}.json`, { method: 'HEAD' });
-            return res.ok ? termCode : null;
-          } catch {
-            return null;
-          }
+          return (await hasAvailabilityData(termCode)) ? termCode : null;
         })
       );
 
-      const available = results.filter((t): t is string => t !== null);
+      if (cancelled) return;
+
+      const available = results.filter((t): t is string => t !== null).sort((a, b) => b.localeCompare(a));
       if (available.length > 0) {
         setSemesters(getScheduleSemesterOptions(pastSemesters, available));
+        setLatestAvailableSemester(available[0]);
+
+        if (!userSelectedSemesterRef.current) {
+          setActiveSemester(available[0]);
+        }
+      } else {
+        setLatestAvailableSemester(initialActiveSemester);
       }
     }
 
     probeFutureSemesters();
-  }, [pastSemesters]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [initialActiveSemester, pastSemesters]);
 
   useEffect(() => {
     // Cancellation flag: if activeSemester changes while a fetch is in flight,
@@ -557,14 +599,18 @@ export default function ScheduleContent() {
     return { status: 'Open', color: GT_COLORS.canopyLime, description: `${seatsAvailable} seats available` };
   };
 
-  // Check if viewing current semester (for showing status)
-  const { year: currentYear, semester: currentSem } = getCurrentSemester();
-  const currentTermCode = getTermCode(currentYear, currentSem);
-  const isCurrentSemester = activeSemester === currentTermCode;
+  // Show registration status for the newest term with available data. This can
+  // be a future registration term, such as Fall 2026 while the calendar is still
+  // in Summer 2026.
+  const isLatestAvailableSemester = activeSemester === latestAvailableSemester;
+  const scheduleTableColumns = isLatestAvailableSemester ? currentScheduleTableColumns : historicalScheduleTableColumns;
 
   // Reusable table row renderer
   const renderSectionRow = (section: CourseSection, showCoreElectiveBadge = false) => {
     const regStatus = getRegistrationStatus(section);
+    const enrollmentPercentage = section.capacity > 0
+      ? Math.round((section.enrolled / section.capacity) * 100)
+      : 0;
 
     return (
     <Box
@@ -600,7 +646,7 @@ export default function ScheduleContent() {
           </CopyButton>
         </Group>
       </Box>
-      {isCurrentSemester && (
+      {isLatestAvailableSemester && (
         <Box role="cell" px="sm" py="sm" ta="center">
           <Tooltip label={regStatus.description}>
             <Badge
@@ -621,13 +667,13 @@ export default function ScheduleContent() {
                 href={section.url}
                 target="_blank"
                 fw={600}
-                style={{ color: GT_COLORS.boldBlue }}
+                style={{ color: GT_COLORS.boldBlue, whiteSpace: 'nowrap' }}
                 underline="always"
               >
                 {section.courseId}
               </Anchor>
             ) : (
-              <Text fw={600} style={{ color: GT_COLORS.boldBlue }}>
+              <Text fw={600} style={{ color: GT_COLORS.boldBlue, whiteSpace: 'nowrap' }}>
                 {section.courseId}
               </Text>
             )}
@@ -668,12 +714,12 @@ export default function ScheduleContent() {
               {section.enrolled} / {section.capacity}
             </Text>
             <Text size="xs" fw={600} style={{ color: getEnrollmentColor(section.enrolled, section.capacity) }}>
-              {section.capacity > 0 ? Math.round((section.enrolled / section.capacity) * 100) : 0}%
+              {enrollmentPercentage}%
             </Text>
           </Group>
           <Progress.Root size="sm" radius="xl">
             <Progress.Section
-              value={section.capacity > 0 ? (section.enrolled / section.capacity) * 100 : 0}
+              value={enrollmentPercentage}
               color={getEnrollmentBadgeColor(section.enrolled, section.capacity)}
               aria-label={`Enrollment progress: ${section.enrolled} out of ${section.capacity} seats filled`}
             />
@@ -699,7 +745,7 @@ export default function ScheduleContent() {
       <Box
         role="table"
         style={{
-          minWidth: 800,
+          minWidth: isLatestAvailableSemester ? 860 : 775,
           ['--table-border-color' as string]: sharedTableBorderColor,
           ['--table-header-border-color' as string]: sharedTableHeaderBorderColor,
         }}
@@ -716,7 +762,7 @@ export default function ScheduleContent() {
           }}
         >
           <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle()}>CRN</Box>
-          {isCurrentSemester && <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle('center')}>Status</Box>}
+          {isLatestAvailableSemester && <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle('center')}>Status</Box>}
           <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle()}>Course</Box>
           <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle()}>Instructor</Box>
           <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle('center')}>Enrollment</Box>
@@ -806,7 +852,10 @@ export default function ScheduleContent() {
               label="Semester"
               data={semesters}
               value={activeSemester}
-              onChange={(value) => setActiveSemester(value || semesters[0]?.value || '')}
+              onChange={(value) => {
+                userSelectedSemesterRef.current = true;
+                setActiveSemester(value || semesters[0]?.value || '');
+              }}
               leftSection={<IconCalendar size={16} />}
               allowDeselect={false}
               comboboxProps={{ withinPortal: true }}
