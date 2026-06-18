@@ -6,8 +6,8 @@ const DEFAULT_TIMEOUT_MS = 15000;
 const DEPLOYMENT_ORIGINS = {
   production: 'https://omshub.org',
   productionWww: 'https://www.omshub.org',
-  preview: 'https://website-git-fix-email-otp-auth-cookies-omshub.vercel.app',
 };
+const VERCEL_PREVIEW_HOST_PATTERN = /^website-(?:git-[a-z0-9-]+|[a-z0-9]+)-omshub\.vercel\.app$/;
 
 function normalizeBaseUrl(value) {
   if (!value) throw new Error('Deployment URL is required');
@@ -28,8 +28,7 @@ function isAllowedDeploymentHost(hostname) {
   const host = hostname.toLowerCase();
   return (
     isProductionHost(host) ||
-    host === new URL(DEPLOYMENT_ORIGINS.preview).hostname ||
-    /^website-[a-z0-9]+-omshub\.vercel\.app$/.test(host)
+    VERCEL_PREVIEW_HOST_PATTERN.test(host)
   );
 }
 
@@ -51,7 +50,7 @@ function resolveAllowedDeploymentOrigin(value) {
   if (hostname.toLowerCase() === 'www.omshub.org') {
     return DEPLOYMENT_ORIGINS.productionWww;
   }
-  return DEPLOYMENT_ORIGINS.preview;
+  return baseUrl;
 }
 
 function assertAllowedRequestTarget(target) {

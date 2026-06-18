@@ -56,21 +56,23 @@ describe('post-deploy auth check helpers', () => {
   it('allows production and OMSHub Vercel deployment hosts', () => {
     expect(isAllowedDeploymentHost('omshub.org')).toBe(true);
     expect(isAllowedDeploymentHost('www.omshub.org')).toBe(true);
-    expect(isAllowedDeploymentHost('website-git-fix-email-otp-auth-cookies-omshub.vercel.app')).toBe(true);
+    expect(
+      isAllowedDeploymentHost('website-git-perf-reduce-vercel-edge-requests-omshub.vercel.app')
+    ).toBe(true);
     expect(isAllowedDeploymentHost('website-a0mbbkjc7-omshub.vercel.app')).toBe(true);
   });
 
-  it('resolves allowed deployments to fixed origins', () => {
+  it('resolves allowed deployments to normalized origins', () => {
     expect(resolveAllowedDeploymentOrigin('https://omshub.org/path?q=1')).toBe(
       'https://omshub.org'
     );
     expect(
       resolveAllowedDeploymentOrigin(
-        'https://website-git-fix-email-otp-auth-cookies-omshub.vercel.app/path?q=1'
+        'https://website-git-perf-reduce-vercel-edge-requests-omshub.vercel.app/path?q=1'
       )
-    ).toBe('https://website-git-fix-email-otp-auth-cookies-omshub.vercel.app');
-    expect(resolveAllowedDeploymentOrigin('https://website-a0mbbkjc7-omshub.vercel.app')).toBe(
-      'https://website-git-fix-email-otp-auth-cookies-omshub.vercel.app'
+    ).toBe('https://website-git-perf-reduce-vercel-edge-requests-omshub.vercel.app');
+    expect(resolveAllowedDeploymentOrigin('https://website-a0mbbkjc7-omshub.vercel.app/path')).toBe(
+      'https://website-a0mbbkjc7-omshub.vercel.app'
     );
     expect(resolveAllowedDeploymentOrigin('https://www.omshub.org/path')).toBe(
       'https://www.omshub.org'
@@ -317,6 +319,50 @@ describe('post-deploy auth check helpers', () => {
       method: 'GET',
       headers: { 'x-vercel-protection-bypass': 'secret' },
     });
+  });
+
+  it('runs auth callback checks against the current preview deployment', async () => {
+    const previewUrl = 'https://website-j6d6qlhar-omshub.vercel.app';
+    const responses = [
+      makeResponse('', 307, {
+        location: `${previewUrl}/?error=access_denied`,
+      }),
+      makeResponse('sb-post-deploy-auth-token-code-verifier=; Path=/; Max-Age=0', 307, {
+        location: `${previewUrl}/?error=auth_callback_error&reason=no_code`,
+      }),
+      makeResponse('', 307, {
+        location: `${previewUrl}/?error=auth_callback_error&reason=exchange_failed&message=bad`,
+      }),
+    ];
+    const requestSpy = jest.spyOn(https, 'request').mockImplementation((target, options, handler) => {
+      const req = new EventEmitter();
+      req.destroy = (error) => req.emit('error', error);
+      req.end = () => {
+        const response = responses.shift();
+        const res = new EventEmitter();
+        res.statusCode = response.status;
+        res.headers = {
+          location: response.headers.get('location'),
+          'set-cookie': response.headers.get('set-cookie')
+            ? [response.headers.get('set-cookie')]
+            : undefined,
+        };
+        res.resume = jest.fn();
+        handler(res);
+        res.emit('end');
+      };
+      return req;
+    });
+
+    await expect(runAuthCallbackChecks(`${previewUrl}/deployment/path`)).resolves.toEqual({
+      baseUrl: previewUrl,
+    });
+
+    expect(requestSpy.mock.calls.map(([target]) => target.hostname)).toEqual([
+      'website-j6d6qlhar-omshub.vercel.app',
+      'website-j6d6qlhar-omshub.vercel.app',
+      'website-j6d6qlhar-omshub.vercel.app',
+    ]);
   });
 
   it('fetches without follow using default request options', async () => {

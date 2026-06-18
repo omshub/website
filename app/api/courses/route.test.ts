@@ -5,6 +5,7 @@
 import { GET } from './route';
 
 const mockGetCourseStats = jest.fn();
+const PUBLIC_API_CACHE_CONTROL = 'public, s-maxage=300, stale-while-revalidate=3600';
 
 jest.mock('@/lib/staticData', () => ({
   getCourseStats: (...args: unknown[]) => mockGetCourseStats(...args),
@@ -28,6 +29,7 @@ describe('/api/courses', () => {
     const response = await GET();
 
     expect(response.status).toBe(200);
+    expect(response.headers.get('Cache-Control')).toBe(PUBLIC_API_CACHE_CONTROL);
     await expect(response.json()).resolves.toEqual({ 'CS-6200': { numReviews: 2 } });
   });
 

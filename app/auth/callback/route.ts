@@ -104,6 +104,34 @@ function getCookieDomainForRequest(request: Request, fallbackOrigin: string) {
   return getCookieDomainForHost(host);
 }
 
+function getSupabaseServerConfig() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+  if (
+    !url ||
+    !publishableKey ||
+    url === 'undefined' ||
+    publishableKey === 'undefined' ||
+    !/^https?:\/\//.test(url)
+  ) {
+    return null;
+  }
+
+  return { publishableKey, url };
+}
+
+type AuthExchangeResult = {
+  data: {
+    session: unknown;
+    user: unknown;
+  } | null;
+  error: {
+    message: string;
+    status?: number;
+  } | null;
+};
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const publicOrigin = getPublicOrigin(request, origin);
@@ -148,23 +176,38 @@ export async function GET(request: Request) {
     options: Record<string, unknown>;
   }> = [];
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          pendingCookies.push(...cookiesToSet);
-        },
-      },
-    }
-  );
+  const supabaseConfig = getSupabaseServerConfig();
+  if (!supabaseConfig) {
+    const message = 'Supabase server client is not configured';
+    console.error('[auth/callback] reason=exchange_failed', {
+      message,
+      forwardedHost: request.headers.get('x-forwarded-host'),
+      origin,
+    });
+    return clearVerifierAndReturn(
+      cookieStore,
+      request,
+      origin,
+      failureRedirect(publicOrigin, 'exchange_failed', { message })
+    );
+  }
 
-  let exchangeResult: Awaited<ReturnType<typeof supabase.auth.exchangeCodeForSession>>;
+  let exchangeResult: AuthExchangeResult;
   try {
+    const supabase = createServerClient(
+      supabaseConfig.url,
+      supabaseConfig.publishableKey,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll();
+          },
+          setAll(cookiesToSet) {
+            pendingCookies.push(...cookiesToSet);
+          },
+        },
+      }
+    );
     exchangeResult = await supabase.auth.exchangeCodeForSession(code);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unexpected token exchange failure';

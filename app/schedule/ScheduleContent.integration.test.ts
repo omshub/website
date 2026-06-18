@@ -8,10 +8,12 @@ describe('schedule content future semester probing', () => {
     expect(source).toContain('setSemesters(getScheduleSemesterOptions(pastSemesters, available));');
   });
 
-  it('does not change the active semester from the future-term probe', () => {
+  it('only changes the active semester from the future-term probe before user selection', () => {
     const probeEffect = source.match(/async function probeFutureSemesters\(\) \{[\s\S]*?\n    \}\n\n    probeFutureSemesters\(\);/);
 
     expect(probeEffect?.[0]).toBeDefined();
-    expect(probeEffect?.[0]).not.toContain('setActiveSemester');
+    expect(probeEffect?.[0]).toMatch(
+      /if \(!userSelectedSemesterRef\.current\) \{\s*setActiveSemester\(available\[0\]\);\s*\}/
+    );
   });
 });

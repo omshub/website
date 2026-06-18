@@ -5,6 +5,7 @@
 import { GET } from './route';
 
 const mockCreateClient = jest.fn();
+const PUBLIC_API_CACHE_CONTROL = 'public, s-maxage=300, stale-while-revalidate=3600';
 
 jest.mock('@/lib/supabase/server', () => ({
   createClient: (...args: unknown[]) => mockCreateClient(...args),
@@ -50,6 +51,7 @@ describe('/api/reviews/recent', () => {
     const response = await GET(makeRequest('/api/reviews/recent?limit=5&offset=10'));
 
     expect(query.range).toHaveBeenCalledWith(10, 14);
+    expect(response.headers.get('Cache-Control')).toBe(PUBLIC_API_CACHE_CONTROL);
     await expect(response.json()).resolves.toEqual({
       reviews: [{ id: 'review-1' }],
       pagination: {
