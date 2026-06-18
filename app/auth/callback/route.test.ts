@@ -46,6 +46,8 @@ describe('/auth/callback', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     process.env = { ...originalEnv };
+    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://example.supabase.co';
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_test';
     mockCookieGetAll.mockReturnValue([]);
     mockExchangeCodeForSession.mockReset();
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -298,6 +300,21 @@ describe('/auth/callback', () => {
 
     expect(response.headers.get('location')).toBe(
       'https://www.omshub.org/?error=auth_callback_error&reason=exchange_failed&message=Unexpected+token+exchange+failure'
+    );
+  });
+
+  it('redirects instead of throwing when Supabase config is missing', async () => {
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+    const response = await GET(
+      makeCallbackRequest('/auth/callback?code=bad', {
+        'x-forwarded-host': 'www.omshub.org',
+        'x-forwarded-proto': 'https',
+      })
+    );
+
+    expect(response.headers.get('location')).toBe(
+      'https://www.omshub.org/?error=auth_callback_error&reason=exchange_failed&message=Supabase+server+client+is+not+configured'
     );
   });
 
