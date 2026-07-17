@@ -57,6 +57,7 @@ export async function updateSession(request: NextRequest) {
 
   const supabaseConfig = getSupabaseProxyConfig();
   if (!supabaseConfig) {
+    supabaseResponse.headers.set('Cache-Control', 'private, no-store');
     return supabaseResponse;
   }
 
@@ -90,7 +91,7 @@ export async function updateSession(request: NextRequest) {
   const hasSession = request.cookies.getAll().some((c) => isAuthTokenCookie(c.name));
   if (hasSession) {
     try {
-      const { error } = await supabase.auth.getUser();
+      const { error } = await supabase.auth.getClaims();
       if (shouldClearAuthCookies(error)) {
         clearAuthTokenCookies(request, supabaseResponse);
       }
@@ -103,5 +104,6 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
+  supabaseResponse.headers.set('Cache-Control', 'private, no-store');
   return supabaseResponse;
 }

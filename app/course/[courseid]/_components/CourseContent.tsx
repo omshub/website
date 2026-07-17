@@ -1,7 +1,6 @@
 'use client';
 
 import ReviewCard from '@/components/ReviewCard';
-import ReviewForm from '@/components/ReviewForm';
 import CourseActionBar from '@/components/CourseActionBar';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -55,6 +54,16 @@ import {
 } from '@/utilities';
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import { GT_COLORS } from '@/lib/theme';
+import dynamic from 'next/dynamic';
+
+const ReviewForm = dynamic(() => import('@/components/ReviewForm'), {
+  ssr: false,
+  loading: () => (
+    <Center py="xl">
+      <Loader size="sm" />
+    </Center>
+  ),
+});
 
 // Map semester id (sp, sm, fa) to term number (1, 2, 3)
 const semesterIdToTerm: Record<string, number> = {
@@ -124,6 +133,8 @@ export default function CourseContent({
   const [selectedSemester, setSelectedSemester] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [debouncedSearch] = useDebouncedValue(searchQuery, 300);
+  const effectiveSearch =
+    debouncedSearch.trim().length >= 2 ? debouncedSearch.trim() : '';
   const [isSearching, setIsSearching] = useState(false);
 
   const handleCopyUrl = () => {
@@ -141,15 +152,15 @@ export default function CourseContent({
     });
     if (selectedYear !== 'all') params.set('year', selectedYear);
     if (selectedSemester !== 'all') params.set('semester', selectedSemester);
-    if (debouncedSearch) params.set('search', debouncedSearch);
+    if (effectiveSearch) params.set('search', effectiveSearch);
     return params.toString();
-  }, [courseId, selectedYear, selectedSemester, debouncedSearch]);
+  }, [courseId, selectedYear, selectedSemester, effectiveSearch]);
 
   // Reset and fetch when filters/search change
   useEffect(() => {
     const fetchFiltered = async () => {
       // Skip if we're at initial state with no filters
-      if (selectedYear === 'all' && selectedSemester === 'all' && !debouncedSearch) {
+      if (selectedYear === 'all' && selectedSemester === 'all' && !effectiveSearch) {
         // Reset to initial state if filters were cleared
         if (reviews !== initialReviews) {
           setReviews(initialReviews);
@@ -180,7 +191,7 @@ export default function CourseContent({
     };
 
     fetchFiltered();
-  }, [selectedYear, selectedSemester, debouncedSearch, buildQueryParams]);
+  }, [selectedYear, selectedSemester, effectiveSearch, buildQueryParams]);
 
   // Load more reviews
   const loadMore = useCallback(async () => {
@@ -577,9 +588,9 @@ export default function CourseContent({
                 onChange={(e) => setSearchQuery(e.currentTarget.value)}
                 aria-label="Search reviews"
               />
-              {debouncedSearch && (
+              {effectiveSearch && (
                 <Text size="sm" c="grayMatter">
-                  {filteredReviews.length} result{filteredReviews.length !== 1 ? 's' : ''} for "{debouncedSearch}"
+                  {filteredReviews.length} result{filteredReviews.length !== 1 ? 's' : ''} for "{effectiveSearch}"
                 </Text>
               )}
 
@@ -673,7 +684,7 @@ export default function CourseContent({
           <>
             <Stack gap="md">
               {filteredReviews.map((value: Review) => (
-                <ReviewCard key={value.reviewId} {...value} courseName={courseName} searchHighlight={debouncedSearch} />
+                <ReviewCard key={value.reviewId} {...value} courseName={courseName} searchHighlight={effectiveSearch} />
               ))}
             </Stack>
 
@@ -767,12 +778,14 @@ export default function CourseContent({
           centered
           radius="lg"
         >
-          <ReviewForm
-            courseId={courseId}
-            courseName={courseName}
-            reviewInput={null}
-            handleReviewModalClose={closeReviewModal}
-          />
+          {reviewModalOpened && (
+            <ReviewForm
+              courseId={courseId}
+              courseName={courseName}
+              reviewInput={null}
+              handleReviewModalClose={closeReviewModal}
+            />
+          )}
         </Modal>
       </Container>
 

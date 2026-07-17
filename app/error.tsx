@@ -85,6 +85,7 @@ export default function Error({ error, reset }: ErrorProps) {
             <Button
               component={Link}
               href="/"
+              prefetch={false}
               variant="outline"
               leftSection={<IconHome size={18} />}
               color="dark"

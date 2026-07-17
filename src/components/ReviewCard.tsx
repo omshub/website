@@ -8,11 +8,8 @@ import {
   IconTrash,
   IconPencil,
 } from '@tabler/icons-react';
-import stringWidth from 'string-width';
 import remarkGfm from 'remark-gfm';
-import rehypeKatex from 'rehype-katex';
 import rehypeRaw from 'rehype-raw';
-import remarkMath from 'remark-math';
 import {
   Box,
   Button,
@@ -31,11 +28,15 @@ import { useDisclosure } from '@mantine/hooks';
 
 import { mapSemesterIdToName } from '@/utilities';
 import { GT_COLORS, CSS_STAT_COLORS } from '@/lib/theme';
-import { toBlob } from 'html-to-image';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Markdown from 'react-markdown';
-import ReviewForm from '@/components/ReviewForm';
+import dynamic from 'next/dynamic';
 import HighlightedText from '@/components/HighlightedText';
+
+const ReviewForm = dynamic(() => import('@/components/ReviewForm'), {
+  ssr: false,
+  loading: () => <Loader size="sm" />,
+});
 
 interface ReviewCardProps extends Review {
   courseName?: string;
@@ -96,6 +97,7 @@ export const copyReviewScreenshot = async (
 ) => {
   if (!element) return 'missing-element' as const;
   try {
+    const { toBlob } = await import('html-to-image');
     const blob = await toBlob(element, {
       skipFonts: true,
     });
@@ -376,15 +378,8 @@ const ReviewCard = ({
               [data-mantine-color-scheme="dark"] .review-body a:hover { color: #79c0ff; }
             `}</style>
             <Markdown
-              remarkPlugins={[
-                [
-                  remarkGfm,
-                  { singleTilde: false },
-                  { stringLength: stringWidth },
-                ],
-                remarkMath,
-              ]}
-              rehypePlugins={[rehypeKatex, rehypeRaw]}
+              remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
+              rehypePlugins={[rehypeRaw]}
             >
               {body}
             </Markdown>
@@ -429,12 +424,14 @@ const ReviewCard = ({
         centered
         size="lg"
       >
-        <ReviewForm
-          courseId={courseId}
-          courseName={courseName as TCourseName}
-          reviewInput={reviewInputMemo}
-          handleReviewModalClose={closeEditModal}
-        />
+        {editModalOpened && (
+          <ReviewForm
+            courseId={courseId}
+            courseName={courseName as TCourseName}
+            reviewInput={reviewInputMemo}
+            handleReviewModalClose={closeEditModal}
+          />
+        )}
       </Modal>
     </div>
   );

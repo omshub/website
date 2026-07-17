@@ -194,9 +194,9 @@ export const submitReviewAndNotify = async (
   }
 };
 
-export const fetchUserReviews = async (userId: string): Promise<TUserReviews> => {
+export const fetchUserReviews = async (_userId?: string): Promise<TUserReviews> => {
   try {
-    const response = await fetch(`/api/user/reviews?userId=${userId}`);
+    const response = await fetch('/api/user/reviews');
     if (response.ok) {
       return await response.json();
     }
@@ -204,6 +204,18 @@ export const fetchUserReviews = async (userId: string): Promise<TUserReviews> =>
   } catch (error) {
     console.error('Error fetching user reviews:', error);
     return {};
+  }
+};
+
+export const fetchUserReviewKeys = async (): Promise<string[]> => {
+  try {
+    const response = await fetch('/api/user/reviews?summary=true');
+    if (!response.ok) return [];
+    const data = await response.json();
+    return Array.isArray(data.reviewKeys) ? data.reviewKeys : [];
+  } catch (error) {
+    console.error('Error fetching user review summary:', error);
+    return [];
   }
 };
 
@@ -215,7 +227,7 @@ const ReviewForm = ({
   const authContext = useAuth();
   const user = authContext?.user;
 
-  const [userReviews, setUserReviews] = useState<TUserReviews>({});
+  const [userReviewKeys, setUserReviewKeys] = useState<string[]>([]);
 
   const yearRange = getYearRange();
 
@@ -258,7 +270,7 @@ const ReviewForm = ({
   useEffect(() => {
     if (!userId) return;
 
-    fetchUserReviews(userId).then(setUserReviews);
+    fetchUserReviewKeys().then(setUserReviewKeys);
   }, [userId]);
 
   // Only reset form when reviewId changes (editing a different review)
@@ -334,7 +346,7 @@ const ReviewForm = ({
                     },
                     validateNotTakenCourse: (semester) => {
                       return validateUserNotTakenCourse(
-                        userReviews,
+                        userReviewKeys,
                         courseId,
                         semester,
                         getValues()?.year
@@ -380,7 +392,7 @@ const ReviewForm = ({
                     },
                     validateNotTakenCourse: (year) => {
                       return validateUserNotTakenCourse(
-                        userReviews,
+                        userReviewKeys,
                         courseId,
                         getValues()?.semesterId,
                         year
@@ -654,14 +666,17 @@ export const validateSemesterYear = (
 };
 
 export const validateUserNotTakenCourse = (
-  userReviews: TUserReviews | Record<string, never>,
+  userReviews: TUserReviews | Record<string, never> | string[],
   courseId: TCourseId,
   semester: TNullable<string>,
   year: TNullable<number>
 ) => {
   if (semester && year) {
     const objKey = `${courseId}-${year}-${mapSemsterIdToTerm[semester]}`;
-    return Object.keys(userReviews).find((key) => key.includes(objKey))
+    const reviewKeys = Array.isArray(userReviews)
+      ? userReviews
+      : Object.keys(userReviews);
+    return reviewKeys.find((key) => key.includes(objKey))
       ? false
       : true;
   }

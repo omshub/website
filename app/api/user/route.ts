@@ -1,97 +1,73 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getUser, addUser } from '@/lib/supabase/dbOperations';
+import { uncachedApiJson } from '@/lib/cacheHeaders';
+import { getAuthenticatedClaims } from '@/lib/supabase/auth';
 import { createClient } from '@/lib/supabase/server';
 
-function isUniqueViolation(error: unknown) {
-  return (error as { code?: string } | null)?.code === '23505';
-}
+const USER_PROFILE_COLUMNS =
+  'id,has_gt_email,education_level,subject_area,work_years,specialization';
 
-function userResponse(user: { id: string; has_gt_email: boolean }) {
-  return NextResponse.json({
-    userId: user.id,
-    hasGTEmail: user.has_gt_email,
-    reviews: {},
-  });
-}
-
-async function getAuthenticatedUser() {
+export async function GET() {
   const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  const auth = await getAuthenticatedClaims(supabase);
 
-  if (error || !user) return null;
-  return user;
-}
-
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const userId = searchParams.get('userId');
-
-  if (!userId) {
-    return NextResponse.json({ error: 'userId is required' }, { status: 400 });
+  if (!auth) {
+    return uncachedApiJson({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const authUser = await getAuthenticatedUser();
-    if (!authUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    if (authUser.id !== userId) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const { data: user, error } = await supabase
+      .from('users')
+      .select(USER_PROFILE_COLUMNS)
+      .eq('id', auth.userId)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!user) {
+      return uncachedApiJson({ userId: null, hasGTEmail: false, reviews: {} });
     }
 
-    const user = await getUser(userId);
-    if (!user) {
-      return NextResponse.json({ userId: null, hasGTEmail: false, reviews: {} });
-    }
-    // Return in the format expected by the client
-    return NextResponse.json({
+    return uncachedApiJson({
       userId: user.id,
       hasGTEmail: user.has_gt_email,
       educationLevelId: user.education_level,
       subjectAreaId: user.subject_area,
       workYears: user.work_years,
       specializationId: user.specialization,
-      reviews: {}, // Reviews are fetched separately via /api/user/reviews
+      reviews: {},
     });
   } catch (error) {
     console.error('Error fetching user:', error);
-    return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 });
+    return uncachedApiJson({ error: 'Failed to fetch user' }, { status: 500 });
   }
 }
 
 export async function POST() {
+  const supabase = await createClient();
+  const auth = await getAuthenticatedClaims(supabase);
+
+  if (!auth) {
+    return uncachedApiJson({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    const authUser = await getAuthenticatedUser();
-    if (!authUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const hasGTEmail = auth.email?.endsWith('@gatech.edu') ?? false;
+    const { data: user, error } = await supabase
+      .from('users')
+      .upsert(
+        { id: auth.userId, has_gt_email: hasGTEmail },
+        { onConflict: 'id' }
+      )
+      .select('id,has_gt_email')
+      .single();
 
-    const hasGTEmail = authUser.email?.endsWith('@gatech.edu') ?? false;
-    const existingUser = await getUser(authUser.id);
+    if (error) throw error;
 
-    if (existingUser) {
-      return userResponse(existingUser);
-    }
-
-    try {
-      const user = await addUser({
-        id: authUser.id,
-        has_gt_email: hasGTEmail,
-      });
-
-      return userResponse(user);
-    } catch (error) {
-      if (isUniqueViolation(error)) {
-        const racedUser = await getUser(authUser.id);
-        if (racedUser) return userResponse(racedUser);
-      }
-      throw error;
-    }
+    return uncachedApiJson({
+      userId: user.id,
+      hasGTEmail: user.has_gt_email,
+      reviews: {},
+    });
   } catch (error) {
     console.error('Error creating user:', error);
-    return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
+    return uncachedApiJson({ error: 'Failed to create user' }, { status: 500 });
   }
 }

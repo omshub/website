@@ -103,6 +103,7 @@ export default function NotFound() {
                 leftSection={<IconHome size={16} />}
                 component={Link}
                 href="/"
+                prefetch={false}
               >
                 Back to Home
               </Button>
@@ -120,6 +121,7 @@ export default function NotFound() {
                   size="xs"
                   component={Link}
                   href="/schedule"
+                  prefetch={false}
                 >
                   Course Schedule
                 </Button>
