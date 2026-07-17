@@ -3,9 +3,9 @@
  */
 
 import { GET } from './route';
+import { PUBLIC_API_CACHE_CONTROL } from '@/lib/cacheHeaders';
 
 const mockGetCourseStats = jest.fn();
-const PUBLIC_API_CACHE_CONTROL = 'public, s-maxage=300, stale-while-revalidate=3600';
 
 jest.mock('@/lib/staticData', () => ({
   getCourseStats: (...args: unknown[]) => mockGetCourseStats(...args),
