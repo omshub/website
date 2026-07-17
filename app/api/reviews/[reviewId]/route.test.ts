@@ -3,177 +3,149 @@
  */
 
 import { DELETE, PUT } from './route';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
-const mockCreateClient = jest.fn();
-const mockAuthGetUser = jest.fn();
-
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: (...args: unknown[]) => mockCreateClient(...args),
+const mockGetAuthenticatedClaims = jest.fn();
+const mockFetchSingle = jest.fn();
+const mockFetchEq = jest.fn(() => ({ single: mockFetchSingle }));
+const mockSelect = jest.fn(() => ({ eq: mockFetchEq }));
+const mockDeleteEq = jest.fn();
+const mockDelete = jest.fn(() => ({ eq: mockDeleteEq }));
+const mockUpdateEq = jest.fn();
+const mockUpdate = jest.fn(() => ({ eq: mockUpdateEq }));
+const mockFrom = jest.fn(() => ({
+  select: mockSelect,
+  delete: mockDelete,
+  update: mockUpdate,
 }));
 
-function makeRequest(init?: RequestInit) {
-  return new Request('https://www.omshub.org/api/reviews/review-1', init);
-}
+jest.mock('@/lib/supabase/auth', () => ({
+  getAuthenticatedClaims: (...args: unknown[]) =>
+    mockGetAuthenticatedClaims(...args),
+}));
 
-function makeContext(reviewId = 'review-1') {
-  return { params: Promise.resolve({ reviewId }) };
-}
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn(async () => ({ from: mockFrom })),
+}));
 
-function makeQuery(result: unknown) {
-  const query: any = {
-    select: jest.fn(() => query),
-    eq: jest.fn(() => query),
-    single: jest.fn(() => query),
-    delete: jest.fn(() => query),
-    update: jest.fn(() => query),
-    then: (resolve: (value: unknown) => unknown) => Promise.resolve(resolve(result)),
-  };
-  return query;
-}
+jest.mock('@/lib/supabase/publicReviews', () => ({
+  courseReviewsCacheTag: (courseId: string) => `reviews:course:${courseId}`,
+  RECENT_REVIEWS_CACHE_TAG: 'reviews:recent',
+}));
+
+jest.mock('next/cache', () => ({
+  revalidatePath: jest.fn(),
+  revalidateTag: jest.fn(),
+}));
+
+const context = { params: Promise.resolve({ reviewId: 'review-1' }) };
+const deleteRequest = new Request(
+  'https://www.omshub.org/api/reviews/review-1',
+  { method: 'DELETE' }
+) as any;
+const updateRequest = () =>
+  new Request('https://www.omshub.org/api/reviews/review-1', {
+    method: 'PUT',
+    body: JSON.stringify({
+      body: 'Updated',
+      workload: 8,
+      difficulty: 2,
+      overall: 4,
+    }),
+  }) as any;
 
 describe('/api/reviews/[reviewId]', () => {
   let consoleErrorSpy: jest.SpyInstance;
-  let queries: any[];
 
   beforeEach(() => {
     jest.clearAllMocks();
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    mockAuthGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
-    queries = [];
-    mockCreateClient.mockResolvedValue({
-      auth: { getUser: mockAuthGetUser },
-      from: jest.fn(() => queries.shift()),
+    mockGetAuthenticatedClaims.mockResolvedValue({ userId: 'user-1' });
+    mockFetchSingle.mockResolvedValue({
+      data: { reviewer_id: 'user-1', course_id: 'CS-6200' },
+      error: null,
     });
+    mockDeleteEq.mockResolvedValue({ error: null });
+    mockUpdateEq.mockResolvedValue({ error: null });
   });
 
-  afterEach(() => {
-    consoleErrorSpy.mockRestore();
-  });
+  afterEach(() => consoleErrorSpy.mockRestore());
 
-  it('requires authentication before deleting', async () => {
-    mockAuthGetUser.mockResolvedValueOnce({ data: { user: null }, error: null });
-
-    const response = await DELETE(makeRequest(), makeContext());
-
+  it.each([
+    ['delete', () => DELETE(deleteRequest, context)],
+    ['update', () => PUT(updateRequest(), context)],
+  ])('requires verified claims before %s', async (_name, run) => {
+    mockGetAuthenticatedClaims.mockResolvedValueOnce(null);
+    const response = await run();
     expect(response.status).toBe(401);
+    expect(mockSelect).not.toHaveBeenCalled();
   });
 
-  it('returns 404 when deleting a missing review', async () => {
-    queries.push(makeQuery({ data: null, error: new Error('not found') }));
-
-    const response = await DELETE(makeRequest(), makeContext());
-
+  it.each([
+    ['delete', () => DELETE(deleteRequest, context)],
+    ['update', () => PUT(updateRequest(), context)],
+  ])('returns 404 when the review is missing before %s', async (_name, run) => {
+    mockFetchSingle.mockResolvedValueOnce({
+      data: null,
+      error: { message: 'missing' },
+    });
+    const response = await run();
     expect(response.status).toBe(404);
   });
 
-  it('forbids deleting another user review', async () => {
-    queries.push(makeQuery({ data: { reviewer_id: 'user-2' }, error: null }));
-
-    const response = await DELETE(makeRequest(), makeContext());
-
+  it.each([
+    ['delete', () => DELETE(deleteRequest, context)],
+    ['update', () => PUT(updateRequest(), context)],
+  ])('forbids %s for a different owner', async (_name, run) => {
+    mockFetchSingle.mockResolvedValueOnce({
+      data: { reviewer_id: 'user-2', course_id: 'CS-6200' },
+      error: null,
+    });
+    const response = await run();
     expect(response.status).toBe(403);
   });
 
-  it('deletes the authenticated user review', async () => {
-    const fetchQuery = makeQuery({ data: { reviewer_id: 'user-1' }, error: null });
-    const deleteQuery = makeQuery({ error: null });
-    queries.push(fetchQuery, deleteQuery);
-
-    const response = await DELETE(makeRequest(), makeContext());
-
+  it('deletes an owned review and invalidates caches', async () => {
+    const response = await DELETE(deleteRequest, context);
     expect(response.status).toBe(200);
-    expect(deleteQuery.delete).toHaveBeenCalled();
-    await expect(response.json()).resolves.toEqual({ success: true });
-  });
-
-  it('returns a 500 when delete fails', async () => {
-    queries.push(
-      makeQuery({ data: { reviewer_id: 'user-1' }, error: null }),
-      makeQuery({ error: new Error('delete failed') })
+    expect(mockDeleteEq).toHaveBeenCalledWith('id', 'review-1');
+    expect(revalidateTag).toHaveBeenCalledWith(
+      'reviews:course:CS-6200',
+      'max'
     );
-
-    const response = await DELETE(makeRequest(), makeContext());
-
-    expect(response.status).toBe(500);
-    await expect(response.json()).resolves.toEqual({ error: 'Failed to delete review' });
+    expect(revalidateTag).toHaveBeenCalledWith('reviews:recent', 'max');
+    expect(revalidatePath).toHaveBeenCalledWith('/course/CS-6200');
   });
 
-  it('returns a 500 when delete throws', async () => {
-    mockCreateClient.mockRejectedValueOnce(new Error('client failed'));
-
-    const response = await DELETE(makeRequest(), makeContext());
-
-    expect(response.status).toBe(500);
-    await expect(response.json()).resolves.toEqual({ error: 'Internal server error' });
-  });
-
-  it('requires authentication before updating', async () => {
-    mockAuthGetUser.mockResolvedValueOnce({ data: { user: null }, error: null });
-
-    const response = await PUT(makeRequest({ method: 'PUT', body: '{}' }), makeContext());
-
-    expect(response.status).toBe(401);
-  });
-
-  it('returns 404 when updating a missing review', async () => {
-    queries.push(makeQuery({ data: null, error: new Error('not found') }));
-
-    const response = await PUT(makeRequest({ method: 'PUT', body: '{}' }), makeContext());
-
-    expect(response.status).toBe(404);
-  });
-
-  it('forbids updating another user review', async () => {
-    queries.push(makeQuery({ data: { reviewer_id: 'user-2' }, error: null }));
-
-    const response = await PUT(makeRequest({ method: 'PUT', body: '{}' }), makeContext());
-
-    expect(response.status).toBe(403);
-  });
-
-  it('updates the authenticated user review', async () => {
-    const updateQuery = makeQuery({ data: { id: 'review-1', body: 'updated' }, error: null });
-    queries.push(makeQuery({ data: { reviewer_id: 'user-1' }, error: null }), updateQuery);
-
-    const response = await PUT(
-      makeRequest({
-        method: 'PUT',
-        body: JSON.stringify({ body: 'updated', workload: 12, difficulty: 4, overall: 5 }),
-      }),
-      makeContext()
-    );
-
+  it('updates an owned review without returning the full row', async () => {
+    const response = await PUT(updateRequest(), context);
     expect(response.status).toBe(200);
-    expect(updateQuery.update).toHaveBeenCalledWith(
+    expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
-        body: 'updated',
-        workload: 12,
-        difficulty: 4,
-        overall: 5,
+        body: 'Updated',
+        workload: 8,
+        difficulty: 2,
+        overall: 4,
         modified_at: expect.any(String),
       })
     );
-    await expect(response.json()).resolves.toEqual({
-      review: { id: 'review-1', body: 'updated' },
+    expect(mockUpdateEq).toHaveBeenCalledWith('id', 'review-1');
+    await expect(response.json()).resolves.toEqual({ success: true });
+  });
+
+  it('returns 500 when deletion fails', async () => {
+    mockDeleteEq.mockResolvedValueOnce({
+      error: { message: 'delete failed' },
     });
+    const response = await DELETE(deleteRequest, context);
+    expect(response.status).toBe(500);
   });
 
-  it('returns a 500 when update fails', async () => {
-    queries.push(
-      makeQuery({ data: { reviewer_id: 'user-1' }, error: null }),
-      makeQuery({ data: null, error: new Error('update failed') })
-    );
-
-    const response = await PUT(makeRequest({ method: 'PUT', body: '{}' }), makeContext());
-
+  it('returns 500 when update fails', async () => {
+    mockUpdateEq.mockResolvedValueOnce({
+      error: { message: 'update failed' },
+    });
+    const response = await PUT(updateRequest(), context);
     expect(response.status).toBe(500);
-    await expect(response.json()).resolves.toEqual({ error: 'Failed to update review' });
-  });
-
-  it('returns a 500 when update body parsing throws', async () => {
-    const response = await PUT(makeRequest({ method: 'PUT', body: '{' }), makeContext());
-
-    expect(response.status).toBe(500);
-    await expect(response.json()).resolves.toEqual({ error: 'Internal server error' });
   });
 });

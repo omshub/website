@@ -170,6 +170,7 @@ export default function Footer() {
                     key={link.label}
                     component={Link}
                     href={link.href}
+                    prefetch={false}
                     size="sm"
                     c="white"
                     style={{

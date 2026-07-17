@@ -1,10 +1,46 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getUserReviews } from '@/lib/supabase/dbOperations';
+import { NextRequest } from 'next/server';
+import { getAuthenticatedClaims } from '@/lib/supabase/auth';
 import { createClient } from '@/lib/supabase/server';
 import type { Database } from '@/lib/supabase/database.types';
+import { uncachedApiJson } from '@/lib/cacheHeaders';
 import { TCourseId, TPayloadReviews } from '@/lib/types';
 
 type SupabaseReview = Database['public']['Tables']['reviews']['Row'];
+const MAX_USER_REVIEWS = 200;
+const USER_REVIEW_COLUMNS = [
+  'id',
+  'course_id',
+  'reviewer_id',
+  'year',
+  'semester',
+  'body',
+  'workload',
+  'difficulty',
+  'overall',
+  'staff_support',
+  'is_legacy',
+  'is_gt_verified',
+  'upvotes',
+  'downvotes',
+  'is_recommended',
+  'is_good_first_course',
+  'is_pairable',
+  'has_group_projects',
+  'has_writing_assignments',
+  'has_exams_quizzes',
+  'has_mandatory_readings',
+  'has_programming_assignments',
+  'has_provided_dev_env',
+  'programming_languages',
+  'preparation',
+  'oms_courses_taken',
+  'has_relevant_work_experience',
+  'experience_level',
+  'grade',
+  'created_at',
+  'modified_at',
+].join(',');
+const SEMESTER_TERM: Record<string, number> = { sp: 1, sm: 2, fa: 3 };
 
 // Convert Supabase reviews array to TPayloadReviews object format (keyed by reviewId)
 function mapSupabaseReviewsToPayload(reviews: SupabaseReview[]): TPayloadReviews {
@@ -49,32 +85,50 @@ function mapSupabaseReviewsToPayload(reviews: SupabaseReview[]): TPayloadReviews
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const userId = searchParams.get('userId');
+  const summaryOnly = searchParams.get('summary') === 'true';
+  const supabase = await createClient();
+  const auth = await getAuthenticatedClaims(supabase);
 
-  if (!userId) {
-    return NextResponse.json({ error: 'userId is required' }, { status: 400 });
+  if (!auth) {
+    return uncachedApiJson({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    if (summaryOnly) {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('course_id,year,semester')
+        .eq('reviewer_id', auth.userId)
+        .order('created_at', { ascending: false })
+        .limit(MAX_USER_REVIEWS);
 
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      if (error) throw error;
+
+      const reviewKeys = (data ?? []).map(
+        (review) =>
+          `${review.course_id}-${review.year}-${SEMESTER_TERM[review.semester] ?? 0}`
+      );
+      return uncachedApiJson({ reviewKeys });
     }
 
-    if (user.id !== userId) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const { data, error } = await supabase
+      .from('reviews')
+      .select(USER_REVIEW_COLUMNS)
+      .eq('reviewer_id', auth.userId)
+      .order('created_at', { ascending: false })
+      .limit(MAX_USER_REVIEWS);
 
-    const supabaseReviews = await getUserReviews(userId);
-    const reviews = mapSupabaseReviewsToPayload(supabaseReviews);
-    return NextResponse.json(reviews);
+    if (error) throw error;
+
+    const reviews = mapSupabaseReviewsToPayload(
+      (data ?? []) as unknown as SupabaseReview[]
+    );
+    return uncachedApiJson(reviews);
   } catch (error) {
     console.error('Error fetching user reviews:', error);
-    return NextResponse.json({ error: 'Failed to fetch user reviews' }, { status: 500 });
+    return uncachedApiJson(
+      { error: 'Failed to fetch user reviews' },
+      { status: 500 }
+    );
   }
 }

@@ -47,6 +47,7 @@ export default function Breadcrumbs({ items, showHome = true }: BreadcrumbsProps
                 key={item.label}
                 component={Link}
                 href={item.href || '/'}
+                prefetch={false}
                 size="sm"
                 c="boldBlue"
                 style={{ display: 'flex', alignItems: 'center', gap: 4 }}

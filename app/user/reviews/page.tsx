@@ -22,8 +22,8 @@ import { IconPencil } from '@tabler/icons-react';
 import { GT_COLORS } from '@/lib/theme';
 
 // API function to interact with Supabase via API routes
-async function getUserReviewsFromApi(userId: string): Promise<TUserReviews> {
-  const response = await fetch(`/api/user/reviews?userId=${userId}`);
+async function getUserReviewsFromApi(): Promise<TUserReviews> {
+  const response = await fetch('/api/user/reviews');
   if (!response.ok) {
     throw new Error('Failed to fetch user reviews');
   }
@@ -35,12 +35,13 @@ export default function UserReviewsPage() {
   const authContext = useAuth();
   const [userReviews, setUserReviews] = useState<TUserReviews>({});
   const user = authContext?.user;
+  const userId = user?.id;
 
   useEffect(() => {
     async function fetchUserData() {
-      if (user?.id) {
+      if (userId) {
         try {
-          const reviews = await getUserReviewsFromApi(user.id);
+          const reviews = await getUserReviewsFromApi();
           setUserReviews(reviews);
         } catch (error) {
           console.error('Error fetching user data:', error);
@@ -53,7 +54,7 @@ export default function UserReviewsPage() {
       }
     }
     fetchUserData();
-  }, [user]);
+  }, [userId]);
 
   const reviewCount = Object.keys(userReviews)?.length || 0;
 

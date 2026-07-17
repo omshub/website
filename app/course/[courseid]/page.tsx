@@ -1,6 +1,10 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { createServerClient, mapSupabaseReviewsToArray } from '@/lib/supabase';
+import { mapSupabaseReviewsToArray } from '@/lib/supabase';
+import {
+  EMPTY_PUBLIC_REVIEW_PAGE,
+  getPublicReviewsPage,
+} from '@/lib/supabase/publicReviews';
 import { getCoursesDataStatic, getCourseStats } from '@/lib/staticData';
 import { TCourseId } from '@/lib/types';
 import { mapDynamicCoursesDataToCourses } from '@/lib/utilities';
@@ -8,6 +12,9 @@ import { CourseSchema, FAQSchema, BreadcrumbSchema } from '@/components/Structur
 import CourseContent from './_components/CourseContent';
 
 const PAGE_SIZE = 20;
+
+// Route segment config must remain a statically analyzable literal for Next.js.
+export const revalidate = 21600;
 
 interface CoursePageProps {
   params: Promise<{ courseid: string }>;
@@ -107,18 +114,14 @@ export default async function CoursePage({ params }: CoursePageProps) {
   const { courseid } = await params;
   const courseId = courseid as TCourseId;
 
-  const supabase = await createServerClient();
-
   // Fetch all data in parallel
-  const [allCourseDataDynamic, coursesDataStatic, { data: reviews, count }] = await Promise.all([
+  const [allCourseDataDynamic, coursesDataStatic, reviewPage] = await Promise.all([
     getCourseStats(),
     getCoursesDataStatic(),
-    supabase
-      .from('reviews')
-      .select('*', { count: 'exact' })
-      .eq('course_id', courseId)
-      .order('created_at', { ascending: false })
-      .range(0, PAGE_SIZE - 1),
+    getPublicReviewsPage({ courseId, limit: PAGE_SIZE }).catch((error) => {
+      console.error('Unable to load public course reviews:', error);
+      return EMPTY_PUBLIC_REVIEW_PAGE;
+    }),
   ]);
 
   const allCourseData = mapDynamicCoursesDataToCourses(
@@ -132,9 +135,9 @@ export default async function CoursePage({ params }: CoursePageProps) {
   }
 
   // Convert reviews to array format
-  const initialReviews = mapSupabaseReviewsToArray(reviews || []);
-  const totalReviewCount = count || 0;
-  const initialHasMore = totalReviewCount > PAGE_SIZE;
+  const initialReviews = mapSupabaseReviewsToArray(reviewPage.reviews);
+  const totalReviewCount = currentCourseData.numReviews || initialReviews.length;
+  const initialHasMore = reviewPage.hasMore;
 
   // Breadcrumb data for structured data
   const breadcrumbs = [

@@ -2,6 +2,19 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getAuthenticatedClaims } from '@/lib/supabase/auth';
+import { revalidatePath, revalidateTag } from 'next/cache';
+import {
+  courseReviewsCacheTag,
+  RECENT_REVIEWS_CACHE_TAG,
+} from '@/lib/supabase/publicReviews';
+
+function invalidateReviewCaches(courseId: string) {
+  revalidateTag(courseReviewsCacheTag(courseId), 'max');
+  revalidateTag(RECENT_REVIEWS_CACHE_TAG, 'max');
+  revalidatePath(`/course/${courseId}`);
+  revalidatePath('/recents');
+}
 
 // DELETE /api/reviews/[reviewId]
 export async function DELETE(
@@ -12,16 +25,15 @@ export async function DELETE(
     const { reviewId } = await context.params;
     const supabase = await createClient();
 
-    // Get the current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
+    const auth = await getAuthenticatedClaims(supabase);
+    if (!auth) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if the review belongs to the user
     const { data: review, error: fetchError } = await supabase
       .from('reviews')
-      .select('reviewer_id')
+      .select('reviewer_id, course_id')
       .eq('id', reviewId)
       .single();
 
@@ -29,7 +41,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Review not found' }, { status: 404 });
     }
 
-    if (review.reviewer_id !== user.id) {
+    if (review.reviewer_id !== auth.userId) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -44,6 +56,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Failed to delete review' }, { status: 500 });
     }
 
+    invalidateReviewCaches(review.course_id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error in DELETE /api/reviews/[reviewId]:', error);
@@ -61,16 +74,15 @@ export async function PUT(
     const body = await request.json();
     const supabase = await createClient();
 
-    // Get the current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
+    const auth = await getAuthenticatedClaims(supabase);
+    if (!auth) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if the review belongs to the user
     const { data: existingReview, error: fetchError } = await supabase
       .from('reviews')
-      .select('reviewer_id')
+      .select('reviewer_id, course_id')
       .eq('id', reviewId)
       .single();
 
@@ -78,12 +90,12 @@ export async function PUT(
       return NextResponse.json({ error: 'Review not found' }, { status: 404 });
     }
 
-    if (existingReview.reviewer_id !== user.id) {
+    if (existingReview.reviewer_id !== auth.userId) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     // Update the review
-    const { data: review, error: updateError } = await supabase
+    const { error: updateError } = await supabase
       .from('reviews')
       .update({
         body: body.body,
@@ -92,16 +104,15 @@ export async function PUT(
         overall: body.overall,
         modified_at: new Date().toISOString(),
       })
-      .eq('id', reviewId)
-      .select()
-      .single();
+      .eq('id', reviewId);
 
     if (updateError) {
       console.error('Error updating review:', updateError);
       return NextResponse.json({ error: 'Failed to update review' }, { status: 500 });
     }
 
-    return NextResponse.json({ review });
+    invalidateReviewCaches(existingReview.course_id);
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error in PUT /api/reviews/[reviewId]:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

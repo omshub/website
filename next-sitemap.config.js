@@ -27,9 +27,8 @@ module.exports = {
     if (path.startsWith('/course/') && path !== '/course') {
       return {
         loc: path,
-        changefreq: 'daily',
+        changefreq: 'weekly',
         priority: 0.9,
-        lastmod: new Date().toISOString(),
       };
     }
 
@@ -73,9 +72,8 @@ module.exports = {
       for (const courseId of Object.keys(courses)) {
         result.push({
           loc: `/course/${courseId}`,
-          changefreq: 'daily',
+          changefreq: 'weekly',
           priority: 0.9,
-          lastmod: new Date().toISOString(),
         });
       }
     } catch (error) {

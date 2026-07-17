@@ -30,7 +30,10 @@ describe('createClient()', () => {
     expect(mockCreateBrowserClient).toHaveBeenCalledWith(
       'https://example.supabase.co',
       'publishable-key',
-      { cookieOptions: { domain: undefined } }
+      {
+        cookieOptions: { domain: undefined },
+        global: { fetch: expect.any(Function) },
+      }
     );
   });
 

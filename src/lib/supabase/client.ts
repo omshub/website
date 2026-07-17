@@ -1,5 +1,18 @@
 import { createBrowserClient } from '@supabase/ssr';
 import type { Database } from './database.types';
+import { SUPABASE_AUTH_CIRCUIT_EVENT } from './authCircuitBreaker';
+
+export const SUPABASE_RESTRICTED_EVENT = SUPABASE_AUTH_CIRCUIT_EVENT;
+
+export const monitoredFetch: typeof fetch = async (input, init) => {
+  const response = await fetch(input, init);
+
+  if (response.status === 402 && typeof window !== 'undefined') {
+    window.dispatchEvent(new Event(SUPABASE_RESTRICTED_EVENT));
+  }
+
+  return response;
+};
 
 // Scope auth cookies (including PKCE code_verifier) to the registrable domain
 // so they survive www <-> apex navigations on the canonical production host.
@@ -44,7 +57,10 @@ export function createClient() {
   return createBrowserClient<Database>(
     config.url,
     config.publishableKey,
-    { cookieOptions: { domain: getCookieDomain() } }
+    {
+      cookieOptions: { domain: getCookieDomain() },
+      global: { fetch: monitoredFetch },
+    }
   );
 }
 

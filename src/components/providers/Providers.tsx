@@ -24,6 +24,8 @@ const LoginDrawer = dynamic(loadLoginDrawer, {
 
 function LoginDrawerWrapper() {
   const { loginOpen, handleLoginClose } = useMenu();
+  if (!loginOpen) return null;
+
   return (
     <Suspense fallback={null}>
       <LoginDrawer opened={loginOpen} onClose={handleLoginClose} />

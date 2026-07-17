@@ -73,8 +73,9 @@ module.exports = {
       '@tabler/icons-react',
       '@supabase/supabase-js',
     ],
-    // Inline CSS into HTML for better Clarity session replay support
-    inlineCss: true,
+    // Keep CSS in immutable shared chunks so navigating between course pages
+    // does not resend the full stylesheet with every HTML response.
+    inlineCss: false,
   },
 
   // Reduce unused JavaScript with tree shaking

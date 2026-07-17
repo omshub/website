@@ -44,18 +44,27 @@ export default function RecentsContent({
   const [offset, setOffset] = useState(initialReviews.length);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch] = useDebouncedValue(searchQuery, 300);
+  const effectiveSearch =
+    debouncedSearch.trim().length >= 2 ? debouncedSearch.trim() : '';
   const [isSearching, setIsSearching] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
 
   // Reset and search when debounced search changes
   useEffect(() => {
     const performSearch = async () => {
-      if (debouncedSearch === '' && reviews === initialReviews) return;
+      if (effectiveSearch === '') {
+        setReviews(initialReviews);
+        setHasMore(initialHasMore);
+        setOffset(initialReviews.length);
+        return;
+      }
 
       setIsSearching(true);
       setLoading(true);
       try {
-        const searchParam = debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : '';
+        const searchParam = effectiveSearch
+          ? `&search=${encodeURIComponent(effectiveSearch)}`
+          : '';
         const response = await fetch(`/api/reviews/recent?limit=${PAGE_SIZE}&offset=0${searchParam}`);
         if (!response.ok) throw new Error('Failed to fetch');
 
@@ -74,14 +83,16 @@ export default function RecentsContent({
     };
 
     performSearch();
-  }, [debouncedSearch]);
+  }, [effectiveSearch, initialHasMore, initialReviews]);
 
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return;
 
     setLoading(true);
     try {
-      const searchParam = debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : '';
+      const searchParam = effectiveSearch
+        ? `&search=${encodeURIComponent(effectiveSearch)}`
+        : '';
       const response = await fetch(`/api/reviews/recent?limit=${PAGE_SIZE}&offset=${offset}${searchParam}`);
       if (!response.ok) throw new Error('Failed to fetch');
 
@@ -96,7 +107,7 @@ export default function RecentsContent({
     } finally {
       setLoading(false);
     }
-  }, [loading, hasMore, offset, debouncedSearch]);
+  }, [loading, hasMore, offset, effectiveSearch]);
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
@@ -173,9 +184,9 @@ export default function RecentsContent({
             onChange={(e) => setSearchQuery(e.currentTarget.value)}
             aria-label="Search reviews"
           />
-          {debouncedSearch && (
+          {effectiveSearch && (
             <Text size="sm" c="grayMatter" mt="xs">
-              {reviews.length} result{reviews.length !== 1 ? 's' : ''} for "{debouncedSearch}"
+              {reviews.length} result{reviews.length !== 1 ? 's' : ''} for "{effectiveSearch}"
             </Text>
           )}
         </Paper>
@@ -205,7 +216,7 @@ export default function RecentsContent({
                   })}
                 </Text>
               </Group>
-              <ReviewCard {...review} searchHighlight={debouncedSearch} />
+              <ReviewCard {...review} searchHighlight={effectiveSearch} />
             </Box>
           ))}
         </Stack>

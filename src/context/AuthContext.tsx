@@ -1,7 +1,11 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, useRef } from 'react';
-import { getClient, hasSupabaseBrowserConfig } from '@/lib/supabase/client';
+import {
+  getClient,
+  hasSupabaseBrowserConfig,
+  SUPABASE_RESTRICTED_EVENT,
+} from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { notifySuccess, notifyError } from '@/utils/notifications';
 import type { User, Session } from '@supabase/supabase-js';
@@ -80,6 +84,19 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
       return;
     }
 
+    const handleSupabaseRestriction = () => {
+      supabase.auth.stopAutoRefresh();
+      setSession(null);
+      setUser(null);
+      previousUserRef.current = null;
+      setLoading(false);
+    };
+
+    window.addEventListener(
+      SUPABASE_RESTRICTED_EVENT,
+      handleSupabaseRestriction
+    );
+
     // Get initial session. If local auth state is corrupt/stale, fail closed
     // to anonymous and ask the server cleanup route to expire any leftover
     // Supabase cookies rather than leaving the app permanently "loading".
@@ -147,7 +164,13 @@ export const AuthProvider = ({ children }: TContextProviderProps) => {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      window.removeEventListener(
+        SUPABASE_RESTRICTED_EVENT,
+        handleSupabaseRestriction
+      );
+      subscription.unsubscribe();
+    };
   }, []); // Empty dependency array - subscription should only be created once
 
   const signInWithProvider = async (

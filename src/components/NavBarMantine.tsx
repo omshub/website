@@ -97,7 +97,7 @@ export function NavBarMantine() {
         <Group h={64} justify="space-between">
           {/* Logo and Nav Links */}
           <Group gap="xl">
-            <Link href="/" style={{ textDecoration: 'none' }}>
+            <Link href="/" prefetch={false} style={{ textDecoration: 'none' }}>
               <Group gap="xs">
                 <ThemeIcon
                   size={36}
@@ -120,6 +120,7 @@ export function NavBarMantine() {
                   key={link.href}
                   component={Link}
                   href={link.href}
+                  prefetch={false}
                   variant="subtle"
                   size="sm"
                   fw={500}
@@ -335,6 +336,7 @@ export function NavBarMantine() {
                         leftSection={<IconFileText size={16} />}
                         component={Link}
                         href="/user/reviews"
+                        prefetch={false}
                       >
                         My Reviews
                       </Menu.Item>
@@ -416,6 +418,7 @@ export function NavBarMantine() {
               key={link.href}
               component={Link}
               href={link.href}
+              prefetch={false}
               variant="subtle"
               color="gray"
               fullWidth
@@ -581,6 +584,7 @@ export function NavBarMantine() {
               <Button
                 component={Link}
                 href="/user/reviews"
+                prefetch={false}
                 variant="light"
                 leftSection={<IconFileText size={18} />}
                 fullWidth

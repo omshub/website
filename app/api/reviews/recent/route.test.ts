@@ -3,117 +3,77 @@
  */
 
 import { GET } from './route';
+import { PUBLIC_API_CACHE_CONTROL } from '@/lib/cacheHeaders';
 
-const mockCreateClient = jest.fn();
-const PUBLIC_API_CACHE_CONTROL = 'public, s-maxage=300, stale-while-revalidate=3600';
+const mockGetPublicReviewsPage = jest.fn();
 
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: (...args: unknown[]) => mockCreateClient(...args),
+jest.mock('@/lib/supabase/publicReviews', () => ({
+  getPublicReviewsPage: (...args: unknown[]) => mockGetPublicReviewsPage(...args),
+  MAX_PUBLIC_REVIEW_LIMIT: 50,
+  MAX_PUBLIC_REVIEW_OFFSET: 5000,
+  MAX_PUBLIC_REVIEW_SEARCH_LENGTH: 100,
 }));
 
-function makeRequest(path: string) {
-  return new Request(`https://www.omshub.org${path}`);
-}
-
-function makeQuery(result: unknown) {
-  const query: any = {
-    select: jest.fn(() => query),
-    order: jest.fn(() => query),
-    ilike: jest.fn(() => query),
-    range: jest.fn(() => Promise.resolve(result)),
-    then: (resolve: (value: unknown) => unknown) => Promise.resolve(resolve(result)),
-  };
-  return query;
-}
+const makeRequest = (path: string) =>
+  new Request(`https://www.omshub.org${path}`) as any;
 
 describe('/api/reviews/recent', () => {
   let consoleErrorSpy: jest.SpyInstance;
-  let query: any;
-  let countQuery: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    query = makeQuery({ data: [{ id: 'review-1' }], error: null });
-    countQuery = makeQuery({ count: 20 });
-    mockCreateClient.mockResolvedValue({
-      from: jest.fn()
-        .mockReturnValueOnce(query)
-        .mockReturnValueOnce(countQuery),
+    mockGetPublicReviewsPage.mockResolvedValue({
+      reviews: [{ id: 'review-1' }],
+      hasMore: true,
     });
   });
 
-  afterEach(() => {
-    consoleErrorSpy.mockRestore();
-  });
+  afterEach(() => consoleErrorSpy.mockRestore());
 
-  it('returns recent reviews with pagination', async () => {
-    const response = await GET(makeRequest('/api/reviews/recent?limit=5&offset=10'));
+  it('forwards bounded pagination and search to the cached reader', async () => {
+    const response = await GET(
+      makeRequest('/api/reviews/recent?limit=5&offset=10&search=kernel')
+    );
 
-    expect(query.range).toHaveBeenCalledWith(10, 14);
+    expect(mockGetPublicReviewsPage).toHaveBeenCalledWith({
+      search: 'kernel',
+      limit: 5,
+      offset: 10,
+    });
     expect(response.headers.get('Cache-Control')).toBe(PUBLIC_API_CACHE_CONTROL);
     await expect(response.json()).resolves.toEqual({
       reviews: [{ id: 'review-1' }],
-      pagination: {
-        offset: 10,
-        limit: 5,
-        total: 20,
-        hasMore: true,
-      },
+      pagination: { offset: 10, limit: 5, hasMore: true },
     });
   });
 
-  it('filters recent reviews by search and caps limit', async () => {
-    const response = await GET(makeRequest('/api/reviews/recent?limit=999&search=kernel'));
-
-    expect(query.ilike).toHaveBeenCalledWith('body', '%kernel%');
-    expect(countQuery.ilike).toHaveBeenCalledWith('body', '%kernel%');
-    expect(query.range).toHaveBeenCalledWith(0, 99);
-    expect(response.status).toBe(200);
+  it.each([
+    '/api/reviews/recent?limit=0',
+    '/api/reviews/recent?limit=51',
+    '/api/reviews/recent?offset=-1',
+    '/api/reviews/recent?offset=5001',
+    '/api/reviews/recent?limit=not-a-number',
+  ])('rejects invalid pagination: %s', async (path) => {
+    const response = await GET(makeRequest(path));
+    expect(response.status).toBe(400);
+    expect(response.headers.get('Cache-Control')).toBe('private, no-store');
+    expect(mockGetPublicReviewsPage).not.toHaveBeenCalled();
   });
 
-  it('returns empty arrays and zero count defaults', async () => {
-    query = makeQuery({ data: null, error: null });
-    countQuery = makeQuery({ count: null });
-    mockCreateClient.mockResolvedValue({
-      from: jest.fn()
-        .mockReturnValueOnce(query)
-        .mockReturnValueOnce(countQuery),
-    });
+  it('rejects one-character searches', async () => {
+    const response = await GET(makeRequest('/api/reviews/recent?search=x'));
+    expect(response.status).toBe(400);
+    expect(mockGetPublicReviewsPage).not.toHaveBeenCalled();
+  });
 
+  it('returns an uncached 503 when the cached reader fails', async () => {
+    mockGetPublicReviewsPage.mockRejectedValueOnce(new Error('restricted'));
     const response = await GET(makeRequest('/api/reviews/recent'));
-
+    expect(response.status).toBe(503);
+    expect(response.headers.get('Cache-Control')).toBe('private, no-store');
     await expect(response.json()).resolves.toEqual({
-      reviews: [],
-      pagination: {
-        offset: 0,
-        limit: 20,
-        total: 0,
-        hasMore: false,
-      },
+      error: 'Failed to fetch reviews',
     });
-  });
-
-  it('returns a 500 when recent review lookup fails', async () => {
-    query = makeQuery({ data: null, error: new Error('select failed') });
-    mockCreateClient.mockResolvedValue({
-      from: jest.fn()
-        .mockReturnValueOnce(query)
-        .mockReturnValueOnce(countQuery),
-    });
-
-    const response = await GET(makeRequest('/api/reviews/recent'));
-
-    expect(response.status).toBe(500);
-    await expect(response.json()).resolves.toEqual({ error: 'Failed to fetch reviews' });
-  });
-
-  it('returns a 500 when the handler throws', async () => {
-    mockCreateClient.mockRejectedValueOnce(new Error('client failed'));
-
-    const response = await GET(makeRequest('/api/reviews/recent'));
-
-    expect(response.status).toBe(500);
-    await expect(response.json()).resolves.toEqual({ error: 'Internal server error' });
   });
 });

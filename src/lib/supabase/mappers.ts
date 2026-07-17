@@ -1,4 +1,5 @@
 import type { Database } from './database.types';
+import type { PublicReviewRow } from './publicReviews';
 import type { Review, TCourseId, TProgrammingLanguageId } from '@/lib/types';
 
 export type SupabaseReview = Database['public']['Tables']['reviews']['Row'];
@@ -10,7 +11,9 @@ function nullToUndefined<T>(value: T | null): T | undefined {
 /**
  * Convert a single Supabase review row to the Review type used throughout the app
  */
-export function mapSupabaseReviewToReview(review: SupabaseReview): Review {
+export function mapSupabaseReviewToReview(
+  review: SupabaseReview | PublicReviewRow
+): Review {
   return {
     reviewId: review.id,
     courseId: review.course_id as TCourseId,
@@ -27,28 +30,34 @@ export function mapSupabaseReviewToReview(review: SupabaseReview): Review {
     workload: review.workload ?? 0,
     difficulty: (review.difficulty ?? 3) as 1 | 2 | 3 | 4 | 5,
     overall: (review.overall ?? 3) as 1 | 2 | 3 | 4 | 5,
-    staffSupport: review.staff_support as 1 | 2 | 3 | 4 | 5 | undefined,
-    isRecommended: nullToUndefined(review.is_recommended),
-    isGoodFirstCourse: nullToUndefined(review.is_good_first_course),
-    isPairable: nullToUndefined(review.is_pairable),
-    hasGroupProjects: nullToUndefined(review.has_group_projects),
-    hasWritingAssignments: nullToUndefined(review.has_writing_assignments),
-    hasExamsQuizzes: nullToUndefined(review.has_exams_quizzes),
-    hasMandatoryReadings: nullToUndefined(review.has_mandatory_readings),
-    hasProgrammingAssignments: nullToUndefined(review.has_programming_assignments),
-    hasProvidedDevEnv: nullToUndefined(review.has_provided_dev_env),
-    programmingLanguagesIds: review.programming_languages as TProgrammingLanguageId[] | undefined,
-    preparation: review.preparation as 1 | 2 | 3 | 4 | 5 | undefined,
-    omsCoursesTaken: review.oms_courses_taken,
-    hasRelevantWorkExperience: nullToUndefined(review.has_relevant_work_experience),
-    experienceLevelId: nullToUndefined(review.experience_level) as 'jr' | 'mid' | 'sr' | undefined,
-    gradeId: nullToUndefined(review.grade),
+    ...('staff_support' in review
+      ? {
+          staffSupport: review.staff_support as 1 | 2 | 3 | 4 | 5 | undefined,
+          isRecommended: nullToUndefined(review.is_recommended),
+          isGoodFirstCourse: nullToUndefined(review.is_good_first_course),
+          isPairable: nullToUndefined(review.is_pairable),
+          hasGroupProjects: nullToUndefined(review.has_group_projects),
+          hasWritingAssignments: nullToUndefined(review.has_writing_assignments),
+          hasExamsQuizzes: nullToUndefined(review.has_exams_quizzes),
+          hasMandatoryReadings: nullToUndefined(review.has_mandatory_readings),
+          hasProgrammingAssignments: nullToUndefined(review.has_programming_assignments),
+          hasProvidedDevEnv: nullToUndefined(review.has_provided_dev_env),
+          programmingLanguagesIds: review.programming_languages as TProgrammingLanguageId[] | undefined,
+          preparation: review.preparation as 1 | 2 | 3 | 4 | 5 | undefined,
+          omsCoursesTaken: review.oms_courses_taken,
+          hasRelevantWorkExperience: nullToUndefined(review.has_relevant_work_experience),
+          experienceLevelId: nullToUndefined(review.experience_level) as 'jr' | 'mid' | 'sr' | undefined,
+          gradeId: nullToUndefined(review.grade),
+        }
+      : {}),
   };
 }
 
 /**
  * Convert an array of Supabase review rows to Review array
  */
-export function mapSupabaseReviewsToArray(reviews: SupabaseReview[]): Review[] {
+export function mapSupabaseReviewsToArray(
+  reviews: Array<SupabaseReview | PublicReviewRow>
+): Review[] {
   return reviews.map(mapSupabaseReviewToReview);
 }

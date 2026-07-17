@@ -1,21 +1,25 @@
 import { updateSession } from '../proxy';
 import { createServerClient } from '@supabase/ssr';
 
-const mockGetUser = jest.fn().mockResolvedValue({ data: { user: null }, error: null });
+const mockGetClaims = jest.fn().mockResolvedValue({ data: { user: null }, error: null });
 
 jest.mock('@supabase/ssr', () => ({
   createServerClient: jest.fn((_url, _key, options) => ({
     auth: {
-      getUser: mockGetUser,
+      getClaims: mockGetClaims,
     },
     __options: options,
   })),
 }));
 
 const mockNextResponseCookies = { set: jest.fn() };
+const mockNextResponseHeaders = { set: jest.fn() };
 jest.mock('next/server', () => ({
   NextResponse: {
-    next: jest.fn(() => ({ cookies: mockNextResponseCookies })),
+    next: jest.fn(() => ({
+      cookies: mockNextResponseCookies,
+      headers: mockNextResponseHeaders,
+    })),
   },
 }));
 
@@ -56,7 +60,7 @@ describe('updateSession()', () => {
       NEXT_PUBLIC_SUPABASE_URL: 'https://example.supabase.co',
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'publishable-key',
     };
-    mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
+    mockGetClaims.mockResolvedValue({ data: { user: null }, error: null });
   });
 
   afterAll(() => {
@@ -69,26 +73,26 @@ describe('updateSession()', () => {
     await expect(updateSession(makeMockRequest())).resolves.toBeDefined();
 
     expect(createServerClient).not.toHaveBeenCalled();
-    expect(mockGetUser).not.toHaveBeenCalled();
+    expect(mockGetClaims).not.toHaveBeenCalled();
   });
 
-  it('does NOT call getUser() when no session cookie is present', async () => {
+  it('does NOT call getClaims() when no session cookie is present', async () => {
     await updateSession(makeMockRequest());
-    expect(mockGetUser).not.toHaveBeenCalled();
+    expect(mockGetClaims).not.toHaveBeenCalled();
   });
 
-  it('does NOT call getUser() for PKCE code_verifier cookies only', async () => {
+  it('does NOT call getClaims() for PKCE code_verifier cookies only', async () => {
     await updateSession(
       makeMockRequest([{ name: 'sb-abc123-auth-token-code-verifier', value: 'verifier' }])
     );
-    expect(mockGetUser).not.toHaveBeenCalled();
+    expect(mockGetClaims).not.toHaveBeenCalled();
   });
 
-  it('calls getUser() when a session token cookie is present', async () => {
+  it('calls getClaims() when a session token cookie is present', async () => {
     await updateSession(
       makeMockRequest([{ name: 'sb-abc123-auth-token', value: 'token' }])
     );
-    expect(mockGetUser).toHaveBeenCalledTimes(1);
+    expect(mockGetClaims).toHaveBeenCalledTimes(1);
   });
 
   it('applies Supabase cookie writes to the request and response', async () => {
@@ -111,33 +115,33 @@ describe('updateSession()', () => {
     );
   });
 
-  it('calls getUser() for chunked session token cookies', async () => {
+  it('calls getClaims() for chunked session token cookies', async () => {
     await updateSession(
       makeMockRequest([{ name: 'sb-abc123-auth-token.0', value: 'chunk' }])
     );
-    expect(mockGetUser).toHaveBeenCalledTimes(1);
+    expect(mockGetClaims).toHaveBeenCalledTimes(1);
   });
 
-  it('calls getUser() for API requests with session cookies so stale cookies are cleared before handlers run', async () => {
+  it('calls getClaims() for API requests with session cookies so stale cookies are cleared before handlers run', async () => {
     await updateSession(
       makeMockRequest([{ name: 'sb-abc123-auth-token', value: 'token' }], {
         pathname: '/api/reviews',
       })
     );
-    expect(mockGetUser).toHaveBeenCalledTimes(1);
+    expect(mockGetClaims).toHaveBeenCalledTimes(1);
   });
 
-  it('calls getUser() for Next.js prefetch requests with session cookies so Server Components receive refreshed cookies', async () => {
+  it('calls getClaims() for Next.js prefetch requests with session cookies so Server Components receive refreshed cookies', async () => {
     await updateSession(
       makeMockRequest([{ name: 'sb-abc123-auth-token', value: 'token' }], {
         headers: { 'next-router-prefetch': '1' },
       })
     );
-    expect(mockGetUser).toHaveBeenCalledTimes(1);
+    expect(mockGetClaims).toHaveBeenCalledTimes(1);
   });
 
-  it('clears auth-token cookies when getUser() reports an invalid refresh token', async () => {
-    mockGetUser.mockResolvedValueOnce({
+  it('clears auth-token cookies when getClaims() reports an invalid refresh token', async () => {
+    mockGetClaims.mockResolvedValueOnce({
       data: { user: null },
       error: { message: 'Invalid Refresh Token: Refresh Token Not Found', status: 400 },
     });
@@ -167,8 +171,8 @@ describe('updateSession()', () => {
     );
   });
 
-  it('does not clear auth-token cookies when getUser() is rate limited', async () => {
-    mockGetUser.mockResolvedValueOnce({
+  it('does not clear auth-token cookies when getClaims() is rate limited', async () => {
+    mockGetClaims.mockResolvedValueOnce({
       data: { user: null },
       error: { message: 'Too many requests', status: 429 },
     });
@@ -184,8 +188,8 @@ describe('updateSession()', () => {
     );
   });
 
-  it('does not clear auth-token cookies when getUser returns an error without a message', async () => {
-    mockGetUser.mockResolvedValueOnce({
+  it('does not clear auth-token cookies when getClaims returns an error without a message', async () => {
+    mockGetClaims.mockResolvedValueOnce({
       data: { user: null },
       error: { status: 500 },
     });
@@ -202,7 +206,7 @@ describe('updateSession()', () => {
   });
 
   it('also clears production domain auth-token cookies for www/apex hosts', async () => {
-    mockGetUser.mockResolvedValueOnce({
+    mockGetClaims.mockResolvedValueOnce({
       data: { user: null },
       error: { message: 'Invalid Refresh Token: Refresh Token Not Found', status: 400 },
     });
@@ -221,7 +225,7 @@ describe('updateSession()', () => {
   });
 
   it('treats production host casing case-insensitively when clearing domain cookies', async () => {
-    mockGetUser.mockResolvedValueOnce({
+    mockGetClaims.mockResolvedValueOnce({
       data: { user: null },
       error: { message: 'Invalid Refresh Token: Refresh Token Not Found', status: 400 },
     });
@@ -240,7 +244,7 @@ describe('updateSession()', () => {
   });
 
   it('uses forwarded production hosts when clearing domain auth-token cookies', async () => {
-    mockGetUser.mockResolvedValueOnce({
+    mockGetClaims.mockResolvedValueOnce({
       data: { user: null },
       error: { message: 'Invalid Refresh Token: Refresh Token Not Found', status: 400 },
     });
@@ -260,7 +264,7 @@ describe('updateSession()', () => {
   });
 
   it('handles comma-separated forwarded hosts when clearing domain cookies', async () => {
-    mockGetUser.mockResolvedValueOnce({
+    mockGetClaims.mockResolvedValueOnce({
       data: { user: null },
       error: { message: 'refresh token not found', status: 400 },
     });
@@ -279,7 +283,7 @@ describe('updateSession()', () => {
   });
 
   it('does not let thrown auth refresh failures break public requests', async () => {
-    mockGetUser.mockRejectedValueOnce({
+    mockGetClaims.mockRejectedValueOnce({
       message: 'Invalid Refresh Token: Refresh Token Not Found',
       status: 400,
     });
@@ -298,7 +302,7 @@ describe('updateSession()', () => {
   });
 
   it('rethrows unexpected auth refresh failures', async () => {
-    mockGetUser.mockRejectedValueOnce(new Error('network unavailable'));
+    mockGetClaims.mockRejectedValueOnce(new Error('network unavailable'));
 
     await expect(
       updateSession(
