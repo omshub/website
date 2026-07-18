@@ -329,8 +329,9 @@ export default function ScheduleContent() {
   const pastSemesters = useMemo(() => getPastSemesters(), []);
   const initialActiveSemester = getInitialActiveSemester(pastSemesters);
   const [semesters, setSemesters] = useState(pastSemesters);
-  const [activeSemester, setActiveSemester] = useState(initialActiveSemester);
-  const [latestAvailableSemester, setLatestAvailableSemester] = useState(initialActiveSemester);
+  const [activeSemester, setActiveSemester] = useState('');
+  const [latestAvailableSemester, setLatestAvailableSemester] = useState('');
+  const [isDiscoveringSemester, setIsDiscoveringSemester] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -365,7 +366,13 @@ export default function ScheduleContent() {
         }
       } else {
         setLatestAvailableSemester(initialActiveSemester);
+
+        if (!userSelectedSemesterRef.current) {
+          setActiveSemester(initialActiveSemester);
+        }
       }
+
+      setIsDiscoveringSemester(false);
     }
 
     probeFutureSemesters();
@@ -376,6 +383,8 @@ export default function ScheduleContent() {
   }, [initialActiveSemester, pastSemesters]);
 
   useEffect(() => {
+    if (!activeSemester) return;
+
     // Cancellation flag: if activeSemester changes while a fetch is in flight,
     // a slower earlier request must not overwrite the newer semester's rows.
     let cancelled = false;
@@ -602,7 +611,7 @@ export default function ScheduleContent() {
   // Show registration status for the newest term with available data. This can
   // be a future registration term, such as Fall 2026 while the calendar is still
   // in Summer 2026.
-  const isLatestAvailableSemester = activeSemester === latestAvailableSemester;
+  const isLatestAvailableSemester = activeSemester !== '' && activeSemester === latestAvailableSemester;
   const scheduleTableColumns = isLatestAvailableSemester ? currentScheduleTableColumns : historicalScheduleTableColumns;
 
   // Reusable table row renderer
@@ -852,6 +861,8 @@ export default function ScheduleContent() {
               label="Semester"
               data={semesters}
               value={activeSemester}
+              placeholder={isDiscoveringSemester ? 'Finding latest semester…' : undefined}
+              disabled={isDiscoveringSemester}
               onChange={(value) => {
                 userSelectedSemesterRef.current = true;
                 setActiveSemester(value || semesters[0]?.value || '');
@@ -902,7 +913,7 @@ export default function ScheduleContent() {
         <Group justify="space-between" mb="lg">
           <div>
             <Title order={2} size="h3">
-              {getTermLabel(activeSemester)} Courses
+              {activeSemester ? `${getTermLabel(activeSemester)} Courses` : 'Course Schedule'}
             </Title>
             <Group gap="xs">
               <Text size="sm" c="dimmed">
@@ -935,7 +946,9 @@ export default function ScheduleContent() {
             <Center h={300}>
               <Stack align="center" gap="md">
                 <Loader color={GT_COLORS.techGold} />
-                <Text c="dimmed" size="sm">Loading course data...</Text>
+                <Text c="dimmed" size="sm">
+                  {isDiscoveringSemester ? 'Finding latest semester…' : 'Loading course data...'}
+                </Text>
               </Stack>
             </Center>
           </Paper>
