@@ -3,6 +3,8 @@ import {
   getFutureCandidates,
   getInitialActiveSemester,
   getPastSemesters,
+  getRegistrationDefaultTerm,
+  getRegistrationStatus,
   getScheduleSemesterOptions,
   getTermCode,
   getTermLabel,
@@ -87,5 +89,79 @@ describe('schedule semester helpers', () => {
   it('falls back to no active semester when no base semesters exist', () => {
     expect(getInitialActiveSemester([])).toBe('');
     expect(getScheduleSemesterOptions([], ['202608'])).toEqual([{ value: '202608', label: 'Fall 2026' }]);
+  });
+
+  const registrationCalendar = {
+    schemaVersion: 1,
+    source: 'test',
+    generatedAt: '2026-01-01T00:00:00Z',
+    terms: [
+      {
+        term: '202608',
+        phase1: { start: '2026-04-13', end: '2026-04-30' },
+        continuingOmscs: { start: '2026-05-01', end: '2026-08-16' },
+        phase2: { start: '2026-08-17', end: '2026-08-31' },
+      },
+      {
+        term: '202702',
+        availability: '2026-10-14',
+        phase1: { start: '2026-11-02', end: '2026-11-20' },
+        phase2: { start: '2027-01-04', end: '2027-01-15' },
+      },
+    ],
+  };
+
+  it.each([
+    ['2026-08-14T12:00:00', '202608'],
+    ['2026-10-14T12:00:00', '202608'],
+    ['2026-11-02T12:00:00', '202702'],
+    ['2027-01-04T12:00:00', '202702'],
+  ])('defaults to the furthest available term whose Phase I has begun on %s', (now, expected) => {
+    expect(getRegistrationDefaultTerm(['202608', '202702'], registrationCalendar, new Date(now))).toBe(expected);
+  });
+
+  it('falls back to the calendar-current term when the calendar is malformed or incompatible', () => {
+    expect(getRegistrationDefaultTerm(['202608'], { schemaVersion: 2, terms: [] }, new Date('2026-08-14T12:00:00'))).toBe('202608');
+    expect(getRegistrationDefaultTerm(['202608'], null, new Date('2026-05-06T12:00:00'))).toBe('202605');
+  });
+
+  it('compares date-only registration boundaries in the local calendar day', () => {
+    expect(getRegistrationDefaultTerm(['202702'], registrationCalendar, new Date(2026, 10, 2, 0, 0))).toBe('202702');
+  });
+
+  it('ignores malformed registration dates', () => {
+    const malformedDateCalendar = {
+      schemaVersion: 1,
+      terms: [{ term: '202702', phase1: { start: '2026-02-30', end: '2026-11-20' } }],
+    };
+
+    expect(getRegistrationDefaultTerm(['202702'], malformedDateCalendar, new Date('2026-08-14T12:00:00'))).toBe('202608');
+  });
+
+  it.each([null, 'not a registration term'])(
+    'falls back when the calendar contains a malformed %p term entry',
+    (malformedTerm) => {
+      const malformedTermCalendar = { schemaVersion: 1, terms: [malformedTerm] };
+
+      expect(getRegistrationDefaultTerm(['202702'], malformedTermCalendar, new Date('2026-08-14T12:00:00'))).toBe('202608');
+    }
+  );
+
+  it.each([null, 'not a registration term'])(
+    'reports no status when the calendar contains a malformed %p term entry',
+    (malformedTerm) => {
+      const malformedTermCalendar = { schemaVersion: 1, terms: [malformedTerm] };
+
+      expect(getRegistrationStatus('202702', malformedTermCalendar, new Date('2026-08-14T12:00:00'))).toBeNull();
+    }
+  );
+
+  it('reports only the active registration phase for the selected term', () => {
+    expect(getRegistrationStatus('202608', registrationCalendar, new Date('2026-08-17T12:00:00'))).toEqual({
+      label: 'Phase II registration open',
+      accessibleLabel: 'Registration status: Phase II registration open',
+    });
+    expect(getRegistrationStatus('202702', registrationCalendar, new Date('2026-08-17T12:00:00'))).toBeNull();
+    expect(getRegistrationStatus('202608', registrationCalendar, new Date('2026-09-01T12:00:00'))).toBeNull();
   });
 });
