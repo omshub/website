@@ -42,6 +42,8 @@ import {
   getFutureCandidates,
   getInitialActiveSemester,
   getPastSemesters,
+  getRegistrationDefaultTerm,
+  getRegistrationStatus as getRegistrationCalendarStatus,
   getScheduleSemesterOptions,
   getTermLabel,
 } from '../_lib/semesters';
@@ -340,6 +342,7 @@ export default function ScheduleContent() {
   const [specializations, setSpecializations] = useState<SpecializationMap>({});
   const [programs, setPrograms] = useState<ProgramMap>({});
   const [selectedSpecialization, setSelectedSpecialization] = useState<string | null>(null);
+  const [registrationCalendar, setRegistrationCalendar] = useState<unknown>(null);
   const userSelectedSemesterRef = useRef(false);
 
   // Probe future semester candidates and prepend any that have data
@@ -348,13 +351,25 @@ export default function ScheduleContent() {
 
     async function probeFutureSemesters() {
       const candidates = getFutureCandidates(3);
-      const results = await Promise.all(
-        candidates.map(async (termCode) => {
-          return (await hasAvailabilityData(termCode)) ? termCode : null;
-        })
-      );
+      const registrationCalendarResponse = fetch(`${DATA_REPO_BASE}/static/registration-windows.json`, { cache: 'no-store' })
+        .catch(() => null);
+      const [results, response] = await Promise.all([
+        Promise.all(candidates.map(async (termCode) => ((await hasAvailabilityData(termCode)) ? termCode : null))),
+        registrationCalendarResponse,
+      ]);
+
+      let calendar: unknown = null;
+      if (response?.ok) {
+        try {
+          calendar = await response.json();
+        } catch {
+          // Leave the calendar unset and use the existing calendar-current fallback.
+        }
+      }
 
       if (cancelled) return;
+
+      setRegistrationCalendar(calendar);
 
       const available = results.filter((t): t is string => t !== null).sort((a, b) => b.localeCompare(a));
       if (available.length > 0) {
@@ -362,7 +377,7 @@ export default function ScheduleContent() {
         setLatestAvailableSemester(available[0]);
 
         if (!userSelectedSemesterRef.current) {
-          setActiveSemester(available[0]);
+          setActiveSemester(getRegistrationDefaultTerm(available, calendar));
         }
       } else {
         setLatestAvailableSemester(initialActiveSemester);
@@ -560,6 +575,10 @@ export default function ScheduleContent() {
     return getGroupedScheduleSections(filteredAndSortedSections, selectedSpec, coreCourseIds, electiveCourseIds);
   }, [filteredAndSortedSections, selectedSpec, coreCourseIds, electiveCourseIds]);
   const displayedSections = useMemo(() => getDisplayedScheduleSections(groupedSections), [groupedSections]);
+  const registrationStatus = useMemo(
+    () => getRegistrationCalendarStatus(activeSemester, registrationCalendar),
+    [activeSemester, registrationCalendar]
+  );
 
   // Calculate stats
   const safeSections = sections || [];
@@ -857,7 +876,8 @@ export default function ScheduleContent() {
           withBorder
         >
           <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
-            <Select
+            <Stack gap={4}>
+              <Select
               label="Semester"
               data={semesters}
               value={activeSemester}
@@ -869,8 +889,14 @@ export default function ScheduleContent() {
               }}
               leftSection={<IconCalendar size={16} />}
               allowDeselect={false}
-              comboboxProps={{ withinPortal: true }}
-            />
+                comboboxProps={{ withinPortal: true }}
+              />
+              {registrationStatus && (
+                <Text size="sm" c="dimmed" role="status" aria-live="polite" aria-label={registrationStatus.accessibleLabel}>
+                  {registrationStatus.label}
+                </Text>
+              )}
+            </Stack>
 
             <Select
               label="Specialization"

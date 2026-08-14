@@ -13,7 +13,7 @@ describe('schedule content future semester probing', () => {
 
     expect(probeEffect?.[0]).toBeDefined();
     expect(probeEffect?.[0]).toMatch(
-      /if \(!userSelectedSemesterRef\.current\) \{\s*setActiveSemester\(available\[0\]\);\s*\}/
+      /if \(!userSelectedSemesterRef\.current\) \{\s*setActiveSemester\(getRegistrationDefaultTerm\(available, calendar\)\);\s*\}/
     );
   });
 
@@ -28,5 +28,13 @@ describe('schedule content future semester probing', () => {
     expect(source).toMatch(
       /else \{\s*setLatestAvailableSemester\(initialActiveSemester\);\s*if \(!userSelectedSemesterRef\.current\) \{\s*setActiveSemester\(initialActiveSemester\);\s*\}/
     );
+  });
+
+  it('fetches the registration calendar once alongside future probes and renders an accessible active-phase label', () => {
+    expect(source).toContain("`${DATA_REPO_BASE}/static/registration-windows.json`");
+    expect(source).toContain('const registrationCalendarResponse = fetch(');
+    expect(source).toContain('const registrationStatus = useMemo(');
+    expect(source).toContain('aria-live="polite"');
+    expect(source).toContain('{registrationStatus.label}');
   });
 });

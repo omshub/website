@@ -97,3 +97,93 @@ export function getScheduleSemesterOptions(baseSemesters: SemesterOption[], avai
 
   return [...futureOptions, ...baseSemesters];
 }
+
+interface RegistrationPhase {
+  start?: string;
+  end?: string;
+}
+
+interface RegistrationTerm {
+  term?: string;
+  phase1?: RegistrationPhase;
+  continuingOmscs?: RegistrationPhase;
+  phase2?: RegistrationPhase;
+}
+
+interface RegistrationCalendar {
+  schemaVersion?: number;
+  terms?: RegistrationTerm[];
+}
+
+export interface RegistrationStatus {
+  label: string;
+  accessibleLabel: string;
+}
+
+function isDateOnly(value: unknown): value is string {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+}
+
+function localCalendarDate(now: Date): string {
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${now.getFullYear()}-${month}-${day}`;
+}
+
+function isCompatibleRegistrationCalendar(calendar: unknown): calendar is RegistrationCalendar {
+  return typeof calendar === 'object'
+    && calendar !== null
+    && (calendar as RegistrationCalendar).schemaVersion === 1
+    && Array.isArray((calendar as RegistrationCalendar).terms);
+}
+
+function isWithinPhase(phase: RegistrationPhase | undefined, today: string): boolean {
+  return Boolean(phase && isDateOnly(phase.start) && isDateOnly(phase.end) && phase.start <= today && today <= phase.end);
+}
+
+export function getRegistrationDefaultTerm(
+  availableFutureTermCodes: string[],
+  calendar: unknown,
+  now = new Date()
+): string {
+  const fallback = getInitialActiveSemester(getPastSemesters(now));
+  if (!isCompatibleRegistrationCalendar(calendar)) return fallback;
+
+  const today = localCalendarDate(now);
+  const availableTerms = new Set(availableFutureTermCodes);
+  const eligible = calendar.terms!
+    .filter((term) => availableTerms.has(term.term || '') && isDateOnly(term.phase1?.start) && term.phase1.start <= today)
+    .map((term) => term.term as string)
+    .sort((a, b) => b.localeCompare(a));
+
+  return eligible[0] || fallback;
+}
+
+export function getRegistrationStatus(
+  activeTermCode: string,
+  calendar: unknown,
+  now = new Date()
+): RegistrationStatus | null {
+  if (!isCompatibleRegistrationCalendar(calendar)) return null;
+
+  const term = calendar.terms!.find((candidate) => candidate.term === activeTermCode);
+  if (!term) return null;
+
+  const today = localCalendarDate(now);
+  const phases: Array<[RegistrationPhase | undefined, string]> = [
+    [term.phase1, 'Phase I registration open'],
+    [term.continuingOmscs, 'Continuing OMSCS registration open'],
+    [term.phase2, 'Phase II registration open'],
+  ];
+  const activePhase = phases.find(([phase]) => isWithinPhase(phase, today));
+  if (!activePhase) return null;
+
+  return {
+    label: activePhase[1],
+    accessibleLabel: `Registration status: ${activePhase[1]}`,
+  };
+}
