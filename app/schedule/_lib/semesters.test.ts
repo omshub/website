@@ -138,6 +138,24 @@ describe('schedule semester helpers', () => {
     expect(getRegistrationDefaultTerm(['202702'], malformedDateCalendar, new Date('2026-08-14T12:00:00'))).toBe('202608');
   });
 
+  it.each([null, 'not a registration term'])(
+    'falls back when the calendar contains a malformed %p term entry',
+    (malformedTerm) => {
+      const malformedTermCalendar = { schemaVersion: 1, terms: [malformedTerm] };
+
+      expect(getRegistrationDefaultTerm(['202702'], malformedTermCalendar, new Date('2026-08-14T12:00:00'))).toBe('202608');
+    }
+  );
+
+  it.each([null, 'not a registration term'])(
+    'reports no status when the calendar contains a malformed %p term entry',
+    (malformedTerm) => {
+      const malformedTermCalendar = { schemaVersion: 1, terms: [malformedTerm] };
+
+      expect(getRegistrationStatus('202702', malformedTermCalendar, new Date('2026-08-14T12:00:00'))).toBeNull();
+    }
+  );
+
   it('reports only the active registration phase for the selected term', () => {
     expect(getRegistrationStatus('202608', registrationCalendar, new Date('2026-08-17T12:00:00'))).toEqual({
       label: 'Phase II registration open',

@@ -141,6 +141,10 @@ function isCompatibleRegistrationCalendar(calendar: unknown): calendar is Regist
     && Array.isArray((calendar as RegistrationCalendar).terms);
 }
 
+function isRegistrationTerm(term: unknown): term is RegistrationTerm {
+  return typeof term === 'object' && term !== null;
+}
+
 function isWithinPhase(phase: RegistrationPhase | undefined, today: string): boolean {
   return Boolean(phase && isDateOnly(phase.start) && isDateOnly(phase.end) && phase.start <= today && today <= phase.end);
 }
@@ -156,6 +160,7 @@ export function getRegistrationDefaultTerm(
   const today = localCalendarDate(now);
   const availableTerms = new Set(availableFutureTermCodes);
   const eligible = calendar.terms!
+    .filter(isRegistrationTerm)
     .filter((term) => availableTerms.has(term.term || '') && isDateOnly(term.phase1?.start) && term.phase1.start <= today)
     .map((term) => term.term as string)
     .sort((a, b) => b.localeCompare(a));
@@ -170,7 +175,7 @@ export function getRegistrationStatus(
 ): RegistrationStatus | null {
   if (!isCompatibleRegistrationCalendar(calendar)) return null;
 
-  const term = calendar.terms!.find((candidate) => candidate.term === activeTermCode);
+  const term = calendar.terms!.filter(isRegistrationTerm).find((candidate) => candidate.term === activeTermCode);
   if (!term) return null;
 
   const today = localCalendarDate(now);
