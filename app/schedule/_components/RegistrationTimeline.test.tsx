@@ -30,6 +30,7 @@ describe('RegistrationTimeline', () => {
     expect(screen.getByText('Published Phase II window ended')).toBeInTheDocument();
     expect(screen.getByText('in 15d 7h 29m')).toBeInTheDocument();
     expect(screen.getByRole('list', { name: 'Fall 2026 registration milestones' })).toBeInTheDocument();
+    expect(document.querySelector('.registration-timeline-step--focus')).toBeInTheDocument();
   });
 
   it('renders nothing for malformed calendars', () => {
