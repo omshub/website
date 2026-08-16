@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Badge, Group, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import { Badge, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import {
   formatRegistrationCountdown,
   getTermLabel,
@@ -61,15 +61,19 @@ export function RegistrationTimeline({ calendar, now }: RegistrationTimelineProp
                 const countdown = formatRegistrationCountdown(milestone, liveNow);
                 return (
                   <Paper key={`${milestone.kind}-${milestone.date}`} p="sm" radius="md" withBorder bg={milestone.state === 'current' ? 'yellow.0' : undefined}>
-                    <Group justify="space-between" align="flex-start" wrap="nowrap" gap="xs">
+                    <Stack gap={4} align="flex-start">
                       <div>
                         <Text size="sm" fw={600}>{milestone.label}</Text>
                         <Text size="xs" c="dimmed">{formatMilestoneDate(milestone)}</Text>
                       </div>
-                      <Badge color={milestoneColor(milestone.state)} variant={milestone.state === 'current' ? 'filled' : 'light'}>
+                      <Badge
+                        color={milestoneColor(milestone.state)}
+                        variant={milestone.state === 'current' ? 'filled' : milestone.state === 'completed' ? 'outline' : 'light'}
+                        style={{ flexShrink: 0, whiteSpace: 'nowrap' }}
+                      >
                         {milestone.state === 'completed' ? '✓ Completed' : countdown}
                       </Badge>
-                    </Group>
+                    </Stack>
                   </Paper>
                 );
               })}
