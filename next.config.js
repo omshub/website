@@ -1,5 +1,11 @@
 /** @type {import('next').NextConfig} */
 
+const registrationDataRef = process.env.NEXT_PUBLIC_REGISTRATION_DATA_REF
+  || (process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_GIT_COMMIT_REF)
+  || 'main';
+const registrationWindowsUrl = process.env.NEXT_PUBLIC_REGISTRATION_WINDOWS_URL
+  || `https://raw.githubusercontent.com/omshub/data/${registrationDataRef}/static/registration-windows.json`;
+
 module.exports = {
   reactStrictMode: true,
 
@@ -42,6 +48,7 @@ module.exports = {
     messagingSenderId: process.env.MESSAGING_SENDER_ID,
     appId: process.env.APP_ID,
     measurementId: process.env.MEASUREMENT_ID,
+    NEXT_PUBLIC_REGISTRATION_WINDOWS_URL: registrationWindowsUrl,
   },
 
   compiler: {
