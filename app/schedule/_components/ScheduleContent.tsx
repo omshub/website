@@ -38,6 +38,7 @@ import {
   IconCheck,
 } from '@tabler/icons-react';
 import { GT_COLORS } from '@/lib/theme';
+import { RegistrationTimeline } from './RegistrationTimeline';
 import {
   getFutureCandidates,
   getInitialActiveSemester,
@@ -58,6 +59,8 @@ import {
 
 // Data repository URL
 const DATA_REPO_BASE = 'https://raw.githubusercontent.com/omshub/data/main';
+const REGISTRATION_WINDOWS_URL = process.env.NEXT_PUBLIC_REGISTRATION_WINDOWS_URL
+  || `${DATA_REPO_BASE}/static/registration-windows.json`;
 
 async function hasAvailabilityData(termCode: string): Promise<boolean> {
   const url = `${DATA_REPO_BASE}/data/${termCode}.json`;
@@ -351,7 +354,7 @@ export default function ScheduleContent() {
 
     async function probeFutureSemesters() {
       const candidates = getFutureCandidates(3);
-      const registrationCalendarResponse = fetch(`${DATA_REPO_BASE}/static/registration-windows.json`, { cache: 'no-store' })
+      const registrationCalendarResponse = fetch(REGISTRATION_WINDOWS_URL, { cache: 'no-store' })
         .catch(() => null);
       const [results, response] = await Promise.all([
         Promise.all(candidates.map(async (termCode) => ((await hasAvailabilityData(termCode)) ? termCode : null))),
@@ -934,6 +937,8 @@ export default function ScheduleContent() {
             </Group>
           )}
         </Paper>
+
+        <RegistrationTimeline calendar={registrationCalendar} />
 
         {/* Results Header */}
         <Group justify="space-between" mb="lg">

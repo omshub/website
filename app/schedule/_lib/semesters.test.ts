@@ -5,6 +5,8 @@ import {
   getPastSemesters,
   getRegistrationDefaultTerm,
   getRegistrationStatus,
+  formatRegistrationCountdown,
+  getUpcomingRegistrationTimeline,
   getScheduleSemesterOptions,
   getTermCode,
   getTermLabel,
@@ -163,5 +165,38 @@ describe('schedule semester helpers', () => {
     });
     expect(getRegistrationStatus('202702', registrationCalendar, new Date('2026-08-17T12:00:00'))).toBeNull();
     expect(getRegistrationStatus('202608', registrationCalendar, new Date('2026-09-01T12:00:00'))).toBeNull();
+  });
+
+  it('formats a timestamped ticket-post countdown', () => {
+    expect(formatRegistrationCountdown({
+      term: '202608',
+      kind: 'tickets',
+      label: 'Phase II tickets post',
+      date: '2026-08-13',
+      timestamp: '2026-08-13T18:00:00-04:00',
+      state: 'upcoming',
+    }, new Date('2026-08-13T20:30:00Z'))).toBe('in 1h 30m');
+  });
+
+  it('uses calendar-day copy for date-only milestones', () => {
+    expect(formatRegistrationCountdown({
+      term: '202608', kind: 'registration-start', label: 'Phase II registration begins', date: '2026-08-17', state: 'upcoming',
+    }, new Date(2026, 7, 14))).toBe('in 3 days');
+  });
+
+  it('excludes completed Phase II terms and ignores malformed optional timestamps', () => {
+    const calendar = {
+      schemaVersion: 1,
+      terms: [
+        { term: '202608', phase2: { tickets: '2026-08-13', ticketsAt: 'not-a-timestamp', start: '2026-08-17', end: '2026-08-28', endAt: 'invalid' } },
+        { term: '202702', phase2: { tickets: '2026-12-15', start: '2027-01-04', end: '2027-01-15' } },
+      ],
+    };
+
+    const timeline = getUpcomingRegistrationTimeline(calendar, new Date('2026-08-29T12:00:00-04:00'));
+    expect(timeline.map((item) => item.term)).not.toContain('202608');
+    const tickets = timeline.find((item) => item.term === '202702' && item.kind === 'tickets');
+    expect(tickets).toEqual(expect.objectContaining({ term: '202702', kind: 'tickets', date: '2026-12-15' }));
+    expect(tickets).not.toHaveProperty('timestamp');
   });
 });

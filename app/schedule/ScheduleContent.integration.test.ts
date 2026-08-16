@@ -31,10 +31,17 @@ describe('schedule content future semester probing', () => {
   });
 
   it('fetches the registration calendar once alongside future probes and renders an accessible active-phase label', () => {
-    expect(source).toContain("`${DATA_REPO_BASE}/static/registration-windows.json`");
+    expect(source).toContain('fetch(REGISTRATION_WINDOWS_URL');
     expect(source).toContain('const registrationCalendarResponse = fetch(');
     expect(source).toContain('const registrationStatus = useMemo(');
     expect(source).toContain('aria-live="polite"');
     expect(source).toContain('{registrationStatus.label}');
+  });
+
+  it('uses a preview artifact URL override and renders the timeline', () => {
+    expect(source).toContain('NEXT_PUBLIC_REGISTRATION_WINDOWS_URL');
+    expect(source).toContain('const REGISTRATION_WINDOWS_URL');
+    expect(source).toContain('fetch(REGISTRATION_WINDOWS_URL');
+    expect(source).toContain('<RegistrationTimeline calendar={registrationCalendar} />');
   });
 });

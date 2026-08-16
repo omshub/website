@@ -98,16 +98,33 @@ export function getScheduleSemesterOptions(baseSemesters: SemesterOption[], avai
   return [...futureOptions, ...baseSemesters];
 }
 
-interface RegistrationPhase {
+export interface RegistrationPhase {
+  availability?: string;
+  tickets?: string;
+  ticketsAt?: string;
   start?: string;
   end?: string;
+  endAt?: string;
 }
 
-interface RegistrationTerm {
+export interface RegistrationTerm {
   term?: string;
+  availability?: string;
   phase1?: RegistrationPhase;
   continuingOmscs?: RegistrationPhase;
   phase2?: RegistrationPhase;
+}
+
+export type RegistrationMilestoneKind = 'availability' | 'tickets' | 'registration-start' | 'registration-end';
+export type RegistrationMilestoneState = 'completed' | 'current' | 'upcoming';
+
+export interface RegistrationMilestone {
+  term: string;
+  kind: RegistrationMilestoneKind;
+  label: string;
+  date: string;
+  timestamp?: string;
+  state: RegistrationMilestoneState;
 }
 
 interface RegistrationCalendar {
@@ -126,6 +143,92 @@ function isDateOnly(value: unknown): value is string {
   const [year, month, day] = value.split('-').map(Number);
   const date = new Date(year, month - 1, day);
   return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+}
+
+function isExplicitOffsetTimestamp(value: unknown): value is string {
+  return typeof value === 'string'
+    && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value)
+    && !Number.isNaN(Date.parse(value));
+}
+
+function calendarDayDifference(date: string, now: Date): number {
+  const [year, month, day] = date.split('-').map(Number);
+  const today = localCalendarDate(now).split('-').map(Number);
+  return Math.round((Date.UTC(year, month - 1, day) - Date.UTC(today[0], today[1] - 1, today[2])) / 86_400_000);
+}
+
+function getMilestoneState(
+  kind: RegistrationMilestoneKind,
+  date: string,
+  timestamp: string | undefined,
+  phase2: RegistrationPhase | undefined,
+  now: Date
+): RegistrationMilestoneState {
+  const isPast = timestamp
+    ? Date.parse(timestamp) < now.getTime()
+    : calendarDayDifference(date, now) < 0;
+  if (isPast) return 'completed';
+
+  if (kind === 'registration-start' || kind === 'registration-end') {
+    const today = localCalendarDate(now);
+    if (isDateOnly(phase2?.start) && isDateOnly(phase2?.end) && phase2.start <= today && today <= phase2.end) {
+      return 'current';
+    }
+  }
+  return 'upcoming';
+}
+
+export function formatRegistrationCountdown(milestone: RegistrationMilestone, now = new Date()): string {
+  if (milestone.timestamp && isExplicitOffsetTimestamp(milestone.timestamp)) {
+    const minutes = Math.ceil((Date.parse(milestone.timestamp) - now.getTime()) / 60_000);
+    if (minutes <= 0) return 'completed';
+    const days = Math.floor(minutes / 1_440);
+    const hours = Math.floor((minutes % 1_440) / 60);
+    const remainderMinutes = minutes % 60;
+    const parts = [days && `${days}d`, hours && `${hours}h`, remainderMinutes && `${remainderMinutes}m`].filter(Boolean);
+    return `in ${parts.join(' ')}`;
+  }
+
+  const days = calendarDayDifference(milestone.date, now);
+  if (days < 0) return 'completed';
+  if (days === 0) return 'today';
+  return `in ${days} day${days === 1 ? '' : 's'}`;
+}
+
+export function getUpcomingRegistrationTimeline(calendar: unknown, now = new Date()): RegistrationMilestone[] {
+  if (!isCompatibleRegistrationCalendar(calendar)) return [];
+  const today = localCalendarDate(now);
+  const eligibleTerms = calendar.terms!
+    .filter(isRegistrationTerm)
+    .filter((term) => typeof term.term === 'string' && /^\d{6}$/.test(term.term))
+    .filter((term) => {
+      const endTimestamp = isExplicitOffsetTimestamp(term.phase2?.endAt) ? term.phase2.endAt : undefined;
+      if (endTimestamp) return Date.parse(endTimestamp) >= now.getTime();
+      return !isDateOnly(term.phase2?.end) || term.phase2.end >= today;
+    })
+    .sort((a, b) => (a.term as string).localeCompare(b.term as string))
+    .slice(0, 3);
+
+  return eligibleTerms.flatMap((term) => {
+    const phase2 = term.phase2;
+    const candidates: Array<Omit<RegistrationMilestone, 'state'>> = [
+      isDateOnly(term.availability) ? { term: term.term!, kind: 'availability', label: 'Schedule available', date: term.availability } : null,
+      isDateOnly(phase2?.tickets) ? {
+        term: term.term!, kind: 'tickets', label: 'Phase II tickets post', date: phase2.tickets,
+        ...(isExplicitOffsetTimestamp(phase2.ticketsAt) ? { timestamp: phase2.ticketsAt } : {}),
+      } : null,
+      isDateOnly(phase2?.start) ? { term: term.term!, kind: 'registration-start', label: 'Phase II registration begins', date: phase2.start } : null,
+      isDateOnly(phase2?.end) ? {
+        term: term.term!, kind: 'registration-end', label: 'Published Phase II window ended', date: phase2.end,
+        ...(isExplicitOffsetTimestamp(phase2.endAt) ? { timestamp: phase2.endAt } : {}),
+      } : null,
+    ].filter((candidate): candidate is Omit<RegistrationMilestone, 'state'> => candidate !== null);
+
+    return candidates.map((candidate) => ({
+      ...candidate,
+      state: getMilestoneState(candidate.kind, candidate.date, candidate.timestamp, phase2, now),
+    }));
+  });
 }
 
 function localCalendarDate(now: Date): string {
