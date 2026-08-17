@@ -18,11 +18,12 @@ import {
   Center,
   TextInput,
   ActionIcon,
+  Button,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconMessageCircle, IconSearch, IconX } from '@tabler/icons-react';
 import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { GT_COLORS } from '@/lib/theme';
 
 interface RecentsContentProps {
@@ -47,7 +48,7 @@ export default function RecentsContent({
   const effectiveSearch =
     debouncedSearch.trim().length >= 2 ? debouncedSearch.trim() : '';
   const [isSearching, setIsSearching] = useState(false);
-  const loaderRef = useRef<HTMLDivElement>(null);
+  const pinFooterRef = useRef(false);
 
   // Reset and search when debounced search changes
   useEffect(() => {
@@ -87,6 +88,8 @@ export default function RecentsContent({
 
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return;
+    const footer = document.querySelector('footer');
+    pinFooterRef.current = !!footer && footer.getBoundingClientRect().top < window.innerHeight;
 
     setLoading(true);
     try {
@@ -109,28 +112,11 @@ export default function RecentsContent({
     }
   }, [loading, hasMore, offset, effectiveSearch]);
 
-  // Intersection Observer for infinite scroll
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loading) {
-          loadMore();
-        }
-      },
-      { threshold: 0.1, rootMargin: '100px' }
-    );
-
-    const currentRef = loaderRef.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, [hasMore, loading, loadMore]);
+  useLayoutEffect(() => {
+    if (!pinFooterRef.current) return;
+    pinFooterRef.current = false;
+    document.querySelector('footer')?.scrollIntoView({ block: 'end', behavior: 'auto' });
+  }, [reviews]);
 
   return (
     <Box>
@@ -221,8 +207,7 @@ export default function RecentsContent({
           ))}
         </Stack>
 
-        {/* Loading indicator / Intersection target */}
-        <Box ref={loaderRef} py="xl">
+        <Box py="xl">
           {loading && (
             <Center>
               <Loader color={GT_COLORS.techGold} size="md" />
@@ -230,9 +215,9 @@ export default function RecentsContent({
           )}
           {!loading && hasMore && (
             <Center>
-              <Text size="sm" c="grayMatter">
-                Scroll to load more reviews
-              </Text>
+              <Button variant="subtle" color="gray" onClick={loadMore}>
+                Load more reviews
+              </Button>
             </Center>
           )}
           {!hasMore && reviews.length > 0 && (
