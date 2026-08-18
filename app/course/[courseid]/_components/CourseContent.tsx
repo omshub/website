@@ -52,7 +52,7 @@ import {
   mapSemesterTermToEmoji,
   mapSemesterTermToName,
 } from '@/utilities';
-import { useMemo, useState, useCallback, useEffect, useRef } from 'react';
+import { useMemo, useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { GT_COLORS } from '@/lib/theme';
 import dynamic from 'next/dynamic';
 
@@ -126,7 +126,7 @@ export default function CourseContent({
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(initialReviews.length);
-  const loaderRef = useRef<HTMLDivElement>(null);
+  const pinFooterRef = useRef(false);
 
   // Filter state
   const [selectedYear, setSelectedYear] = useState<string>('all');
@@ -196,6 +196,8 @@ export default function CourseContent({
   // Load more reviews
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return;
+    const footer = document.querySelector('footer');
+    pinFooterRef.current = !!footer && footer.getBoundingClientRect().top < window.innerHeight;
 
     setLoading(true);
     try {
@@ -215,28 +217,11 @@ export default function CourseContent({
     }
   }, [loading, hasMore, offset, buildQueryParams]);
 
-  // Intersection Observer for infinite scroll
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loading) {
-          loadMore();
-        }
-      },
-      { threshold: 0.1, rootMargin: '100px' }
-    );
-
-    const currentRef = loaderRef.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, [hasMore, loading, loadMore]);
+  useLayoutEffect(() => {
+    if (!pinFooterRef.current) return;
+    pinFooterRef.current = false;
+    document.querySelector('footer')?.scrollIntoView({ block: 'end', behavior: 'auto' });
+  }, [reviews]);
 
   // Get all reviews as array (already an array now)
   const allReviewsArray = useMemo(() => {
@@ -675,7 +660,7 @@ export default function CourseContent({
           {filteredReviews.length > 0 && (
             <Text size="sm" c="grayMatter">
               {filteredReviews.length} of {totalReviewCount} review{totalReviewCount !== 1 ? 's' : ''}
-              {hasMore && ' (scroll for more)'}
+              {hasMore && ' (load more below)'}
             </Text>
           )}
         </Group>
@@ -688,8 +673,7 @@ export default function CourseContent({
               ))}
             </Stack>
 
-            {/* Loading indicator / Intersection target */}
-            <Box ref={loaderRef} py="xl">
+            <Box py="xl">
               {loading && (
                 <Center>
                   <Loader color={GT_COLORS.techGold} size="md" />
@@ -697,9 +681,9 @@ export default function CourseContent({
               )}
               {!loading && hasMore && (
                 <Center>
-                  <Text size="sm" c="grayMatter">
-                    Scroll to load more reviews
-                  </Text>
+                  <Button variant="subtle" color="gray" onClick={loadMore}>
+                    Load more reviews
+                  </Button>
                 </Center>
               )}
               {!hasMore && reviews.length > 0 && reviews.length < totalReviewCount && (
