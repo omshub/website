@@ -23,14 +23,12 @@ describe('RegistrationTimeline', () => {
 
     expect(screen.getByRole('heading', { name: 'Upcoming registration phases' })).toBeInTheDocument();
     expect(screen.getByText('Dates are public program milestones; individual time tickets vary.')).toBeInTheDocument();
-    expect(screen.getByText('Phase II tickets post')).toBeInTheDocument();
-    expect(screen.getByText('in 1h 30m')).toBeInTheDocument();
-    expect(screen.getByText('Phase II registration begins')).toBeInTheDocument();
-    expect(screen.getByText('in 4 days')).toBeInTheDocument();
-    expect(screen.getByText('Published Phase II window ended')).toBeInTheDocument();
-    expect(screen.getByText('in 15d 7h 29m')).toBeInTheDocument();
-    expect(screen.getByRole('list', { name: 'Fall 2026 registration milestones' })).toBeInTheDocument();
-    expect(document.querySelector('.registration-timeline-step--focus')).toBeInTheDocument();
+    expect(screen.getByText('Official GT Registrar dates')).toBeInTheDocument();
+    expect(screen.getByRole('list', { name: 'Fall 2026 registration phases' })).toBeInTheDocument();
+    expect(screen.getByText('Schedule available · May 1')).toBeInTheDocument();
+    expect(screen.getByText('Next: Phase II · Aug 17–28')).toBeInTheDocument();
+    expect(screen.getByText('Tickets posted · in 1h 30m')).toBeInTheDocument();
+    expect(document.querySelector('.registration-phase-item--focus')).toBeInTheDocument();
   });
 
   it('renders nothing for malformed calendars', () => {
