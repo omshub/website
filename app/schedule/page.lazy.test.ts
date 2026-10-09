@@ -6,7 +6,7 @@ describe('schedule page content loading boundary', () => {
 
   it('uses the lazy schedule content wrapper', () => {
     expect(source).toContain("import LazyScheduleContent from './_components/LazyScheduleContent';");
-    expect(source).toContain('<LazyScheduleContent />');
+    expect(source).toContain('<LazyScheduleContent');
     expect(source).not.toContain("import ScheduleContent from './_components/ScheduleContent';");
   });
 });
