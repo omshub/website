@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useRef } from 'react';
+import Link from 'next/link';
 import {
   Container,
   Title,
@@ -22,6 +23,8 @@ import {
   CopyButton,
   Select,
   TextInput,
+  Switch,
+  UnstyledButton,
 } from '@mantine/core';
 import {
   IconSearch,
@@ -36,7 +39,11 @@ import {
   IconBookmark,
   IconCopy,
   IconCheck,
+  IconChevronUp,
+  IconChevronDown,
+  IconSelector,
 } from '@tabler/icons-react';
+import { Course, TCourseId } from '@/lib/types';
 import { GT_COLORS } from '@/lib/theme';
 import {
   getFutureCandidates,
@@ -187,6 +194,11 @@ interface CourseSection {
   seatsAvailable: number;
   waitlist: number;
   url: string | null;
+  isFoundational?: boolean;
+  avgDifficulty?: number | null;
+  avgWorkload?: number | null;
+  avgOverall?: number | null;
+  numReviews?: number;
 }
 
 interface StatCardProps {
@@ -203,9 +215,13 @@ interface GroupedScheduleSections {
   freeElectives: CourseSection[];
 }
 
+interface ScheduleContentProps {
+  allCourseData?: Partial<Record<TCourseId, Course>>;
+}
+
 const scheduleTableHeaderHeight = sharedTableHeaderHeight;
-const currentScheduleTableColumns = '100px 85px minmax(295px, 1.8fr) minmax(165px, 1fr) 135px 80px';
-const historicalScheduleTableColumns = '100px minmax(295px, 1.8fr) minmax(165px, 1fr) 135px 80px';
+const currentScheduleTableColumns = '100px 85px minmax(320px, 2.5fr) minmax(140px, 1.5fr) 105px 100px 95px 135px 80px';
+const historicalScheduleTableColumns = '100px minmax(320px, 2.5fr) minmax(140px, 1.5fr) 105px 100px 95px 135px 80px';
 
 export function getScheduleTablePaperProps() {
   return getSharedTablePaperProps();
@@ -327,7 +343,29 @@ function getSearchScore(section: CourseSection, query: string): number {
   return 0; // No match
 }
 
-export default function ScheduleContent() {
+type SortField = 'courseId' | 'difficulty' | 'workload' | 'overall';
+
+function SortableHeader({ children, reversed, sorted, onSort, ta = 'left', px = 'sm', py = 'sm' }: any) {
+  const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
+  return (
+    <Box role="columnheader" px={px} py={py} style={getScheduleHeaderCellStyle(ta)}>
+      {onSort ? (
+        <UnstyledButton onClick={onSort} style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: ta === 'center' ? 'center' : 'flex-start', width: '100%' }}>
+          <Text fw={600} size="sm" c="white">
+            {children}
+          </Text>
+          <Icon size={14} stroke={1.5} color="white" style={{ opacity: 0.7 }} />
+        </UnstyledButton>
+      ) : (
+        <Text fw={600} size="sm" c="white" ta={ta}>
+          {children}
+        </Text>
+      )}
+    </Box>
+  );
+}
+
+export default function ScheduleContent({ allCourseData = {} }: ScheduleContentProps) {
   const pastSemesters = useMemo(() => getPastSemesters(), []);
   const initialActiveSemester = getInitialActiveSemester(pastSemesters);
   const [semesters, setSemesters] = useState(pastSemesters);
@@ -335,6 +373,9 @@ export default function ScheduleContent() {
   const [latestAvailableSemester, setLatestAvailableSemester] = useState('');
   const [isDiscoveringSemester, setIsDiscoveringSemester] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFoundationalOnly, setShowFoundationalOnly] = useState(false);
+  const [sortBy, setSortBy] = useState<SortField | null>(null);
+  const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sections, setSections] = useState<CourseSection[]>([]);
@@ -478,6 +519,7 @@ export default function ScheduleContent() {
           const sections = courseData.sections || [];
 
           for (const section of sections) {
+            const extraData = allCourseData?.[courseId as TCourseId] || ({} as Partial<Course>);
             combinedSections.push({
               crn: section.crn,
               courseId,
@@ -490,6 +532,11 @@ export default function ScheduleContent() {
               seatsAvailable: section.seatsAvailable,
               waitlist: section.waitCount || 0,
               url: courseInfo?.url || null,
+              isFoundational: courseInfo?.isFoundational || extraData?.isFoundational || false,
+              avgDifficulty: extraData?.avgDifficulty || null,
+              avgWorkload: extraData?.avgWorkload || null,
+              avgOverall: extraData?.avgOverall || null,
+              numReviews: extraData?.numReviews || 0,
             });
           }
         }
@@ -559,16 +606,49 @@ export default function ScheduleContent() {
       return [];
     }
 
-    const scored = sections.map((section) => ({
+    const filteredByFoundational = showFoundationalOnly
+      ? sections.filter(s => s.isFoundational)
+      : sections;
+
+    const scored = filteredByFoundational.map((section) => ({
       section,
       score: getSearchScore(section, searchQuery),
     }));
 
     return scored
       .filter((item) => item.score > 0)
-      .sort((a, b) => b.score - a.score)
+      .sort((a, b) => {
+        if (searchQuery && b.score !== a.score) {
+          return b.score - a.score;
+        }
+
+        let comparison = 0;
+        switch (sortBy) {
+          case 'courseId':
+            comparison = a.section.courseId.localeCompare(b.section.courseId);
+            break;
+          case 'difficulty':
+            comparison = (a.section.avgDifficulty || 0) - (b.section.avgDifficulty || 0);
+            break;
+          case 'workload':
+            comparison = (a.section.avgWorkload || 0) - (b.section.avgWorkload || 0);
+            break;
+          case 'overall':
+            comparison = (a.section.avgOverall || 0) - (b.section.avgOverall || 0);
+            break;
+          default:
+            comparison = a.section.courseId.localeCompare(b.section.courseId);
+        }
+        return reverseSortDirection ? -comparison : comparison;
+      })
       .map((item) => item.section);
-  }, [sections, searchQuery]);
+  }, [sections, searchQuery, showFoundationalOnly, sortBy, reverseSortDirection]);
+
+  const setSorting = (field: SortField) => {
+    const reversed = field === sortBy ? !reverseSortDirection : false;
+    setSortBy(field);
+    setReverseSortDirection(reversed);
+  };
 
   // Group sections by core/elective/free when specialization is selected
   const groupedSections = useMemo(() => {
@@ -625,6 +705,55 @@ export default function ScheduleContent() {
 
     // Under 80% full = Open
     return { status: 'Open', color: GT_COLORS.canopyLime, description: `${seatsAvailable} seats available` };
+  };
+
+  // Get difficulty badge
+  const getDifficultyBadge = (value: number | null | undefined) => {
+    if (value === null || value === undefined) return <Text size="sm" c="grayMatter">-</Text>;
+    let bgColor = '#E8F5E9', textColor = '#256029', label = 'Easy';
+    if (value >= 4) { bgColor = '#FDE8E4'; textColor = '#9E2A20'; label = 'Hard'; }
+    else if (value >= 2.5) { bgColor = '#FEF3E2'; textColor = '#8B5A00'; label = 'Medium'; }
+    return (
+      <Tooltip label={`${value.toFixed(1)} / 5`}>
+        <Badge size="sm" variant="filled" style={{ backgroundColor: bgColor, color: textColor }}>{label}</Badge>
+      </Tooltip>
+    );
+  };
+
+  // Get workload display
+  const getWorkloadDisplay = (value: number | null | undefined) => {
+    if (value === null || value === undefined) return <Text size="sm" c="dimmed">-</Text>;
+    const maxWorkload = 30;
+    const percentage = Math.min((value / maxWorkload) * 100, 100);
+    let textColor = '#0d6650', progressColor = 'teal';
+    if (value >= 20) { textColor = '#c92a2a'; progressColor = 'red'; }
+    else if (value >= 12) { textColor = '#7a5d00'; progressColor = 'yellow'; }
+    return (
+      <Tooltip label={`${value.toFixed(1)} hours per week`}>
+        <Box w={65}>
+          <Text size="xs" fw={600} ta="center" mb={2} style={{ color: textColor }}>{Math.round(value)}h/wk</Text>
+          <Progress value={percentage} size="xs" color={progressColor} radius="xl" aria-label={`Workload: ${Math.round(value)} hours`} />
+        </Box>
+      </Tooltip>
+    );
+  };
+
+  // Get overall rating display
+  const getOverallDisplay = (value: number | null | undefined, numReviews: number | undefined, courseId: string) => {
+    if (value === null || value === undefined) return <Text size="sm" c="dimmed">-</Text>;
+    let textColor = '#c92a2a', iconColor = 'var(--mantine-color-red-filled)';
+    if (value >= 4) { textColor = '#256029'; iconColor = 'var(--mantine-color-green-filled)'; }
+    else if (value >= 3) { textColor = '#0d6650'; iconColor = 'var(--mantine-color-teal-filled)'; }
+    return (
+      <Tooltip label={numReviews ? `${numReviews} reviews` : 'No reviews'}>
+        <Anchor component={Link} href={`/course/${courseId}`} style={{ textDecoration: 'none' }}>
+          <Group gap={4} justify="center" wrap="nowrap">
+            <IconStar size={14} fill={iconColor} color={iconColor} />
+            <Text size="sm" fw={600} style={{ color: textColor }}>{value.toFixed(1)}</Text>
+          </Group>
+        </Anchor>
+      </Tooltip>
+    );
   };
 
   // Show registration status for the newest term with available data. This can
@@ -719,10 +848,17 @@ export default function ScheduleContent() {
                 </Badge>
               </Tooltip>
             )}
-            {section.aliases.length > 0 && (
+              {section.aliases.length > 0 && (
               <Tooltip label="Common abbreviations for this course">
                 <Badge variant="light" size="xs" style={{ backgroundColor: `${GT_COLORS.olympicTeal}25`, color: '#006670' }}>
                   {section.aliases.join(' / ')}
+                </Badge>
+              </Tooltip>
+            )}
+            {section.isFoundational && (
+              <Tooltip label="Foundational Course">
+                <Badge variant="light" size="xs" color="blue">
+                  Foundational
                 </Badge>
               </Tooltip>
             )}
@@ -734,6 +870,17 @@ export default function ScheduleContent() {
       </Box>
       <Box role="cell" px="sm" py="sm">
         <Text size="sm">{section.instructor}</Text>
+      </Box>
+      <Box role="cell" px="xs" py="sm" ta="center">
+        {getDifficultyBadge(section.avgDifficulty)}
+      </Box>
+      <Box role="cell" px="xs" py="sm">
+        <Center>
+          {getWorkloadDisplay(section.avgWorkload)}
+        </Center>
+      </Box>
+      <Box role="cell" px="xs" py="sm" ta="center">
+        {getOverallDisplay(section.avgOverall, section.numReviews, section.courseId)}
       </Box>
       <Box role="cell" px="sm" py="sm">
         <Stack gap={4} w={120}>
@@ -773,7 +920,7 @@ export default function ScheduleContent() {
       <Box
         role="table"
         style={{
-          minWidth: isLatestAvailableSemester ? 860 : 775,
+          minWidth: isLatestAvailableSemester ? 1160 : 1075,
           ['--table-border-color' as string]: sharedTableBorderColor,
           ['--table-header-border-color' as string]: sharedTableHeaderBorderColor,
         }}
@@ -789,12 +936,15 @@ export default function ScheduleContent() {
             backgroundColor: sharedTableHeaderBackground,
           }}
         >
-          <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle()}>CRN</Box>
-          {isLatestAvailableSemester && <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle('center')}>Status</Box>}
-          <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle()}>Course</Box>
-          <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle()}>Instructor</Box>
-          <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle('center')}>Enrollment</Box>
-          <Box role="columnheader" px="sm" py="sm" style={getScheduleHeaderCellStyle('center')}>Waitlist</Box>
+          <SortableHeader px="sm" py="sm">CRN</SortableHeader>
+          {isLatestAvailableSemester && <SortableHeader px="sm" py="sm" ta="center">Status</SortableHeader>}
+          <SortableHeader px="sm" py="sm" sorted={sortBy === 'courseId'} reversed={reverseSortDirection} onSort={() => setSorting('courseId')}>Course</SortableHeader>
+          <SortableHeader px="sm" py="sm">Instructor</SortableHeader>
+          <SortableHeader px="xs" py="sm" ta="center" sorted={sortBy === 'difficulty'} reversed={reverseSortDirection} onSort={() => setSorting('difficulty')}>Difficulty</SortableHeader>
+          <SortableHeader px="xs" py="sm" ta="center" sorted={sortBy === 'workload'} reversed={reverseSortDirection} onSort={() => setSorting('workload')}>Workload</SortableHeader>
+          <SortableHeader px="xs" py="sm" ta="center" sorted={sortBy === 'overall'} reversed={reverseSortDirection} onSort={() => setSorting('overall')}>Rating</SortableHeader>
+          <SortableHeader px="sm" py="sm" ta="center">Enrollment</SortableHeader>
+          <SortableHeader px="sm" py="sm" ta="center">Waitlist</SortableHeader>
         </Box>
         <Box role="rowgroup">
           {(sectionsList || []).map((section) => renderSectionRow(section, showCoreElectiveBadge))}
@@ -918,6 +1068,17 @@ export default function ScheduleContent() {
               leftSection={<IconSearch size={16} />}
             />
           </SimpleGrid>
+
+          {!selectedSpec && (
+            <Group justify="flex-end" mt="md">
+              <Switch
+                label="Foundational courses only"
+                checked={showFoundationalOnly}
+                onChange={(e) => setShowFoundationalOnly(e.currentTarget.checked)}
+                color={GT_COLORS.navy}
+              />
+            </Group>
+          )}
 
           {/* Selected Specialization Info */}
           {selectedSpec && (
