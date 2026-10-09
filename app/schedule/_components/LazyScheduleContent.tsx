@@ -16,6 +16,12 @@ const ScheduleContent = dynamic(() => import('./ScheduleContent'), {
   ),
 });
 
-export default function LazyScheduleContent() {
-  return <ScheduleContent />;
+import { Course, TCourseId } from '@/lib/types';
+
+interface LazyScheduleContentProps {
+  allCourseData: Record<TCourseId, Course>;
+}
+
+export default function LazyScheduleContent({ allCourseData }: LazyScheduleContentProps) {
+  return <ScheduleContent allCourseData={allCourseData} />;
 }
