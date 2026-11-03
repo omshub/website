@@ -55,6 +55,7 @@ import {
 import { useMemo, useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { GT_COLORS } from '@/lib/theme';
 import dynamic from 'next/dynamic';
+import CourseRegistrationCard from './CourseRegistrationCard';
 
 const ReviewForm = dynamic(() => import('@/components/ReviewForm'), {
   ssr: false,
@@ -386,6 +387,8 @@ export default function CourseContent({
 
       {/* Main Content */}
       <Container size="lg" py="xl">
+        <CourseRegistrationCard key={courseId} courseId={courseId} />
+
         {/* Course Stats - Single consolidated section */}
         {hasStats && courseAvgWorkload && courseAvgDifficulty && courseAvgOverall && (
           <Paper
