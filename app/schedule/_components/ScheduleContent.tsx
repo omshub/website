@@ -282,9 +282,13 @@ function StatCard({ icon, value, label, color }: StatCardProps) {
 }
 
 // Score function for alias-priority search
-function getSearchScore(section: CourseSection, query: string): number {
+export function getSearchScore(section: CourseSection, query: string): number {
   const normalizedQuery = query.toLowerCase().trim();
   if (!normalizedQuery) return 1; // Show all when no query
+
+  const crn = section.crn || '';
+  if (crn === normalizedQuery) return 1200;
+  if (crn.includes(normalizedQuery)) return 1100;
 
   const aliases = section.aliases || [];
   const courseId = section.courseId || '';
@@ -912,7 +916,7 @@ export default function ScheduleContent() {
 
             <TextInput
               label="Search"
-              placeholder="Search by course ID, name, or alias..."
+              placeholder="Search by CRN, course ID, name, or alias..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               leftSection={<IconSearch size={16} />}

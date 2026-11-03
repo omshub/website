@@ -55,6 +55,7 @@ import {
 import { useMemo, useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { GT_COLORS } from '@/lib/theme';
 import dynamic from 'next/dynamic';
+import CourseRegistration from './CourseRegistration';
 
 const ReviewForm = dynamic(() => import('@/components/ReviewForm'), {
   ssr: false,
@@ -364,6 +365,7 @@ export default function CourseContent({
                   </Badge>
                 </Group>
               )}
+              <CourseRegistration key={courseId} courseId={courseId} />
             </Stack>
 
             {/* Add Review Button */}
