@@ -1,0 +1,21 @@
+.courseId {
+  color: var(--mantine-color-dimmed);
+}
+
+/* Mantine's selected description is translucent, and its light badges retain
+   their own foregrounds. Keep the entire active result navy on brand gold. */
+.action:is([data-selected], :hover, :focus-visible) {
+  background-color: var(--mantine-primary-color-filled);
+  color: var(--mantine-color-navy-5);
+  --action-description-color: var(--mantine-color-navy-5);
+  --action-description-opacity: 1;
+}
+
+.action:is([data-selected], :hover, :focus-visible) .courseId,
+.action:is([data-selected], :hover, :focus-visible) .metric {
+  color: var(--mantine-color-navy-5);
+}
+
+.action:is([data-selected], :hover, :focus-visible) .metric {
+  background-color: transparent;
+}

@@ -13,6 +13,7 @@ import {
 } from '@tabler/icons-react';
 import { TCourseId, CourseDataDynamic } from '@/lib/types';
 import { getCoursesDataStatic } from '@/lib/staticData';
+import classes from './SpotlightSearch.module.css';
 
 interface SimpleCourse {
   courseId: string;
@@ -89,7 +90,7 @@ export const buildSpotlightActions = (
 
       const description = (
         <Group gap="xs" wrap="wrap">
-          <Text size="xs" c="dimmed">{course.courseId}{aliasStr}</Text>
+          <Text size="xs" className={classes.courseId}>{course.courseId}{aliasStr}</Text>
           {hasStats && (
             <>
               {course.avgDifficulty !== null && course.avgDifficulty !== undefined && (
@@ -97,6 +98,7 @@ export const buildSpotlightActions = (
                   size="xs"
                   variant="light"
                   color="orange"
+                  className={classes.metric}
                   leftSection={<IconFlame size={10} />}
                 >
                   {formatSpotlightRating(course.avgDifficulty)}
@@ -107,6 +109,7 @@ export const buildSpotlightActions = (
                   size="xs"
                   variant="light"
                   color="cyan"
+                  className={classes.metric}
                   leftSection={<IconClock size={10} />}
                 >
                   {Math.round(course.avgWorkload)}h/wk
@@ -117,6 +120,7 @@ export const buildSpotlightActions = (
                   size="xs"
                   variant="light"
                   color="yellow"
+                  className={classes.metric}
                   leftSection={<IconStar size={10} />}
                 >
                   {formatSpotlightRating(course.avgOverall)}
@@ -126,6 +130,7 @@ export const buildSpotlightActions = (
                 size="xs"
                 variant="light"
                 color="gray"
+                className={classes.metric}
                 leftSection={<IconMessageCircle size={10} />}
               >
                 {course.numReviews}
@@ -274,16 +279,11 @@ export default function SpotlightSearch({ courses: initialCourses }: SpotlightSe
       }}
       shortcut={['mod + k', '/']}
       limit={10}
+      classNames={{ action: classes.action }}
       styles={{
         action: {
           padding: 'var(--mantine-spacing-md)',
           borderRadius: 'var(--mantine-radius-sm)',
-          '&[data-selected]': {
-            backgroundColor: 'var(--mantine-color-navy-5)',
-            '& *': {
-              color: 'var(--mantine-color-white)',
-            },
-          },
         },
         actionLabel: {
           fontWeight: 600,
